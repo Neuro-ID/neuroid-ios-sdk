@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		26BCF348268DA4B20002C289 /* Calculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF347268DA4B20002C289 /* Calculation.swift */; };
+		26BCF34C268DA7CF0002C289 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF349268DA7CF0002C289 /* DB.swift */; };
+		26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */; };
+		26BCF34E268DA7CF0002C289 /* Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34B268DA7CF0002C289 /* Events.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +19,9 @@
 		26BCF33F268DA3C40002C289 /* NeuroID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NeuroID.h; sourceTree = "<group>"; };
 		26BCF340268DA3C40002C289 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		26BCF347268DA4B20002C289 /* Calculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculation.swift; sourceTree = "<group>"; };
+		26BCF349268DA7CF0002C289 /* DB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
+		26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTracker.swift; sourceTree = "<group>"; };
+		26BCF34B268DA7CF0002C289 /* Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +57,9 @@
 				26BCF33F268DA3C40002C289 /* NeuroID.h */,
 				26BCF340268DA3C40002C289 /* Info.plist */,
 				26BCF347268DA4B20002C289 /* Calculation.swift */,
+				26BCF349268DA7CF0002C289 /* DB.swift */,
+				26BCF34B268DA7CF0002C289 /* Events.swift */,
+				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";
@@ -134,7 +143,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26BCF34E268DA7CF0002C289 /* Events.swift in Sources */,
 				26BCF348268DA4B20002C289 /* Calculation.swift in Sources */,
+				26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */,
+				26BCF34C268DA7CF0002C289 /* DB.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
