@@ -14,6 +14,8 @@
 		26BCF34E268DA7CF0002C289 /* Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34B268DA7CF0002C289 /* Events.swift */; };
 		26BCF351268DA9CC0002C289 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34F268DA9CC0002C289 /* sqlite3.c */; };
 		26BCF352268DA9CC0002C289 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF350268DA9CC0002C289 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		26BCF359268DAC530002C289 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF358268DAC530002C289 /* Security.framework */; };
+		26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF35A268DAC5A0002C289 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		26BCF34B268DA7CF0002C289 /* Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
 		26BCF34F268DA9CC0002C289 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
 		26BCF350268DA9CC0002C289 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		26BCF358268DAC530002C289 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		26BCF35A268DAC5A0002C289 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +37,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */,
+				26BCF359268DAC530002C289 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +50,7 @@
 			children = (
 				26BCF33E268DA3C40002C289 /* NeuroID */,
 				26BCF33D268DA3C40002C289 /* Products */,
+				26BCF357268DAC530002C289 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,6 +75,15 @@
 				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
 			);
 			path = NeuroID;
+			sourceTree = "<group>";
+		};
+		26BCF357268DAC530002C289 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				26BCF35A268DAC5A0002C289 /* Foundation.framework */,
+				26BCF358268DAC530002C289 /* Security.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
