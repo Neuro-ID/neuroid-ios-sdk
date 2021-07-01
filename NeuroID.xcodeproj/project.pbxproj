@@ -8,12 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		26BCF348268DA4B20002C289 /* Calculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF347268DA4B20002C289 /* Calculation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		26BCF33C268DA3C40002C289 /* NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		26BCF33F268DA3C40002C289 /* NeuroID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NeuroID.h; sourceTree = "<group>"; };
 		26BCF340268DA3C40002C289 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		26BCF347268DA4B20002C289 /* Calculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +50,7 @@
 			children = (
 				26BCF33F268DA3C40002C289 /* NeuroID.h */,
 				26BCF340268DA3C40002C289 /* Info.plist */,
+				26BCF347268DA4B20002C289 /* Calculation.swift */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";
@@ -94,6 +97,7 @@
 				TargetAttributes = {
 					26BCF33B268DA3C40002C289 = {
 						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1250;
 					};
 				};
 			};
@@ -130,6 +134,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26BCF348268DA4B20002C289 /* Calculation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +266,7 @@
 		26BCF345268DA3C40002C289 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YM62LBZ4XN;
@@ -278,6 +284,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.kynguyen.NeuroID;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -286,6 +293,7 @@
 		26BCF346268DA3C40002C289 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YM62LBZ4XN;
