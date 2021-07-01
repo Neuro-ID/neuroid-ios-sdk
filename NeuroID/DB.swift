@@ -1,5 +1,4 @@
 import Foundation
-import SQLite3
 
 class DB {
     struct DBResult {
@@ -24,28 +23,28 @@ class DB {
         if sqlite3_open(dbPath, &db) == SQLITE_OK {
             niprint("Successfully opened connection to database at \(dbPath)")
 
-//            let password = generatePassword()
-//            var rc = sqlite3_key(db, password, Int32(password.utf8CString.count))
-//            if rc != SQLITE_OK {
-//                let errmsg = String(cString: sqlite3_errmsg(db))
-//                niprint("Error setting key: \(errmsg)")
-//            }
-//
-//            var stmt: OpaquePointer?
-//            rc = sqlite3_prepare(db, "PRAGMA cipher_version;", -1, &stmt, nil)
-//            if rc != SQLITE_OK {
-//                let errmsg = String(cString: sqlite3_errmsg(db))
-//                niprint("Error preparing SQL: \(errmsg)")
-//            }
-//            rc = sqlite3_step(stmt)
-//            if rc == SQLITE_ROW {
-//                let version = sqlite3_column_text(stmt, 0)
-//                niprint("cipher_version: %s", version as Any)
-//            } else {
-//                let errmsg = String(cString: sqlite3_errmsg(db))
-//                niprint("Error retrieiving cipher_version: \(errmsg)")
-//            }
-//            sqlite3_finalize(stmt)
+            let password = generatePassword()
+            var rc = sqlite3_key(db, password, Int32(password.utf8CString.count))
+            if rc != SQLITE_OK {
+                let errmsg = String(cString: sqlite3_errmsg(db))
+                niprint("Error setting key: \(errmsg)")
+            }
+
+            var stmt: OpaquePointer?
+            rc = sqlite3_prepare(db, "PRAGMA cipher_version;", -1, &stmt, nil)
+            if rc != SQLITE_OK {
+                let errmsg = String(cString: sqlite3_errmsg(db))
+                niprint("Error preparing SQL: \(errmsg)")
+            }
+            rc = sqlite3_step(stmt)
+            if rc == SQLITE_ROW {
+                let version = sqlite3_column_text(stmt, 0)
+                niprint("cipher_version: %s", version as Any)
+            } else {
+                let errmsg = String(cString: sqlite3_errmsg(db))
+                niprint("Error retrieiving cipher_version: \(errmsg)")
+            }
+            sqlite3_finalize(stmt)
 
             return db
         } else {
