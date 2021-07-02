@@ -43,7 +43,7 @@ public struct NeuroID {
         #endif
 
         let tracker = NeuroIDTracker(screen: "AppDelegate", controller: nil)
-        tracker.log(event: NIEvent(type: .windowLoad, tg: nil, x: nil, y: nil))
+        tracker.log(event: NIEvent(type: .windowLoad, tg: nil, view: nil))
     }
 
     private static func swizzle() {
@@ -165,7 +165,7 @@ public struct NeuroID {
 
     private static func osLog(category: String = "default", content: Any..., type: OSLogType) {
         Log.log(category: category, contents: content, type: .info)
-        log(NIEvent(customEvent: category, tg: ["content": content], x: nil, y: nil))
+        log(NIEvent(customEvent: category, tg: ["content": content], view: nil))
     }
 
     static func log(_ event: NIEvent) {
@@ -208,41 +208,33 @@ public class NeuroIDTracker: NSObject {
 public extension NeuroIDTracker {
     func logCheckBoxChange(isChecked: Bool, checkBox: UIView) {
         var tg: [String: Any?] = ["isChecked": isChecked]
-        let event = NIEvent(type: .checkboxChange,
-                            tg: tg,
-                            x: Int(checkBox.frame.origin.x),
-                            y: Int(checkBox.frame.origin.y))
+        let event = NIEvent(type: .checkboxChange, tg: tg, view: checkBox)
         log(event: event)
 
         tg["inputEvent"] = event.type
-        log(event: NIEvent(type: .input, tg: tg,
-                           x: Int(checkBox.frame.origin.x),
-                           y: Int(checkBox.frame.origin.y)))
+        log(event: NIEvent(type: .input, tg: tg, view: checkBox))
     }
 
     func logRadioChange(isChecked: Bool, radioButton: UIView) {
-        log(event: NIEvent(type: .radioChange,
-                           tg: ["isChecked": isChecked],
-                           x: Int(radioButton.frame.origin.x),
-                           y: Int(radioButton.frame.origin.y)))
+        log(event: NIEvent(type: .radioChange, tg: ["isChecked": isChecked], view: radioButton))
     }
 
     func logSubmission(_ params: [String: Any?]? = nil) {
-        log(event: NIEvent(type: .formSubmit, tg: params, x: nil, y: nil))
-        log(event: NIEvent(type: .applicationSubmit, tg: params, x: nil, y: nil))
-        log(event: NIEvent(type: .pageSubmit, tg: params, x: nil, y: nil))
+        log(event: NIEvent(type: .formSubmit, tg: params, view: nil))
+        log(event: NIEvent(type: .applicationSubmit, tg: params, view: nil))
+        log(event: NIEvent(type: .pageSubmit, tg: params, view: nil))
     }
 
     func logSubmissionSuccess(_ params: [String: Any?]? = nil) {
-        log(event: NIEvent(type: .formSubmitSuccess, tg: params, x: nil, y: nil))
-        log(event: NIEvent(type: .applicationSubmitSuccess, tg: params, x: nil, y: nil))
+        log(event: NIEvent(type: .formSubmitSuccess, tg: params, view: nil))
+        log(event: NIEvent(type: .applicationSubmitSuccess, tg: params, view: nil))
     }
 
     func logSubmissionFailure(error: Error, params: [String: Any?]? = nil) {
         var newParams = params ?? [:]
         newParams["error"] = error.localizedDescription
-        log(event: NIEvent(type: .formSubmitFailure, tg: newParams, x: nil, y: nil))
-        log(event: NIEvent(type: .applicationSubmitFailure, tg: newParams, x: nil, y: nil))
+        log(event: NIEvent(type: .formSubmitFailure, tg: newParams, view: nil))
+        log(event: NIEvent(type: .applicationSubmitFailure, tg: newParams, view: nil))
     }
 
     func excludeViews(views: UIView...) {
@@ -354,16 +346,14 @@ private extension NeuroIDTracker {
             }
 
             detectPasting(view: textField, text: textField.text ?? "")
-            log(event: NIEvent(type: eventType, tg: ["text": textField.text],
-                               x: Int(textField.frame.origin.x), y: Int(textField.frame.origin.y)))
+            log(event: NIEvent(type: eventType, tg: ["text": textField.text], view: textField))
         } else if let textView = notification.object as? UITextView {
             if textView.textContentType == .password || textView.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
                 if textView.textContentType == .newPassword { return }
             }
 
-            log(event: NIEvent(type: eventType, tg: ["text": textView.text],
-                               x: Int(textView.frame.origin.x), y: Int(textView.frame.origin.y)))
+            log(event: NIEvent(type: eventType, tg: ["text": textView.text], view: nil))
         }
     }
 
@@ -374,8 +364,7 @@ private extension NeuroIDTracker {
         let newCount = text.count
         if newCount > 0 && newCount - savedCount > 2 {
             let pastedText = text.replacingOccurrences(of: savedText, with: "")
-            log(event: NIEvent(type: .paste, tg: ["newText": text, "oldText": savedText, "pasteContent": pastedText],
-                               x: Int(view.frame.origin.x), y: Int(view.frame.origin.y)))
+            log(event: NIEvent(type: .paste, tg: ["newText": text, "oldText": savedText, "pasteContent": pastedText], view: nil))
         }
         textCapturing[id] = text
     }
@@ -404,7 +393,7 @@ private extension NeuroIDTracker {
     func touchEvent(sender: UIView, eventName: NIEventName) {
         if NeuroID.secrectViews.contains(sender) { return }
         let tg: [String: Any?] = ["sender": sender.className]
-        log(event: NIEvent(type: eventName, tg: tg, x: Int(sender.frame.origin.x), y: Int(sender.frame.origin.y)))
+        log(event: NIEvent(type: eventName, tg: tg, view: nil))
     }
 }
 
@@ -437,7 +426,7 @@ private extension NeuroIDTracker {
             tg["value"] = "\(control.date)"
         }
 
-        log(event: NIEvent(type: eventName, tg: tg, x: Int(sender.frame.origin.x), y: Int(sender.frame.origin.y)))
+        log(event: NIEvent(type: eventName, tg: tg, view: nil))
     }
 }
 
@@ -452,7 +441,7 @@ private extension NeuroIDTracker {
     }
 
     @objc func appMovedToBackground() {
-        log(event: NIEvent(type: NIEventName.userInactive, tg: nil, x: nil, y: nil))
+        log(event: NIEvent(type: NIEventName.userInactive, tg: nil, view: nil))
     }
 }
 
@@ -463,7 +452,7 @@ private extension NeuroIDTracker {
     }
 
     @objc func contentCopied() {
-        log(event: NIEvent(type: NIEventName.copy, tg: ["content": UIPasteboard.general.string], x: nil, y: nil))
+        log(event: NIEvent(type: NIEventName.copy, tg: ["content": UIPasteboard.general.string], view: nil))
     }
 }
 
@@ -481,8 +470,8 @@ private extension NeuroIDTracker {
             orientation = "Portrait"
         }
 
-        log(event: NIEvent(type: NIEventName.windowOrientationChange, tg: ["orientation": orientation], x: nil, y: nil))
-        log(event: NIEvent(type: NIEventName.deviceOrientation, tg: ["orientation": orientation], x: nil, y: nil))
+        log(event: NIEvent(type: NIEventName.windowOrientationChange, tg: ["orientation": orientation], view: nil))
+        log(event: NIEvent(type: NIEventName.deviceOrientation, tg: ["orientation": orientation], view: nil))
     }
 }
 
@@ -671,7 +660,7 @@ extension UIViewController {
     }
 
     func log(eventName: NIEventName, params: [String: Any?]? = nil) {
-        let event = NIEvent(type: eventName, tg: params, x: nil, y: nil)
+        let event = NIEvent(type: eventName, tg: params, view: nil)
         log(event: event)
     }
 
@@ -786,7 +775,7 @@ extension NSError {
             "code": code,
             "userInfo": userInfo
         ]
-        NeuroID.log(NIEvent(type: .error, tg: tg, x: nil, y: nil))
+        NeuroID.log(NIEvent(type: .error, tg: tg, view: nil))
         self.neuroIdInit(domain: domain, code: code, userInfo: userInfo)
     }
 }

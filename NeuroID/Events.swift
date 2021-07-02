@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 internal enum NISessionEventName: String {
     case createSession = "CREATE_SESSION"
@@ -68,32 +68,46 @@ public enum NIEventName: String {
 }
 
 public struct NIEvent {
-    let type: String
+    public let type: String
     let tg: [String: Any?]?
     let ts = Date().timeIntervalSince1970 * 1000
-    let x: Int?
-    let y: Int?
+    let x: CGFloat?
+    let y: CGFloat?
 
-    init(session: NISessionEventName, tg: [String: Any?]?, x: Int?, y: Int?) {
+    init(session: NISessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
         self.tg = tg
         self.x = x
         self.y = y
     }
 
-    init(type: NIEventName, tg: [String: Any?]?, x: Int?, y: Int?) {
+    init(type: NIEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         self.type = type.rawValue
         self.tg = tg
         self.x = x
         self.y = y
     }
 
-    init(customEvent: String, tg: [String: Any?]?, x: Int?, y: Int?) {
-        type = customEvent
+    init(customEvent: String, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+        self.type = customEvent
         self.tg = tg
         self.x = x
         self.y = y
-        NeuroID.log(NIEvent(session: .setCustomEvent, tg: tg, x: x, y: y))
+    }
+
+    public init(type: NIEventName, tg: [String: Any?]?, view: UIView?) {
+        self.type = type.rawValue
+        self.tg = tg
+        self.x = view?.frame.origin.x
+        self.y = view?.frame.origin.y
+    }
+
+    public init(customEvent: String, tg: [String: Any?]?, view: UIView?) {
+        type = customEvent
+        self.tg = tg
+        self.x = view?.frame.origin.x
+        self.y = view?.frame.origin.y
+        NeuroID.log(NIEvent(session: .setCustomEvent, tg: tg, x: self.x, y: self.y))
     }
 
     func toDict() -> [String: Any] {
