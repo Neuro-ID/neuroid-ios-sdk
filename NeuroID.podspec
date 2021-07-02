@@ -13,7 +13,7 @@ s.homepage = "https://google.com"
 s.source = { :git => "https://github.com/nguyentruongky/Test.git", :tag => "#{s.version}"}
 
 s.source_files = "NeuroID/**/*.{h,c,m,swift}"
-spec.xcconfig = { 
+s.xcconfig = { 
     'OTHER_CFLAGS'  => '-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=3 -DSQLCIPHER_CRYPTO_CC -DNDEBUG',
     'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) COCOAPODS=1 IOS=1 SQLITE_HAS_CODEC=1'
   }
