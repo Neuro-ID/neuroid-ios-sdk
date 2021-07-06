@@ -63,13 +63,13 @@
 		26BCF33E268DA3C40002C289 /* NeuroID */ = {
 			isa = PBXGroup;
 			children = (
-				26BCF33F268DA3C40002C289 /* NeuroID.h */,
-				26BCF340268DA3C40002C289 /* Info.plist */,
-				26BCF34F268DA9CC0002C289 /* sqlite3.c */,
-				26BCF350268DA9CC0002C289 /* sqlite3.h */,
 				26BCF349268DA7CF0002C289 /* DB.swift */,
 				26BCF34B268DA7CF0002C289 /* Events.swift */,
+				26BCF340268DA3C40002C289 /* Info.plist */,
+				26BCF33F268DA3C40002C289 /* NeuroID.h */,
 				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
+				26BCF34F268DA9CC0002C289 /* sqlite3.c */,
+				26BCF350268DA9CC0002C289 /* sqlite3.h */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";

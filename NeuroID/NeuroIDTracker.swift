@@ -58,6 +58,7 @@ public struct NeuroID {
         }
     }
     private static func send() {
+        logInfo(category: "APICall", content: "Sending to API")
         DispatchQueue.global(qos: .background).async {
             let dbResult = DB.shared.getAll()
             if dbResult.base64Strings.isEmpty { return }
@@ -73,10 +74,11 @@ public struct NeuroID {
             params["events"] = events.toBase64()
 
             post(params: params, onSuccess: { _ in
+                logInfo(category: "APICall", content: "Sending successfully")
                 // send success -> delete
                 DB.shared.deleteSent()
-            }, onFailure: { _ in
-
+            }, onFailure: { error in
+                logError(category: "APICall", content: error.localizedDescription)
             })
         }
     }
