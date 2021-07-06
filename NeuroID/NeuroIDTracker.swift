@@ -201,8 +201,10 @@ public class NeuroIDTracker: NSObject {
     public func log(event: NIEvent) {
         niprint(event.toDict())
         guard let base64 = event.toBase64() else { return }
+        NeuroID.logDebug(category: "saveEvent", content: event.toDict())
         let screenName = screen ?? UUID().uuidString
         DB.shared.insert(screen: screenName, base64String: base64)
+        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
     }
 }
 
@@ -803,19 +805,9 @@ func niprint(_ strings: Any...) {
 }
 
 private struct Log {
-    static var subsystem: String {
-        return Bundle.main.bundleIdentifier ?? UUID().uuidString
-    }
-
-    @available(iOS 10.0, *)
-    static let table = OSLog(subsystem: subsystem, category: "table")
-    @available(iOS 10.0, *)
-    static let networking = OSLog(subsystem: subsystem, category: "networking")
-
     @available(iOS 10.0, *)
     static func log(category: String, contents: Any..., type: OSLogType) {
         let message = contents.map { "\($0)"}.joined(separator: " ")
-        let osLog = OSLog(subsystem: subsystem, category: category)
-        os_log("%@", log: osLog, type: type, message)
+        os_log("NeuroID: %@", message)
     }
 }
