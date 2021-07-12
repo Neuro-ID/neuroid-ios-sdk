@@ -211,7 +211,7 @@ public class NeuroIDTracker: NSObject {
 // MARK: - Custom events
 public extension NeuroIDTracker {
     func logCheckBoxChange(isChecked: Bool, checkBox: UIView) {
-        var tg: [String: Any?] = ["isChecked": isChecked]
+        var tg: [String: Any?] = ["tgs": checkBox.id]
         let event = NIEvent(type: .checkboxChange, tg: tg, view: checkBox)
         log(event: event)
 
@@ -220,7 +220,8 @@ public extension NeuroIDTracker {
     }
 
     func logRadioChange(isChecked: Bool, radioButton: UIView) {
-        log(event: NIEvent(type: .radioChange, tg: ["isChecked": isChecked], view: radioButton))
+        let tg: [String: Any?] = ["tgs": radioButton.id]
+        log(event: NIEvent(type: .radioChange, tg: tg, view: radioButton))
     }
 
     func logSubmission(_ params: [String: Any?]? = nil) {
@@ -342,6 +343,10 @@ private extension NeuroIDTracker {
     }
 
     func logTextEvent(from notification: Notification, eventType: NIEventName) {
+        var tg: [String: Any] = [
+            "etn": "INPUT",
+            "kc": "0"
+        ]
         if let textField = notification.object as? UITextField {
             // isSecureText
             if textField.textContentType == .password || textField.isSecureTextEntry { return }
@@ -349,15 +354,17 @@ private extension NeuroIDTracker {
                 if textField.textContentType == .newPassword { return }
             }
 
+            tg["tgs"] = textField.id
             detectPasting(view: textField, text: textField.text ?? "")
-            log(event: NIEvent(type: eventType, tg: ["text": textField.text], view: textField))
+            log(event: NIEvent(type: eventType, tg: tg, view: textField))
         } else if let textView = notification.object as? UITextView {
             if textView.textContentType == .password || textView.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
                 if textView.textContentType == .newPassword { return }
             }
-
-            log(event: NIEvent(type: eventType, tg: ["text": textView.text], view: nil))
+            tg["tgs"] = textView.id
+            detectPasting(view: textView, text: textView.text ?? "")
+            log(event: NIEvent(type: eventType, tg: tg, view: nil))
         }
     }
 
@@ -367,8 +374,12 @@ private extension NeuroIDTracker {
         let savedCount = savedText.count
         let newCount = text.count
         if newCount > 0 && newCount - savedCount > 2 {
-            let pastedText = text.replacingOccurrences(of: savedText, with: "")
-            log(event: NIEvent(type: .paste, tg: ["newText": text, "oldText": savedText, "pasteContent": pastedText], view: nil))
+            let tg: [String: Any?] = [
+                "etn": "INPUT",
+                "kc": "0",
+                "tgs": view.id
+            ]
+            log(event: NIEvent(type: .paste, tg: tg, view: nil))
         }
         textCapturing[id] = text
     }
@@ -396,7 +407,7 @@ private extension NeuroIDTracker {
 
     func touchEvent(sender: UIView, eventName: NIEventName) {
         if NeuroID.secrectViews.contains(sender) { return }
-        let tg: [String: Any?] = ["sender": sender.className]
+        let tg: [String: Any?] = ["sender": sender.className, "tgs": sender.id]
         log(event: NIEvent(type: eventName, tg: tg, view: nil))
     }
 }
@@ -409,7 +420,7 @@ private extension NeuroIDTracker {
 
     @objc func valueChanged(sender: UIView) {
         var eventName = NIEventName.change
-        var tg: [String: Any?] = ["sender": sender.className]
+        var tg: [String: Any?] = ["sender": sender.className, "tgs": sender.id]
 
         if let control = sender as? UISwitch {
             eventName = .selectChange
@@ -809,5 +820,16 @@ private struct Log {
     static func log(category: String, contents: Any..., type: OSLogType) {
         let message = contents.map { "\($0)"}.joined(separator: " ")
         os_log("NeuroID: %@", message)
+    }
+}
+
+public extension UIView {
+    var id: String? {
+        get {
+            return accessibilityIdentifier
+        }
+        set {
+            accessibilityIdentifier = newValue
+        }
     }
 }

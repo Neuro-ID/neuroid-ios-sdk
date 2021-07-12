@@ -97,14 +97,18 @@ public struct NIEvent {
 
     public init(type: NIEventName, tg: [String: Any?]?, view: UIView?) {
         self.type = type.rawValue
-        self.tg = tg
+        var newTg = tg ?? [String: Any?]()
+        newTg["tgs"] = view?.id
+        self.tg = newTg
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
     }
 
     public init(customEvent: String, tg: [String: Any?]?, view: UIView?) {
         type = customEvent
-        self.tg = tg
+        var newTg = tg ?? [String: Any?]()
+        newTg["tgs"] = view?.id
+        self.tg = newTg
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
         NeuroID.log(NIEvent(session: .setCustomEvent, tg: tg, x: self.x, y: self.y))
