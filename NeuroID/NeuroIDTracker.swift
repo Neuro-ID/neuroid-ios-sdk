@@ -15,6 +15,7 @@ public struct NeuroID {
     private static let SEND_INTERVAL: Double = 5
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secrectViews = [UIView]()
+    fileprivate static let showDebugLog = false
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
@@ -49,7 +50,6 @@ public struct NeuroID {
     private static func swizzle() {
         UIViewController.startSwizzling()
         UINavigationController.swizzleNavigation()
-        NSError.startSwizzling()
     }
     private static func initTimer() {
         DispatchQueue.main.asyncAfter(deadline: .now() + SEND_INTERVAL) {
@@ -167,7 +167,6 @@ public struct NeuroID {
 
     private static func osLog(category: String = "default", content: Any..., type: OSLogType) {
         Log.log(category: category, contents: content, type: .info)
-        log(NIEvent(customEvent: category, tg: ["content": content], view: nil))
     }
 
     static func log(_ event: NIEvent) {
@@ -199,7 +198,6 @@ public class NeuroIDTracker: NSObject {
     }
 
     public func log(event: NIEvent) {
-        niprint(event.toDict())
         guard let base64 = event.toBase64() else { return }
         NeuroID.logDebug(category: "saveEvent", content: event.toDict())
         let screenName = screen ?? UUID().uuidString
@@ -211,12 +209,9 @@ public class NeuroIDTracker: NSObject {
 // MARK: - Custom events
 public extension NeuroIDTracker {
     func logCheckBoxChange(isChecked: Bool, checkBox: UIView) {
-        var tg: [String: Any?] = ["tgs": checkBox.id]
+        let tg: [String: Any?] = ["tgs": checkBox.id]
         let event = NIEvent(type: .checkboxChange, tg: tg, view: checkBox)
         log(event: event)
-
-        tg["inputEvent"] = event.type
-        log(event: NIEvent(type: .input, tg: tg, view: checkBox))
     }
 
     func logRadioChange(isChecked: Bool, radioButton: UIView) {
@@ -277,21 +272,9 @@ private extension NeuroIDTracker {
     func createSession(screen: String) {
         let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
         guard let base64 = [event.toDict()].toBase64() else { return }
-        let params = [
-            "key": NeuroID.clientKey,
-            "id": ParamsCreator.createRequestId(),
-            "siteId": nil,
-            "sid": NeuroID.sessionId,
-            "cid": NeuroID.clientId,
-            "aid": nil,
-            "did": 1623787353447.57899235,
-            "uid": NeuroID.userId,
-            "pid": ParamsCreator.getPageId(),
-            "iid": nil,
-            "url": screen,
-            "jsv": "4.0.0-beta-0-gd71221c",
-            "events": base64
-        ] as [String: Any?]
+        var params = ParamsCreator.getDefaultSessionParams()
+        params["events"] = base64
+        params["url"] = screen
         NeuroID.post(params: params, onSuccess: { _ in }, onFailure: { _ in })
     }
 }
@@ -344,26 +327,29 @@ private extension NeuroIDTracker {
 
     func logTextEvent(from notification: Notification, eventType: NIEventName) {
         var tg: [String: Any] = [
-            "etn": "INPUT",
             "kc": "0"
         ]
-        if let textField = notification.object as? UITextField {
+        if let textControl = notification.object as? UITextField {
             // isSecureText
-            if textField.textContentType == .password || textField.isSecureTextEntry { return }
+            if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
-                if textField.textContentType == .newPassword { return }
+                if textControl.textContentType == .newPassword { return }
             }
 
-            tg["tgs"] = textField.id
-            detectPasting(view: textField, text: textField.text ?? "")
-            log(event: NIEvent(type: eventType, tg: tg, view: textField))
-        } else if let textView = notification.object as? UITextView {
-            if textView.textContentType == .password || textView.isSecureTextEntry { return }
+            tg["tgs"] = textControl.id
+            detectPasting(view: textControl, text: textControl.text ?? "")
+            log(event: NIEvent(type: eventType, tg: tg, view: textControl))
+        } else if let textControl = notification.object as? UITextView {
+            if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
-                if textView.textContentType == .newPassword { return }
+                if textControl.textContentType == .newPassword { return }
             }
-            tg["tgs"] = textView.id
-            detectPasting(view: textView, text: textView.text ?? "")
+            tg["tgs"] = textControl.id
+            detectPasting(view: textControl, text: textControl.text ?? "")
+            log(event: NIEvent(type: eventType, tg: tg, view: nil))
+        } else if let textControl = notification.object as? UISearchBar {
+            tg["tgs"] = textControl.id
+            detectPasting(view: textControl, text: textControl.text ?? "")
             log(event: NIEvent(type: eventType, tg: tg, view: nil))
         }
     }
@@ -379,7 +365,7 @@ private extension NeuroIDTracker {
                 "kc": "0",
                 "tgs": view.id
             ]
-            log(event: NIEvent(type: .paste, tg: tg, view: nil))
+            log(event: NIEvent(type: .paste, tg: tg, view: view))
         }
         textCapturing[id] = text
     }
@@ -492,34 +478,21 @@ private extension NeuroIDTracker {
 
 // MARK: - Properties - temporary public for testing
 struct ParamsCreator {
-    static func getDefaultSessionParams() -> [String: Any] {
-        let params: [String: Any] = [
-            "type": "CREATE_SESSION",
-            "f": getClientKey(),
-            "sid": createSessionId(),
-            "cid": getClientId(),
-            "loc": getLocale(),
-            "ua": getUserAgent(),
-            "tzo": getTimezone(),
-            "lng": getLanguage(),
-            "aid": "null", // temp
-            "did": "null", // temp
-            "siteId": "null", // temp
-            // ce,
-            // je,
-            // ol,
-            "p": "Apple",
-            "sh": UIScreen.main.bounds.height,
-            "sw": UIScreen.main.bounds.width,
-            "cd": 32,
-            "pd": 32,
-            // jsl,
-            // dnt,
-            "tch": true,
-            "url": "",
-            "ns": "nid",
-            "jsv": getSDKVersion()
-        ]
+    static func getDefaultSessionParams() -> [String: Any?] {
+        let params = [
+            "key": NeuroID.clientKey,
+            "id": ParamsCreator.createRequestId(),
+            "siteId": nil,
+            "sid": NeuroID.sessionId,
+            "cid": NeuroID.clientId,
+            "aid": nil,
+            "did": 1623787353447.57899235,
+            "uid": NeuroID.userId,
+            "pid": ParamsCreator.getPageId(),
+            "iid": nil,
+            "jsv": "4.0.0-beta-0-gd71221c",
+        ] as [String: Any?]
+
         return params
     }
 
@@ -655,7 +628,7 @@ extension UIViewController {
         return tracker
     }
 
-    func log(event: NIEvent) {
+    public func log(event: NIEvent) {
         if ignoreLists.contains(className) { return }
         var tg: [String: Any?] = event.tg ?? [:]
         tg["className"] = className
@@ -674,20 +647,20 @@ extension UIViewController {
         }
     }
 
-    func log(eventName: NIEventName, params: [String: Any?]? = nil) {
+    public func log(eventName: NIEventName, params: [String: Any?]? = nil) {
         let event = NIEvent(type: eventName, tg: params, view: nil)
         log(event: event)
     }
 
-    func logViewWillAppear(params: [String: Any?]) {
+    public func logViewWillAppear(params: [String: Any?]) {
         log(eventName: .windowFocus, params: params)
     }
 
-    func logViewDidLoad(params: [String: Any?]) {
+    public func logViewDidLoad(params: [String: Any?]) {
         log(eventName: .windowLoad, params: params)
     }
 
-    func logViewWillDisappear(params: [String: Any?]) {
+    public func logViewWillDisappear(params: [String: Any?]) {
         log(eventName: .windowBlur, params: params)
     }
 }
@@ -818,8 +791,12 @@ func niprint(_ strings: Any...) {
 private struct Log {
     @available(iOS 10.0, *)
     static func log(category: String, contents: Any..., type: OSLogType) {
-        let message = contents.map { "\($0)"}.joined(separator: " ")
-        os_log("NeuroID: %@", message)
+        #if DEBUG
+        if NeuroID.showDebugLog {
+            let message = contents.map { "\($0)"}.joined(separator: " ")
+            os_log("NeuroID: %@", message)
+        }
+        #endif
     }
 }
 
