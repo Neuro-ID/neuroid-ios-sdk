@@ -144,8 +144,10 @@ public struct NIEvent {
                 }
             }
         }
-        if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
-            dictTg["etn"] = etn
+        if dictTg["etn"] == nil {
+            if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
+                dictTg["etn"] = etn
+            }
         }
 
         dict["tg"] = dictTg

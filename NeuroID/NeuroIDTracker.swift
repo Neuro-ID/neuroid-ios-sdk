@@ -209,13 +209,13 @@ public class NeuroIDTracker: NSObject {
 // MARK: - Custom events
 public extension NeuroIDTracker {
     func logCheckBoxChange(isChecked: Bool, checkBox: UIView) {
-        let tg: [String: Any?] = ["tgs": checkBox.id]
+        let tg = ParamsCreator.getTgParams(view: checkBox)
         let event = NIEvent(type: .checkboxChange, tg: tg, view: checkBox)
         log(event: event)
     }
 
     func logRadioChange(isChecked: Bool, radioButton: UIView) {
-        let tg: [String: Any?] = ["tgs": radioButton.id]
+        let tg = ParamsCreator.getTgParams(view: radioButton)
         log(event: NIEvent(type: .radioChange, tg: tg, view: radioButton))
     }
 
@@ -326,9 +326,6 @@ private extension NeuroIDTracker {
     }
 
     func logTextEvent(from notification: Notification, eventType: NIEventName) {
-        var tg: [String: Any] = [
-            "kc": "0"
-        ]
         if let textControl = notification.object as? UITextField {
             // isSecureText
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
@@ -336,7 +333,7 @@ private extension NeuroIDTracker {
                 if textControl.textContentType == .newPassword { return }
             }
 
-            tg["tgs"] = textControl.id
+            let tg = ParamsCreator.getTextTgParams(view: textControl)
             detectPasting(view: textControl, text: textControl.text ?? "")
             log(event: NIEvent(type: eventType, tg: tg, view: textControl))
         } else if let textControl = notification.object as? UITextView {
@@ -344,11 +341,11 @@ private extension NeuroIDTracker {
             if #available(iOS 12.0, *) {
                 if textControl.textContentType == .newPassword { return }
             }
-            tg["tgs"] = textControl.id
+            let tg = ParamsCreator.getTextTgParams(view: textControl)
             detectPasting(view: textControl, text: textControl.text ?? "")
             log(event: NIEvent(type: eventType, tg: tg, view: nil))
         } else if let textControl = notification.object as? UISearchBar {
-            tg["tgs"] = textControl.id
+            let tg = ParamsCreator.getTextTgParams(view: textControl)
             detectPasting(view: textControl, text: textControl.text ?? "")
             log(event: NIEvent(type: eventType, tg: tg, view: nil))
         }
@@ -360,11 +357,9 @@ private extension NeuroIDTracker {
         let savedCount = savedText.count
         let newCount = text.count
         if newCount > 0 && newCount - savedCount > 2 {
-            let tg: [String: Any?] = [
-                "etn": "INPUT",
-                "kc": "0",
-                "tgs": view.id
-            ]
+            let tg = ParamsCreator.getTextTgParams(
+                view: view,
+                extraParams: ["etn": NIEventName.input.rawValue])
             log(event: NIEvent(type: .paste, tg: tg, view: view))
         }
         textCapturing[id] = text
@@ -393,7 +388,10 @@ private extension NeuroIDTracker {
 
     func touchEvent(sender: UIView, eventName: NIEventName) {
         if NeuroID.secrectViews.contains(sender) { return }
-        let tg: [String: Any?] = ["sender": sender.className, "tgs": sender.id]
+        let tg = ParamsCreator.getTgParams(
+            view: sender,
+            extraParams: ["sender": sender.className])
+
         log(event: NIEvent(type: eventName, tg: tg, view: nil))
     }
 }
@@ -406,25 +404,18 @@ private extension NeuroIDTracker {
 
     @objc func valueChanged(sender: UIView) {
         var eventName = NIEventName.change
-        var tg: [String: Any?] = ["sender": sender.className, "tgs": sender.id]
+        let tg: [String: Any?] = ParamsCreator.getUiControlTgParams(sender: sender)
 
-        if let control = sender as? UISwitch {
+        if let _ = sender as? UISwitch {
             eventName = .selectChange
-            tg["oldValue"] = !control.isOn
-            tg["newValue"] = control.isOn
-        } else if let control = sender as? UISegmentedControl {
+        } else if let _ = sender as? UISegmentedControl {
             eventName = .selectChange
-            tg["value"] = control.titleForSegment(at: control.selectedSegmentIndex)
-            tg["selectedIndex"] = control.selectedSegmentIndex
-        } else if let control = sender as? UIStepper {
+        } else if let _ = sender as? UIStepper {
             eventName = .change
-            tg["value"] = control.value
-        } else if let control = sender as? UISlider {
+        } else if let _ = sender as? UISlider {
             eventName = .sliderChange
-            tg["value"] = control.value
-        } else if let control = sender as? UIDatePicker {
+        } else if let _ = sender as? UIDatePicker {
             eventName = .inputChange
-            tg["value"] = "\(control.date)"
         }
 
         log(event: NIEvent(type: eventName, tg: tg, view: nil))
@@ -453,7 +444,7 @@ private extension NeuroIDTracker {
     }
 
     @objc func contentCopied() {
-        log(event: NIEvent(type: NIEventName.copy, tg: ["content": UIPasteboard.general.string], view: nil))
+        log(event: NIEvent(type: NIEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: nil))
     }
 }
 
@@ -478,6 +469,60 @@ private extension NeuroIDTracker {
 
 // MARK: - Properties - temporary public for testing
 struct ParamsCreator {
+    static func getTgParams(view: UIView, extraParams: [String: Any?] = [:]) -> [String: Any?] {
+        var params: [String: Any?] = ["tgs": view.id, "etn": NIEventName.input.rawValue]
+        for (key, value) in extraParams {
+            params[key] = value
+        }
+        return params
+    }
+
+    static func getTextTgParams(view: UIView, extraParams: [String: Any?] = [:]) -> [String: Any?] {
+        var params: [String: Any?] = [
+            "tgs": view.id,
+            "etn": NIEventName.textChange.rawValue,
+            "kc": 0
+        ]
+        for (key, value) in extraParams {
+            params[key] = value
+        }
+        return params
+    }
+
+    static func getUiControlTgParams(sender: UIView) -> [String: Any?] {
+        var tg: [String: Any?] = ["sender": sender.className, "tgs": sender.id]
+
+        if let control = sender as? UISwitch {
+            tg["oldValue"] = !control.isOn
+            tg["newValue"] = control.isOn
+        } else if let control = sender as? UISegmentedControl {
+            tg["value"] = control.titleForSegment(at: control.selectedSegmentIndex)
+            tg["selectedIndex"] = control.selectedSegmentIndex
+        } else if let control = sender as? UIStepper {
+            tg["value"] = control.value
+        } else if let control = sender as? UISlider {
+            tg["value"] = control.value
+        } else if let control = sender as? UIDatePicker {
+            tg["value"] = "\(control.date)"
+        }
+        return tg
+    }
+
+    static func getCopyTgParams() -> [String: Any?] {
+        return ["content": UIPasteboard.general.string]
+    }
+
+    static func getOrientationChangeTgParams() -> [String: Any?] {
+        let orientation: String
+        if UIDevice.current.orientation.isLandscape {
+            orientation = "Landscape"
+        } else {
+            orientation = "Portrait"
+        }
+
+        return ["orientation": orientation]
+    }
+
     static func getDefaultSessionParams() -> [String: Any?] {
         let params = [
             "key": NeuroID.clientKey,
@@ -490,7 +535,7 @@ struct ParamsCreator {
             "uid": NeuroID.userId,
             "pid": ParamsCreator.getPageId(),
             "iid": nil,
-            "jsv": "4.0.0-beta-0-gd71221c",
+            "jsv": "4.0.0-beta-0-gd71221c"
         ] as [String: Any?]
 
         return params
