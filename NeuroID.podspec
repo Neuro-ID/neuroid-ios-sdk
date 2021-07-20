@@ -9,7 +9,7 @@ s.swift_version = '5.0'
 
 s.version = "0.0.1"
 s.license = { :type => "MIT", :text => <<-LICENSE
-Copyright (c) 2021 Ky Nguyen <nguyentruongky33@gmail.com>
+Copyright (c) 2021 Neuro-ID <product@neuro-id.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +31,9 @@ THE SOFTWARE.
 
 LICENSE
  }
-s.author = { "Ky Nguyen" => "nguyentruongky33@gmail.com" }
-s.homepage = "https://google.com"
-s.source = { :git => "https://github.com/nguyentruongky/Test.git", :tag => "#{s.version}"}
+s.author = { "Neuro-ID" => "Neuro-ID" }
+s.homepage = "https://neuro-id.com/"
+s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
 
 s.source_files = "NeuroID/**/*.{h,c,m,swift}"
 s.xcconfig = { 
