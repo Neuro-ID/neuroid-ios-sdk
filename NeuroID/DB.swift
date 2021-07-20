@@ -16,13 +16,10 @@ class DB {
             .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             .appendingPathComponent(fileName).relativePath
         guard let dbPath = defaultDbPath else {
-            niprint("defaultDbPath is nil.")
             return nil
         }
 
         if sqlite3_open(dbPath, &db) == SQLITE_OK {
-            niprint("Successfully opened connection to database at \(dbPath)")
-
             let password = generatePassword()
             var rc = sqlite3_key(db, password, Int32(password.utf8CString.count))
             if rc != SQLITE_OK {
@@ -37,10 +34,7 @@ class DB {
                 niprint("Error preparing SQL: \(errmsg)")
             }
             rc = sqlite3_step(stmt)
-            if rc == SQLITE_ROW {
-                let version = sqlite3_column_text(stmt, 0)
-                niprint("cipher_version: %s", version as Any)
-            } else {
+            if rc != SQLITE_ROW {
                 let errmsg = String(cString: sqlite3_errmsg(db))
                 niprint("Error retrieiving cipher_version: \(errmsg)")
             }
@@ -75,11 +69,7 @@ Status TEXT NOT NULL);
 """
         var statement: OpaquePointer?
         if prepare(queryString: queryString, statement: &statement) {
-            if execute(statement) {
-                niprint("Table created.")
-            } else {
-                niprint("Table is not created.")
-            }
+            execute(statement)
         }
         endExecution(statement)
     }
@@ -90,11 +80,7 @@ Status TEXT NOT NULL);
             var statement: OpaquePointer?
 
             if self.prepare(queryString: queryString, statement: &statement) {
-                if self.execute(statement) {
-                    niprint("Successfully inserted row.", screen, base64String)
-                } else {
-                    niprint("Could not insert row.", screen, base64String)
-                }
+                self.execute(statement)
                 self.endExecution(statement)
             }
         }
@@ -116,13 +102,10 @@ Status TEXT NOT NULL);
             while sqlite3_step(statement) == SQLITE_ROW {
                 guard let screenRaw = sqlite3_column_text(statement, 0),
                       let rawBase64 = sqlite3_column_text(statement, 1) else {
-                    niprint("Query result is nil.")
                     continue
                 }
                 screen = String(cString: screenRaw)
                 let base64 = String(cString: rawBase64)
-
-                niprint("Query Result:", base64)
                 base64Strings.append(base64)
             }
         }
@@ -137,11 +120,7 @@ Status TEXT NOT NULL);
         for string in base64Strings {
             let queryString = "UPDATE Events SET Status = 'sending' WHERE Base64 = '\(string)';"
             if prepare(queryString: queryString, statement: &statement) {
-                if execute(statement) {
-                    niprint("\nSuccessfully updated row.")
-                } else {
-                    niprint("\nCould not update row.")
-                }
+                execute(statement)
             }
         }
         endExecution(statement)
@@ -152,19 +131,15 @@ Status TEXT NOT NULL);
             let queryString = "DELETE FROM Events WHERE Status = 'sending';"
             var statement: OpaquePointer?
             if self.prepare(queryString: queryString, statement: &statement) {
-                if self.execute(statement) {
-                    niprint("Successfully deleted all rows.")
-                } else {
-                    niprint("Could not delete all rows.")
-                }
+                self.execute(statement)
             }
             self.endExecution(statement)
         }
     }
 
+    @discardableResult
     private func prepare(queryString: String, statement: inout OpaquePointer?) -> Bool {
         if sqlite3_prepare(db, queryString, -1, &statement, nil) == SQLITE_OK {
-            niprint("queryString", queryString, "was prepared")
             return true
         } else {
             let errorMessage = String(cString: sqlite3_errmsg(db))
@@ -173,6 +148,7 @@ Status TEXT NOT NULL);
         }
     }
 
+    @discardableResult
     private func execute(_ statement: OpaquePointer?) -> Bool {
         if sqlite3_step(statement) == SQLITE_DONE {
             return true
@@ -198,11 +174,7 @@ extension DB {
         let queryString = "DELETE FROM Events;"
         var statement: OpaquePointer?
         if prepare(queryString: queryString, statement: &statement) {
-            if execute(statement) {
-                niprint("Successfully deleted all rows.")
-            } else {
-                niprint("Could not delete all rows.")
-            }
+            execute(statement)
         }
         endExecution(statement)
 

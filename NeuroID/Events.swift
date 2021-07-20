@@ -65,6 +65,15 @@ public enum NIEventName: String {
     case windowResize = "WINDOW_RESIZE"
     case deviceMotion = "DEVICE_MOTION"
     case deviceOrientation = "DEVICE_ORIENTATION"
+    
+    var etn: String? {
+        switch self {
+        case .change, .textChange, .radioChange, .inputChange, .paste, .keyDown, .keyUp, .selectChange, .sliderChange:
+            return rawValue
+        default:
+            return nil
+        }
+    }
 }
 
 public struct NIEvent {
@@ -111,7 +120,6 @@ public struct NIEvent {
         self.tg = newTg
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
-        NeuroID.log(NIEvent(session: .setCustomEvent, tg: tg, x: self.x, y: self.y))
     }
 
     func toDict() -> [String: Any] {
@@ -129,7 +137,16 @@ public struct NIEvent {
         var dictTg = [String: Any]()
         if let tg = tg {
             for (key, value) in tg where value != nil {
-                dictTg[key] = value
+                if key == "kc" {
+                    dict["kc"] = value
+                } else {
+                    dictTg[key] = value
+                }
+            }
+        }
+        if dictTg["etn"] == nil {
+            if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
+                dictTg["etn"] = etn
             }
         }
 
@@ -138,25 +155,7 @@ public struct NIEvent {
     }
 
     func toBase64() -> String? {
-        var dict = [String: Any]()
-        dict["type"] = type
-        dict["ts"] = ts
-        if let data = x {
-            dict["x"] = data
-        }
-
-        if let data = y {
-            dict["y"] = data
-        }
-
-        var dictTg = [String: Any]()
-        if let tg = tg {
-            for (key, value) in tg where value != nil {
-                dictTg[key] = value
-            }
-        }
-
-        dict["tg"] = dictTg
+        let dict = toDict()
 
         do {
             let data = try JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)
