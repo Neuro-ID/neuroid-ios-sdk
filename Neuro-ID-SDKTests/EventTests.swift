@@ -2,7 +2,6 @@
 //  EventTests.swift
 //  Neuro-ID-SDKTests
 //
-//  Created by Ky Nguyen on 4/30/21.
 //
 
 import XCTest

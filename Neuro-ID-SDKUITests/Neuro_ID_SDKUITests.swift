@@ -2,8 +2,6 @@
 //  Neuro_ID_SDKUITests.swift
 //  Neuro-ID-SDKUITests
 //
-//  Created by Ky Nguyen on 3/24/21.
-//
 
 import XCTest
 

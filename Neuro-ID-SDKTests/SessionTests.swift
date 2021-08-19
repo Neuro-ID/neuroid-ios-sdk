@@ -2,8 +2,6 @@
 //  Neuro_ID_SDKTests.swift
 //  Neuro-ID-SDKTests
 //
-//  Created by Ky Nguyen on 3/24/21.
-//
 
 import XCTest
 @testable import Neuro_ID_SDK

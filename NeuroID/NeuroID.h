@@ -2,7 +2,6 @@
 //  NeuroID.h
 //  NeuroID
 //
-//  Created by Ky Nguyen on 7/1/21.
 //
 
 #import <Foundation/Foundation.h>
