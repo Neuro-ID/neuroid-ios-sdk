@@ -16,12 +16,21 @@
 		26BCF359268DAC530002C289 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF358268DAC530002C289 /* Security.framework */; };
 		26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF35A268DAC5A0002C289 /* Foundation.framework */; };
 		6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */; };
-		6F39E8BD26CEA6D200BE9834 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8BA26CEA6D200BE9834 /* SessionTests.swift */; };
-		6F39E8BE26CEA6D200BE9834 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8BB26CEA6D200BE9834 /* EventTests.swift */; };
-		6F39E8BF26CEA6D200BE9834 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6F39E8BC26CEA6D200BE9834 /* Info.plist */; };
-		6F39E8C326CEA6E300BE9834 /* Neuro_ID_SDKUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8C126CEA6E300BE9834 /* Neuro_ID_SDKUITests.swift */; };
-		6F39E8C426CEA6E300BE9834 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6F39E8C226CEA6E300BE9834 /* Info.plist */; };
+		6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8CB26CEA9A800BE9834 /* SessionTests.swift */; };
+		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
+		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
+		6F39E8E126CEAA7900BE9834 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8E026CEAA7900BE9834 /* EventTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6F39E8CF26CEA9A800BE9834 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 26BCF333268DA3C40002C289 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 26BCF33B268DA3C40002C289;
+			remoteInfo = NeuroID;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		26BCF33C268DA3C40002C289 /* NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,11 +44,13 @@
 		26BCF358268DAC530002C289 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		26BCF35A268DAC5A0002C289 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPreferences.swift; sourceTree = "<group>"; };
-		6F39E8BA26CEA6D200BE9834 /* SessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
-		6F39E8BB26CEA6D200BE9834 /* EventTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
-		6F39E8BC26CEA6D200BE9834 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6F39E8C126CEA6E300BE9834 /* Neuro_ID_SDKUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Neuro_ID_SDKUITests.swift; sourceTree = "<group>"; };
-		6F39E8C226CEA6E300BE9834 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F39E8CB26CEA9A800BE9834 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
+		6F39E8CD26CEA9A800BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKUITest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKUITest.swift; sourceTree = "<group>"; };
+		6F39E8DC26CEAA0C00BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F39E8E026CEAA7900BE9834 /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,15 +63,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F39E8C626CEA9A800BE9834 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F39E8D526CEAA0C00BE9834 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		26BCF332268DA3C40002C289 = {
 			isa = PBXGroup;
 			children = (
-				6F39E8C026CEA6E300BE9834 /* Neuro-ID-SDKUITests */,
-				6F39E8B926CEA6D200BE9834 /* Neuro-ID-SDKTests */,
 				26BCF33E268DA3C40002C289 /* NeuroID */,
+				6F39E8CA26CEA9A800BE9834 /* SDKTest */,
+				6F39E8D926CEAA0C00BE9834 /* SDKUITest */,
 				26BCF33D268DA3C40002C289 /* Products */,
 				26BCF357268DAC530002C289 /* Frameworks */,
 			);
@@ -70,6 +96,8 @@
 			isa = PBXGroup;
 			children = (
 				26BCF33C268DA3C40002C289 /* NeuroID.framework */,
+				6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */,
+				6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -98,23 +126,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		6F39E8B926CEA6D200BE9834 /* Neuro-ID-SDKTests */ = {
+		6F39E8CA26CEA9A800BE9834 /* SDKTest */ = {
 			isa = PBXGroup;
 			children = (
-				6F39E8BA26CEA6D200BE9834 /* SessionTests.swift */,
-				6F39E8BB26CEA6D200BE9834 /* EventTests.swift */,
-				6F39E8BC26CEA6D200BE9834 /* Info.plist */,
+				6F39E8CB26CEA9A800BE9834 /* SessionTests.swift */,
+				6F39E8CD26CEA9A800BE9834 /* Info.plist */,
+				6F39E8E026CEAA7900BE9834 /* EventTests.swift */,
 			);
-			path = "Neuro-ID-SDKTests";
+			path = SDKTest;
 			sourceTree = "<group>";
 		};
-		6F39E8C026CEA6E300BE9834 /* Neuro-ID-SDKUITests */ = {
+		6F39E8D926CEAA0C00BE9834 /* SDKUITest */ = {
 			isa = PBXGroup;
 			children = (
-				6F39E8C126CEA6E300BE9834 /* Neuro_ID_SDKUITests.swift */,
-				6F39E8C226CEA6E300BE9834 /* Info.plist */,
+				6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */,
+				6F39E8DC26CEAA0C00BE9834 /* Info.plist */,
 			);
-			path = "Neuro-ID-SDKUITests";
+			path = SDKUITest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,17 +178,59 @@
 			productReference = 26BCF33C268DA3C40002C289 /* NeuroID.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		6F39E8C826CEA9A800BE9834 /* SDKTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F39E8D326CEA9A800BE9834 /* Build configuration list for PBXNativeTarget "SDKTest" */;
+			buildPhases = (
+				6F39E8C526CEA9A800BE9834 /* Sources */,
+				6F39E8C626CEA9A800BE9834 /* Frameworks */,
+				6F39E8C726CEA9A800BE9834 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6F39E8D026CEA9A800BE9834 /* PBXTargetDependency */,
+			);
+			name = SDKTest;
+			productName = SDKTest;
+			productReference = 6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6F39E8D726CEAA0C00BE9834 /* SDKUITest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F39E8DD26CEAA0C00BE9834 /* Build configuration list for PBXNativeTarget "SDKUITest" */;
+			buildPhases = (
+				6F39E8D426CEAA0C00BE9834 /* Sources */,
+				6F39E8D526CEAA0C00BE9834 /* Frameworks */,
+				6F39E8D626CEAA0C00BE9834 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SDKUITest;
+			productName = SDKUITest;
+			productReference = 6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		26BCF333268DA3C40002C289 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					26BCF33B268DA3C40002C289 = {
 						CreatedOnToolsVersion = 12.5;
 						LastSwiftMigration = 1250;
+					};
+					6F39E8C826CEA9A800BE9834 = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
+					6F39E8D726CEAA0C00BE9834 = {
+						CreatedOnToolsVersion = 12.5.1;
 					};
 				};
 			};
@@ -178,6 +248,8 @@
 			projectRoot = "";
 			targets = (
 				26BCF33B268DA3C40002C289 /* NeuroID */,
+				6F39E8C826CEA9A800BE9834 /* SDKTest */,
+				6F39E8D726CEAA0C00BE9834 /* SDKUITest */,
 			);
 		};
 /* End PBXProject section */
@@ -187,8 +259,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F39E8C426CEA6E300BE9834 /* Info.plist in Resources */,
-				6F39E8BF26CEA6D200BE9834 /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F39E8C726CEA9A800BE9834 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F39E8D626CEAA0C00BE9834 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,18 +283,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F39E8BD26CEA6D200BE9834 /* SessionTests.swift in Sources */,
 				26BCF34E268DA7CF0002C289 /* Events.swift in Sources */,
 				26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */,
-				6F39E8C326CEA6E300BE9834 /* Neuro_ID_SDKUITests.swift in Sources */,
-				6F39E8BE26CEA6D200BE9834 /* EventTests.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				26BCF34C268DA7CF0002C289 /* DB.swift in Sources */,
 				26BCF351268DA9CC0002C289 /* sqlite3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F39E8C526CEA9A800BE9834 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F39E8E126CEAA7900BE9834 /* EventTests.swift in Sources */,
+				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F39E8D426CEAA0C00BE9834 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6F39E8D026CEA9A800BE9834 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 26BCF33B268DA3C40002C289 /* NeuroID */;
+			targetProxy = 6F39E8CF26CEA9A800BE9834 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		26BCF342268DA3C40002C289 /* Debug */ = {
@@ -420,6 +526,86 @@
 			};
 			name = Release;
 		};
+		6F39E8D126CEA9A800BE9834 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SDKTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6F39E8D226CEA9A800BE9834 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SDKTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6F39E8DE26CEAA0C00BE9834 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SDKUITest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKUITest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6F39E8DF26CEAA0C00BE9834 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SDKUITest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKUITest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -437,6 +623,24 @@
 			buildConfigurations = (
 				26BCF345268DA3C40002C289 /* Debug */,
 				26BCF346268DA3C40002C289 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F39E8D326CEA9A800BE9834 /* Build configuration list for PBXNativeTarget "SDKTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F39E8D126CEA9A800BE9834 /* Debug */,
+				6F39E8D226CEA9A800BE9834 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F39E8DD26CEAA0C00BE9834 /* Build configuration list for PBXNativeTarget "SDKUITest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F39E8DE26CEAA0C00BE9834 /* Debug */,
+				6F39E8DF26CEAA0C00BE9834 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

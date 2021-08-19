@@ -1,11 +1,13 @@
 //
-//  Neuro_ID_SDKUITests.swift
-//  Neuro-ID-SDKUITests
+//  SDKUITest.swift
+//  SDKUITest
+//
+//  Created by Clayton Selby on 8/19/21.
 //
 
 import XCTest
 
-class Neuro_ID_SDKUITests: XCTestCase {
+class SDKUITest: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

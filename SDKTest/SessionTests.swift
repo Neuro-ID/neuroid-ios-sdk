@@ -1,10 +1,11 @@
 //
-//  Neuro_ID_SDKTests.swift
-//  Neuro-ID-SDKTests
+//  SDKTest.swift
+//  SDKTest
+//
+//  Created by Clayton Selby on 8/19/21.
 //
 
 import XCTest
-@testable import Neuro_ID_SDK
 
 class SessionTests: XCTestCase {
     let clientKey = "this_is_the_client_key_from_NeuroID"
@@ -51,4 +52,5 @@ class SessionTests: XCTestCase {
         XCTAssertTrue(params["screenHeight"] != nil)
         XCTAssertTrue(params["screenHeight"] as! CGFloat == UIScreen.main.bounds.height)
     }
+
 }

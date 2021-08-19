@@ -1,11 +1,11 @@
 //
 //  EventTests.swift
-//  Neuro-ID-SDKTests
+//  SDKTest
 //
+//  Created by Clayton Selby on 8/19/21.
 //
 
 import XCTest
-@testable import Neuro_ID_SDK
 
 class EventTests: XCTestCase {
     let clientKey = "this_is_the_client_key_from_NeuroID"
