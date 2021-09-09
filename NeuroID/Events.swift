@@ -78,11 +78,108 @@ public enum NIEventName: String {
 
 public struct NIEvent {
     public let type: String
-    let tg: [String: Any?]?
-    let ts = Date().timeIntervalSince1970 * 1000
-    let x: CGFloat?
-    let y: CGFloat?
+        var tg: [String: Any?]? = nil
+        var ts = Date().timeIntervalSince1970 * 1000
+        var x: CGFloat?
+        var y: CGFloat?
+        var f: String?
+        var lsid: String?
+        var sid: String?
+        var siteId: String? // Unused
+        var cid: String? // Done
+        var did: String? // Done
+        var iid: String? // Done
+        var loc: String? // Done
+        var ua: String? // Done
+        var tzo: Int?  // Done
+        var lng: String? // Done
+        var ol: String? // Unused
+        var p: String? // Done
+        var dnt: String? // Done
+        var tch: String? // Done
+        var url: String?
+        var ns: String? // Done
+        var jsv: String? // Done
 
+        /**
+            Use to initiate a new session
+             Element mapping:
+         
+             type: CREATE_SESSION,
+             f: key,
+             siteId: siteId,
+             sid: sessionId,
+             lsid: lastSessionId,
+             cid: clientId,
+             did: deviceId,
+             iid: intermediateId,
+             loc: locale,
+             ua: userAgent,
+             tzo: timezoneOffset,
+             lng: language,
+             ce: cookieEnabled,
+             je: javaEnabled,
+             ol: onLine,
+             p: platform,
+             sh: screenHeight,
+             sw: screenWidth,
+             ah: availHeight,
+             aw: availWidth,
+             cd: colorDepth,
+             pd: pixelDepth,
+             jsl: jsLibraries,
+             dnt: doNotTrack,
+             tch: touch,
+             url: url,
+             ns: commandQueueNamespace,
+             jsv: jsVersion,
+             is: idleSince,
+             ts: Date.now(),
+         */
+        init(session: NISessionEventName,
+             f: String? = nil,
+             siteId: String? = nil,
+             sid: String? = nil,
+             lsid: String? = nil,
+             cid: String? = nil,
+             did: String? = nil,
+             iid: String? = nil,
+             loc: String? = nil,
+             ua: String? = nil,
+             tzo: Int? = nil,
+             lng: String? = nil,
+             ol: String? = nil,
+             p: String? = nil,
+             dnt: String? = nil,
+             tch: String? = nil,
+             url: String? = nil,
+             ns: String? = nil,
+             jsv: String? = nil,
+             ts: Double? = nil) {
+            
+            self.type = session.rawValue
+            self.f = f
+            self.siteId = siteId
+            self.sid = sid
+            self.lsid = lsid
+            self.cid = cid
+            self.did = did
+            self.iid = iid
+            self.loc = loc
+            self.ua = ua
+            self.tzo = tzo
+            self.lng = lng
+            self.ol = ol
+            self.p = p
+            self.dnt = dnt
+            self.tch = tch
+            self.url = url
+            self.ns = ns
+            self.jsv = jsv
+            self.ts = ts!
+            
+        }
+    
     init(session: NISessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
         self.tg = tg

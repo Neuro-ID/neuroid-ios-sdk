@@ -18,5 +18,7 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NeuroURL</key>
+	<string>https://c52d-148-64-34-107.ngrok.io</string>
 </dict>
 </plist>

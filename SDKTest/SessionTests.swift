@@ -6,17 +6,24 @@
 //
 
 import XCTest
+@testable import NeuroID
 
 class SessionTests: XCTestCase {
-    let clientKey = "this_is_the_client_key_from_NeuroID"
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+    let userId = "form_mobilesandbox"
+    
     override func setUpWithError() throws {
-        NeuroID.configure(clientKey: clientKey, userId: "kynguyen")
+        NeuroID.configure(clientKey: clientKey, userId: userId)
     }
 
     func testSessionParams() throws {
         let urlName = "HomeScreen"
-        let tracker = NeuroIDTracker(userUrl: urlName)
-        let params = tracker.getSessionParams(userUrl: urlName)
+        let testView = UIViewController();
+
+        let tracker = NeuroIDTracker(screen: urlName, controller: testView);
+        
+        let params = ParamsCreator.getDefaultSessionParams();
+//            tracker.getSessionParams(userUrl: urlName)
 
         XCTAssertTrue(params["key"] != nil)
         XCTAssertTrue(params["key"] as! String == clientKey)

@@ -1,12 +1,12 @@
 import Foundation
 import UIKit
 import os
+import WebKit
 
 public struct NeuroID {
-    fileprivate static let rooUrl = "https://api.usw2-dev1.nidops.net"
-    fileprivate static var baseUrl: String {
-        return rooUrl + "/v3/c"
-    }
+//    fileprivate static let rootUrl = "https://api.usw2-dev1.nidops.net"
+    
+
     fileprivate static var sequenceId = 1
     fileprivate static var clientKey: String?
     fileprivate static let sessionId: String = ParamsCreator.createSessionId()
@@ -16,6 +16,7 @@ public struct NeuroID {
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secrectViews = [UIView]()
     fileprivate static let showDebugLog = false
+    fileprivate static let baseUrl = getBaseURL()
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
@@ -25,6 +26,9 @@ public struct NeuroID {
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String, userId: String?) {
+        
+       
+        
         if NeuroID.clientKey != nil {
             fatalError("You already configured the SDK")
         }
@@ -47,6 +51,7 @@ public struct NeuroID {
         tracker.log(event: NIEvent(type: .windowLoad, tg: nil, view: nil))
     }
 
+    
     private static func swizzle() {
         UIViewController.startSwizzling()
         UINavigationController.swizzleNavigation()
@@ -189,7 +194,7 @@ public class NeuroIDTracker: NSObject {
     private var className: String?
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
-    init(screen: String, controller: UIViewController?) {
+    public init(screen: String, controller: UIViewController?) {
         super.init()
         self.screen = screen
         createSession(screen: screen)
@@ -245,6 +250,30 @@ public extension NeuroIDTracker {
 }
 
 // MARK: - Private functions
+
+private func getBaseURL() -> String {
+    let URL_PLIST_KEY = "NeuroURL"
+    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
+    var baseUrl: String {
+        return rootUrl + "/v3/c"
+    }
+    return "https://fb70-148-64-34-107.ngrok.io";
+//    return "https://api.usw2-dev1.nidops.net";
+//    return baseUrl;
+}
+extension Bundle {
+    static func infoPlistValue(forKey key: String) -> Any? {
+//        let infoPlistPath = Bundle.main.url(forResource: "Info", withExtension: "plist")
+        
+        guard let value = Bundle.main.object(forInfoDictionaryKey: key) else {
+            os_log("NeuroID Failed to find Plist");
+           return nil
+        }
+        os_log("NeuroID config found");
+        return value
+    }
+}
+
 private extension NeuroIDTracker {
     func subscribe(inScreen controller: UIViewController?) {
         if let views = controller?.view.subviews {
@@ -275,7 +304,11 @@ private extension NeuroIDTracker {
         var params = ParamsCreator.getDefaultSessionParams()
         params["events"] = base64
         params["url"] = screen
-        NeuroID.post(params: params, onSuccess: { _ in }, onFailure: { _ in })
+        NeuroID.post(params: params, onSuccess: { _ in
+            niprint("Success creating session")
+        }, onFailure: { _ in
+            niprint("Failure creating session")
+        })
     }
 }
 
@@ -546,7 +579,7 @@ struct ParamsCreator {
             fatalError("UserId is not set")
         }
 
-        let params: [String: Any] = [
+        var params: [String: Any] = [
             "key": getClientKey(),
             "id": createRequestId(),
             "sid": NeuroID.sessionId,
@@ -589,9 +622,73 @@ struct ParamsCreator {
     }
 
     static func getClientId() -> String {
+        let clientIdName = "nid_cid";
+        let defaults = UserDefaults.standard
+        var cid = defaults.string(forKey: clientIdName);
+        
+        if (cid != nil){
+            return cid!;
+        } else {
+            cid = genId()
+            defaults.set(cid, forKey: clientIdName)
+            return cid!
+        }
+    }
+    
+    static func getDeviceId() -> String {
+        let deviceIdCacheKey = "nid_did";
+        let defaults = UserDefaults.standard
+        var did = defaults.string(forKey: deviceIdCacheKey);
+        
+        if (did != nil){
+            return did!;
+        } else {
+            did = self.genId()
+            defaults.set(did, forKey: deviceIdCacheKey)
+            return did!
+        }
+    }
+    
+    static func getIntermediateId() -> String {
+        let intermediateIdCacheKey = "nid_iid";
+        let defaults = UserDefaults.standard
+        var iid = defaults.string(forKey: intermediateIdCacheKey);
+        
+        if (iid != nil){
+            return iid!;
+        } else {
+            iid = self.genId()
+            defaults.set(iid, forKey: intermediateIdCacheKey)
+            return iid!
+        }
+    }
+    
+    private static func genId() -> String {
         let now = Int(Date().timeIntervalSince1970 * 1000)
         let random = Int(Double.random(in: 0..<1) * Double(Int32.max))
-        return "\(now).\(random)"
+        return "\(now).\(random)";
+    }
+    
+    static func getDnt() -> Bool {
+        let dntName = "nid_dnt";
+        let defaults = UserDefaults.standard
+        let dnt = defaults.string(forKey: dntName);
+        // If there is ANYTHING set in nid_dnt, we return true (meaning don't track)
+        if (dnt != nil)
+        {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    // Obviously, being a phone we always support touch
+    static func getTouch() -> Bool {
+        return true
+    }
+    
+    static func getPlatform() -> String {
+        return "Apple"
     }
 
     static func getLocale() -> String {
@@ -602,8 +699,9 @@ struct ParamsCreator {
         return "iOS " + UIDevice.current.systemVersion
     }
 
-    static func getTimezone() -> String {
-        let timezone = TimeZone.current.abbreviation() ?? "Unidentified"
+    // Minutes from GMT
+    static func getTimezone() -> Int {
+        let timezone = TimeZone.current.secondsFromGMT() / 60
         return timezone
     }
 
@@ -614,6 +712,10 @@ struct ParamsCreator {
 
     static func getSDKVersion() -> String {
         return "v-ios-1.0.0"
+    }
+    
+    static func getCommandQueueNamespace() -> String {
+        return "nid";
     }
 
     static func getPageId() -> String {
