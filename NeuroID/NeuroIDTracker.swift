@@ -34,6 +34,12 @@ public struct NeuroID {
         }
         NeuroID.clientKey = clientKey
         NeuroID.userId = userId
+        
+        let key = "nid_key";
+        let defaults = UserDefaults.standard
+        defaults.set(clientKey, forKey: key)
+        
+        
         if let userId = userId {
             setUserId(userId)
         }
@@ -51,6 +57,14 @@ public struct NeuroID {
         tracker.log(event: NIEvent(type: .windowLoad, tg: nil, view: nil))
     }
 
+    
+    static func getClientKeyFromLocalStorage() -> String {
+        let keyName = "nid_key";
+        let defaults = UserDefaults.standard
+        var key = defaults.string(forKey: keyName);
+        
+        return key ?? ""
+    }
     
     private static func swizzle() {
         UIViewController.startSwizzling()
@@ -257,7 +271,7 @@ private func getBaseURL() -> String {
     var baseUrl: String {
         return rootUrl + "/v3/c"
     }
-    return "https://fb70-148-64-34-107.ngrok.io";
+    return "https://109e-148-64-34-107.ngrok.io";
 //    return "https://api.usw2-dev1.nidops.net";
 //    return baseUrl;
 }
@@ -299,7 +313,9 @@ private extension NeuroIDTracker {
     }
 
     func createSession(screen: String) {
-        let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
+//        let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
+        let event = NIEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.createSessionId(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion(), ts:ParamsCreator.getTimeStamp())
+        
         guard let base64 = [event.toDict()].toBase64() else { return }
         var params = ParamsCreator.getDefaultSessionParams()
         params["events"] = base64
@@ -509,6 +525,12 @@ struct ParamsCreator {
         }
         return params
     }
+    
+    static func getTimeStamp() -> Double {
+        let now = Double(Date().timeIntervalSince1970 * 1000)
+        
+        return now
+    }
 
     static func getTextTgParams(view: UIView, extraParams: [String: Any?] = [:]) -> [String: Any?] {
         var params: [String: Any?] = [
@@ -612,11 +634,20 @@ struct ParamsCreator {
         return String(format: "%02X", rawId)
     }
 
+    // Sessions are created under conditions:
+    // Launch of application
+    // If user idles for > 30 min
     static func createSessionId() -> String {
+        let sidName =  "nid_sid"
+        let defaults = UserDefaults.standard
+        var sid = defaults.string(forKey: sidName)
+        
+        // Todo implement idle checking
         var id = ""
         for _ in 0 ..< 16 {
             let digit = Int.random(in: 0..<10)
             id += "\(digit)"
+            defaults.set(id, forKey: sidName)
         }
         return id
     }

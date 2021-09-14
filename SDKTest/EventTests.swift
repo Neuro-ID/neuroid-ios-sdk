@@ -11,6 +11,7 @@ import XCTest
 class EventTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     let userId = "form_mobilesandbox"
+    
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey, userId: userId)
     }
@@ -26,6 +27,27 @@ class EventTests: XCTestCase {
         XCTAssertTrue(data != nil);
     }
     
+    func testCreateSessionID() {
+        let data = ParamsCreator.createSessionId();
+        let sidName =  "nid_sid"
+        let defaults = UserDefaults.standard
+        var sid = defaults.string(forKey: sidName)
+        print("User Session ID: ", sid!)
+        XCTAssertTrue(sid != nil);
+    }
+    
+    func testSettingAndGettingAPIClientKey(){
+        let keyLookup = NeuroID.getClientKeyFromLocalStorage();
+        print("Key lookup:", keyLookup)
+        XCTAssertTrue(keyLookup == clientKey)
+    }
+    
+    func testGetTimeStamp(){
+        let data = ParamsCreator.getTimeStamp();
+        print("Timestamp: ", data)
+        XCTAssertTrue(data != nil);
+        
+    }
     func testTimeZoneOffset() {
         let data = ParamsCreator.getTimezone();
         print("TimeZone Offset: ", data)

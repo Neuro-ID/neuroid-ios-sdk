@@ -78,28 +78,27 @@ public enum NIEventName: String {
 
 public struct NIEvent {
     public let type: String
-        var tg: [String: Any?]? = nil
-        var ts = Date().timeIntervalSince1970 * 1000
-        var x: CGFloat?
-        var y: CGFloat?
-        var f: String?
-        var lsid: String?
-        var sid: String?
-        var siteId: String? // Unused
-        var cid: String? // Done
-        var did: String? // Done
-        var iid: String? // Done
-        var loc: String? // Done
-        var ua: String? // Done
-        var tzo: Int?  // Done
-        var lng: String? // Done
-        var ol: String? // Unused
-        var p: String? // Done
-        var dnt: String? // Done
-        var tch: String? // Done
-        var url: String?
-        var ns: String? // Done
-        var jsv: String? // Done
+    var tg: [String: Any?]? = nil
+    var ts = ParamsCreator.getTimeStamp()
+    var x: CGFloat?
+    var y: CGFloat?
+    var f: String?
+    var lsid: String?
+    var sid: String? // Done
+    var siteId: String? // Unused
+    var cid: String? // Done
+    var did: String? // Done
+    var iid: String? // Done
+    var loc: String? // Done
+    var ua: String? // Done
+    var tzo: Int?  // Done
+    var lng: String? // Done
+    var p: String? // Done
+    var dnt: Bool? // Done
+    var tch: String? // Done
+    var url: String?
+    var ns: String? // Done
+    var jsv: String? // Done
 
         /**
             Use to initiate a new session
@@ -148,14 +147,12 @@ public struct NIEvent {
              ua: String? = nil,
              tzo: Int? = nil,
              lng: String? = nil,
-             ol: String? = nil,
              p: String? = nil,
-             dnt: String? = nil,
+             dnt: Bool? = nil,
              tch: String? = nil,
              url: String? = nil,
              ns: String? = nil,
-             jsv: String? = nil,
-             ts: Double? = nil) {
+             jsv: String? = nil) {
             
             self.type = session.rawValue
             self.f = f
@@ -169,14 +166,12 @@ public struct NIEvent {
             self.ua = ua
             self.tzo = tzo
             self.lng = lng
-            self.ol = ol
             self.p = p
             self.dnt = dnt
             self.tch = tch
             self.url = url
             self.ns = ns
             self.jsv = jsv
-            self.ts = ts!
             
         }
     
