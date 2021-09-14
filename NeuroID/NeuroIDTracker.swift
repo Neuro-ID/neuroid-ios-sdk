@@ -16,7 +16,6 @@ public struct NeuroID {
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secrectViews = [UIView]()
     fileprivate static let showDebugLog = false
-    fileprivate static let baseUrl = getBaseURL()
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
@@ -107,7 +106,9 @@ public struct NeuroID {
     fileprivate static func post(params: [String: Any?],
                                  onSuccess: @escaping(Any) -> Void,
                                  onFailure: @escaping(Error) -> Void) {
-        guard let url = URL(string: NeuroID.baseUrl) else { return }
+        guard let url = URL(string: getBaseURL() + "/v3/c") else {
+            fatalError("No NeuroID base URL found")
+        }
         guard let clientKey = clientKey else {
             fatalError("No client key setup")
         }
@@ -266,12 +267,12 @@ public extension NeuroIDTracker {
 // MARK: - Private functions
 
 private func getBaseURL() -> String {
-    let URL_PLIST_KEY = "NeuroURL"
-    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
-    var baseUrl: String {
-        return rootUrl + "/v3/c"
-    }
-    return "https://109e-148-64-34-107.ngrok.io";
+//    let URL_PLIST_KEY = "NeuroURL"
+//    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
+//    var baseUrl: String {
+//        return rootUrl + "/v3/c"
+//    }
+    return "https://07fa-148-64-34-107.ngrok.io";
 //    return "https://api.usw2-dev1.nidops.net";
 //    return baseUrl;
 }
@@ -314,7 +315,7 @@ private extension NeuroIDTracker {
 
     func createSession(screen: String) {
 //        let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
-        let event = NIEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.createSessionId(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion(), ts:ParamsCreator.getTimeStamp())
+        let event = NIEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.createSessionId(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
         guard let base64 = [event.toDict()].toBase64() else { return }
         var params = ParamsCreator.getDefaultSessionParams()
@@ -582,15 +583,15 @@ struct ParamsCreator {
         let params = [
             "key": NeuroID.clientKey,
             "id": ParamsCreator.createRequestId(),
-            "siteId": nil,
-            "sid": NeuroID.sessionId,
-            "cid": NeuroID.clientId,
+//            "siteId": ParamsCreator.get,
+            "sid": ParamsCreator.createSessionId(),
+            "cid": ParamsCreator.getClientId(),
             "aid": nil,
-            "did": 1623787353447.57899235,
-            "uid": NeuroID.userId,
+            "did": ParamsCreator.getDeviceId(),
+//            "uid": NeuroID.userId,
             "pid": ParamsCreator.getPageId(),
-            "iid": nil,
-            "jsv": "4.0.0-beta-0-gd71221c"
+            "iid": ParamsCreator.getIntermediateId(),
+            "jsv": ParamsCreator.getSDKVersion()
         ] as [String: Any?]
 
         return params
@@ -642,6 +643,9 @@ struct ParamsCreator {
         let defaults = UserDefaults.standard
         var sid = defaults.string(forKey: sidName)
         
+        if (sid != nil) {
+            return sid!;
+        }
         // Todo implement idle checking
         var id = ""
         for _ in 0 ..< 16 {

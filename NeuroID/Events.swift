@@ -95,7 +95,7 @@ public struct NIEvent {
     var lng: String? // Done
     var p: String? // Done
     var dnt: Bool? // Done
-    var tch: String? // Done
+    var tch: Bool? // Done
     var url: String?
     var ns: String? // Done
     var jsv: String? // Done
@@ -149,7 +149,7 @@ public struct NIEvent {
              lng: String? = nil,
              p: String? = nil,
              dnt: Bool? = nil,
-             tch: String? = nil,
+             tch: Bool? = nil,
              url: String? = nil,
              ns: String? = nil,
              jsv: String? = nil) {
