@@ -103,7 +103,7 @@ public struct NeuroID {
 
     /// Direct send to API to create session
     /// Regularly send in loop
-    fileprivate static func post(params: [String: Any?],
+    fileprivate static func post(events: [Dictionary<String, Any?>],
                                  onSuccess: @escaping(Any) -> Void,
                                  onFailure: @escaping(Error) -> Void) {
         guard let url = URL(string: getBaseURL() + "/v3/c") else {
@@ -117,12 +117,22 @@ public struct NeuroID {
         request.setValue("Basic \(clientKey)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
 
-        var dataString = ""
-        for (key, value) in params {
-            let newValue = value ?? "null"
-            dataString += "\(key)=\(newValue)&"
+        var eventString = ""
+        
+        for (event) in events {
+            guard let base64 = event.toBase64() else { return }
+            var params = ParamsCreator.getDefaultSessionParams()
+            params["events"] = base64
+            params["url"] = screen
         }
-
+            
+            
+            for (key, value) in event {
+                let newValue = value ?? "null"
+                dataString += "\(key)=\(newValue)&"
+            }
+        
+        
         dataString.removeLast()
         guard let data = dataString.data(using: .utf8) else { return }
         request.httpBody = data
@@ -272,7 +282,7 @@ private func getBaseURL() -> String {
 //    var baseUrl: String {
 //        return rootUrl + "/v3/c"
 //    }
-    return "https://07fa-148-64-34-107.ngrok.io";
+    return "https://886c-148-64-34-107.ngrok.io";
 //    return "https://api.usw2-dev1.nidops.net";
 //    return baseUrl;
 }
@@ -317,11 +327,7 @@ private extension NeuroIDTracker {
 //        let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
         let event = NIEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.createSessionId(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
-        guard let base64 = [event.toDict()].toBase64() else { return }
-        var params = ParamsCreator.getDefaultSessionParams()
-        params["events"] = base64
-        params["url"] = screen
-        NeuroID.post(params: params, onSuccess: { _ in
+        NeuroID.post(events: [event.toDict()], onSuccess: { _ in
             niprint("Success creating session")
         }, onFailure: { _ in
             niprint("Failure creating session")
@@ -583,12 +589,12 @@ struct ParamsCreator {
         let params = [
             "key": NeuroID.clientKey,
             "id": ParamsCreator.createRequestId(),
-//            "siteId": ParamsCreator.get,
+            "siteId": nil,
             "sid": ParamsCreator.createSessionId(),
             "cid": ParamsCreator.getClientId(),
             "aid": nil,
             "did": ParamsCreator.getDeviceId(),
-//            "uid": NeuroID.userId,
+            "uid": nil,
             "pid": ParamsCreator.getPageId(),
             "iid": ParamsCreator.getIntermediateId(),
             "jsv": ParamsCreator.getSDKVersion()

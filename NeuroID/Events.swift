@@ -134,7 +134,20 @@ public struct NIEvent {
              jsv: jsVersion,
              is: idleSince,
              ts: Date.now(),
+     
+            Event Change
+            type: CHANGE,
+           tg: { tgs: target, et: eventMetadata.elementType, etn: eventMetadata.elementTagName },
+           v: eventMetadata.value,
+           sm: eventMetadata.similarity,
+           pd: eventMetadata.percentDiff,
+           pl: eventMetadata.previousLength,
+           cl: eventMetadata.currentLength,
+           ld: eventMetadata.levenshtein,
+           ts: Date.now(),
          */
+    
+    
         init(session: NISessionEventName,
              f: String? = nil,
              siteId: String? = nil,
@@ -174,6 +187,15 @@ public struct NIEvent {
             self.jsv = jsv
             
         }
+    
+    var asDictionary : [String:Any] {
+        let mirror = Mirror(reflecting: self)
+        let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map({ (label:String?, value:Any) -> (String, Any)? in
+          guard let label = label else { return nil }
+          return (label, value)
+        }).compactMap { $0 })
+        return dict
+      }
     
     init(session: NISessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
@@ -215,35 +237,38 @@ public struct NIEvent {
     }
 
     func toDict() -> [String: Any] {
-        var dict = [String: Any]()
-        dict["type"] = type
-        dict["ts"] = ts
-        if let data = x {
-            dict["x"] = data
-        }
-
-        if let data = y {
-            dict["y"] = data
-        }
-
-        var dictTg = [String: Any]()
-        if let tg = tg {
-            for (key, value) in tg where value != nil {
-                if key == "kc" {
-                    dict["kc"] = value
-                } else {
-                    dictTg[key] = value
-                }
-            }
-        }
-        if dictTg["etn"] == nil {
-            if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
-                dictTg["etn"] = etn
-            }
-        }
-
-        dict["tg"] = dictTg
-        return dict
+        var valuesAsDict = self.asDictionary;
+        return valuesAsDict
+//        var stringDictionary: [String: Int] = [:]
+//        var dict = [String: Any]()
+//        dict["type"] = type
+//        dict["ts"] = ts
+//        if let data = x {
+//            dict["x"] = data
+//        }
+//
+//        if let data = y {
+//            dict["y"] = data
+//        }
+//
+//        var dictTg = [String: Any]()
+//        if let tg = tg {
+//            for (key, value) in tg where value != nil {
+//                if key == "kc" {
+//                    dict["kc"] = value
+//                } else {
+//                    dictTg[key] = value
+//                }
+//            }
+//        }
+//        if dictTg["etn"] == nil {
+//            if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
+//                dictTg["etn"] = etn
+//            }
+//        }
+//
+//        dict["tg"] = dictTg
+//        return dict
     }
 
     func toBase64() -> String? {
