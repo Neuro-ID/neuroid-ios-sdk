@@ -16,6 +16,12 @@ class SessionTests: XCTestCase {
         NeuroID.configure(clientKey: clientKey, userId: userId)
     }
 
+//    func testCreateSession() throws {
+//        let urlName = "HomeScreen"
+//        let testView = UIViewController();
+//        let tracker = NeuroIDTracker(screen: urlName, controller: testView);
+//        XCTAssertTrue(true)
+//    }
     func testSessionParams() throws {
         let urlName = "HomeScreen"
         let testView = UIViewController();

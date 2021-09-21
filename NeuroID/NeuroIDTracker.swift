@@ -81,17 +81,13 @@ public struct NeuroID {
             let dbResult = DB.shared.getAll()
             if dbResult.base64Strings.isEmpty { return }
 
-            var params = ParamsCreator.getDefaultEventParams()
-            params["url"] = dbResult.screen
-
             var events = [[String: Any]]()
             for string in dbResult.base64Strings {
                 guard let dict = string.decodeBase64() else { continue }
                 events.append(dict)
             }
-            params["events"] = events.toBase64()
 
-            post(params: params, onSuccess: { _ in
+            post(events: events, screen: dbResult.screen, onSuccess: { _ in
                 logInfo(category: "APICall", content: "Sending successfully")
                 // send success -> delete
                 DB.shared.deleteSent()
@@ -104,6 +100,7 @@ public struct NeuroID {
     /// Direct send to API to create session
     /// Regularly send in loop
     fileprivate static func post(events: [Dictionary<String, Any?>],
+                                 screen: String,
                                  onSuccess: @escaping(Any) -> Void,
                                  onFailure: @escaping(Error) -> Void) {
         guard let url = URL(string: getBaseURL() + "/v3/c") else {
@@ -116,24 +113,26 @@ public struct NeuroID {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("Basic \(clientKey)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
-
-        var eventString = ""
+//        arrayOfDictionaries.toJSONString()
         
-        for (event) in events {
-            guard let base64 = event.toBase64() else { return }
-            var params = ParamsCreator.getDefaultSessionParams()
-            params["events"] = base64
-            params["url"] = screen
+        let jsonEvents: String? = events.toJSONString()
+        guard let base64Events: String? = Data(jsonEvents!.utf8).base64EncodedString() else {
+            return
         }
-            
-            
-            for (key, value) in event {
-                let newValue = value ?? "null"
-                dataString += "\(key)=\(newValue)&"
-            }
+//        guard let base64Events = [].toBase64() else { return }
+        var params = ParamsCreator.getDefaultSessionParams()
         
+        params["events"] = base64Events!
+        params["url"] = screen
+        var dataString = "";
+        for (key, value) in params {
+            let newValue = value ?? "null"
+            dataString += "\(key)=\(newValue)&"
+        }
         
+        // Removes the trailing '&'
         dataString.removeLast()
+        
         guard let data = dataString.data(using: .utf8) else { return }
         request.httpBody = data
 
@@ -282,7 +281,7 @@ private func getBaseURL() -> String {
 //    var baseUrl: String {
 //        return rootUrl + "/v3/c"
 //    }
-    return "https://886c-148-64-34-107.ngrok.io";
+    return "https://d6b0-47-218-55-222.ngrok.io";
 //    return "https://api.usw2-dev1.nidops.net";
 //    return baseUrl;
 }
@@ -327,7 +326,7 @@ private extension NeuroIDTracker {
 //        let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
         let event = NIEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.createSessionId(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
-        NeuroID.post(events: [event.toDict()], onSuccess: { _ in
+        NeuroID.post(events: [event.toDict()], screen: screen, onSuccess: { _ in
             niprint("Success creating session")
         }, onFailure: { _ in
             niprint("Failure creating session")
@@ -533,9 +532,8 @@ struct ParamsCreator {
         return params
     }
     
-    static func getTimeStamp() -> Double {
-        let now = Double(Date().timeIntervalSince1970 * 1000)
-        
+    static func getTimeStamp() -> Int64 {
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
         return now
     }
 
@@ -603,29 +601,6 @@ struct ParamsCreator {
         return params
     }
 
-    static func getDefaultEventParams() -> [String: Any] {
-        guard let userId = NeuroID.userId else {
-            fatalError("UserId is not set")
-        }
-
-        var params: [String: Any] = [
-            "key": getClientKey(),
-            "id": createRequestId(),
-            "sid": NeuroID.sessionId,
-            "cid": NeuroID.clientId,
-            "uid": userId,
-            "pid": getPageId(),
-            "iid": 1, // temp
-            "url": 1, // temp
-            "jsv": 1, // temp
-            "aid": "null", // temp
-            "did": "null", // temp
-            "siteId": "null" // temp
-
-        ]
-        return params
-    }
-
     static func getClientKey() -> String {
         guard let key = NeuroID.clientKey else {
             fatalError("clientKey is not set")
@@ -650,6 +625,8 @@ struct ParamsCreator {
         var sid = defaults.string(forKey: sidName)
         
         if (sid != nil) {
+            var sidExpiresAt = defaults.string(forKey: "nid_sid_expires")
+            ParamsCreator.getTimeStamp()
             return sid!;
         }
         // Todo implement idle checking
@@ -659,6 +636,7 @@ struct ParamsCreator {
             id += "\(digit)"
             defaults.set(id, forKey: sidName)
         }
+        print("Session ID:", id);
         return id
     }
 
@@ -970,6 +948,33 @@ extension String {
     }
 }
 
+extension Collection where Iterator.Element == [String: Any?] {
+  func toJSONString(options: JSONSerialization.WritingOptions = .prettyPrinted) -> String {
+    if let arr = self as? [[String: Any]],
+       let dat = try? JSONSerialization.data(withJSONObject: arr, options: options),
+       let str = String(data: dat, encoding: String.Encoding.utf8) {
+      return str
+    }
+    return "[]"
+  }
+}
+/** Base 64 Encode/Decoding
+ */
+extension StringProtocol {
+    var data: Data { Data(utf8) }
+    var base64Encoded: Data { data.base64EncodedData() }
+    var base64Decoded: Data? { Data(base64Encoded: string) }
+}
+extension LosslessStringConvertible {
+    var string: String { .init(self) }
+}
+extension Sequence where Element == UInt8 {
+    var data: Data { .init(self) }
+    var base64Decoded: Data? { Data(base64Encoded: data) }
+    var string: String? { String(bytes: self, encoding: .utf8) }
+}
+/** End base64 block*/
+
 func niprint(_ strings: Any...) {
     if NeuroID.logVisible {
         Swift.print(strings)
@@ -985,6 +990,12 @@ private struct Log {
             os_log("NeuroID: %@", message)
         }
         #endif
+    }
+}
+
+extension Double {
+    func truncate(places : Int)-> Double {
+        return Double(floor(pow(10.0, Double(places)) * self)/pow(10.0, Double(places)))
     }
 }
 

@@ -98,6 +98,7 @@ public struct NIEvent {
     var tch: Bool? // Done
     var url: String?
     var ns: String? // Done
+    var jsl: Array<String>  = ["iOS"];
     var jsv: String? // Done
 
         /**

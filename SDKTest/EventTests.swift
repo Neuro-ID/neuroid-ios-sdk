@@ -101,8 +101,8 @@ class EventTests: XCTestCase {
 //        let params = ParamsCreator.getDefaultSessionParams();
 
         let copyEvent = NIEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
-        let params = ParamsCreator.getDefaultEventParams()
-//        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
+        let params = ParamsCreator.getDefaultSessionParams()
+        //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 
         XCTAssertTrue(params["key"] != nil)
         XCTAssertTrue(params["key"] as! String == clientKey)
