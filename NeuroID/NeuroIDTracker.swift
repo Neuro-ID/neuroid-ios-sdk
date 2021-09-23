@@ -810,7 +810,7 @@ extension UIViewController {
         return tracker
     }
 
-    public func log(event: NIDEvent) {
+    public func captureEvent(event: NIDEvent) {
         if ignoreLists.contains(className) { return }
         var tg: [String: Any?] = event.tg ?? [:]
         tg["className"] = className
@@ -829,21 +829,21 @@ extension UIViewController {
         }
     }
 
-    public func log(eventName: NIDEventName, params: [String: Any?]? = nil) {
+    public func captureEvent(eventName: NIDEventName, params: [String: Any?]? = nil) {
         let event = NIDEvent(type: eventName, tg: params, view: nil)
-        log(event: event)
+        captureEvent(event: event)
     }
 
-    public func logViewWillAppear(params: [String: Any?]) {
-        log(eventName: .windowFocus, params: params)
+    public func captureEventLogViewWillAppear(params: [String: Any?]) {
+        captureEvent(eventName: .windowFocus, params: params)
     }
 
-    public func logViewDidLoad(params: [String: Any?]) {
-        log(eventName: .windowLoad, params: params)
+    public func captureEventLogViewDidLoad(params: [String: Any?]) {
+        captureEvent(eventName: .windowLoad, params: params)
     }
 
-    public func logViewWillDisappear(params: [String: Any?]) {
-        log(eventName: .windowBlur, params: params)
+    public func captureEventLogViewWillDisappear(params: [String: Any?]) {
+        captureEvent(eventName: .windowBlur, params: params)
     }
 }
 
@@ -852,36 +852,36 @@ private extension UIViewController {
         let screen = UIViewController.self
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.viewWillAppear),
-                  swizzledSelector: #selector(screen.neuroIdViewWillAppear))
+                  swizzledSelector: #selector(screen.neuroIDViewWillAppear))
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.viewWillDisappear),
-                  swizzledSelector: #selector(screen.neuroIdViewWillDisappear))
+                  swizzledSelector: #selector(screen.neuroIDViewWillDisappear))
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.viewDidLoad),
-                  swizzledSelector: #selector(screen.neuroIdViewDidLoad))
+                  swizzledSelector: #selector(screen.neuroIDViewDidLoad))
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.dismiss),
-                  swizzledSelector: #selector(screen.neuroIdDismiss))
+                  swizzledSelector: #selector(screen.neuroIDDismiss))
     }
 
-    @objc func neuroIdViewWillAppear(animated: Bool) {
-        self.neuroIdViewWillAppear(animated: animated)
-        log(eventName: .windowFocus)
+    @objc func neuroIDViewWillAppear(animated: Bool) {
+        self.neuroIDViewWillAppear(animated: animated)
+        captureEvent(eventName: .windowFocus)
     }
 
-    @objc func neuroIdViewWillDisappear(animated: Bool) {
-        self.neuroIdViewWillDisappear(animated: animated)
-        log(eventName: .windowBlur)
+    @objc func neuroIDViewWillDisappear(animated: Bool) {
+        self.neuroIDViewWillDisappear(animated: animated)
+        captureEvent(eventName: .windowBlur)
     }
 
-    @objc func neuroIdViewDidLoad() {
-        self.neuroIdViewDidLoad()
-        log(eventName: .windowLoad)
+    @objc func neuroIDViewDidLoad() {
+        self.neuroIDViewDidLoad()
+        captureEvent(eventName: .windowLoad)
     }
 
-    @objc func neuroIdDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        self.neuroIdDismiss(animated: flag, completion: completion)
-        log(eventName: .windowUnload)
+    @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        self.neuroIDDismiss(animated: flag, completion: completion)
+        captureEvent(eventName: .windowUnload)
     }
 }
 
@@ -890,28 +890,28 @@ extension UINavigationController {
         let screen = UINavigationController.self
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.popViewController(animated:)),
-                  swizzledSelector: #selector(screen.neuroIdPopViewController(animated:)))
+                  swizzledSelector: #selector(screen.neuroIDPopViewController(animated:)))
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.popToViewController(_:animated:)),
-                  swizzledSelector: #selector(screen.neuroIdPopToViewController(_:animated:)))
+                  swizzledSelector: #selector(screen.neuroIDPopToViewController(_:animated:)))
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.popToRootViewController),
-                  swizzledSelector: #selector(screen.neuroIdPopToRootViewController))
+                  swizzledSelector: #selector(screen.neuroIDPopToRootViewController))
     }
 
-    @objc fileprivate func neuroIdPopViewController(animated: Bool) -> UIViewController? {
-        log(eventName: .windowUnload)
-        return self.neuroIdPopViewController(animated: animated)
+    @objc fileprivate func neuroIDPopViewController(animated: Bool) -> UIViewController? {
+        captureEvent(eventName: .windowUnload)
+        return self.neuroIDPopViewController(animated: animated)
     }
 
-    @objc fileprivate func neuroIdPopToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
-        log(eventName: .windowUnload)
-        return self.neuroIdPopToViewController(viewController, animated: animated)
+    @objc fileprivate func neuroIDPopToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
+        captureEvent(eventName: .windowUnload)
+        return self.neuroIDPopToViewController(viewController, animated: animated)
     }
 
-    @objc fileprivate func neuroIdPopToRootViewController(animated: Bool) -> [UIViewController]? {
-        log(eventName: .windowUnload)
-        return self.neuroIdPopToRootViewController(animated: animated)
+    @objc fileprivate func neuroIDPopToRootViewController(animated: Bool) -> [UIViewController]? {
+        captureEvent(eventName: .windowUnload)
+        return self.neuroIDPopToRootViewController(animated: animated)
     }
 }
 
@@ -936,17 +936,17 @@ extension NSError {
         let obj = NSError.self
         errorSwizzling(obj,
                        originalSelector: #selector(obj.init(domain:code:userInfo:)),
-                       swizzledSelector: #selector(obj.neuroIdInit(domain:code:userInfo:)))
+                       swizzledSelector: #selector(obj.neuroIDInit(domain:code:userInfo:)))
     }
 
-    @objc fileprivate func neuroIdInit(domain: String, code: Int, userInfo dict: [String: Any]? = nil) {
+    @objc fileprivate func neuroIDInit(domain: String, code: Int, userInfo dict: [String: Any]? = nil) {
         let tg: [String: Any?] = [
             "domain": domain,
             "code": code,
             "userInfo": userInfo
         ]
         NeuroID.captureEvent(NIDEvent(type: .error, tg: tg, view: nil))
-        self.neuroIdInit(domain: domain, code: code, userInfo: userInfo)
+        self.neuroIDInit(domain: domain, code: code, userInfo: userInfo)
     }
 }
 
