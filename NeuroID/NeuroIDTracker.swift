@@ -162,7 +162,7 @@ public struct NeuroID {
 
     public static func setUserId(_ userId: String) {
         NeuroID.userId = userId
-        log(NIDEvent(session: .setUserId, tg: ["userId": userId], x: nil, y: nil))
+        captureEvent(NIDEvent(session: .setUserId, tg: ["userId": userId], x: nil, y: nil))
     }
     public static func logInfo(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .info)
@@ -188,7 +188,7 @@ public struct NeuroID {
         Log.log(category: category, contents: content, type: .info)
     }
 
-    static func log(_ event: NIDEvent) {
+    static func captureEvent(_ event: NIDEvent) {
         guard let base64 = event.toBase64() else { return }
         DispatchQueue.global(qos: .userInitiated).async {
             DB.shared.insert(screen: event.type, base64String: base64)
@@ -232,29 +232,29 @@ public class NeuroIDTracker: NSObject {
 
 // MARK: - Custom events
 public extension NeuroIDTracker {
-    func logCheckBoxChange(isChecked: Bool, checkBox: UIView) {
+    func captureEventCheckBoxChange(isChecked: Bool, checkBox: UIView) {
         let tg = ParamsCreator.getTgParams(view: checkBox)
         let event = NIDEvent(type: .checkboxChange, tg: tg, view: checkBox)
         captureEvent(event: event)
     }
 
-    func logRadioChange(isChecked: Bool, radioButton: UIView) {
+    func captureEventRadioChange(isChecked: Bool, radioButton: UIView) {
         let tg = ParamsCreator.getTgParams(view: radioButton)
         captureEvent(event: NIDEvent(type: .radioChange, tg: tg, view: radioButton))
     }
 
-    func logSubmission(_ params: [String: Any?]? = nil) {
+    func captureEventSubmission(_ params: [String: Any?]? = nil) {
         captureEvent(event: NIDEvent(type: .formSubmit, tg: params, view: nil))
         captureEvent(event: NIDEvent(type: .applicationSubmit, tg: params, view: nil))
         captureEvent(event: NIDEvent(type: .pageSubmit, tg: params, view: nil))
     }
 
-    func logSubmissionSuccess(_ params: [String: Any?]? = nil) {
+    func captureEventSubmissionSuccess(_ params: [String: Any?]? = nil) {
         captureEvent(event: NIDEvent(type: .formSubmitSuccess, tg: params, view: nil))
         captureEvent(event: NIDEvent(type: .applicationSubmitSuccess, tg: params, view: nil))
     }
 
-    func logSubmissionFailure(error: Error, params: [String: Any?]? = nil) {
+    func captureEventSubmissionFailure(error: Error, params: [String: Any?]? = nil) {
         var newParams = params ?? [:]
         newParams["error"] = error.localizedDescription
         captureEvent(event: NIDEvent(type: .formSubmitFailure, tg: newParams, view: nil))
@@ -945,7 +945,7 @@ extension NSError {
             "code": code,
             "userInfo": userInfo
         ]
-        NeuroID.log(NIDEvent(type: .error, tg: tg, view: nil))
+        NeuroID.captureEvent(NIDEvent(type: .error, tg: tg, view: nil))
         self.neuroIdInit(domain: domain, code: code, userInfo: userInfo)
     }
 }
