@@ -24,24 +24,17 @@ public struct NeuroID {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String, userId: String?) {
-        
-       
+    public static func configure(clientKey: String) {
         
         if NeuroID.clientKey != nil {
             fatalError("You already configured the SDK")
         }
         NeuroID.clientKey = clientKey
-        NeuroID.userId = userId
         
         let key = "nid_key";
         let defaults = UserDefaults.standard
         defaults.set(clientKey, forKey: key)
-        
-        
-        if let userId = userId {
-            setUserId(userId)
-        }
+
         swizzle()
 
         #if DEBUG
@@ -60,7 +53,7 @@ public struct NeuroID {
     static func getClientKeyFromLocalStorage() -> String {
         let keyName = "nid_key";
         let defaults = UserDefaults.standard
-        var key = defaults.string(forKey: keyName);
+        let key = defaults.string(forKey: keyName);
         
         return key ?? ""
     }

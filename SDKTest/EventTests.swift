@@ -13,7 +13,7 @@ class EventTests: XCTestCase {
     let userId = "form_mobilesandbox"
     
     override func setUpWithError() throws {
-        NeuroID.configure(clientKey: clientKey, userId: userId)
+        NeuroID.configure(clientKey: clientKey)
     }
 
     func testLocale() {

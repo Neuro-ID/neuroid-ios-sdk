@@ -10,10 +10,9 @@ import XCTest
 
 class SessionTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    let userId = "form_mobilesandbox"
     
     override func setUpWithError() throws {
-        NeuroID.configure(clientKey: clientKey, userId: userId)
+        NeuroID.configure(clientKey: clientKey)
     }
 
     func testCreateSession() throws {
