@@ -26,9 +26,13 @@ class EventTests: XCTestCase {
         print("User Agent: ", data)
         XCTAssertTrue(data != nil);
     }
+    func testSessionExpired() {
+        let data = ParamsCreator.isSessionExpired();
+        XCTAssertTrue(true);
+    }
     
     func testCreateSessionID() {
-        let data = ParamsCreator.createSessionId();
+        let data = ParamsCreator.getSessionID();
         let sidName =  "nid_sid"
         let defaults = UserDefaults.standard
         var sid = defaults.string(forKey: sidName)
@@ -100,7 +104,7 @@ class EventTests: XCTestCase {
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
 //        let params = ParamsCreator.getDefaultSessionParams();
 
-        let copyEvent = NIEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
+        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 

@@ -16,12 +16,29 @@ class SessionTests: XCTestCase {
         NeuroID.configure(clientKey: clientKey, userId: userId)
     }
 
-//    func testCreateSession() throws {
-//        let urlName = "HomeScreen"
-//        let testView = UIViewController();
-//        let tracker = NeuroIDTracker(screen: urlName, controller: testView);
-//        XCTAssertTrue(true)
-//    }
+    func testCreateSession() throws {
+        let urlName = "HomeScreen"
+        let testView = UIViewController();
+        let tracker = NeuroIDTracker(screen: urlName, controller: testView);
+        let session = tracker.getCurrentSession();
+        XCTAssertTrue(session.url == urlName)
+    }
+    
+    func testTextInputEvents() throws {
+        let urlName = "FormScreenText"
+        let testView = UIViewController();
+        let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
+        sampleTextField.accessibilityLabel = "FName"
+        sampleTextField.placeholder = "First Name"
+        testView.view.addSubview(sampleTextField);
+        NeuroIDTracker(screen: urlName, controller: testView);
+        let charsToInput = ["C", "l", "a", "y"]
+        // Simulate a user typing
+        for c in charsToInput {
+            sampleTextField.insertText(c)
+        }
+        
+    }
     func testSessionParams() throws {
         let urlName = "HomeScreen"
         let testView = UIViewController();

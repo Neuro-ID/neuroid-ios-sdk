@@ -1,6 +1,6 @@
 import UIKit
 
-internal enum NISessionEventName: String {
+internal enum NIDSessionEventName: String {
     case createSession = "CREATE_SESSION"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
@@ -11,12 +11,12 @@ internal enum NISessionEventName: String {
     case heartBeat = "HEARTBEAT"
 
     func log() {
-        let event = NIEvent(session: self, tg: nil, x: nil, y: nil)
+        let event = NIDEvent(session: self, tg: nil, x: nil, y: nil)
         NeuroID.log(event)
     }
 }
 
-public enum NIEventName: String {
+public enum NIDEventName: String {
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -76,7 +76,7 @@ public enum NIEventName: String {
     }
 }
 
-public struct NIEvent {
+public struct NIDEvent {
     public let type: String
     var tg: [String: Any?]? = nil
     var ts = ParamsCreator.getTimeStamp()
@@ -149,7 +149,7 @@ public struct NIEvent {
          */
     
     
-        init(session: NISessionEventName,
+        init(session: NIDSessionEventName,
              f: String? = nil,
              siteId: String? = nil,
              sid: String? = nil,
@@ -198,14 +198,14 @@ public struct NIEvent {
         return dict
       }
     
-    init(session: NISessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+    init(session: NIDSessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
         self.tg = tg
         self.x = x
         self.y = y
     }
 
-    init(type: NIEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+    init(type: NIDEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         self.type = type.rawValue
         self.tg = tg
         self.x = x
@@ -219,7 +219,7 @@ public struct NIEvent {
         self.y = y
     }
 
-    public init(type: NIEventName, tg: [String: Any?]?, view: UIView?) {
+    public init(type: NIDEventName, tg: [String: Any?]?, view: UIView?) {
         self.type = type.rawValue
         var newTg = tg ?? [String: Any?]()
         newTg["tgs"] = view?.id
@@ -238,38 +238,8 @@ public struct NIEvent {
     }
 
     func toDict() -> [String: Any] {
-        var valuesAsDict = self.asDictionary;
+        let valuesAsDict = self.asDictionary;
         return valuesAsDict
-//        var stringDictionary: [String: Int] = [:]
-//        var dict = [String: Any]()
-//        dict["type"] = type
-//        dict["ts"] = ts
-//        if let data = x {
-//            dict["x"] = data
-//        }
-//
-//        if let data = y {
-//            dict["y"] = data
-//        }
-//
-//        var dictTg = [String: Any]()
-//        if let tg = tg {
-//            for (key, value) in tg where value != nil {
-//                if key == "kc" {
-//                    dict["kc"] = value
-//                } else {
-//                    dictTg[key] = value
-//                }
-//            }
-//        }
-//        if dictTg["etn"] == nil {
-//            if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
-//                dictTg["etn"] = etn
-//            }
-//        }
-//
-//        dict["tg"] = dictTg
-//        return dict
     }
 
     func toBase64() -> String? {
