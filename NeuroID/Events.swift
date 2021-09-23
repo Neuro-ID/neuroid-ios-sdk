@@ -1,6 +1,6 @@
 import UIKit
 
-internal enum NISessionEventName: String {
+internal enum NIDSessionEventName: String {
     case createSession = "CREATE_SESSION"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
@@ -11,12 +11,12 @@ internal enum NISessionEventName: String {
     case heartBeat = "HEARTBEAT"
 
     func log() {
-        let event = NIEvent(session: self, tg: nil, x: nil, y: nil)
+        let event = NIDEvent(session: self, tg: nil, x: nil, y: nil)
         NeuroID.log(event)
     }
 }
 
-public enum NIEventName: String {
+public enum NIDEventName: String {
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -76,21 +76,136 @@ public enum NIEventName: String {
     }
 }
 
-public struct NIEvent {
+public struct NIDEvent {
     public let type: String
-    let tg: [String: Any?]?
-    let ts = Date().timeIntervalSince1970 * 1000
-    let x: CGFloat?
-    let y: CGFloat?
+    var tg: [String: Any?]? = nil
+    var ts = ParamsCreator.getTimeStamp()
+    var x: CGFloat?
+    var y: CGFloat?
+    var f: String?
+    var lsid: String?
+    var sid: String? // Done
+    var siteId: String? // Unused
+    var cid: String? // Done
+    var did: String? // Done
+    var iid: String? // Done
+    var loc: String? // Done
+    var ua: String? // Done
+    var tzo: Int?  // Done
+    var lng: String? // Done
+    var p: String? // Done
+    var dnt: Bool? // Done
+    var tch: Bool? // Done
+    var url: String?
+    var ns: String? // Done
+    var jsl: Array<String>  = ["iOS"];
+    var jsv: String? // Done
 
-    init(session: NISessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+        /**
+            Use to initiate a new session
+             Element mapping:
+         
+             type: CREATE_SESSION,
+             f: key,
+             siteId: siteId,
+             sid: sessionId,
+             lsid: lastSessionId,
+             cid: clientId,
+             did: deviceId,
+             iid: intermediateId,
+             loc: locale,
+             ua: userAgent,
+             tzo: timezoneOffset,
+             lng: language,
+             ce: cookieEnabled,
+             je: javaEnabled,
+             ol: onLine,
+             p: platform,
+             sh: screenHeight,
+             sw: screenWidth,
+             ah: availHeight,
+             aw: availWidth,
+             cd: colorDepth,
+             pd: pixelDepth,
+             jsl: jsLibraries,
+             dnt: doNotTrack,
+             tch: touch,
+             url: url,
+             ns: commandQueueNamespace,
+             jsv: jsVersion,
+             is: idleSince,
+             ts: Date.now(),
+     
+            Event Change
+            type: CHANGE,
+           tg: { tgs: target, et: eventMetadata.elementType, etn: eventMetadata.elementTagName },
+           v: eventMetadata.value,
+           sm: eventMetadata.similarity,
+           pd: eventMetadata.percentDiff,
+           pl: eventMetadata.previousLength,
+           cl: eventMetadata.currentLength,
+           ld: eventMetadata.levenshtein,
+           ts: Date.now(),
+         */
+    
+    
+        init(session: NIDSessionEventName,
+             f: String? = nil,
+             siteId: String? = nil,
+             sid: String? = nil,
+             lsid: String? = nil,
+             cid: String? = nil,
+             did: String? = nil,
+             iid: String? = nil,
+             loc: String? = nil,
+             ua: String? = nil,
+             tzo: Int? = nil,
+             lng: String? = nil,
+             p: String? = nil,
+             dnt: Bool? = nil,
+             tch: Bool? = nil,
+             url: String? = nil,
+             ns: String? = nil,
+             jsv: String? = nil) {
+            
+            self.type = session.rawValue
+            self.f = f
+            self.siteId = siteId
+            self.sid = sid
+            self.lsid = lsid
+            self.cid = cid
+            self.did = did
+            self.iid = iid
+            self.loc = loc
+            self.ua = ua
+            self.tzo = tzo
+            self.lng = lng
+            self.p = p
+            self.dnt = dnt
+            self.tch = tch
+            self.url = url
+            self.ns = ns
+            self.jsv = jsv
+            
+        }
+    
+    var asDictionary : [String:Any] {
+        let mirror = Mirror(reflecting: self)
+        let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map({ (label:String?, value:Any) -> (String, Any)? in
+          guard let label = label else { return nil }
+          return (label, value)
+        }).compactMap { $0 })
+        return dict
+      }
+    
+    init(session: NIDSessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
         self.tg = tg
         self.x = x
         self.y = y
     }
 
-    init(type: NIEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+    init(type: NIDEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         self.type = type.rawValue
         self.tg = tg
         self.x = x
@@ -104,7 +219,7 @@ public struct NIEvent {
         self.y = y
     }
 
-    public init(type: NIEventName, tg: [String: Any?]?, view: UIView?) {
+    public init(type: NIDEventName, tg: [String: Any?]?, view: UIView?) {
         self.type = type.rawValue
         var newTg = tg ?? [String: Any?]()
         newTg["tgs"] = view?.id
@@ -123,35 +238,8 @@ public struct NIEvent {
     }
 
     func toDict() -> [String: Any] {
-        var dict = [String: Any]()
-        dict["type"] = type
-        dict["ts"] = ts
-        if let data = x {
-            dict["x"] = data
-        }
-
-        if let data = y {
-            dict["y"] = data
-        }
-
-        var dictTg = [String: Any]()
-        if let tg = tg {
-            for (key, value) in tg where value != nil {
-                if key == "kc" {
-                    dict["kc"] = value
-                } else {
-                    dictTg[key] = value
-                }
-            }
-        }
-        if dictTg["etn"] == nil {
-            if let eventName = NIEventName(rawValue: type), let etn = eventName.etn {
-                dictTg["etn"] = etn
-            }
-        }
-
-        dict["tg"] = dictTg
-        return dict
+        let valuesAsDict = self.asDictionary;
+        return valuesAsDict
     }
 
     func toBase64() -> String? {
