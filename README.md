@@ -16,9 +16,9 @@ Neuro-ID's Mobile SDK makes it simple to embed behavioral analytics inside your 
 
 - Add the code below to your `application(:didFinishLaunchingWithOptions:)`
 
-  `NeuroID.configure(clientKey: "provided_api_key", userId: "user_id_in_your_system_id")`
+  `NeuroID.configure(clientKey: "provided_api_key")`
 
-- To have th best results, you have to set the id for every UIView you want to track.
+- To have the best results, you have to set the id for every UIView and field you want to track. (We will do this automatically for you and make an attempt and providing a descriptive name)
 
 ```Swift
 hotelNameTextField.id = "hotelNameTextField"
@@ -34,25 +34,25 @@ Neuro-ID SDK silently logs your behaviors. We silently capture the events below:
 
 You can manually track above events by the following functions directly in your `UIViewController`:
 
-- log(event: NIEvent)
-- log(eventName: NIEventName)
-- logViewWillAppear(params: [String: Any?])
-- logViewDidLoad(params: [String: Any?])
-- logViewWillDisappear(params: [String: Any?])
+- captureEvent(event: NIEvent)
+- captureEvent(eventName: NIEventName)
+- captureEventLogViewWillAppear(params: [String: Any?])
+- captureEventLogViewDidLoad(params: [String: Any?])
+- captureEventLogViewWillDisappear(params: [String: Any?])
 
 ### 3. Manually logging
 
 We provide some functions to help you log your actions easily via `NeuroIDTracker`
 
-- logCheckBoxChange
-- logRadioChange
-- logSubmission
-- logSubmissionSuccess
-- logSubmissionFailure
+- captureEventCheckBoxChange
+- captureEventRadioChange
+- captureEventSubmission
+- captureEventSubmissionSuccess
+- captureEventSubmissionFailure
 
-### 4. NIEvent
+### 4. NIDEvent
 
-NIEvent can be initialized with predefined `NIEventName` (link to the file on github) but you definitely can add your custom event.
+NIDEvent can be initialized with predefined `NIDEventName` (link to the file on github) but you definitely can add your custom event.
 
 ## Sample application [⤴](#table-of-contents)
 
