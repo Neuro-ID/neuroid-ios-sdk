@@ -37,8 +37,28 @@ class SessionTests: XCTestCase {
         for c in charsToInput {
             sampleTextField.insertText(c)
         }
+    }
+    
+    func testDetectingTextFieldsForRegsitering() throws {
+        let urlName = "TextFieldScreen"
+        let testView = UIViewController();
+        let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
+        sampleTextField.accessibilityLabel = "Lname"
+        sampleTextField.placeholder = "Last Name"
+        testView.view.addSubview(sampleTextField);
+        
+        // Call this to force the viewWillLoad hook
+        testView.beginAppearanceTransition(true, animated: false)
+        testView.endAppearanceTransition()
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let sut = storyboard.instantiateViewController(identifier: "testView")
+////        sut.presenter = presenter
+//        sut.loadViewIfNeeded()
+//
+        
         
     }
+    
     func testSessionParams() throws {
         let urlName = "HomeScreen"
         let testView = UIViewController();
