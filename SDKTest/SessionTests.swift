@@ -8,6 +8,7 @@
 import XCTest
 @testable import NeuroID
 
+
 class SessionTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     
@@ -41,12 +42,12 @@ class SessionTests: XCTestCase {
     
     func testDetectingTextFieldsForRegsitering() throws {
         let urlName = "TextFieldScreen"
-        let testView = UIViewController();
-        let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
-        sampleTextField.accessibilityLabel = "Lname"
-        sampleTextField.placeholder = "Last Name"
-        testView.view.addSubview(sampleTextField);
-        
+        let testView = LoanViewControllerPersonalDetails();
+//        let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
+//        sampleTextField.accessibilityLabel = "Lname"
+//        sampleTextField.placeholder = "Last Name"
+//        testView.view.addSubview(sampleTextField);
+//        
         // Call this to force the viewWillLoad hook
         testView.beginAppearanceTransition(true, animated: false)
         testView.endAppearanceTransition()
@@ -104,3 +105,31 @@ class SessionTests: XCTestCase {
     }
 
 }
+
+class LoanViewControllerPersonalDetails: UIViewController {
+    override func viewDidLoad() {
+        
+        let moreInfoController = UIViewController();
+        let moreInfoSubView = UITextView();
+        moreInfoController.view.addSubview(moreInfoSubView);
+        
+        let aboutMe = UITextView()
+        
+        aboutMe.id = "aboutMe"
+        let myName = UITextField()
+        myName.id = "myName"
+        
+        self.view.addSubview(aboutMe)
+        self.view.addSubview(myName)
+        self.addChild(moreInfoController)
+        // MUST call super at the end of the method to ensure we capture all the added views
+        super.viewDidLoad();
+        
+    }
+    
+}
+
+class LoanViewControllerWorkDetails: UIViewController {
+    
+}
+

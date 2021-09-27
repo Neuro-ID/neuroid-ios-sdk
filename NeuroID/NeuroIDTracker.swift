@@ -773,6 +773,26 @@ extension UIViewController {
     }
 }
 
+/***
+    Anytime a view loads
+    Check child subviews for eligible form events
+    Form all eligible form events, check to see if they have a valid identifier and set one
+    Register form events
+*/
+
+private func registerSubViewsTargets(subViewControllers: [UIViewController], subViews: [UIView]) -> [UIView]{
+    var registerViews = [UIView]()
+    for ctrls in subViewControllers {
+        registerViews.append(ctrls.view)
+        registerViews += ctrls.view.subviews
+    }
+    for vw in subViews {
+        registerViews.append(vw)
+    }
+    
+    return registerViews
+}
+
 private func swizzling(viewController: UIViewController.Type,
                        originalSelector: Selector,
                        swizzledSelector: Selector) {
@@ -850,7 +870,7 @@ extension UIViewController {
 private extension UIViewController {
     @objc static func startSwizzling() {
         let screen = UIViewController.self
-       
+    
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.viewWillAppear),
                   swizzledSelector: #selector(screen.neuroIDViewWillAppear))
@@ -868,6 +888,7 @@ private extension UIViewController {
     @objc func neuroIDViewWillAppear(animated: Bool) {
         self.neuroIDViewWillAppear(animated: animated)
         captureEvent(eventName: .windowFocus)
+        
     }
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
@@ -876,13 +897,20 @@ private extension UIViewController {
     }
 
     
-    // Anytime a view loads
-    // Check child subviews for eligible form events
-    // Form all eligible form events, check to see if they have a valid identifier and set one
-    // Register form events
+    
+    /**
+        When overriding viewDidLoad in  controllers make sure that super is the last thing called in the function (so that we can accurately detect all added views/subviews)
+    
+          Anytime a view loads
+          Check child subviews for eligible form events
+          Form all eligible form events, check to see if they have a valid identifier and set one
+          Register form events
+     */
     @objc func neuroIDViewDidLoad() {
         self.neuroIDViewDidLoad()
         captureEvent(eventName: .windowLoad)
+        var subViews = self.view.subviews
+        registerSubViewsTargets(subViewControllers: self.children, subViews: subViews)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
