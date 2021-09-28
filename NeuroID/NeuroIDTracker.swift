@@ -59,7 +59,7 @@ public struct NeuroID {
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
     
-    public static func resume(){
+    public static func start(){
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
     }
     

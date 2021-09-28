@@ -97,7 +97,7 @@ class EventTests: XCTestCase {
     
     func testStoppingSDKIsStoppedFalse(){
         if (NeuroID.isStopped()) {
-            NeuroID.resume();
+            NeuroID.start();
         }
         let isStopped = NeuroID.isStopped()
         print("Is Stopped", isStopped)
