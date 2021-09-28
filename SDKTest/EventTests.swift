@@ -9,6 +9,7 @@ import XCTest
 @testable import NeuroID
 
 class EventTests: XCTestCase {
+    
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     let userId = "form_mobilesandbox"
     
@@ -94,6 +95,21 @@ class EventTests: XCTestCase {
         XCTAssertTrue(data != nil);
     }
     
+    func testStoppingSDKIsStoppedFalse(){
+        if (NeuroID.isStopped()) {
+            NeuroID.resume();
+        }
+        let isStopped = NeuroID.isStopped()
+        print("Is Stopped", isStopped)
+        XCTAssertTrue(!isStopped);
+    }
+    
+    func testStoppingSDKIsStoppedTrue(){
+        NeuroID.stop()
+        let isStopped = NeuroID.isStopped()
+        print("Is Stopped", isStopped)
+        XCTAssertTrue(isStopped);
+    }
     func testEventParams() throws {
 //        let urlName = "HomeScreen"
 //        let tracker = NeuroIDTracker(userUrl: urlName)

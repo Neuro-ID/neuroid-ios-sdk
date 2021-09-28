@@ -16,6 +16,8 @@ public struct NeuroID {
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secrectViews = [UIView]()
     fileprivate static let showDebugLog = false
+    
+    fileprivate static let localStorageNIDStopAll = "nid_stop_all"
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
@@ -26,6 +28,10 @@ public struct NeuroID {
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String) {
         
+        // Early exit for if SDK is stopped.
+        if (NeuroID.isStopped()){
+            return
+        }
         if NeuroID.clientKey != nil {
             fatalError("You already configured the SDK")
         }
@@ -47,6 +53,22 @@ public struct NeuroID {
 
         let tracker = NeuroIDTracker(screen: "AppDelegate", controller: nil)
         tracker.captureEvent(event: NIDEvent(type: .windowLoad, tg: nil, view: nil))
+    }
+    
+    public static func stop(){
+        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
+    }
+    
+    public static func resume(){
+        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+    }
+    
+    public static func isStopped() -> Bool{
+        let key = UserDefaults.standard.bool(forKey: localStorageNIDStopAll);
+        if (key){
+            return true
+        }
+        return false
     }
 
     
@@ -212,8 +234,10 @@ public class NeuroIDTracker: NSObject {
     public init(screen: String, controller: UIViewController?) {
         super.init()
         self.screen = screen
-        self.createSessionEvent = createSession(screen: screen)
-        subscribe(inScreen: controller)
+        if (!NeuroID.isStopped()){
+            self.createSessionEvent = createSession(screen: screen)
+            subscribe(inScreen: controller)
+        }
         className = controller?.className
     }
 
@@ -232,29 +256,29 @@ public class NeuroIDTracker: NSObject {
 
 // MARK: - Custom events
 public extension NeuroIDTracker {
-    func logCheckBoxChange(isChecked: Bool, checkBox: UIView) {
+    func captureCheckBoxChange(isChecked: Bool, checkBox: UIView) {
         let tg = ParamsCreator.getTgParams(view: checkBox)
         let event = NIDEvent(type: .checkboxChange, tg: tg, view: checkBox)
         captureEvent(event: event)
     }
 
-    func logRadioChange(isChecked: Bool, radioButton: UIView) {
+    func captureRadioChange(isChecked: Bool, radioButton: UIView) {
         let tg = ParamsCreator.getTgParams(view: radioButton)
         captureEvent(event: NIDEvent(type: .radioChange, tg: tg, view: radioButton))
     }
 
-    func logSubmission(_ params: [String: Any?]? = nil) {
+    func captureSubmission(_ params: [String: Any?]? = nil) {
         captureEvent(event: NIDEvent(type: .formSubmit, tg: params, view: nil))
         captureEvent(event: NIDEvent(type: .applicationSubmit, tg: params, view: nil))
         captureEvent(event: NIDEvent(type: .pageSubmit, tg: params, view: nil))
     }
 
-    func logSubmissionSuccess(_ params: [String: Any?]? = nil) {
+    func captureSubmissionSuccess(_ params: [String: Any?]? = nil) {
         captureEvent(event: NIDEvent(type: .formSubmitSuccess, tg: params, view: nil))
         captureEvent(event: NIDEvent(type: .applicationSubmitSuccess, tg: params, view: nil))
     }
 
-    func logSubmissionFailure(error: Error, params: [String: Any?]? = nil) {
+    func captureSubmissionFailure(error: Error, params: [String: Any?]? = nil) {
         var newParams = params ?? [:]
         newParams["error"] = error.localizedDescription
         captureEvent(event: NIDEvent(type: .formSubmitFailure, tg: newParams, view: nil))
@@ -276,9 +300,9 @@ private func getBaseURL() -> String {
 //    var baseUrl: String {
 //        return rootUrl + "/v3/c"
 //    }
-    return "http://localhost:8080";
-//    return "https://api.usw2-dev1.nidops.net";
 //    return baseUrl;
+//    return "http://localhost:8080";
+    return "https://api.usw2-dev1.nidops.net";
 }
 extension Bundle {
     static func infoPlistValue(forKey key: String) -> Any? {
@@ -318,7 +342,7 @@ private extension NeuroIDTracker {
     }
 
     func createSession(screen: String) -> NIDEvent {
-//        let event = NIEvent(session: .createSession, tg: nil, x: nil, y: nil)
+        // TODO, return session if already exists
         let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
         NeuroID.post(events: [event.toDict()], screen: screen, onSuccess: { _ in
