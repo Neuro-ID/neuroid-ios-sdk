@@ -29,6 +29,7 @@ class SessionTests: XCTestCase {
         let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
         sampleTextField.accessibilityLabel = "FName"
         sampleTextField.placeholder = "First Name"
+        sampleTextField.id = "horray"
         testView.view.addSubview(sampleTextField);
         NeuroIDTracker(screen: urlName, controller: testView);
         let charsToInput = ["C", "l", "a", "y"]
