@@ -79,6 +79,12 @@ public enum NIDEventName: String {
 public struct NIDEvent {
     public let type: String
     var tg: [String: Any?]? = nil
+    var tgs: String?
+    var en: String?
+    var etn: String? // Tag name (input)
+    var et: String? // Element Type (text)
+    var eid: String?
+    var v: String? // Value
     var ts = ParamsCreator.getTimeStamp()
     var x: CGFloat?
     var y: CGFloat?
@@ -147,56 +153,61 @@ public struct NIDEvent {
            ld: eventMetadata.levenshtein,
            ts: Date.now(),
          */
+        
     
+    init(session: NIDSessionEventName,
+         f: String? = nil,
+         siteId: String? = nil,
+         sid: String? = nil,
+         lsid: String? = nil,
+         cid: String? = nil,
+         did: String? = nil,
+         iid: String? = nil,
+         loc: String? = nil,
+         ua: String? = nil,
+         tzo: Int? = nil,
+         lng: String? = nil,
+         p: String? = nil,
+         dnt: Bool? = nil,
+         tch: Bool? = nil,
+         url: String? = nil,
+         ns: String? = nil,
+         jsv: String? = nil) {
+        
+        self.type = session.rawValue
+        self.f = f
+        self.siteId = siteId
+        self.sid = sid
+        self.lsid = lsid
+        self.cid = cid
+        self.did = did
+        self.iid = iid
+        self.loc = loc
+        self.ua = ua
+        self.tzo = tzo
+        self.lng = lng
+        self.p = p
+        self.dnt = dnt
+        self.tch = tch
+        self.url = url
+        self.ns = ns
+        self.jsv = jsv
+    }
+    /** Register Target
+   {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
+ */
     
-        init(session: NIDSessionEventName,
-             f: String? = nil,
-             siteId: String? = nil,
-             sid: String? = nil,
-             lsid: String? = nil,
-             cid: String? = nil,
-             did: String? = nil,
-             iid: String? = nil,
-             loc: String? = nil,
-             ua: String? = nil,
-             tzo: Int? = nil,
-             lng: String? = nil,
-             p: String? = nil,
-             dnt: Bool? = nil,
-             tch: Bool? = nil,
-             url: String? = nil,
-             ns: String? = nil,
-             jsv: String? = nil) {
-            
-            self.type = session.rawValue
-            self.f = f
-            self.siteId = siteId
-            self.sid = sid
-            self.lsid = lsid
-            self.cid = cid
-            self.did = did
-            self.iid = iid
-            self.loc = loc
-            self.ua = ua
-            self.tzo = tzo
-            self.lng = lng
-            self.p = p
-            self.dnt = dnt
-            self.tch = tch
-            self.url = url
-            self.ns = ns
-            self.jsv = jsv
-            
-        }
-    
-    var asDictionary : [String:Any] {
-        let mirror = Mirror(reflecting: self)
-        let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map({ (label:String?, value:Any) -> (String, Any)? in
-          guard let label = label else { return nil }
-          return (label, value)
-        }).compactMap { $0 })
-        return dict
-      }
+    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String) {
+        self.type = eventName.rawValue
+        self.tgs = tgs;
+        self.en = en;
+        self.eid = tgs;
+        var ec = "";
+        self.etn = etn;
+        self.et = et;
+        var ef:Any = Optional<String>.none;
+        self.v = v;
+    }
     
     init(session: NIDSessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
@@ -236,7 +247,17 @@ public struct NIDEvent {
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
     }
-
+    
+    
+    var asDictionary : [String:Any] {
+        let mirror = Mirror(reflecting: self)
+        let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map({ (label:String?, value:Any) -> (String, Any)? in
+          guard let label = label else { return nil }
+          return (label, value)
+        }).compactMap { $0 })
+        return dict
+    }
+    
     func toDict() -> [String: Any] {
         let valuesAsDict = self.asDictionary;
         return valuesAsDict

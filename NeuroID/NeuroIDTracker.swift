@@ -21,6 +21,8 @@ public struct NeuroID {
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
+    
+    
 
     // MARK: - Setup
     /// 1. Configure the SDK
@@ -40,9 +42,17 @@ public struct NeuroID {
         let key = "nid_key";
         let defaults = UserDefaults.standard
         defaults.set(clientKey, forKey: key)
-
+    }
+    
+    public static func stop(){
+        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
+    }
+    
+    // When start is called, enable swizzling, as well as dispatch queue to send to API
+    public static func start(){
         swizzle()
-
+        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+        
         #if DEBUG
         if NSClassFromString("XCTest") == nil {
             initTimer()
@@ -50,17 +60,6 @@ public struct NeuroID {
         #else
         initTimer()
         #endif
-
-        let tracker = NeuroIDTracker(screen: "AppDelegate", controller: nil)
-        tracker.captureEvent(event: NIDEvent(type: .windowLoad, tg: nil, view: nil))
-    }
-    
-    public static func stop(){
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
-    }
-    
-    public static func start(){
-        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
     }
     
     public static func isStopped() -> Bool{
@@ -69,6 +68,17 @@ public struct NeuroID {
             return true
         }
         return false
+    }
+    
+    public static func getBaseURL() -> String {
+    //    let URL_PLIST_KEY = "NeuroURL"
+    //    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
+    //    var baseUrl: String {
+    //        return rootUrl + "/v3/c"
+    //    }
+    //    return baseUrl;
+        return "http://localhost:8080";
+//        return "https://api.usw2-dev1.nidops.net";
     }
 
     
@@ -118,7 +128,7 @@ public struct NeuroID {
                                  screen: String,
                                  onSuccess: @escaping(Any) -> Void,
                                  onFailure: @escaping(Error) -> Void) {
-        guard let url = URL(string: getBaseURL() + "/v3/c") else {
+        guard let url = URL(string: NeuroID.getBaseURL() + "/v3/c") else {
             fatalError("No NeuroID base URL found")
         }
         guard let clientKey = clientKey else {
@@ -183,8 +193,8 @@ public struct NeuroID {
     }
 
     public static func setUserId(_ userId: String) {
-        NeuroID.userId = userId
-        captureEvent(NIDEvent(session: .setUserId, tg: ["userId": userId], x: nil, y: nil))
+        UserDefaults.standard.set(userId, forKey: "nid_user_id")
+//        captureEvent(NIDEvent(session: .setUserId, tg: ["userId": userId], x: nil, y: nil))
     }
     public static func logInfo(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .info)
@@ -294,16 +304,7 @@ public extension NeuroIDTracker {
 
 // MARK: - Private functions
 
-private func getBaseURL() -> String {
-//    let URL_PLIST_KEY = "NeuroURL"
-//    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
-//    var baseUrl: String {
-//        return rootUrl + "/v3/c"
-//    }
-//    return baseUrl;
-//    return "http://localhost:8080";
-    return "https://api.usw2-dev1.nidops.net";
-}
+
 extension Bundle {
     static func infoPlistValue(forKey key: String) -> Any? {
 //        let infoPlistPath = Bundle.main.url(forResource: "Info", withExtension: "plist")
@@ -612,7 +613,7 @@ struct ParamsCreator {
             "cid": ParamsCreator.getClientId(),
             "aid": nil,
             "did": ParamsCreator.getDeviceId(),
-            "uid": nil,
+            "uid": ParamsCreator.getUserID() ?? nil,
             "pid": ParamsCreator.getPageId(),
             "iid": ParamsCreator.getIntermediateId(),
             "jsv": ParamsCreator.getSDKVersion()
@@ -693,6 +694,12 @@ struct ParamsCreator {
             UserDefaults.standard.set(cid, forKey: clientIdName)
             return cid!
         }
+    }
+    
+    
+    static func getUserID() -> String? {
+        let nidUserID = "nid_user_id";
+        return UserDefaults.standard.string(forKey: nidUserID);
     }
     
     static func getDeviceId() -> String {
@@ -804,16 +811,18 @@ extension UIViewController {
     Register form events
 */
 
-private func registerSubViewsTargets(subViewControllers: [UIViewController], subViews: [UIView]) -> [UIView]{
+private func registerSubViewsTargets(subViewControllers: [UIViewController]) -> [UIView]{
     var registerViews = [UIView]()
     for ctrls in subViewControllers {
         registerViews.append(ctrls.view)
         registerViews += ctrls.view.subviews
     }
-    for vw in subViews {
-        registerViews.append(vw)
+
+    for v in registerViews {
+        var test = v.className
+        print(test)
+//        NIDEvent(eventName: NIDEventName.registerTarget, tgs: v.id, en: v.id, etn: <#T##String#>, et: <#T##String#>, v: <#T##String#>)
     }
-    
     return registerViews
 }
 
@@ -934,7 +943,9 @@ private extension UIViewController {
         self.neuroIDViewDidLoad()
         captureEvent(eventName: .windowLoad)
         var subViews = self.view.subviews
-        registerSubViewsTargets(subViewControllers: self.children, subViews: subViews)
+        var allViewControllers = self.children
+        allViewControllers.append(self)
+        registerSubViewsTargets(subViewControllers: allViewControllers)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -1074,12 +1085,24 @@ extension Double {
 }
 
 public extension UIView {
-    var id: String? {
+    var id: String {
         get {
-            return accessibilityIdentifier
+            // TODO insert generated ID
+            return (accessibilityIdentifier.isEmptyOrNil) ? ("todo-id") : (accessibilityIdentifier!)
         }
         set {
             accessibilityIdentifier = newValue
+        }
+    }
+}
+
+public extension UIView {
+    var label: String {
+        get {
+            return (accessibilityLabel.isEmptyOrNil) ? ("todo-label") : (accessibilityLabel!)
+        }
+        set {
+            accessibilityLabel = newValue
         }
     }
 }
@@ -1104,4 +1127,11 @@ extension CharacterSet {
     allowed.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
     return allowed
   }()
+}
+
+extension Optional where Wrapped: Collection {
+  var isEmptyOrNil: Bool {
+    guard let value = self else { return true }
+    return value.isEmpty
+  }
 }

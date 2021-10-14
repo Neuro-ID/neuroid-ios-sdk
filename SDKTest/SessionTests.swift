@@ -26,12 +26,17 @@ class SessionTests: XCTestCase {
     
     func testTextInputEvents() throws {
         let urlName = "FormScreenText"
-        let testView = UIViewController();
+        let testView = LoanViewControllerPersonalDetails();
+        testView.view.id = "LoanViewControllerPersonalDetails"
         let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
         sampleTextField.accessibilityLabel = "FName"
         sampleTextField.placeholder = "First Name"
         sampleTextField.id = "horray"
         testView.view.addSubview(sampleTextField);
+        testView.viewDidLoad()
+        testView.beginAppearanceTransition(true, animated: false)
+       
+//        testView.endAppearanceTransition()
         NeuroIDTracker(screen: urlName, controller: testView);
         let charsToInput = ["C", "l", "a", "y"]
         // Simulate a user typing
@@ -42,15 +47,15 @@ class SessionTests: XCTestCase {
     
     func testDetectingTextFieldsForRegsitering() throws {
         let urlName = "TextFieldScreen"
-        let testView = LoanViewControllerPersonalDetails();
+//        let testView = LoanViewControllerPersonalDetails();
 //        let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
 //        sampleTextField.accessibilityLabel = "Lname"
 //        sampleTextField.placeholder = "Last Name"
 //        testView.view.addSubview(sampleTextField);
 //        
         // Call this to force the viewWillLoad hook
-        testView.beginAppearanceTransition(true, animated: false)
-        testView.endAppearanceTransition()
+//        testView.beginAppearanceTransition(true, animated: false)
+//        testView.endAppearanceTransition()
 //        let storyboard = UIStoryboard(name: "Main", bundle: nil)
 //        let sut = storyboard.instantiateViewController(identifier: "testView")
 ////        sut.presenter = presenter
@@ -107,29 +112,29 @@ class SessionTests: XCTestCase {
 }
 
 class LoanViewControllerPersonalDetails: UIViewController {
-    override func viewDidLoad() {
-        
-        let moreInfoController = UIViewController();
-        let moreInfoSubView = UITextView();
-        moreInfoController.view.addSubview(moreInfoSubView);
-        
-        let aboutMe = UITextView()
-        
-        aboutMe.id = "aboutMe"
-        let myName = UITextField()
-        myName.id = "myName"
-        
-        self.view.addSubview(aboutMe)
-        self.view.addSubview(myName)
-        self.addChild(moreInfoController)
-        // MUST call super at the end of the method to ensure we capture all the added views
-        super.viewDidLoad();
-        
-    }
-    
-}
+//    override func viewDidLoad() {
 
-class LoanViewControllerWorkDetails: UIViewController {
-    
+//        let moreInfoController = UIViewController();
+//        let moreInfoSubView = UITextView();
+//        moreInfoController.view.addSubview(moreInfoSubView);
+//
+//        let aboutMe = UITextView()
+//
+//        aboutMe.id = "aboutMe"
+//        let myName = UITextField()
+//        myName.id = "myName"
+//
+//        self.view.addSubview(aboutMe)
+//        self.view.addSubview(myName)
+//        self.addChild(moreInfoController)
+        // MUST call super at the end of the method to ensure we capture all the added views
+//        super.viewDidLoad();
+//
+//    }
+
 }
+//
+//class LoanViewControllerWorkDetails: UIViewController {
+//
+//}
 

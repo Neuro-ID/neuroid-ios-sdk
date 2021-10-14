@@ -83,6 +83,13 @@ class EventTests: XCTestCase {
         XCTAssertTrue(data != nil);
     }
     
+    func testGetBaseURL(){
+        let data = NeuroID.getBaseURL();
+        print("URL: ", data)
+        XCTAssertTrue(data != nil);
+    }
+    
+    
     func testSDKVersion(){
         let data = ParamsCreator.getSDKVersion()
         print("Version: ", data)
