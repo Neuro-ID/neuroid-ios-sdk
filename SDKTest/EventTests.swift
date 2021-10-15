@@ -117,6 +117,13 @@ class EventTests: XCTestCase {
         print("Is Stopped", isStopped)
         XCTAssertTrue(isStopped);
     }
+    
+    func testSetIUserID(){
+        NeuroID.setUserID("atestUserID")
+        let params = ParamsCreator.getDefaultSessionParams()
+        let uid = params["uid"] as! String
+        XCTAssert(uid == "atestUserID")
+    }
     func testEventParams() throws {
 //        let urlName = "HomeScreen"
 //        let tracker = NeuroIDTracker(userUrl: urlName)

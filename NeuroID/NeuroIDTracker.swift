@@ -192,9 +192,10 @@ public struct NeuroID {
         task.resume()
     }
 
-    public static func setUserId(_ userId: String) {
+    public static func setUserID(_ userId: String) {
         UserDefaults.standard.set(userId, forKey: "nid_user_id")
-//        captureEvent(NIDEvent(session: .setUserId, tg: ["userId": userId], x: nil, y: nil))
+        let setUserEvent = NIDEvent(session: NIDSessionEventName.setUserId, uid: userId);
+        captureEvent(setUserEvent)
     }
     public static func logInfo(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .info)
@@ -346,11 +347,7 @@ private extension NeuroIDTracker {
         // TODO, return session if already exists
         let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
-        NeuroID.post(events: [event.toDict()], screen: screen, onSuccess: { _ in
-            niprint("Success creating session")
-        }, onFailure: { _ in
-            niprint("Failure creating session")
-        })
+        captureEvent(event: event)
         return event;
     }
 }
@@ -811,17 +808,45 @@ extension UIViewController {
     Register form events
 */
 
-private func registerSubViewsTargets(subViewControllers: [UIViewController]) -> [UIView]{
-    var registerViews = [UIView]()
+private func registerSubViewsTargets(subViewControllers: [UIViewController]) -> [Any]{
+    var registerViews = [Any]()
     for ctrls in subViewControllers {
         registerViews.append(ctrls.view)
         registerViews += ctrls.view.subviews
     }
 
     for v in registerViews {
-        var test = v.className
-        print(test)
-//        NIDEvent(eventName: NIDEventName.registerTarget, tgs: v.id, en: v.id, etn: <#T##String#>, et: <#T##String#>, v: <#T##String#>)
+        switch v {
+        case is UITextField:
+            let tfView = v as! UITextField
+            NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: tfView.id, et: "", v: tfView.placeholder ?? ""))
+        case is UITextView:
+            let tv = v as! UITextView
+            // TODO Checking for text might leak PII, skip default text for now.
+            print("Text type")
+        case is UIPickerView:
+            let pv = v as! UIPickerView
+            print("Picker")
+        case is UIDatePicker:
+            print("Date picker")
+        case is UIButton:
+            print("Button")
+        case is UISlider:
+            print("Slider")
+        case is UISwitch:
+            print("Switch")
+        case is UITableViewCell:
+            print("Table view cell")
+            break
+        default:
+            print("Unknown type", v)
+            return registerViews
+        }
+        // Text
+        // Inputs
+        // Checkbox/Radios inputs
+        
+        
     }
     return registerViews
 }

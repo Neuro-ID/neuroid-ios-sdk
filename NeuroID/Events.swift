@@ -106,6 +106,7 @@ public struct NIDEvent {
     var ns: String? // Done
     var jsl: Array<String>  = ["iOS"];
     var jsv: String? // Done
+    var uid: String?
 
         /**
             Use to initiate a new session
@@ -195,6 +196,7 @@ public struct NIDEvent {
     }
     /** Register Target
    {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
+     ET - Submit, Blank, Hidden
  */
     
     init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String) {
@@ -215,7 +217,15 @@ public struct NIDEvent {
         self.x = x
         self.y = y
     }
-
+    
+    /**
+     Set UserID Event
+     */
+    init(session: NIDSessionEventName, uid: String){
+        self.uid = uid
+        self.type = session.rawValue
+    }
+    
     init(type: NIDEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
         self.type = type.rawValue
         self.tg = tg
@@ -258,13 +268,14 @@ public struct NIDEvent {
         return dict
     }
     
-    func toDict() -> [String: Any] {
+    func toDict() -> [String: Any?] {
         let valuesAsDict = self.asDictionary;
         return valuesAsDict
     }
 
     func toBase64() -> String? {
-        let dict = toDict()
+        // Filter and remove any nil optionals
+        let dict = toDict().filter({ $0.value != nil }).mapValues({ $0! })
 
         do {
             let data = try JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)

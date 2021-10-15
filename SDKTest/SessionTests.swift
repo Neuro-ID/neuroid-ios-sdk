@@ -14,6 +14,7 @@ class SessionTests: XCTestCase {
     
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey)
+        NeuroID.start()
     }
 
     func testCreateSession() throws {
