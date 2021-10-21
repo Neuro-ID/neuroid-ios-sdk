@@ -76,16 +76,49 @@ public enum NIDEventName: String {
     }
 }
 
-public struct NIDEvent {
+public enum TargetValue: Decodable {
+    
+    case int(Int), string(String), bool(Bool), double(Double)
+    
+    public init(from decoder: Decoder) throws {
+        if let int = try? decoder.singleValueContainer().decode(Int.self) {
+            self = .int(int)
+            return
+        }
+        
+        if let double = try? decoder.singleValueContainer().decode(Double.self) {
+            self = .double(double)
+            return
+        }
+        
+        if let string = try? decoder.singleValueContainer().decode(String.self) {
+            self = .string(string)
+            return
+        }
+        
+        if let bool = try? decoder.singleValueContainer().decode(Bool.self) {
+            self = .bool(bool)
+            return
+        }
+        
+        throw TG.missingValue
+    }
+    
+    enum TG:Error {
+        case missingValue
+    }
+}
+
+public struct NIDEvent: Decodable {
     public let type: String
-    var tg: [String: Any?]? = nil
+    var tg: [String: TargetValue]? = nil
     var tgs: String?
     var en: String?
     var etn: String? // Tag name (input)
     var et: String? // Element Type (text)
     var eid: String?
     var v: String? // Value
-    var ts = ParamsCreator.getTimeStamp()
+    var ts:Int64 = ParamsCreator.getTimeStamp()
     var x: CGFloat?
     var y: CGFloat?
     var f: String?
@@ -155,7 +188,9 @@ public struct NIDEvent {
            ts: Date.now(),
          */
         
-    
+//    public init(from decoder: Decoder) throws {
+//        //
+//    }
     init(session: NIDSessionEventName,
          f: String? = nil,
          siteId: String? = nil,
@@ -211,7 +246,7 @@ public struct NIDEvent {
         self.v = v;
     }
     
-    init(session: NIDSessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+    init(session: NIDSessionEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
         type = session.rawValue
         self.tg = tg
         self.x = x
@@ -226,33 +261,33 @@ public struct NIDEvent {
         self.type = session.rawValue
     }
     
-    init(type: NIDEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+    init(type: NIDEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
         self.type = type.rawValue
         self.tg = tg
         self.x = x
         self.y = y
     }
 
-    init(customEvent: String, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
+    init(customEvent: String, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
         self.type = customEvent
         self.tg = tg
         self.x = x
         self.y = y
     }
 
-    public init(type: NIDEventName, tg: [String: Any?]?, view: UIView?) {
+    public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
         self.type = type.rawValue
-        var newTg = tg ?? [String: Any?]()
-        newTg["tgs"] = view?.id
+        var newTg = tg ?? [String: TargetValue]()
+        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
     }
 
-    public init(customEvent: String, tg: [String: Any?]?, view: UIView?) {
+    public init(customEvent: String, tg: [String: TargetValue]?, view: UIView?) {
         type = customEvent
-        var newTg = tg ?? [String: Any?]()
-        newTg["tgs"] = view?.id
+        var newTg = tg ?? [String: TargetValue]()
+        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
@@ -299,4 +334,15 @@ extension Array {
             return nil
         }
     }
+}
+
+extension Collection where Iterator.Element == [String: Any?] {
+    func toJSONString() -> String {
+    if let arr = self as? [[String: Any]],
+       let dat = try? JSONSerialization.data(withJSONObject: arr),
+       let str = String(data: dat, encoding: String.Encoding.utf8) {
+      return str
+    }
+    return "[]"
+  }
 }

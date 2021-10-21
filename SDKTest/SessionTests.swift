@@ -25,6 +25,13 @@ class SessionTests: XCTestCase {
         XCTAssertTrue(session.url == urlName)
     }
     
+    func testRandom() throws {
+        var dictRandom = ["events":"eventstringt", "status":"pending"]
+        if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
+            print(key)
+        }
+//        print(key)
+    }
     func testTextInputEvents() throws {
         let urlName = "FormScreenText"
         let testView = LoanViewControllerPersonalDetails();

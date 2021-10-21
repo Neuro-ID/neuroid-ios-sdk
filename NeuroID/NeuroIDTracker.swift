@@ -102,24 +102,43 @@ public struct NeuroID {
     }
     private static func send() {
         logInfo(category: "APICall", content: "Sending to API")
-        DispatchQueue.global(qos: .background).async {
-            let dbResult = DB.shared.getAll()
-            if dbResult.base64Strings.isEmpty { return }
-
-            var events = [[String: Any]]()
-            for string in dbResult.base64Strings {
-                guard let dict = string.decodeBase64() else { continue }
-                events.append(dict)
-            }
-
-            post(events: events, screen: dbResult.screen, onSuccess: { _ in
-                logInfo(category: "APICall", content: "Sending successfully")
-                // send success -> delete
-                DB.shared.deleteSent()
-            }, onFailure: { error in
-                logError(category: "APICall", content: error.localizedDescription)
-            })
-        }
+//        DispatchQueue.global(qos: .background).async {
+//            let dataStoreEvents = DataStore.shared.getAllEvents()
+//            if dataStoreEvents.isEmpty { return }
+//
+//            var events = [[String: Any]]()
+////
+////            [
+////                ["viewController" : [123], ["somethingElse"]],
+////                ["viewController" :[543], ["more"],
+////                ["another" :       8394]
+////            ]
+//            // Keep track of current screen
+//            var currentScreen = dataStoreEvents[0].values.first;
+//            for event in dataStoreEvents {
+//                // Select keys
+//                if (event["screen"] !== currentScreen){
+//
+//                }
+//                let screens = event.keys
+//                var batchEvents = []
+//                for s in screens {
+//
+//                }
+//
+//
+//                guard let dict = string.decodeBase64() else { continue }
+//                events.append(dict)
+//            }
+//
+//            post(events: events, screen: dbResult.screen, onSuccess: { _ in
+//                logInfo(category: "APICall", content: "Sending successfully")
+//                // send success -> delete
+//                DataStore.shared.removeSentEvents()
+//            }, onFailure: { error in
+//                logError(category: "APICall", content: error.localizedDescription)
+//            })
+//        }
     }
 
     /// Direct send to API to create session
@@ -222,9 +241,9 @@ public struct NeuroID {
     }
 
     static func captureEvent(_ event: NIDEvent) {
-        guard let base64 = event.toBase64() else { return }
+//        guard let base64 = event.toBase64() else { return }
         DispatchQueue.global(qos: .userInitiated).async {
-            DB.shared.insert(screen: event.type, base64String: base64)
+            DataStore.insertEvent(screen: event.type, event: event)
         }
     }
 }
@@ -253,10 +272,9 @@ public class NeuroIDTracker: NSObject {
     }
 
     public func captureEvent(event: NIDEvent) {
-        guard let base64 = event.toBase64() else { return }
         NeuroID.logDebug(category: "saveEvent", content: event.toDict())
         let screenName = screen ?? UUID().uuidString
-        DB.shared.insert(screen: screenName, base64String: base64)
+        DataStore.insertEvent(screen: screenName, event: event)
         NeuroID.logDebug(category: "saveEvent", content: "save event finish")
     }
     
@@ -1058,16 +1076,16 @@ extension String {
     }
 }
 
-extension Collection where Iterator.Element == [String: Any?] {
-    func toJSONString() -> String {
-    if let arr = self as? [[String: Any]],
-       let dat = try? JSONSerialization.data(withJSONObject: arr),
-       let str = String(data: dat, encoding: String.Encoding.utf8) {
-      return str
-    }
-    return "[]"
-  }
-}
+//extension Collection where Iterator.Element == [String: Any?] {
+//    func toJSONString() -> String {
+//    if let arr = self as? [[String: Any]],
+//       let dat = try? JSONSerialization.data(withJSONObject: arr),
+//       let str = String(data: dat, encoding: String.Encoding.utf8) {
+//      return str
+//    }
+//    return "[]"
+//  }
+//}
 /** Base 64 Encode/Decoding
  */
 extension StringProtocol {
