@@ -134,7 +134,7 @@ class EventTests: XCTestCase {
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
 //        let params = ParamsCreator.getDefaultSessionParams();
 
-        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
+//        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 

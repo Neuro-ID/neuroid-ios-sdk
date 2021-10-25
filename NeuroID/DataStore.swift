@@ -11,37 +11,38 @@ public struct DataStore {
        3) events_sent queue is cleared every minute
           
      */
-    
     static func insertEvent(screen: String, event: NIDEvent)
     {
-        let eventDict = [event.toDict()].toJSONString()
-        let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
-        var eventInsert = [String: [[String:Any]]]()
-
-        let parsedExistingEvents: [NIDEvent] = try! JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
-
-        // If we have this screen in local cache add events to it
-//        if (existingEvents != nil){
-//            eventInsert = existingEvents as! [String : [[String:Any]]]
-//            (eventInsert[screen] != nil) ? eventInsert[screen]?.append(eventDict) : (eventInsert[screen] = [eventDict]);
-//        }
-//        else {
-//            eventInsert[screen] = [eventDict]
-//        }
-//        UserDefaults.standard.setValue(eventInsert, forKey: eventsKey)
-    }
-    
-    static func getAllEvents() ->  [String:[String:Any]]{
-        let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
-        var returnedEvents = [String:[String:Any]] ()
-        if (existingEvents != nil){
-            returnedEvents = existingEvents as! [String : [String:Any]]
+        let encoder = JSONEncoder()
+        
+        do {
+            let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
+            if (existingEvents != nil){
+                var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
+                parsedEvents.append(event)
+                let allEvents = try encoder.encode(parsedEvents)
+                UserDefaults.standard.setValue(allEvents, forKey: eventsKey)
+            }
+            else {
+                let singleEvent = try encoder.encode([event])
+                UserDefaults.standard.setValue(singleEvent, forKey: eventsKey)
+            }
+         } catch {
+            print(error.localizedDescription)
         }
-        return returnedEvents
     }
     
-    static func removeSentEvents() {
-        UserDefaults.standard.setValue([], forKey: eventsKey)
-
+    static func getAllEvents() ->  [NIDEvent]{
+        let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
+        
+        do {
+            var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
+            return parsedEvents
+        } catch  {
+            print(error.localizedDescription)
+        }
+        return []
     }
+    
+    
 }

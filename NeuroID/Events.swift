@@ -76,9 +76,21 @@ public enum NIDEventName: String {
     }
 }
 
-public enum TargetValue: Decodable {
+
+public enum TargetValue: Codable,Equatable {
     
     case int(Int), string(String), bool(Bool), double(Double)
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        
+        switch self {
+            case .int(let value): try container.encode(value)
+            case .string(let value): try container.encode(value)
+            case .bool(let value): try container.encode(value)
+            case .double(let value): try container.encode(value)
+        }
+    }
     
     public init(from decoder: Decoder) throws {
         if let int = try? decoder.singleValueContainer().decode(Int.self) {
@@ -109,7 +121,12 @@ public enum TargetValue: Decodable {
     }
 }
 
-public struct NIDEvent: Decodable {
+public struct EventCache: Codable {
+    var nidEvents: [NIDEvent]
+    
+}
+
+public struct NIDEvent: Codable {
     public let type: String
     var tg: [String: TargetValue]? = nil
     var tgs: String?
@@ -232,6 +249,7 @@ public struct NIDEvent: Decodable {
     /** Register Target
    {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
      ET - Submit, Blank, Hidden
+     
  */
     
     init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String) {
@@ -244,6 +262,19 @@ public struct NIDEvent: Decodable {
         self.et = et;
         var ef:Any = Optional<String>.none;
         self.v = v;
+    }
+    
+    /**
+     Primary View Controller will be the URL that we are tracking. 
+     */
+    public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
+        self.type = type.rawValue
+        var newTg = tg ?? [String: TargetValue]()
+        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        self.tg = newTg
+        self.url = primaryViewController?.className
+        self.x = view?.frame.origin.x
+        self.y = view?.frame.origin.y
     }
     
     init(session: NIDSessionEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
@@ -280,18 +311,19 @@ public struct NIDEvent: Decodable {
         var newTg = tg ?? [String: TargetValue]()
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
+        self.url = view?.className
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
     }
 
-    public init(customEvent: String, tg: [String: TargetValue]?, view: UIView?) {
-        type = customEvent
-        var newTg = tg ?? [String: TargetValue]()
-        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
-        self.tg = newTg
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
-    }
+//    public init(customEvent: String, tg: [String: TargetValue]?, view: UIView?) {
+//        type = customEvent
+//        var newTg = tg ?? [String: TargetValue]()
+//        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+//        self.tg = newTg
+//        self.x = view?.frame.origin.x
+//        self.y = view?.frame.origin.y
+//    }
     
     
     var asDictionary : [String:Any] {
@@ -346,3 +378,4 @@ extension Collection where Iterator.Element == [String: Any?] {
     return "[]"
   }
 }
+
