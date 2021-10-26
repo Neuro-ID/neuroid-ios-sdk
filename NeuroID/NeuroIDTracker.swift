@@ -4,8 +4,6 @@ import os
 import WebKit
 
 public struct NeuroID {
-//    fileprivate static let rootUrl = "https://api.usw2-dev1.nidops.net"
-    
 
     fileprivate static var sequenceId = 1
     fileprivate static var clientKey: String?
@@ -29,11 +27,6 @@ public struct NeuroID {
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String) {
-        
-        // Early exit for if SDK is stopped.
-        if (NeuroID.isStopped()){
-            return
-        }
         if NeuroID.clientKey != nil {
             fatalError("You already configured the SDK")
         }
@@ -50,16 +43,17 @@ public struct NeuroID {
     
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(){
-        swizzle()
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+        swizzle()
         
-        #if DEBUG
-        if NSClassFromString("XCTest") == nil {
-            initTimer()
-        }
-        #else
+        
+//        #if DEBUG
+//        if NSClassFromString("XCTest") == nil {
+//            initTimer()
+//        }
+//        #else
         initTimer()
-        #endif
+//        #endif
     }
     
     public static func isStopped() -> Bool{
@@ -77,8 +71,8 @@ public struct NeuroID {
     //        return rootUrl + "/v3/c"
     //    }
     //    return baseUrl;
-        return "http://localhost:8080";
-//        return "https://api.usw2-dev1.nidops.net";
+//        return "http://localhost:8080";
+        return "https://api.usw2-dev1.nidops.net";
     }
 
     
@@ -95,6 +89,8 @@ public struct NeuroID {
         UINavigationController.swizzleNavigation()
     }
     private static func initTimer() {
+        // Send up the first payload, and then setup a repeating timer
+        self.send()
         DispatchQueue.main.asyncAfter(deadline: .now() + SEND_INTERVAL) {
             self.send()
             self.initTimer()
@@ -103,53 +99,60 @@ public struct NeuroID {
     private static func send() {
         logInfo(category: "APICall", content: "Sending to API")
         DispatchQueue.global(qos: .background).async {
-            do {
-                
-                let dataStoreEvents = DataStore.getAllEvents()
-                if dataStoreEvents.isEmpty { return }
-                var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: dataStoreEvents as! Data)
-                
-                // Group by screen, and send to API
-                let groupedEvents = Dictionary(grouping: parsedEvents, by: { (element: NIDEvent) in
-                    return element.url
-                })
-                
-                for key in groupedEvents.keys {
-                    if (groupedEvents[key] != nil){
-                        post(events: groupedEvents[key], screen: key!, onSuccess: { _ in
-                            logInfo(category: "APICall", content: "Sending successfully")
-                            // send success -> delete
-                            DataStore.shared.removeSentEvents()
-                        }, onFailure: { error in
-                            logError(category: "APICall", content: error.localizedDescription)
-                        })
-                    }
-                   
-                }
-            } catch {
-                return
+            let dataStoreEvents = DataStore.getAllEvents()
+            if dataStoreEvents.isEmpty { return }
+            // Group by screen, and send to API
+            let groupedEvents = Dictionary(grouping: dataStoreEvents, by: { (element: NIDEvent) in
+                return element.url
+            })
+            
+            for key in groupedEvents.keys {
+//                let eventsAsDicts = groupedEvents[key]?.toArrayOfDicts()
+//                if (eventsAsDicts.isEmptyOrNil){
+//                    continue
+//                }
+                post(events: groupedEvents[key] ?? [], screen: key ?? "", onSuccess: { _ in
+                    logInfo(category: "APICall", content: "Sending successfully")
+                        // send success -> delete
+                    }, onFailure: { error in
+                        logError(category: "APICall", content: error.localizedDescription)
+                    })
             }
+            // TODO, add more sophisticated removal of events (in case of failure)
+            DataStore.removeSentEvents()
         }
     }
 
     /// Direct send to API to create session
     /// Regularly send in loop
-    fileprivate static func post(events: [Dictionary<String, Any?>],
+    fileprivate static func post(events: [NIDEvent],
                                  screen: String,
                                  onSuccess: @escaping(Any) -> Void,
                                  onFailure: @escaping(Error) -> Void) {
         guard let url = URL(string: NeuroID.getBaseURL() + "/v3/c") else {
-            fatalError("No NeuroID base URL found")
+            logError(content: "NeuroID base URL found")
+            return
         }
         guard let clientKey = clientKey else {
-            fatalError("No client key setup")
+            logError(content: "NeuroID client key not setup")
+            return
         }
         var request = URLRequest(url: url)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("Basic \(clientKey)", forHTTPHeaderField: "Authorization")
         request.httpMethod = "POST"
         
-        let jsonEvents: String = events.toJSONString()
+        let encoder = JSONEncoder()
+        var jsonData:Data;
+        do {
+            jsonData = try encoder.encode(events)
+        }catch{
+            
+            return
+        }
+        let jsonEvents:String = String(data: jsonData,
+                                       encoding: .utf8) ?? ""
+//        let jsonEvents: String = events.toJSONString()
         let base64Events: String = Data(jsonEvents.utf8).base64EncodedString()
         var params = ParamsCreator.getDefaultSessionParams()
         
@@ -172,16 +175,16 @@ public struct NeuroID {
             guard let data = data,
                   let response = response as? HTTPURLResponse,
                   error == nil else {
-                niprint("error", error ?? "Unknown error")
+                NIDPrintLog("error", error ?? "Unknown error")
 //                onFailure(error ?? NSError(message: "Unknown"))
                 return
             }
 
             let responseDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            niprint(responseDict as Any)
+            NIDPrintLog(responseDict as Any)
 
             guard (200 ... 299) ~= response.statusCode else {
-                niprint("statusCode: ", response.statusCode)
+                NIDPrintLog("statusCode: ", response.statusCode)
                 onFailure(error ?? NSError(domain: "unknown", code: response.statusCode, userInfo: nil))
                 return
             }
@@ -192,7 +195,7 @@ public struct NeuroID {
             }
 
             guard let responseObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) else {
-                niprint("Can't decode")
+                NIDPrintLog("Can't decode")
 //                onFailure(NSError(message: "Can't decode"))
                 return
             }
@@ -1098,7 +1101,7 @@ extension Sequence where Element == UInt8 {
 }
 /** End base64 block*/
 
-func niprint(_ strings: Any...) {
+func NIDPrintLog(_ strings: Any...) {
     if NeuroID.logVisible {
         Swift.print(strings)
     }

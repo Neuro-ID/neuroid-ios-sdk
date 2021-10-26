@@ -39,10 +39,15 @@ public struct DataStore {
             var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
             return parsedEvents
         } catch  {
+            print("Problem getting all events, clearing event cache")
+            DataStore.removeSentEvents()
             print(error.localizedDescription)
         }
         return []
     }
     
-    
+    static func removeSentEvents() {
+        UserDefaults.standard.setValue([], forKey: eventsKey)
+
+    }
 }

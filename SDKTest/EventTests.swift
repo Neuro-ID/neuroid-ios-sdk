@@ -33,6 +33,8 @@ class EventTests: XCTestCase {
     }
     
     func testCreateSessionID() {
+        
+        NeuroID.logError(content: "NeuroID client key not setup")
         let data = ParamsCreator.getSessionID();
         let sidName =  "nid_sid"
         let defaults = UserDefaults.standard

@@ -265,7 +265,7 @@ public struct NIDEvent: Codable {
     }
     
     /**
-     Primary View Controller will be the URL that we are tracking. 
+     Primary View Controller will be the URL that we are tracking.
      */
     public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
         self.type = type.rawValue
@@ -349,7 +349,7 @@ public struct NIDEvent: Codable {
             let base64 = data.base64EncodedString()
             return base64
         } catch let error {
-            niprint("Encode event", dict, "to base64 failed with error", error)
+            NIDPrintLog("Encode event", dict, "to base64 failed with error", error)
             return nil
         }
     }
@@ -362,7 +362,7 @@ extension Array {
             let base64 = data.base64EncodedString()
             return base64
         } catch let error {
-            niprint("Encode event", self, "to base64 failed with error", error)
+            NIDPrintLog("Encode event", self, "to base64 failed with error", error)
             return nil
         }
     }
@@ -370,7 +370,7 @@ extension Array {
 
 extension Collection where Iterator.Element == [String: Any?] {
     func toJSONString() -> String {
-    if let arr = self as? [[String: Any]],
+    if let arr = self as? [[String: Any?]],
        let dat = try? JSONSerialization.data(withJSONObject: arr),
        let str = String(data: dat, encoding: String.Encoding.utf8) {
       return str
@@ -379,3 +379,12 @@ extension Collection where Iterator.Element == [String: Any?] {
   }
 }
 
+extension Collection where Iterator.Element == NIDEvent {
+    func toArrayOfDicts() -> [[String: Any?]] {
+        let dat = self.map({ $0.asDictionary.mapValues { value in
+            return value
+        } })
+
+        return dat
+    }
+}
