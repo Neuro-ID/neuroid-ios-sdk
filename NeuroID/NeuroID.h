@@ -6,7 +6,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "sqlite3.h"
 
 //! Project version number for NeuroID.
 FOUNDATION_EXPORT double NeuroIDVersionNumber;

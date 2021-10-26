@@ -33,6 +33,8 @@ class EventTests: XCTestCase {
     }
     
     func testCreateSessionID() {
+        
+        NeuroID.logError(content: "NeuroID client key not setup")
         let data = ParamsCreator.getSessionID();
         let sidName =  "nid_sid"
         let defaults = UserDefaults.standard
@@ -83,6 +85,13 @@ class EventTests: XCTestCase {
         XCTAssertTrue(data != nil);
     }
     
+    func testGetBaseURL(){
+        let data = NeuroID.getBaseURL();
+        print("URL: ", data)
+        XCTAssertTrue(data != nil);
+    }
+    
+    
     func testSDKVersion(){
         let data = ParamsCreator.getSDKVersion()
         print("Version: ", data)
@@ -110,6 +119,13 @@ class EventTests: XCTestCase {
         print("Is Stopped", isStopped)
         XCTAssertTrue(isStopped);
     }
+    
+    func testSetIUserID(){
+        NeuroID.setUserID("atestUserID")
+        let params = ParamsCreator.getDefaultSessionParams()
+        let uid = params["uid"] as! String
+        XCTAssert(uid == "atestUserID")
+    }
     func testEventParams() throws {
 //        let urlName = "HomeScreen"
 //        let tracker = NeuroIDTracker(userUrl: urlName)
@@ -120,7 +136,7 @@ class EventTests: XCTestCase {
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
 //        let params = ParamsCreator.getDefaultSessionParams();
 
-        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
+//        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 

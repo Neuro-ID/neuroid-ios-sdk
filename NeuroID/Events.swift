@@ -76,10 +76,66 @@ public enum NIDEventName: String {
     }
 }
 
-public struct NIDEvent {
+
+public enum TargetValue: Codable,Equatable {
+    
+    case int(Int), string(String), bool(Bool), double(Double)
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        
+        switch self {
+            case .int(let value): try container.encode(value)
+            case .string(let value): try container.encode(value)
+            case .bool(let value): try container.encode(value)
+            case .double(let value): try container.encode(value)
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        if let int = try? decoder.singleValueContainer().decode(Int.self) {
+            self = .int(int)
+            return
+        }
+        
+        if let double = try? decoder.singleValueContainer().decode(Double.self) {
+            self = .double(double)
+            return
+        }
+        
+        if let string = try? decoder.singleValueContainer().decode(String.self) {
+            self = .string(string)
+            return
+        }
+        
+        if let bool = try? decoder.singleValueContainer().decode(Bool.self) {
+            self = .bool(bool)
+            return
+        }
+        
+        throw TG.missingValue
+    }
+    
+    enum TG:Error {
+        case missingValue
+    }
+}
+
+public struct EventCache: Codable {
+    var nidEvents: [NIDEvent]
+    
+}
+
+public struct NIDEvent: Codable {
     public let type: String
-    var tg: [String: Any?]? = nil
-    var ts = ParamsCreator.getTimeStamp()
+    var tg: [String: TargetValue]? = nil
+    var tgs: String?
+    var en: String?
+    var etn: String? // Tag name (input)
+    var et: String? // Element Type (text)
+    var eid: String?
+    var v: String? // Value
+    var ts:Int64 = ParamsCreator.getTimeStamp()
     var x: CGFloat?
     var y: CGFloat?
     var f: String?
@@ -100,6 +156,7 @@ public struct NIDEvent {
     var ns: String? // Done
     var jsl: Array<String>  = ["iOS"];
     var jsv: String? // Done
+    var uid: String?
 
         /**
             Use to initiate a new session
@@ -147,47 +204,127 @@ public struct NIDEvent {
            ld: eventMetadata.levenshtein,
            ts: Date.now(),
          */
+        
+//    public init(from decoder: Decoder) throws {
+//        //
+//    }
+    init(session: NIDSessionEventName,
+         f: String? = nil,
+         siteId: String? = nil,
+         sid: String? = nil,
+         lsid: String? = nil,
+         cid: String? = nil,
+         did: String? = nil,
+         iid: String? = nil,
+         loc: String? = nil,
+         ua: String? = nil,
+         tzo: Int? = nil,
+         lng: String? = nil,
+         p: String? = nil,
+         dnt: Bool? = nil,
+         tch: Bool? = nil,
+         url: String? = nil,
+         ns: String? = nil,
+         jsv: String? = nil) {
+        
+        self.type = session.rawValue
+        self.f = f
+        self.siteId = siteId
+        self.sid = sid
+        self.lsid = lsid
+        self.cid = cid
+        self.did = did
+        self.iid = iid
+        self.loc = loc
+        self.ua = ua
+        self.tzo = tzo
+        self.lng = lng
+        self.p = p
+        self.dnt = dnt
+        self.tch = tch
+        self.url = url
+        self.ns = ns
+        self.jsv = jsv
+    }
+    /** Register Target
+   {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
+     ET - Submit, Blank, Hidden
+     
+ */
     
+    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String) {
+        self.type = eventName.rawValue
+        self.tgs = tgs;
+        self.en = en;
+        self.eid = tgs;
+        var ec = "";
+        self.etn = etn;
+        self.et = et;
+        var ef:Any = Optional<String>.none;
+        self.v = v;
+    }
     
-        init(session: NIDSessionEventName,
-             f: String? = nil,
-             siteId: String? = nil,
-             sid: String? = nil,
-             lsid: String? = nil,
-             cid: String? = nil,
-             did: String? = nil,
-             iid: String? = nil,
-             loc: String? = nil,
-             ua: String? = nil,
-             tzo: Int? = nil,
-             lng: String? = nil,
-             p: String? = nil,
-             dnt: Bool? = nil,
-             tch: Bool? = nil,
-             url: String? = nil,
-             ns: String? = nil,
-             jsv: String? = nil) {
-            
-            self.type = session.rawValue
-            self.f = f
-            self.siteId = siteId
-            self.sid = sid
-            self.lsid = lsid
-            self.cid = cid
-            self.did = did
-            self.iid = iid
-            self.loc = loc
-            self.ua = ua
-            self.tzo = tzo
-            self.lng = lng
-            self.p = p
-            self.dnt = dnt
-            self.tch = tch
-            self.url = url
-            self.ns = ns
-            self.jsv = jsv
-            
-        }
+    /**
+     Primary View Controller will be the URL that we are tracking.
+     */
+    public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
+        self.type = type.rawValue
+        var newTg = tg ?? [String: TargetValue]()
+        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        self.tg = newTg
+        self.url = primaryViewController?.className
+        self.x = view?.frame.origin.x
+        self.y = view?.frame.origin.y
+    }
+    
+    init(session: NIDSessionEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
+        type = session.rawValue
+        self.tg = tg
+        self.x = x
+        self.y = y
+    }
+    
+    /**
+     Set UserID Event
+     */
+    init(session: NIDSessionEventName, uid: String){
+        self.uid = uid
+        self.type = session.rawValue
+    }
+    
+    init(type: NIDEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
+        self.type = type.rawValue
+        self.tg = tg
+        self.x = x
+        self.y = y
+    }
+
+    init(customEvent: String, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
+        self.type = customEvent
+        self.tg = tg
+        self.x = x
+        self.y = y
+    }
+
+    public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
+        self.type = type.rawValue
+        var newTg = tg ?? [String: TargetValue]()
+        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        self.tg = newTg
+        self.url = view?.className
+        self.x = view?.frame.origin.x
+        self.y = view?.frame.origin.y
+    }
+
+//    public init(customEvent: String, tg: [String: TargetValue]?, view: UIView?) {
+//        type = customEvent
+//        var newTg = tg ?? [String: TargetValue]()
+//        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+//        self.tg = newTg
+//        self.x = view?.frame.origin.x
+//        self.y = view?.frame.origin.y
+//    }
+    
     
     var asDictionary : [String:Any] {
         let mirror = Mirror(reflecting: self)
@@ -196,61 +333,23 @@ public struct NIDEvent {
           return (label, value)
         }).compactMap { $0 })
         return dict
-      }
+    }
     
-    init(session: NIDSessionEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
-        type = session.rawValue
-        self.tg = tg
-        self.x = x
-        self.y = y
-    }
-
-    init(type: NIDEventName, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
-        self.type = type.rawValue
-        self.tg = tg
-        self.x = x
-        self.y = y
-    }
-
-    init(customEvent: String, tg: [String: Any?]?, x: CGFloat?, y: CGFloat?) {
-        self.type = customEvent
-        self.tg = tg
-        self.x = x
-        self.y = y
-    }
-
-    public init(type: NIDEventName, tg: [String: Any?]?, view: UIView?) {
-        self.type = type.rawValue
-        var newTg = tg ?? [String: Any?]()
-        newTg["tgs"] = view?.id
-        self.tg = newTg
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
-    }
-
-    public init(customEvent: String, tg: [String: Any?]?, view: UIView?) {
-        type = customEvent
-        var newTg = tg ?? [String: Any?]()
-        newTg["tgs"] = view?.id
-        self.tg = newTg
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
-    }
-
-    func toDict() -> [String: Any] {
+    func toDict() -> [String: Any?] {
         let valuesAsDict = self.asDictionary;
         return valuesAsDict
     }
 
     func toBase64() -> String? {
-        let dict = toDict()
+        // Filter and remove any nil optionals
+        let dict = toDict().filter({ $0.value != nil }).mapValues({ $0! })
 
         do {
             let data = try JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)
             let base64 = data.base64EncodedString()
             return base64
         } catch let error {
-            niprint("Encode event", dict, "to base64 failed with error", error)
+            NIDPrintLog("Encode event", dict, "to base64 failed with error", error)
             return nil
         }
     }
@@ -263,8 +362,29 @@ extension Array {
             let base64 = data.base64EncodedString()
             return base64
         } catch let error {
-            niprint("Encode event", self, "to base64 failed with error", error)
+            NIDPrintLog("Encode event", self, "to base64 failed with error", error)
             return nil
         }
+    }
+}
+
+extension Collection where Iterator.Element == [String: Any?] {
+    func toJSONString() -> String {
+    if let arr = self as? [[String: Any?]],
+       let dat = try? JSONSerialization.data(withJSONObject: arr),
+       let str = String(data: dat, encoding: String.Encoding.utf8) {
+      return str
+    }
+    return "[]"
+  }
+}
+
+extension Collection where Iterator.Element == NIDEvent {
+    func toArrayOfDicts() -> [[String: Any?]] {
+        let dat = self.map({ $0.asDictionary.mapValues { value in
+            return value
+        } })
+
+        return dat
     }
 }
