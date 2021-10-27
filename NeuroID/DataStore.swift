@@ -18,7 +18,7 @@ public struct DataStore {
         do {
             let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
             if (existingEvents != nil){
-                var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
+                var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
                 parsedEvents.append(event)
                 let allEvents = try encoder.encode(parsedEvents)
                 UserDefaults.standard.setValue(allEvents, forKey: eventsKey)
@@ -36,7 +36,7 @@ public struct DataStore {
         let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
         
         do {
-            var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
+            let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
             return parsedEvents
         } catch  {
             print("Problem getting all events, clearing event cache")

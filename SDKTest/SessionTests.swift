@@ -14,15 +14,19 @@ class SessionTests: XCTestCase {
     
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey)
+        NeuroID.clearSession()
         NeuroID.start()
+       
+        DataStore.removeSentEvents()
     }
-
+    
     func testCreateSession() throws {
+        // As soon as we load a view we should create a swession
         let urlName = "HomeScreen"
         let testView = UIViewController();
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
         let session = tracker.getCurrentSession();
-        XCTAssertTrue(session.url == urlName)
+        XCTAssertTrue(session != nil)
     }
     
     func testRandom() throws {
@@ -33,6 +37,7 @@ class SessionTests: XCTestCase {
 //        print(key)
     }
     func testTextInputEvents() throws {
+       
         let urlName = "FormScreenText"
         let testView = LoanViewControllerPersonalDetails();
         testView.view.id = "LoanViewControllerPersonalDetails"

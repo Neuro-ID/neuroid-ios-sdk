@@ -41,6 +41,9 @@ public struct NeuroID {
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
     
+    public static func clearSession(){
+        UserDefaults.standard.set(nil, forKey: "nid_sid")
+    }
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(){
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
@@ -258,7 +261,7 @@ public class NeuroIDTracker: NSObject {
     public init(screen: String, controller: UIViewController?) {
         super.init()
         self.screen = screen
-        if (!NeuroID.isStopped()){
+        if (!NeuroID.isStopped() && getCurrentSession() == nil){
             self.createSessionEvent = createSession(screen: screen)
             subscribe(inScreen: controller)
         }
@@ -272,8 +275,8 @@ public class NeuroIDTracker: NSObject {
         NeuroID.logDebug(category: "saveEvent", content: "save event finish")
     }
     
-    func getCurrentSession() -> NIDEvent {
-        return self.createSessionEvent!;
+    func getCurrentSession() -> String? {
+        return UserDefaults.standard.string(forKey: "nid_sid")
     }
 }
 
