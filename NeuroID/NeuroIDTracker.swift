@@ -973,8 +973,6 @@ private extension UIViewController {
         captureEvent(eventName: .windowBlur)
     }
 
-    
-    
     /**
         When overriding viewDidLoad in  controllers make sure that super is the last thing called in the function (so that we can accurately detect all added views/subviews)
     

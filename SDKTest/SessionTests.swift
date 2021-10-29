@@ -52,7 +52,6 @@ class SessionTests: XCTestCase {
 //        testView.endAppearanceTransition()
         NeuroIDTracker(screen: urlName, controller: testView);
         let charsToInput = ["C", "l", "a", "y"]
-        // Simulate a user typing
         for c in charsToInput {
             sampleTextField.insertText(c)
         }
