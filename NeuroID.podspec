@@ -6,6 +6,7 @@ s.name = "NeuroID"
 s.summary = "A Swift implementation of a custom UIControl for selecting a range of values on a slider bar."
 s.requires_arc = true
 s.swift_version = '5.0'
+s.branch = "main"
 
 s.version = "0.0.1"
 s.license = { :type => "MIT", :text => <<-LICENSE
@@ -33,6 +34,6 @@ LICENSE
  }
 s.author = { "Neuro-ID" => "Neuro-ID" }
 s.homepage = "https://neuro-id.com/"
-s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
+s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :branch => "#{s.branch}", :tag => "#{s.version}"}
 
 s.source_files = "NeuroID/**/*.{h,c,m,swift}"
