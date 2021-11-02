@@ -1,7 +1,6 @@
 import Foundation
 
 public struct DataStore {
-//    static var shared = DataStore()
     static let eventsKey = "events_pending"
     
     /**
