@@ -35,6 +35,9 @@ public struct DataStore {
     static func getAllEvents() ->  [NIDEvent]{
         let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
         
+        if (existingEvents == nil){
+            return []
+        }
         do {
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
             return parsedEvents
