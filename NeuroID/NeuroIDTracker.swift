@@ -118,7 +118,7 @@ public struct NeuroID {
                     logInfo(category: "APICall", content: "Sending successfully")
                         // send success -> delete
                     }, onFailure: { error in
-                        logError(category: "APICall", content: error.localizedDescription)
+                        logError(category: "APICall", content: String(describing: error))
                     })
             }
             // TODO, add more sophisticated removal of events (in case of failure)

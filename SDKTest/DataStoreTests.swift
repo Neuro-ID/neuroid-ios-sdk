@@ -33,7 +33,7 @@ class DataStoreTests: XCTestCase {
             parsedEvents.append(nid2)
             print(parsedEvents)
         } catch {
-            print(error.localizedDescription)
+            print(String(describing: error))
         }
     }
 
