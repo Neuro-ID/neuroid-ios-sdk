@@ -28,7 +28,7 @@ public struct NeuroID {
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String) {
         if NeuroID.clientKey != nil {
-            fatalError("You already configured the SDK")
+            print("NeuroID Error: You already configured the SDK")
         }
         NeuroID.clientKey = clientKey
         
@@ -638,7 +638,8 @@ struct ParamsCreator {
 
     static func getClientKey() -> String {
         guard let key = NeuroID.clientKey else {
-            fatalError("clientKey is not set")
+            print("Error: clientKey is not set")
+            return ""
         }
         return key
     }
