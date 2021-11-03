@@ -917,18 +917,18 @@ extension UIViewController {
 //            tg["message"] = TargetValue.string(vc.message ?? "")
 //            tg["actions"] = TargetValue.string(vc.actions.compactMap { $0.title }
 //        }
-
-        if let eventName = NIDEventName(rawValue: event.type) {
-            let newEvent = NIDEvent(type: eventName, tg: tg, x: event.x, y: event.y)
-            tracker?.captureEvent(event: newEvent)
-        } else {
-            let newEvent = NIDEvent(customEvent: event.type, tg: tg, x: event.x, y: event.y)
-            tracker?.captureEvent(event: newEvent)
-        }
+//
+//        if let eventName = NIDEventName(rawValue: event.type) {
+//            let newEvent = NIDEvent(type: eventName, tg: tg, x: event.x, y: event.y)
+//            tracker?.captureEvent(event: newEvent)
+//        } else {
+//            let newEvent = NIDEvent(customEvent: event.type, tg: tg, x: event.x, y: event.y)
+            tracker?.captureEvent(event: event)
+//        }
     }
 
     public func captureEvent(eventName: NIDEventName, params: [String: TargetValue]? = nil) {
-        let event = NIDEvent(type: eventName, tg: params, view: nil)
+        let event = NIDEvent(type: eventName, tg: params, view: self.view)
         captureEvent(event: event)
     }
 
