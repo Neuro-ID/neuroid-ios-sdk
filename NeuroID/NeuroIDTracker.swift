@@ -50,13 +50,13 @@ public struct NeuroID {
         swizzle()
         
         
-//        #if DEBUG
-//        if NSClassFromString("XCTest") == nil {
-//            initTimer()
-//        }
-//        #else
+        #if DEBUG
+        if NSClassFromString("XCTest") == nil {
+            initTimer()
+        }
+        #else
         initTimer()
-//        #endif
+        #endif
     }
     
     public static func isStopped() -> Bool{
@@ -74,7 +74,8 @@ public struct NeuroID {
     //        return rootUrl + "/v3/c"
     //    }
     //    return baseUrl;
-//        return "http://localhost:8080";
+//        return "http://localhost:9090";
+//        return "https://5ff9-174-94-156-120.ngrok.io"
         return "https://api.usw2-dev1.nidops.net";
     }
 
@@ -99,31 +100,41 @@ public struct NeuroID {
             self.initTimer()
         }
     }
-    private static func send() {
+    /**
+     Publically exposed just for testing. This should not be any reason to call this directly.
+     */
+    public static func send() {
         logInfo(category: "APICall", content: "Sending to API")
         DispatchQueue.global(qos: .background).async {
-            let dataStoreEvents = DataStore.getAllEvents()
-            if dataStoreEvents.isEmpty { return }
-            // Group by screen, and send to API
-            let groupedEvents = Dictionary(grouping: dataStoreEvents, by: { (element: NIDEvent) in
-                return element.url
-            })
-            
-            for key in groupedEvents.keys {
+            groupAndPOST()
+        }
+    }
+    
+    /**
+     Publically exposed just for testing. This should not be any reason to call this directly.
+     */
+    public static func groupAndPOST() {
+        let dataStoreEvents = DataStore.getAllEvents()
+        if dataStoreEvents.isEmpty { return }
+        // Group by screen, and send to API
+        let groupedEvents = Dictionary(grouping: dataStoreEvents, by: { (element: NIDEvent) in
+            return element.url
+        })
+        
+        for key in groupedEvents.keys {
 //                let eventsAsDicts = groupedEvents[key]?.toArrayOfDicts()
 //                if (eventsAsDicts.isEmptyOrNil){
 //                    continue
 //                }
-                post(events: groupedEvents[key] ?? [], screen: key ?? "", onSuccess: { _ in
-                    logInfo(category: "APICall", content: "Sending successfully")
-                        // send success -> delete
-                    }, onFailure: { error in
-                        logError(category: "APICall", content: String(describing: error))
-                    })
-            }
-            // TODO, add more sophisticated removal of events (in case of failure)
-            DataStore.removeSentEvents()
+            post(events: groupedEvents[key] ?? [], screen: key ?? "", onSuccess: { _ in
+                logInfo(category: "APICall", content: "Sending successfully")
+                    // send success -> delete
+                }, onFailure: { error in
+                    logError(category: "APICall", content: String(describing: error))
+                })
         }
+        // TODO, add more sophisticated removal of events (in case of failure)
+        DataStore.removeSentEvents()
     }
 
     /// Direct send to API to create session

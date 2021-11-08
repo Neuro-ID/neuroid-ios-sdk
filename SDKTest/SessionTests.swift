@@ -26,6 +26,7 @@ class SessionTests: XCTestCase {
         let testView = UIViewController();
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
         let session = tracker.getCurrentSession();
+        NeuroID.groupAndPOST()
         XCTAssertTrue(session != nil)
     }
     

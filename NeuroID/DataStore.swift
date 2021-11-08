@@ -12,6 +12,7 @@ public struct DataStore {
      */
     static func insertEvent(screen: String, event: NIDEvent)
     {
+        print("INSERT EVENT: \(screen) : \(String(describing: event)))")
         let encoder = JSONEncoder()
         
         // Attempt to add to existing events first, if this fails, then we don't have data to decode so set a single event
@@ -47,8 +48,8 @@ public struct DataStore {
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
             return parsedEvents
         } catch {
-            print(String(describing: error))
-            print("Problem getting all events, clearing event cache")
+//            print(String(describing: error))
+            print("No event..(or bad event)")
             DataStore.removeSentEvents()
             
         }
