@@ -75,8 +75,8 @@ public struct NeuroID {
     //    }
     //    return baseUrl;
 //        return "http://localhost:9090";
-//        return "https://5ff9-174-94-156-120.ngrok.io"
-        return "https://api.usw2-dev1.nidops.net";
+        return "https://7dc9-174-94-156-120.ngrok.io"
+//        return "https://api.usw2-dev1.nidops.net";
     }
 
     
