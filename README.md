@@ -62,6 +62,16 @@ For examples of how to integrate the Neuro-ID SDK and a place to experiment, vis
 
 For help with the Neuro-ID Mobile SDK, see the [latest documentation](https://neuro-id.readme.io/docs/overview).
 
+## Developer Debugging
+
+List running simulators `xcrun simctl list 'devices' 'booted'`
+
+Evaluate JSON by setting the env var in XCode Schemes: `debugJSON = true`
+
+JSON will be saved here:
+
+`/Users/USERNAME/Library/Developer/CoreSimulator/Devices/E6C4BAD2-67E5-4C9B-83DF-466882D71FC3/data/Containers/Data/Application/LATEST_APPLICATION_GUID/Documents/nidJSON.txt
+
 ## License [⤴](#table-of-contents)
 
 The Neuro-ID Mobile SDK is provided under an [MIT License](LICENSE).

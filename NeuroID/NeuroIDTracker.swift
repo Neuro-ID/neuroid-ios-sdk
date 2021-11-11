@@ -75,8 +75,8 @@ public struct NeuroID {
     //    }
     //    return baseUrl;
 //        return "http://localhost:9090";
-        return "https://7dc9-174-94-156-120.ngrok.io"
-//        return "https://api.usw2-dev1.nidops.net";
+//        return "https://7dc9-174-94-156-120.ngrok.io"
+        return "https://api.usw2-dev1.nidops.net";
     }
 
     
@@ -95,7 +95,7 @@ public struct NeuroID {
     private static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
         self.send()
-        DispatchQueue.main.asyncAfter(deadline: .now() + SEND_INTERVAL) {
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
             self.send()
             self.initTimer()
         }
@@ -105,7 +105,7 @@ public struct NeuroID {
      */
     public static func send() {
         logInfo(category: "APICall", content: "Sending to API")
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .utility).async {
             groupAndPOST()
         }
     }
