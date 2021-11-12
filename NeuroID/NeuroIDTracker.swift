@@ -171,6 +171,10 @@ public struct NeuroID {
         var params = ParamsCreator.getDefaultSessionParams()
         
         params["events"] = base64Events
+        // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            params["events"] = jsonEvents
+        }
         params["url"] = screen
         
         // Unwrap all optionals and convert to null if empty
@@ -252,6 +256,43 @@ public struct NeuroID {
 //        guard let base64 = event.toBase64() else { return }
         DispatchQueue.global(qos: .userInitiated).async {
             DataStore.insertEvent(screen: event.type, event: event)
+        }
+    }
+    
+    /**
+     Save the params being sent to POST to collector endpoint to a local file
+     */
+    private static func saveDebugJSON(params: [String: Any]){
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            print("DEBUG JSON IS SET, writing to Desktop")
+            do {
+                let encoder = JSONEncoder()
+                let nidJSON:Data = try encoder.encode(params)
+
+                let filemgr = FileManager.default
+                let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
+                
+                if !filemgr.fileExists(atPath: (path.path)) {
+                    filemgr.createFile(atPath: (path.path), contents: nidJSON, attributes: nil)
+                    
+                } else {
+                    let file = FileHandle(forReadingAtPath: (path.path))
+                    if let fileUpdater = try? FileHandle(forUpdating: path) {
+        
+                        // Function which when called will cause all updates to start from end of the file
+                        fileUpdater.seekToEndOfFile()
+
+                        // Which lets the caller move editing to any position within the file by supplying an offset
+                        fileUpdater.write("\n".data(using: .utf8)!)
+                        fileUpdater.write(nidJSON)
+                    }
+                    else {
+                        print("Unable to append DEBUG JSON")
+                    }
+                }
+            } catch{
+                print(String(describing: error))
+            }
         }
     }
 }
