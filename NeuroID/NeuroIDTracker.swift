@@ -173,7 +173,7 @@ public struct NeuroID {
         params["events"] = base64Events
         // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
-            params["events"] = jsonEvents
+            saveDebugJSON(events: jsonEvents)
         }
         params["url"] = screen
         
@@ -262,38 +262,36 @@ public struct NeuroID {
     /**
      Save the params being sent to POST to collector endpoint to a local file
      */
-    private static func saveDebugJSON(params: [String: Any]){
-        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
-            print("DEBUG JSON IS SET, writing to Desktop")
-            do {
-                let encoder = JSONEncoder()
-                let nidJSON:Data = try encoder.encode(params)
+    private static func saveDebugJSON(events: String){
+        print("DEBUG JSON IS SET, writing to Desktop")
+        let jsonStringNIDEvents = "\(events)".data(using: .utf8)!
+        do {
 
-                let filemgr = FileManager.default
-                let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
+            let filemgr = FileManager.default
+            let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
+            
+            if !filemgr.fileExists(atPath: (path.path)) {
+                filemgr.createFile(atPath: (path.path), contents: jsonStringNIDEvents, attributes: nil)
                 
-                if !filemgr.fileExists(atPath: (path.path)) {
-                    filemgr.createFile(atPath: (path.path), contents: nidJSON, attributes: nil)
-                    
-                } else {
-                    let file = FileHandle(forReadingAtPath: (path.path))
-                    if let fileUpdater = try? FileHandle(forUpdating: path) {
-        
-                        // Function which when called will cause all updates to start from end of the file
-                        fileUpdater.seekToEndOfFile()
+            } else {
+                let file = FileHandle(forReadingAtPath: (path.path))
+                if let fileUpdater = try? FileHandle(forUpdating: path) {
+    
+                    // Function which when called will cause all updates to start from end of the file
+                    fileUpdater.seekToEndOfFile()
 
-                        // Which lets the caller move editing to any position within the file by supplying an offset
-                        fileUpdater.write("\n".data(using: .utf8)!)
-                        fileUpdater.write(nidJSON)
-                    }
-                    else {
-                        print("Unable to append DEBUG JSON")
-                    }
+                    // Which lets the caller move editing to any position within the file by supplying an offset
+                    fileUpdater.write(",\n".data(using: .utf8)!)
+                    fileUpdater.write(jsonStringNIDEvents)
                 }
-            } catch{
-                print(String(describing: error))
+                else {
+                    print("Unable to append DEBUG JSON")
+                }
             }
+        } catch{
+            print(String(describing: error))
         }
+        
     }
 }
 
@@ -313,8 +311,10 @@ public class NeuroIDTracker: NSObject {
     public init(screen: String, controller: UIViewController?) {
         super.init()
         self.screen = screen
-        if (!NeuroID.isStopped() && getCurrentSession() == nil){
-            self.createSessionEvent = createSession(screen: screen)
+        if (!NeuroID.isStopped()){
+            if(getCurrentSession() == nil){
+                self.createSessionEvent = createSession(screen: screen)
+            }
             subscribe(inScreen: controller)
         }
         className = controller?.className
@@ -458,13 +458,18 @@ private extension NeuroIDTracker {
 
     @objc func textChange(notification: Notification) {
         // count the number of letters in 10ms (for instance) -> consider paste action
-        logTextEvent(from: notification, eventType: .textChange)
+        logTextEvent(from: notification, eventType: .input)
     }
 
     @objc func textEndEditing(notification: Notification) {
         logTextEvent(from: notification, eventType: .blur)
     }
 
+    /**
+     Target values:
+        ETN - Input
+        ET - human readable tag
+     */
     func logTextEvent(from notification: Notification, eventType: NIDEventName) {
         if let textControl = notification.object as? UITextField {
             // isSecureText
@@ -473,22 +478,28 @@ private extension NeuroIDTracker {
                 if textControl.textContentType == .newPassword { return }
             }
 
-            let tg = ParamsCreator.getTextTgParams(view: textControl)
+            // If Text Input event, also capture KEYDOWN and TEXTCHANGE
+            if (eventType == NIDEventName.input) {
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: "UITextField")
+                captureEvent(event: NIDEvent(type: NIDEventName.keyDown, tg: inputTG))
+            }
+            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextField")
+            captureEvent(event: NIDEvent(type: eventType, tg: tg))
             detectPasting(view: textControl, text: textControl.text ?? "")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg, view: textControl))
         } else if let textControl = notification.object as? UITextView {
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
                 if textControl.textContentType == .newPassword { return }
             }
-            let tg = ParamsCreator.getTextTgParams(view: textControl)
+            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextView")
+            captureEvent(event: NIDEvent(type: eventType, tg: tg))
             detectPasting(view: textControl, text: textControl.text ?? "")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg, view: nil))
         } else if let textControl = notification.object as? UISearchBar {
-            let tg = ParamsCreator.getTextTgParams(view: textControl)
+            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar")
+            captureEvent(event: NIDEvent(type: eventType, tg: tg))
             detectPasting(view: textControl, text: textControl.text ?? "")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg, view: nil))
         }
+
     }
 
     func detectPasting(view: UIView, text: String) {
@@ -634,7 +645,39 @@ struct ParamsCreator {
         }
         return params
     }
-
+    
+    static func getTGParamsForInput(eventName: NIDEventName, view: UIView, type: String, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
+        var params: [String: TargetValue] = [:];
+        
+        switch eventName {
+        case NIDEventName.focus:
+            params = [
+                "tgs": TargetValue.string(view.id),
+                "etn": TargetValue.string(type),
+                "et": TargetValue.string(type)
+            ]
+        case NIDEventName.blur:
+            params = [
+                "tgs": TargetValue.string(view.id),
+                "etn": TargetValue.string(type),
+                "et": TargetValue.string(type)
+            ]
+            // TODO
+            // After a blur happens, save the state of this field, and on a subsequent blur compute the text change value
+        case NIDEventName.keyDown:
+            params = [
+                "tgs": TargetValue.string(view.id),
+                "etn": TargetValue.string(type),
+                "et": TargetValue.string(type)
+            ]
+        default:
+            print("Invalid type")
+        }
+        for (key, value) in extraParams {
+            params[key] = value
+        }
+        return params
+    }
     static func getUiControlTgParams(sender: UIView) -> [String: TargetValue] {
         var tg: [String: TargetValue] = ["sender": TargetValue.string(sender.className), "tgs": TargetValue.string(sender.id)]
 

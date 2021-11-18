@@ -251,7 +251,7 @@ public struct NIDEvent: Codable {
      ET - Submit, Blank, Hidden
      
  */
-    
+
     init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String) {
         self.type = eventName.rawValue
         self.tgs = tgs;
@@ -304,6 +304,16 @@ public struct NIDEvent: Codable {
         self.tg = tg
         self.x = x
         self.y = y
+    }
+    
+    /**
+     FOCUS
+     BLUR
+     
+     */
+    public init(type: NIDEventName, tg: [String: TargetValue]?) {
+        self.type = type.rawValue
+        self.tg = tg
     }
 
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
