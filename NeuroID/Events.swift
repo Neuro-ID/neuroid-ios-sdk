@@ -285,6 +285,12 @@ public struct NIDEvent: Codable {
     }
     
     /**
+     * Form submit, Sucess Submit, Failure Submit
+     */
+    init(type: NIDEventName){
+        self.type = type.rawValue
+    }
+    /**
      Set UserID Event
      */
     init(session: NIDSessionEventName, uid: String){

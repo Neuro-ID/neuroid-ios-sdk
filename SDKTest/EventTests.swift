@@ -158,4 +158,19 @@ class EventTests: XCTestCase {
         XCTAssertTrue(events["x"] as! Int == 10)
         XCTAssertTrue(events["y"] as! Int == 10)
     }
+    
+    func testEventSubmitForm(){
+        let event = NeuroID.formSubmit()
+        XCTAssertTrue(event.type == NIDEventName.applicationSubmit.rawValue)
+    }
+    
+    func testEventSubmitFormFailure(){
+        let event = NeuroID.formFailure()
+        XCTAssertTrue(event.type == NIDEventName.applicationSubmitFailure.rawValue)
+    }
+    
+    func testEventSubmitFormSuccess(){
+        let event = NeuroID.formSubmitSuccess()
+        XCTAssertTrue(event.type == NIDEventName.applicationSubmitSuccess.rawValue)
+    }
 }

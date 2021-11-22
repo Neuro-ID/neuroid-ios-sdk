@@ -67,6 +67,27 @@ public struct NeuroID {
         return false
     }
     
+    /**
+        Form Submit, Sccuess & Failure
+     */
+    public static func formSubmit() -> NIDEvent{
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
+        captureEvent(submitEvent);
+        return submitEvent;
+    }
+    
+    public static func formFailure() -> NIDEvent{
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
+        captureEvent(submitEvent);
+        return submitEvent
+    }
+    
+    public static func formSubmitSuccess() -> NIDEvent{
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
+        captureEvent(submitEvent);
+        return submitEvent
+    }
+    
     public static func getBaseURL() -> String {
     //    let URL_PLIST_KEY = "NeuroURL"
     //    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
@@ -269,7 +290,7 @@ public struct NeuroID {
 
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
-            
+            print("DEBUG PATH \(path.absoluteString)");
             if !filemgr.fileExists(atPath: (path.path)) {
                 filemgr.createFile(atPath: (path.path), contents: jsonStringNIDEvents, attributes: nil)
                 
