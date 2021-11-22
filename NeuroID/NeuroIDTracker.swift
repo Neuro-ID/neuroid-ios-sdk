@@ -76,7 +76,7 @@ public struct NeuroID {
         return submitEvent;
     }
     
-    public static func formFailure() -> NIDEvent{
+    public static func formSubmitFailure() -> NIDEvent{
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
         captureEvent(submitEvent);
         return submitEvent

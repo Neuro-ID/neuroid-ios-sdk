@@ -165,7 +165,7 @@ class EventTests: XCTestCase {
     }
     
     func testEventSubmitFormFailure(){
-        let event = NeuroID.formFailure()
+        let event = NeuroID.formSubmitFailure()
         XCTAssertTrue(event.type == NIDEventName.applicationSubmitFailure.rawValue)
     }
     
