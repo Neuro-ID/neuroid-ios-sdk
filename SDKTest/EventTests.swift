@@ -173,4 +173,8 @@ class EventTests: XCTestCase {
         let event = NeuroID.formSubmitSuccess()
         XCTAssertTrue(event.type == NIDEventName.applicationSubmitSuccess.rawValue)
     }
+    
+    func testEventSetVariable(){
+        NeuroID.setCustomVariable(key: "test", v: "test2")
+    }
 }
