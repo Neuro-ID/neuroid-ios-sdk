@@ -97,7 +97,9 @@ public struct NeuroID {
      
      */
     public static func setCustomVariable(key: String, v: String){
-        
+        let setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v )
+        captureEvent(setCustomVariable);
+        return setCustomVariable
     }
     
     public static func getBaseURL() -> String {

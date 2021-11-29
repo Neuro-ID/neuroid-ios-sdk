@@ -130,6 +130,8 @@ public struct NIDEvent: Codable {
     public let type: String
     var tg: [String: TargetValue]? = nil
     var tgs: String?
+    var key: String,
+    var v: String,
     var en: String?
     var etn: String? // Tag name (input)
     var et: String? // Element Type (text)
@@ -290,6 +292,21 @@ public struct NIDEvent: Codable {
     init(type: NIDEventName){
         self.type = type.rawValue
     }
+    
+    /**
+     Set custom variable
+        - Parameters:
+            - type: NIDEventName
+            - key: String value of key
+            - v: String value of the value
+        - Returns: An NIDEvent instance
+     */
+    init(type: NIDSessionEventName, key: String, v: String) {
+        self.type = type.rawValue
+        self.key = key
+        self.v = v
+    }
+    
     /**
      Set UserID Event
      */
