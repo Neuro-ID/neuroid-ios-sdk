@@ -130,13 +130,12 @@ public struct NIDEvent: Codable {
     public let type: String
     var tg: [String: TargetValue]? = nil
     var tgs: String?
-    var key: String,
-    var v: String,
+    var key: String?
+    var v: String?
     var en: String?
     var etn: String? // Tag name (input)
     var et: String? // Element Type (text)
     var eid: String?
-    var v: String? // Value
     var ts:Int64 = ParamsCreator.getTimeStamp()
     var x: CGFloat?
     var y: CGFloat?

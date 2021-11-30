@@ -96,7 +96,7 @@ public struct NeuroID {
         - Returns: An `NIDEvent` object of type `SET_VARIABLE`
      
      */
-    public static func setCustomVariable(key: String, v: String){
+    public static func setCustomVariable(key: String, v: String) -> NIDEvent{
         let setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v )
         captureEvent(setCustomVariable);
         return setCustomVariable

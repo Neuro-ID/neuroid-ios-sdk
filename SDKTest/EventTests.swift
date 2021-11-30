@@ -175,6 +175,7 @@ class EventTests: XCTestCase {
     }
     
     func testEventSetVariable(){
-        NeuroID.setCustomVariable(key: "test", v: "test2")
+        let event = NeuroID.setCustomVariable(key: "test", v: "test2")
+        XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
     }
 }
