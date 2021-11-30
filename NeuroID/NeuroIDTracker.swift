@@ -88,6 +88,20 @@ public struct NeuroID {
         return submitEvent
     }
     
+    /**
+     Set a custom variable with a key and value.
+        - Parameters:
+            - key: The string value of the variable key
+            - v: The string value of variable
+        - Returns: An `NIDEvent` object of type `SET_VARIABLE`
+     
+     */
+    public static func setCustomVariable(key: String, v: String) -> NIDEvent{
+        let setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v )
+        captureEvent(setCustomVariable);
+        return setCustomVariable
+    }
+    
     public static func getBaseURL() -> String {
     //    let URL_PLIST_KEY = "NeuroURL"
     //    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}

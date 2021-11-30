@@ -10,7 +10,7 @@
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		26BCF34C268DA7CF0002C289 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF349268DA7CF0002C289 /* DataStore.swift */; };
 		26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */; };
-		26BCF34E268DA7CF0002C289 /* Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34B268DA7CF0002C289 /* Events.swift */; };
+		26BCF34E268DA7CF0002C289 /* NIDEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34B268DA7CF0002C289 /* NIDEvent.swift */; };
 		26BCF359268DAC530002C289 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF358268DAC530002C289 /* Security.framework */; };
 		26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF35A268DAC5A0002C289 /* Foundation.framework */; };
 		6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */; };
@@ -37,7 +37,7 @@
 		26BCF340268DA3C40002C289 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		26BCF349268DA7CF0002C289 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTracker.swift; sourceTree = "<group>"; };
-		26BCF34B268DA7CF0002C289 /* Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
+		26BCF34B268DA7CF0002C289 /* NIDEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIDEvent.swift; sourceTree = "<group>"; };
 		26BCF358268DAC530002C289 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		26BCF35A268DAC5A0002C289 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPreferences.swift; sourceTree = "<group>"; };
@@ -104,7 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				26BCF349268DA7CF0002C289 /* DataStore.swift */,
-				26BCF34B268DA7CF0002C289 /* Events.swift */,
+				26BCF34B268DA7CF0002C289 /* NIDEvent.swift */,
 				26BCF340268DA3C40002C289 /* Info.plist */,
 				26BCF33F268DA3C40002C289 /* NeuroID.h */,
 				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
@@ -279,7 +279,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26BCF34E268DA7CF0002C289 /* Events.swift in Sources */,
+				26BCF34E268DA7CF0002C289 /* NIDEvent.swift in Sources */,
 				26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				26BCF34C268DA7CF0002C289 /* DataStore.swift in Sources */,
