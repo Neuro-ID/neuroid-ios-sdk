@@ -12,6 +12,10 @@ public struct DataStore {
      */
     static func insertEvent(screen: String, event: NIDEvent)
     {
+        // Early exit if the developer indicates that the SDK needs to be stopped
+        if (NeuroID.isStopped()){
+            return;
+        }
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             print("DEBUG JSON IS SET, writing to Desktop")
             do {

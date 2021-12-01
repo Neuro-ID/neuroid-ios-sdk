@@ -423,6 +423,10 @@ extension Bundle {
 
 private extension NeuroIDTracker {
     func subscribe(inScreen controller: UIViewController?) {
+        // Early exit if we are stopped
+        if (NeuroID.isStopped()){
+            return;
+        }
         if let views = controller?.view.subviews {
             observeViews(views)
         }
