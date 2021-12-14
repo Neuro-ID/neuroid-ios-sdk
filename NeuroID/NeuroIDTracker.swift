@@ -1273,16 +1273,6 @@ public extension UIView {
     }
 }
 
-public extension UIView {
-    var label: String {
-        get {
-            return (accessibilityLabel.isEmptyOrNil) ? ("todo-label") : (accessibilityLabel!)
-        }
-        set {
-            accessibilityLabel = newValue
-        }
-    }
-}
 
 extension Dictionary {
   func percentEncoded() -> String {
