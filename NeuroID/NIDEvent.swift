@@ -155,7 +155,7 @@ public struct NIDEvent: Codable {
     var tch: Bool? // Done
     var url: String?
     var ns: String? // Done
-    var jsl: Array<String>  = ["iOS"];
+    var jsl: Array<String>?//  = ["iOS"];
     var jsv: String? // Done
     var uid: String?
 
@@ -331,8 +331,14 @@ public struct NIDEvent: Codable {
     /**
      FOCUS
      BLUR
-     
+     LOAD
      */
+    
+    public init(type: NIDEventName, screenName: String){
+        self.url = screenName
+        self.type = type.rawValue
+    }
+    
     public init(type: NIDEventName, tg: [String: TargetValue]?) {
         self.type = type.rawValue
         self.tg = tg
