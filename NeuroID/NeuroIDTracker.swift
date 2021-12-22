@@ -141,7 +141,9 @@ public struct NeuroID {
     public static func send() {
         logInfo(category: "APICall", content: "Sending to API")
         DispatchQueue.global(qos: .utility).async {
-            groupAndPOST()
+            if (!NeuroID.isStopped()) {
+                groupAndPOST()
+            }
         }
     }
     
@@ -149,6 +151,9 @@ public struct NeuroID {
      Publically exposed just for testing. This should not be any reason to call this directly.
      */
     public static func groupAndPOST() {
+        if (NeuroID.isStopped()){
+            return
+        }
         let dataStoreEvents = DataStore.getAllEvents()
         if dataStoreEvents.isEmpty { return }
         // Group by screen, and send to API
@@ -161,7 +166,20 @@ public struct NeuroID {
 //                if (eventsAsDicts.isEmptyOrNil){
 //                    continue
 //                }
-            post(events: groupedEvents[key] ?? [], screen: key ?? "", onSuccess: { _ in
+            // Remove all non api friendly keys from the serialized objects before sending over to post object
+            var oldEvents = groupedEvents[key]
+            
+            // Since we are seriazling this object, we need to remove any values we don't want to send in the event object to the API. This is sort of a not pretty hack
+            var newEvents = oldEvents.map { (value: [NIDEvent]) -> [NIDEvent] in
+                let result = value.map { NIDEvent -> NIDEvent in
+                    var newEvent = NIDEvent
+                    newEvent.url = nil
+                    return newEvent
+                }
+                return result
+            }
+            //
+            post(events: newEvents ?? [], screen: key ?? "", onSuccess: { _ in
                 logInfo(category: "APICall", content: "Sending successfully")
                     // send success -> delete
                 }, onFailure: { error in
@@ -171,7 +189,7 @@ public struct NeuroID {
         // TODO, add more sophisticated removal of events (in case of failure)
         DataStore.removeSentEvents()
     }
-
+    
     /// Direct send to API to create session
     /// Regularly send in loop
     fileprivate static func post(events: [NIDEvent],
@@ -196,7 +214,6 @@ public struct NeuroID {
         do {
             jsonData = try encoder.encode(events)
         }catch{
-            
             return
         }
         let jsonEvents:String = String(data: jsonData,
@@ -221,8 +238,17 @@ public struct NeuroID {
         
         let dataString = unwrappedParams.percentEncoded();
         
+        
         guard let data = dataString.data(using: .utf8) else { return }
         request.httpBody = data
+        
+        // Output post data to terminal if debug
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            print("*********** BEGIN **************")
+            print(dataString.description)
+            print(jsonEvents.description)
+            print("*********** END ***************")
+        }
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
@@ -960,47 +986,53 @@ extension UIViewController {
     Register form events
 */
 
-private func registerSubViewsTargets(subViewControllers: [UIViewController]) -> [Any]{
-    var registerViews = [Any]()
-    for ctrls in subViewControllers {
-        registerViews.append(ctrls.view)
-        registerViews += ctrls.view.subviews
+extension UIView {
+
+    func subviewsRecursive() -> [Any] {
+        return subviews + subviews.flatMap { $0.subviewsRecursive() }
     }
 
-    for v in registerViews {
-        switch v {
-        case is UITextField:
-            let tfView = v as! UITextField
-            NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: tfView.id, et: "", v: tfView.placeholder ?? ""))
-        case is UITextView:
-            let tv = v as! UITextView
-            // TODO Checking for text might leak PII, skip default text for now.
-            print("Text type")
-        case is UIPickerView:
-            let pv = v as! UIPickerView
-            print("Picker")
-        case is UIDatePicker:
-            print("Date picker")
-        case is UIButton:
-            print("Button")
-        case is UISlider:
-            print("Slider")
-        case is UISwitch:
-            print("Switch")
-        case is UITableViewCell:
-            print("Table view cell")
-            break
-        default:
-            print("Unknown type", v)
-            return registerViews
-        }
+}
+
+private func registerSingleView(v: Any){
+    switch v {
+    case is UITextField:
+        let tfView = v as! UITextField
+        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: tfView.id, et: "", v: tfView.placeholder ?? ""))
+    case is UITextView:
+        let tv = v as! UITextView
+        // TODO Checking for text might leak PII, skip default text for now.
+        print("Text type")
+    case is UIPickerView:
+        let pv = v as! UIPickerView
+        print("Picker")
+    case is UIDatePicker:
+        print("Date picker")
+    case is UIButton:
+        print("Button")
+    case is UISlider:
+        print("Slider")
+    case is UISwitch:
+        print("Switch")
+    case is UITableViewCell:
+        print("Table view cell")
+        break
+    default:
+        print("Unknown type", v)
+    }
         // Text
         // Inputs
         // Checkbox/Radios inputs
-        
-        
+}
+
+private func registerSubViewsTargets(subViewControllers: [UIViewController]){
+    for ctrls in subViewControllers {
+        registerSingleView(v: ctrls.view)
+        let childViews = ctrls.view.subviewsRecursive()
+        for _view in childViews {
+            registerSingleView(v: _view)
+        }
     }
-    return registerViews
 }
 
 private func swizzling(viewController: UIViewController.Type,
@@ -1062,21 +1094,26 @@ extension UIViewController {
     }
 
     public func captureEvent(eventName: NIDEventName, params: [String: TargetValue]? = nil) {
-        let event = NIDEvent(type: eventName, tg: params, view: self.view)
+        let event:NIDEvent;
+        if (params.isEmptyOrNil) {
+            event = NIDEvent(type: eventName, screenName: neuroScreenName)
+        } else {
+            event = NIDEvent(type: eventName, tg: params, view: self.view)
+        }
         captureEvent(event: event)
     }
 
-    public func captureEventLogViewWillAppear(params: [String: TargetValue]) {
-        captureEvent(eventName: .windowFocus, params: params)
-    }
-
-    public func captureEventLogViewDidLoad(params: [String: TargetValue]) {
-        captureEvent(eventName: .windowLoad, params: params)
-    }
-
-    public func captureEventLogViewWillDisappear(params: [String: TargetValue]) {
-        captureEvent(eventName: .windowBlur, params: params)
-    }
+//    public func captureEventLogViewWillAppear(params: [String: TargetValue]) {
+//        captureEvent(eventName: .windowFocus, params: params)
+//    }
+//
+//    public func captureEventLogViewDidLoad(params: [String: TargetValue]) {
+//        captureEvent(eventName: .windowLoad, params: params)
+//    }
+//
+//    public func captureEventLogViewWillDisappear(params: [String: TargetValue]) {
+//        captureEvent(eventName: .windowBlur, params: params)
+//    }
 }
 
 private extension UIViewController {
