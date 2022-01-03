@@ -49,6 +49,11 @@ public struct NeuroID {
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
         
+        if #available(iOS 15.0, *) {
+            UserActivityDetection().startDeviceMotion()
+        } else {
+            // Fallback on earlier versions
+        }
         
         #if DEBUG
         if NSClassFromString("XCTest") == nil {

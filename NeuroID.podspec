@@ -35,5 +35,5 @@ s.author = { "Neuro-ID" => "Neuro-ID" }
 s.homepage = "https://neuro-id.com/"
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
 
-s.source_files = "NeuroID/**/*.{h,c,m,swift}"
+s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 end
