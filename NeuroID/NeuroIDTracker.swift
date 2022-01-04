@@ -5,6 +5,7 @@ import WebKit
 
 public struct NeuroID {
 
+    
     fileprivate static var sequenceId = 1
     fileprivate static var clientKey: String?
     fileprivate static let sessionId: String = ParamsCreator.getSessionID()
@@ -15,6 +16,7 @@ public struct NeuroID {
     fileprivate static var secrectViews = [UIView]()
     fileprivate static let showDebugLog = false
     
+    // InputID, currentVal, newVal
     fileprivate static let localStorageNIDStopAll = "nid_stop_all"
 
     /// Turn on/off printing the SDK log to your console
@@ -491,6 +493,8 @@ private extension NeuroIDTracker {
 
 // MARK: - Text control events
 private extension NeuroIDTracker {
+
+
     func observeTextInputEvents() {
         // UITextField
         NotificationCenter.default.addObserver(self,
@@ -523,15 +527,42 @@ private extension NeuroIDTracker {
     }
 
     @objc func textBeginEditing(notification: Notification) {
+        // Set the current value of the textDictionary
+        DispatchQueue.global(qos:.utility).async {
+            if let textControl = notification.object as? UITextField {
+                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
+            } else if let textControl = notification.object as? UITextView {
+                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
+            }
+        }
         logTextEvent(from: notification, eventType: .focus)
     }
 
     @objc func textChange(notification: Notification) {
+        DispatchQueue.global(qos:.utility).async {
+            if let textControl = notification.object as? UITextField {
+                var existingTextValue = UserDefaults.value(forKey: textControl.id)
+                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
+            } else if let textControl = notification.object as? UITextView {
+                var existingTextValue = UserDefaults.value(forKey: textControl.id)
+                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
+            }
+        }
         // count the number of letters in 10ms (for instance) -> consider paste action
         logTextEvent(from: notification, eventType: .input)
     }
 
     @objc func textEndEditing(notification: Notification) {
+        /**
+         We want to make sure to erase user defaults on blur for security
+         */
+        DispatchQueue.global(qos:.utility).async {
+            if let textControl = notification.object as? UITextField {
+                UserDefaults.standard.setValue("", forKey: textControl.id)
+            } else if let textControl = notification.object as? UITextView {
+                UserDefaults.standard.setValue("", forKey: textControl.id)
+            }
+        }
         logTextEvent(from: notification, eventType: .blur)
     }
 
@@ -585,6 +616,63 @@ private extension NeuroIDTracker {
         }
         textCapturing[id] = text
     }
+    
+    func calcSimilarity(previousValue: String, currentValue: String) -> Double {
+      var longer = previousValue;
+      var shorter = currentValue;
+
+      if (previousValue.count < currentValue.count) {
+        longer = currentValue;
+        shorter = previousValue;
+      }
+
+      var longerLength = longer.count;
+
+      if (longerLength == 0) {
+        return 1;
+      }
+
+      return Double((longerLength - levDis(longer, shorter)) / longerLength);
+    }
+    
+    func levDis(_ w1: String, _ w2: String) -> Int {
+        let empty = [Int](repeating:0, count: w2.count)
+        var last = [Int](0...w2.count)
+
+        for (i, char1) in w1.enumerated() {
+            var cur = [i + 1] + empty
+            for (j, char2) in w2.enumerated() {
+                cur[j + 1] = char1 == char2 ? last[j] : min(last[j], last[j + 1], cur[j]) + 1
+            }
+            last = cur
+        }
+        return last.last!
+    }
+    
+    
+    func percentageDifference(newNumOrig: String, originalNumOrig: String) -> Double{
+      let originalNum = originalNumOrig.replacingOccurrences(of: " ", with: "")
+        let newNum = newNumOrig.replacingOccurrences(of: " ", with: "")
+   
+        guard var originalNumParsed = Double (originalNum) else {
+            return -1
+        }
+        
+        guard var newNumParsed = Double (newNum) else {
+            return -1
+        }
+
+      if (originalNumParsed <= 0) {
+          originalNumParsed = 1;
+      }
+
+      if (newNumParsed <= 0) {
+          newNumParsed = 1;
+      }
+
+        return Double((newNumParsed - originalNumParsed) / originalNumParsed);
+    }
+    
 }
 
 // MARK: - Touch events
