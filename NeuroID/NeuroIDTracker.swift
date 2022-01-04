@@ -539,17 +539,26 @@ private extension NeuroIDTracker {
     }
 
     @objc func textChange(notification: Notification) {
+        
         DispatchQueue.global(qos:.utility).async {
+            var similarity:Double;
+            var percentDiff:Double;
             if let textControl = notification.object as? UITextField {
-                var existingTextValue = UserDefaults.value(forKey: textControl.id)
+                let existingTextValue = UserDefaults.value(forKey: textControl.id)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
+                 similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
+                 percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
             } else if let textControl = notification.object as? UITextView {
-                var existingTextValue = UserDefaults.value(forKey: textControl.id)
+                let existingTextValue = UserDefaults.value(forKey: textControl.id)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
+                 similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
+                 percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
             }
+            self.logTextEvent(from: notification, eventType: .input)
         }
+        
         // count the number of letters in 10ms (for instance) -> consider paste action
-        logTextEvent(from: notification, eventType: .input)
+       
     }
 
     @objc func textEndEditing(notification: Notification) {
