@@ -178,4 +178,34 @@ class EventTests: XCTestCase {
         let event = NeuroID.setCustomVariable(key: "test", v: "test2")
         XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
     }
+    
+    func testCalcSimilarity(){
+        let urlName = "HomeScreen"
+        let testView = UIViewController();
+        if (NeuroID.isStopped()) {
+            NeuroID.start();
+        }
+
+        let tracker = NeuroIDTracker(screen: urlName, controller: testView);
+        var similarityLonger = tracker.calcSimilarity(previousValue: "alat", currentValue: "zlata")
+        print("Close Similarity \(similarityLonger)")
+        XCTAssertTrue(similarityLonger == 0.6)
+        
+        var similarityShorter = tracker.calcSimilarity(previousValue: "amuchlongerdiffere", currentValue: "wowshort")
+        print("Much different Similarity \(similarityShorter)")
+        XCTAssertTrue(similarityLonger == 0.6)
+    }
+    
+    func testpercentageDifference(){
+        let urlName = "HomeScreen"
+        let testView = UIViewController();
+        if (NeuroID.isStopped()) {
+            NeuroID.start();
+        }
+
+        let tracker = NeuroIDTracker(screen: urlName, controller: testView);
+        var percentDiff = tracker.percentageDifference(newNumOrig: "20", originalNumOrig: "30")
+        print("Percentdiff \(percentDiff)")
+        
+    }
 }

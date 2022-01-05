@@ -18,10 +18,6 @@
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
 		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
 		6F39E8E126CEAA7900BE9834 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8E026CEAA7900BE9834 /* EventTests.swift */; };
-		6F9526D12782D181001130F2 /* UserActivityDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9526D02782D181001130F2 /* UserActivityDetection.swift */; };
-		6F9526D22782D181001130F2 /* UserActivityDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9526D02782D181001130F2 /* UserActivityDetection.swift */; };
-		6F9526D42782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6F9526D32782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel */; settings = {ATTRIBUTES = (codegen, ); }; };
-		6F9526D52782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6F9526D32782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel */; settings = {ATTRIBUTES = (codegen, ); }; };
 		6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF06B26271FCA8300F6704C /* DataStoreTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,8 +48,6 @@
 		6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKUITest.swift; sourceTree = "<group>"; };
 		6F39E8DC26CEAA0C00BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F39E8E026CEAA7900BE9834 /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
-		6F9526D02782D181001130F2 /* UserActivityDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityDetection.swift; sourceTree = "<group>"; };
-		6F9526D32782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = NIDAccelerometerModelV1.mlmodel; sourceTree = "<group>"; };
 		6FF06B26271FCA8300F6704C /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,14 +103,12 @@
 		26BCF33E268DA3C40002C289 /* NeuroID */ = {
 			isa = PBXGroup;
 			children = (
-				6F9526D32782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel */,
 				26BCF349268DA7CF0002C289 /* DataStore.swift */,
 				26BCF34B268DA7CF0002C289 /* NIDEvent.swift */,
 				26BCF340268DA3C40002C289 /* Info.plist */,
 				26BCF33F268DA3C40002C289 /* NeuroID.h */,
 				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
 				6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */,
-				6F9526D02782D181001130F2 /* UserActivityDetection.swift */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";
@@ -288,11 +280,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				26BCF34E268DA7CF0002C289 /* NIDEvent.swift in Sources */,
-				6F9526D12782D181001130F2 /* UserActivityDetection.swift in Sources */,
 				26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				26BCF34C268DA7CF0002C289 /* DataStore.swift in Sources */,
-				6F9526D42782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,8 +291,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F39E8E126CEAA7900BE9834 /* EventTests.swift in Sources */,
-				6F9526D22782D181001130F2 /* UserActivityDetection.swift in Sources */,
-				6F9526D52782D1C6001130F2 /* NIDAccelerometerModelV1.mlmodel in Sources */,
 				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
 				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
 			);

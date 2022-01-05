@@ -4,7 +4,6 @@ import os
 import WebKit
 
 public struct NeuroID {
-
     
     fileprivate static var sequenceId = 1
     fileprivate static var clientKey: String?
@@ -21,7 +20,6 @@ public struct NeuroID {
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
-    
     
 
     // MARK: - Setup
@@ -50,12 +48,6 @@ public struct NeuroID {
     public static func start(){
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
-        
-        if #available(iOS 15.0, *) {
-            UserActivityDetection().startDeviceMotion()
-        } else {
-            // Fallback on earlier versions
-        }
         
         #if DEBUG
         if NSClassFromString("XCTest") == nil {
@@ -110,17 +102,9 @@ public struct NeuroID {
     }
     
     public static func getBaseURL() -> String {
-    //    let URL_PLIST_KEY = "NeuroURL"
-    //    guard let rootUrl = Bundle.infoPlistValue(forKey: URL_PLIST_KEY) as? String else { return ""}
-    //    var baseUrl: String {
-    //        return rootUrl + "/v3/c"
-    //    }
-    //    return baseUrl;
-//        return "http://localhost:9090";
-//        return "https://7dc9-174-94-156-120.ngrok.io"
-        return "https://api.usw2-dev1.nidops.net";
+        return "https://api.neuro-id.com"
+//      return "https://api.usw2-dev1.nidops.net";
     }
-
     
     static func getClientKeyFromLocalStorage() -> String {
         let keyName = "nid_key";
@@ -146,7 +130,6 @@ public struct NeuroID {
      Publically exposed just for testing. This should not be any reason to call this directly.
      */
     public static func send() {
-        logInfo(category: "APICall", content: "Sending to API")
         DispatchQueue.global(qos: .utility).async {
             if (!NeuroID.isStopped()) {
                 groupAndPOST()
@@ -169,11 +152,6 @@ public struct NeuroID {
         })
         
         for key in groupedEvents.keys {
-//                let eventsAsDicts = groupedEvents[key]?.toArrayOfDicts()
-//                if (eventsAsDicts.isEmptyOrNil){
-//                    continue
-//                }
-            // Remove all non api friendly keys from the serialized objects before sending over to post object
             var oldEvents = groupedEvents[key]
             
             // Since we are seriazling this object, we need to remove any values we don't want to send in the event object to the API. This is sort of a not pretty hack
@@ -185,7 +163,6 @@ public struct NeuroID {
                 }
                 return result
             }
-            //
             post(events: newEvents ?? [], screen: key ?? "", onSuccess: { _ in
                 logInfo(category: "APICall", content: "Sending successfully")
                     // send success -> delete
@@ -225,7 +202,6 @@ public struct NeuroID {
         }
         let jsonEvents:String = String(data: jsonData,
                                        encoding: .utf8) ?? ""
-//        let jsonEvents: String = events.toJSONString()
         let base64Events: String = Data(jsonEvents.utf8).base64EncodedString()
         var params = ParamsCreator.getDefaultSessionParams()
         
@@ -282,7 +258,6 @@ public struct NeuroID {
 
             guard let responseObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) else {
                 NIDPrintLog("Can't decode")
-//                onFailure(NSError(message: "Can't decode"))
                 return
             }
             onSuccess(responseObject)
@@ -321,7 +296,6 @@ public struct NeuroID {
     }
 
     static func captureEvent(_ event: NIDEvent) {
-//        guard let base64 = event.toBase64() else { return }
         DispatchQueue.global(qos: .userInitiated).async {
             DataStore.insertEvent(screen: event.type, event: event)
         }
@@ -359,7 +333,6 @@ public struct NeuroID {
         } catch{
             print(String(describing: error))
         }
-        
     }
 }
 
@@ -391,7 +364,10 @@ public class NeuroIDTracker: NSObject {
     public func captureEvent(event: NIDEvent) {
         NeuroID.logDebug(category: "saveEvent", content: event.toDict())
         let screenName = screen ?? UUID().uuidString
-        DataStore.insertEvent(screen: screenName, event: event)
+        var newEvent = event
+        // Make sure we have a valid url set
+        newEvent.url = screenName
+        DataStore.insertEvent(screen: screenName, event: newEvent)
         NeuroID.logDebug(category: "saveEvent", content: "save event finish")
     }
     
@@ -403,14 +379,14 @@ public class NeuroIDTracker: NSObject {
 // MARK: - Custom events
 public extension NeuroIDTracker {
     func captureEventCheckBoxChange(isChecked: Bool, checkBox: UIView) {
-        let tg = ParamsCreator.getTgParams(view: checkBox)
-        let event = NIDEvent(type: .checkboxChange, tg: tg, view: checkBox)
+        let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.checkboxChange, view: checkBox, type: "UIView")
+        let event = NIDEvent(type: .checkboxChange, tg: tg, v: String(isChecked))
         captureEvent(event: event)
     }
 
     func captureEventRadioChange(isChecked: Bool, radioButton: UIView) {
-        let tg = ParamsCreator.getTgParams(view: radioButton)
-        captureEvent(event: NIDEvent(type: .radioChange, tg: tg, view: radioButton))
+        let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.radioChange, view: radioButton, type: "UIView")
+        captureEvent(event: NIDEvent(type: .radioChange, tg: tg, v: String(isChecked))
     }
 
     func captureEventSubmission(_ params: [String: TargetValue]? = nil) {
@@ -443,8 +419,7 @@ public extension NeuroIDTracker {
 
 extension Bundle {
     static func infoPlistValue(forKey key: String) -> Any? {
-//        let infoPlistPath = Bundle.main.url(forResource: "Info", withExtension: "plist")
-        
+
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) else {
             os_log("NeuroID Failed to find Plist");
            return nil
@@ -541,24 +516,22 @@ private extension NeuroIDTracker {
     @objc func textChange(notification: Notification) {
         
         DispatchQueue.global(qos:.utility).async {
-            var similarity:Double;
-            var percentDiff:Double;
+            var similarity:Double = 0;
+            var percentDiff:Double = 0;
             if let textControl = notification.object as? UITextField {
-                let existingTextValue = UserDefaults.value(forKey: textControl.id)
+                let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
                  similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
                  percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
             } else if let textControl = notification.object as? UITextView {
-                let existingTextValue = UserDefaults.value(forKey: textControl.id)
+                let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
                  similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
                  percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
             }
-            self.logTextEvent(from: notification, eventType: .input)
+            self.logTextEvent(from: notification, eventType: .input, sm: similarity, pd: percentDiff)
         }
-        
         // count the number of letters in 10ms (for instance) -> consider paste action
-       
     }
 
     @objc func textEndEditing(notification: Notification) {
@@ -580,7 +553,7 @@ private extension NeuroIDTracker {
         ETN - Input
         ET - human readable tag
      */
-    func logTextEvent(from notification: Notification, eventType: NIDEventName) {
+    func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
         if let textControl = notification.object as? UITextField {
             // isSecureText
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
@@ -591,7 +564,11 @@ private extension NeuroIDTracker {
             // If Text Input event, also capture KEYDOWN and TEXTCHANGE
             if (eventType == NIDEventName.input) {
                 let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: "UITextField")
+                // Keydown
                 captureEvent(event: NIDEvent(type: NIDEventName.keyDown, tg: inputTG))
+                // Text Change
+                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: "UITextField")
+                captureEvent(event: NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd))
             }
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextField")
             captureEvent(event: NIDEvent(type: eventType, tg: tg))
@@ -626,7 +603,7 @@ private extension NeuroIDTracker {
         textCapturing[id] = text
     }
     
-    func calcSimilarity(previousValue: String, currentValue: String) -> Double {
+    public func calcSimilarity(previousValue: String, currentValue: String) -> Double {
       var longer = previousValue;
       var shorter = currentValue;
 
@@ -634,14 +611,13 @@ private extension NeuroIDTracker {
         longer = currentValue;
         shorter = previousValue;
       }
-
-      var longerLength = longer.count;
+      let longerLength = Double(longer.count);
 
       if (longerLength == 0) {
         return 1;
       }
 
-      return Double((longerLength - levDis(longer, shorter)) / longerLength);
+        return round(((longerLength - Double(levDis(longer, shorter))) / longerLength) * 100) / 100.0;
     }
     
     func levDis(_ w1: String, _ w2: String) -> Int {
@@ -658,8 +634,7 @@ private extension NeuroIDTracker {
         return last.last!
     }
     
-    
-    func percentageDifference(newNumOrig: String, originalNumOrig: String) -> Double{
+    public func percentageDifference(newNumOrig: String, originalNumOrig: String) -> Double{
       let originalNum = originalNumOrig.replacingOccurrences(of: " ", with: "")
         let newNum = newNumOrig.replacingOccurrences(of: " ", with: "")
    
@@ -679,7 +654,7 @@ private extension NeuroIDTracker {
           newNumParsed = 1;
       }
 
-        return Double((newNumParsed - originalNumParsed) / originalNumParsed);
+        return round(Double((newNumParsed - originalNumParsed) / originalNumParsed) * 100) / 100.0;
     }
     
 }
@@ -832,6 +807,22 @@ struct ParamsCreator {
             // TODO
             // After a blur happens, save the state of this field, and on a subsequent blur compute the text change value
         case NIDEventName.keyDown:
+            params = [
+                "tgs": TargetValue.string(view.id),
+            ]
+        case NIDEventName.textChange:
+            params = [
+                "tgs": TargetValue.string(view.id),
+                "etn": TargetValue.string(type),
+                "et": TargetValue.string(type)
+            ]
+        case NIDEventName.checkboxChange:
+            params = [
+                "tgs": TargetValue.string(view.id),
+                "etn": TargetValue.string(type),
+                "et": TargetValue.string(type)
+            ]
+        case NIDEventName.radioChange:
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(type),
