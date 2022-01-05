@@ -158,6 +158,8 @@ public struct NIDEvent: Codable {
     var jsl: Array<String>?//  = ["iOS"];
     var jsv: String? // Done
     var uid: String?
+    var sm: Double?
+    var pd: Double?
 
         /**
             Use to initiate a new session
@@ -266,6 +268,15 @@ public struct NIDEvent: Codable {
     }
     
     /**
+        Text Change
+     */
+    init(type: NIDEventName, tg: [String: TargetValue]?, sm: Double, pd: Double) {
+        self.type = type.rawValue
+        self.tg = tg
+        self.sm = sm
+        self.pd = pd
+    }
+    /**
      Primary View Controller will be the URL that we are tracking.
      */
     public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
@@ -290,6 +301,12 @@ public struct NIDEvent: Codable {
      */
     init(type: NIDEventName){
         self.type = type.rawValue
+    }
+    
+    init(type: NIDEventName, tg: tg, v: v){
+        self.type = type
+        self.tg = tg
+        self.v = v
     }
     
     /**

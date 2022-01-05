@@ -12,7 +12,6 @@ public struct DataStore {
      */
     static func insertEvent(screen: String, event: NIDEvent)
     {
-        // Early exit if the developer indicates that the SDK needs to be stopped
         if (NeuroID.isStopped()){
             return;
         }
@@ -47,8 +46,8 @@ public struct DataStore {
                 } catch{
                     print(String(describing: error))
                 }
+                print("INSERT EVENT: \(screen) : \(String(describing: event)))")
             }
-            print("INSERT EVENT: \(screen) : \(String(describing: event)))")
             let encoder = JSONEncoder()
             
             // Attempt to add to existing events first, if this fails, then we don't have data to decode so set a single event
@@ -85,16 +84,13 @@ public struct DataStore {
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
             return parsedEvents
         } catch {
-//            print(String(describing: error))
             print("No events..(or bad JSON event)")
             DataStore.removeSentEvents()
-            
         }
         return []
     }
     
     static func removeSentEvents() {
         UserDefaults.standard.setValue([], forKey: eventsKey)
-
     }
 }
