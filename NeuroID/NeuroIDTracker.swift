@@ -1250,6 +1250,9 @@ private extension UIViewController {
           Register form events
      */
     @objc func neuroIDViewDidLoad() {
+        if (NeuroID.isStopped()){
+            return
+        }
         self.neuroIDViewDidLoad()
         captureEvent(eventName: .windowLoad)
         var subViews = self.view.subviews
