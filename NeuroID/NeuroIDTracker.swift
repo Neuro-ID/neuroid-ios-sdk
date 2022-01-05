@@ -860,7 +860,7 @@ struct ParamsCreator {
 
     static func getCopyTgParams() -> [String: TargetValue] {
         let val = UIPasteboard.general.string ?? ""
-        return ["content": TargetValue.string(UIPasteboard.general.string!)]
+        return ["content": TargetValue.string(UIPasteboard.general.string ?? "")]
     }
 
     static func getOrientationChangeTgParams() -> [String: Any?] {
@@ -916,8 +916,9 @@ struct ParamsCreator {
         let defaults = UserDefaults.standard
         let sid = defaults.string(forKey: sidName)
         
-        if (sid != nil && !isSessionExpired()) {
-            return sid!;
+        // TODO Expire sesions
+        if (sid != nil) {
+            return sid ?? "";
         }
 
         var id = ""
