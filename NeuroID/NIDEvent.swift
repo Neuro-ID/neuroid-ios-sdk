@@ -303,8 +303,8 @@ public struct NIDEvent: Codable {
         self.type = type.rawValue
     }
     
-    init(type: NIDEventName, tg: tg, v: v){
-        self.type = type
+    init(type: NIDEventName, tg: [String: TargetValue]?, v: String){
+        self.type = type.rawValue
         self.tg = tg
         self.v = v
     }

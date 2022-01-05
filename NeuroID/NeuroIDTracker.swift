@@ -362,6 +362,9 @@ public class NeuroIDTracker: NSObject {
     }
 
     public func captureEvent(event: NIDEvent) {
+        if (NeuroID.isStopped()){
+            return
+        }
         NeuroID.logDebug(category: "saveEvent", content: event.toDict())
         let screenName = screen ?? UUID().uuidString
         var newEvent = event
@@ -386,7 +389,7 @@ public extension NeuroIDTracker {
 
     func captureEventRadioChange(isChecked: Bool, radioButton: UIView) {
         let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.radioChange, view: radioButton, type: "UIView")
-        captureEvent(event: NIDEvent(type: .radioChange, tg: tg, v: String(isChecked))
+        captureEvent(event: NIDEvent(type: .radioChange, tg: tg, v: String(isChecked)))
     }
 
     func captureEventSubmission(_ params: [String: TargetValue]? = nil) {
