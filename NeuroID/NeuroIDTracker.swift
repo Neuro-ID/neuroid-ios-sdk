@@ -593,8 +593,10 @@ private extension NeuroIDTracker {
     }
 
     func detectPasting(view: UIView, text: String) {
-        let id = "\(Unmanaged.passUnretained(view).toOpaque())"
-        let savedText = textCapturing[id] ?? ""
+        var id = "\(Unmanaged.passUnretained(view).toOpaque())"
+        guard var savedText = textCapturing[id] else {
+           return
+        }
         let savedCount = savedText.count
         let newCount = text.count
         if newCount > 0 && newCount - savedCount > 2 {
