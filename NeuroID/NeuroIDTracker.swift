@@ -1093,14 +1093,15 @@ extension UIView {
 
 }
 
-private func registerSingleView(v: Any){
+private func registerSingleView(v: Any, screenName: String){
     switch v {
     case is UITextField:
         let tfView = v as! UITextField
-        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: tfView.id, et: "", v: tfView.placeholder ?? ""))
+        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName))
     case is UITextView:
         let tv = v as! UITextView
         // TODO Checking for text might leak PII, skip default text for now.
+        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName))
         print("Text type")
     case is UIPickerView:
         let pv = v as! UIPickerView
@@ -1126,10 +1127,15 @@ private func registerSingleView(v: Any){
 
 private func registerSubViewsTargets(subViewControllers: [UIViewController]){
     for ctrls in subViewControllers {
-        registerSingleView(v: ctrls.view)
+        let screenName = ctrls.className
+        print(ctrls.neuroScreenName)
+        guard let view = ctrls.view else {
+            return
+        }
+        registerSingleView(v: view, screenName: screenName)
         let childViews = ctrls.view.subviewsRecursive()
         for _view in childViews {
-            registerSingleView(v: _view)
+            registerSingleView(v: _view, screenName: screenName)
         }
     }
 }

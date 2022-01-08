@@ -255,7 +255,7 @@ public struct NIDEvent: Codable {
      
  */
 
-    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String) {
+    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String, url: String) {
         self.type = eventName.rawValue
         self.tgs = tgs;
         self.en = en;
@@ -265,6 +265,7 @@ public struct NIDEvent: Codable {
         self.et = et;
         var ef:Any = Optional<String>.none;
         self.v = v;
+        self.url = url;
     }
     
     /**
