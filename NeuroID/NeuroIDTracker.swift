@@ -1100,16 +1100,10 @@ private func registerSingleView(v: Any, screenName: String){
         NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName))
     case is UITextView:
         let tv = v as! UITextView
-        // TODO Checking for text might leak PII, skip default text for now.
         NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName))
-        print("Text type")
-    case is UIPickerView:
-        let pv = v as! UIPickerView
-        print("Picker")
-    case is UIDatePicker:
-        print("Date picker")
     case is UIButton:
-        print("Button")
+        let tb = v as! UIButton
+        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: tb.className, v: "S~C~~0" , url: screenName))
     case is UISlider:
         print("Slider")
     case is UISwitch:
@@ -1117,6 +1111,11 @@ private func registerSingleView(v: Any, screenName: String){
     case is UITableViewCell:
         print("Table view cell")
         break
+    case is UIPickerView:
+        let pv = v as! UIPickerView
+        print("Picker")
+    case is UIDatePicker:
+        print("Date picker")
     default:
         print("Unknown type", v)
     }
