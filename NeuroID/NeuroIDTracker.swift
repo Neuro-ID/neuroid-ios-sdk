@@ -197,6 +197,7 @@ public struct NeuroID {
         request.httpMethod = "POST"
         
         let encoder = JSONEncoder()
+        
         var jsonData:Data;
         do {
             jsonData = try encoder.encode(events)
@@ -205,7 +206,9 @@ public struct NeuroID {
         }
         let jsonEvents:String = String(data: jsonData,
                                        encoding: .utf8) ?? ""
+        
         let base64Events: String = Data(jsonEvents.utf8).base64EncodedString()
+        
         var params = ParamsCreator.getDefaultSessionParams()
         
         params["events"] = base64Events
@@ -222,7 +225,7 @@ public struct NeuroID {
             unwrappedParams[key] = newValue
         }
         
-        let dataString = unwrappedParams.percentEncoded();
+        let dataString = unwrappedParams.toKeyValueString();
         
         
         guard let data = dataString.data(using: .utf8) else { return }
@@ -1422,10 +1425,10 @@ public extension UIView {
 
 
 extension Dictionary {
-  func percentEncoded() -> String {
+  func toKeyValueString() -> String {
     return map { key, value in
-      let escapedKey = "\(key)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
-      let escapedValue = "\(value)".addingPercentEncoding(withAllowedCharacters: .urlQueryValueAllowed) ?? ""
+      let escapedKey = "\(key)" ?? ""
+      let escapedValue = "\(value)" ?? ""
       return escapedKey + "=" + escapedValue
     }
     .joined(separator: "&")
