@@ -71,19 +71,19 @@ public struct NeuroID {
      */
     public static func formSubmit() -> NIDEvent{
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
-        captureEvent(submitEvent);
+        saveEventToLocalDataStore(submitEvent);
         return submitEvent;
     }
     
     public static func formSubmitFailure() -> NIDEvent{
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
-        captureEvent(submitEvent);
+        saveEventToLocalDataStore(submitEvent);
         return submitEvent
     }
     
     public static func formSubmitSuccess() -> NIDEvent{
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
-        captureEvent(submitEvent);
+        saveEventToLocalDataStore(submitEvent);
         return submitEvent
     }
     
@@ -96,8 +96,11 @@ public struct NeuroID {
      
      */
     public static func setCustomVariable(key: String, v: String) -> NIDEvent{
-        let setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v )
-        captureEvent(setCustomVariable);
+        var setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v )
+        let myKeys: [String] = trackers.map{String($0.key) }
+        // Set the screen to the last active view
+        setCustomVariable.url = myKeys.last
+        saveEventToLocalDataStore(setCustomVariable);
         return setCustomVariable
     }
     
@@ -269,7 +272,7 @@ public struct NeuroID {
     public static func setUserID(_ userId: String) {
         UserDefaults.standard.set(userId, forKey: "nid_user_id")
         let setUserEvent = NIDEvent(session: NIDSessionEventName.setUserId, uid: userId);
-        captureEvent(setUserEvent)
+        saveEventToLocalDataStore(setUserEvent)
     }
     public static func logInfo(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .info)
@@ -295,7 +298,7 @@ public struct NeuroID {
         Log.log(category: category, contents: content, type: .info)
     }
 
-    static func captureEvent(_ event: NIDEvent) {
+    static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DispatchQueue.global(qos: .userInitiated).async {
             DataStore.insertEvent(screen: event.type, event: event)
         }
@@ -1097,13 +1100,13 @@ private func registerSingleView(v: Any, screenName: String){
     switch v {
     case is UITextField:
         let tfView = v as! UITextField
-        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName))
+        NeuroID.saveEventToLocalDataStore(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName))
     case is UITextView:
         let tv = v as! UITextView
-        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName))
+        NeuroID.saveEventToLocalDataStore(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName))
     case is UIButton:
         let tb = v as! UIButton
-        NeuroID.captureEvent(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: tb.className, v: "S~C~~0" , url: screenName))
+        NeuroID.saveEventToLocalDataStore(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: tb.className, v: "S~C~~0" , url: screenName))
     case is UISlider:
         print("Slider")
     case is UISwitch:

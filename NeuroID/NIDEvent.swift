@@ -12,7 +12,7 @@ internal enum NIDSessionEventName: String {
 
     func log() {
         let event = NIDEvent(session: self, tg: nil, x: nil, y: nil)
-        NeuroID.captureEvent(event)
+        NeuroID.saveEventToLocalDataStore(event)
     }
 }
 
