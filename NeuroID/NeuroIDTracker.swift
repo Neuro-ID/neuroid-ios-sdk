@@ -1258,7 +1258,7 @@ private extension UIViewController {
           Register form events
      */
     @objc func neuroIDViewDidLoad() {
-        if (NeuroID.isStopped()){
+        if (NeuroID.isStopped() || UIApplication.shared.applicationState == .background ){
             return
         }
         self.neuroIDViewDidLoad()
