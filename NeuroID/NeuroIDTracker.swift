@@ -100,6 +100,10 @@ public struct NeuroID {
         let myKeys: [String] = trackers.map{String($0.key) }
         // Set the screen to the last active view
         setCustomVariable.url = myKeys.last
+        // If we don't have a valid URL, that means this was called before any views were tracked. Use "AppDelegate" as default
+        if (setCustomVariable.url == nil || setCustomVariable.url!.isEmpty) {
+            setCustomVariable.url = "AppDelegate"
+        }
         saveEventToLocalDataStore(setCustomVariable);
         return setCustomVariable
     }
