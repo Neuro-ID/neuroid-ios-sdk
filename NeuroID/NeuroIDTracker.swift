@@ -577,6 +577,7 @@ private extension NeuroIDTracker {
      */
     func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
         if let textControl = notification.object as? UITextField {
+            let inputType = "text"
             // isSecureText
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
@@ -585,15 +586,19 @@ private extension NeuroIDTracker {
 
             // If Text Input event, also capture KEYDOWN and TEXTCHANGE
             if (eventType == NIDEventName.input) {
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: "UITextField")
                 // Keydown
-                captureEvent(event: NIDEvent(type: NIDEventName.keyDown, tg: inputTG))
+                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
+                captureEvent(event: NIDEvent(type: NIDEventName.keyDown, tg: keydownTG))
+                
                 // Text Change
-                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: "UITextField")
+                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
                 captureEvent(event: NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd))
+                
+                // Input
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
+                captureEvent(event: NIDEvent(type: NIDEventName.input, tg: inputTG))
             }
-            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextField")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg))
+            
             detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UITextView {
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
@@ -816,16 +821,10 @@ struct ParamsCreator {
         var params: [String: TargetValue] = [:];
         
         switch eventName {
-        case NIDEventName.focus:
+        case NIDEventName.focus, NIDEventName.blur, NIDEventName.input, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange:
             params = [
                 "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
-            ]
-        case NIDEventName.blur:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
+                "etn": TargetValue.string(view.id),
                 "et": TargetValue.string(type)
             ]
             // TODO
@@ -833,24 +832,6 @@ struct ParamsCreator {
         case NIDEventName.keyDown:
             params = [
                 "tgs": TargetValue.string(view.id),
-            ]
-        case NIDEventName.textChange:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
-            ]
-        case NIDEventName.checkboxChange:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
-            ]
-        case NIDEventName.radioChange:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
             ]
         default:
             print("Invalid type")
@@ -934,6 +915,7 @@ struct ParamsCreator {
     // If user idles for > 30 min
     static func getSessionID() -> String {
         let sidName =  "nid_sid"
+        let sidExpires = "nid_sid_expires"
         let defaults = UserDefaults.standard
         let sid = defaults.string(forKey: sidName)
         
