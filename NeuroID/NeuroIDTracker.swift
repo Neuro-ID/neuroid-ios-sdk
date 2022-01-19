@@ -49,6 +49,12 @@ public struct NeuroID {
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
         
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            let filemgr = FileManager.default
+            let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
+            print("DEBUG PATH \(path.absoluteString)");
+        }
+        
         #if DEBUG
         if NSClassFromString("XCTest") == nil {
             initTimer()
@@ -127,7 +133,7 @@ public struct NeuroID {
     }
     private static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
-        self.send()
+//        self.send()
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
             self.send()
             self.initTimer()
@@ -216,10 +222,7 @@ public struct NeuroID {
         var params = ParamsCreator.getDefaultSessionParams()
         
         params["events"] = base64Events
-        // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
-        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
-            saveDebugJSON(events: jsonEvents)
-        }
+        
         params["url"] = screen
         
         // Unwrap all optionals and convert to null if empty
@@ -230,6 +233,14 @@ public struct NeuroID {
         }
         
         let dataString = unwrappedParams.toKeyValueString();
+        
+        // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            saveDebugJSON(events: "******************** New POST to NID Collector")
+            saveDebugJSON(events: dataString)
+            saveDebugJSON(events: jsonEvents)
+            saveDebugJSON(events: "******************** END")
+        }
         
         
         guard let data = dataString.data(using: .utf8) else { return }
@@ -315,13 +326,11 @@ public struct NeuroID {
      Save the params being sent to POST to collector endpoint to a local file
      */
     private static func saveDebugJSON(events: String){
-        print("DEBUG JSON IS SET, writing to Desktop")
         let jsonStringNIDEvents = "\(events)".data(using: .utf8)!
         do {
 
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
-            print("DEBUG PATH \(path.absoluteString)");
             if !filemgr.fileExists(atPath: (path.path)) {
                 filemgr.createFile(atPath: (path.path), contents: jsonStringNIDEvents, attributes: nil)
                 
