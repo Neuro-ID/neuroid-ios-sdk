@@ -586,17 +586,25 @@ private extension NeuroIDTracker {
 
             // If Text Input event, also capture KEYDOWN and TEXTCHANGE
             if (eventType == NIDEventName.input) {
+                let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
+                
                 // Keydown
                 let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
-                captureEvent(event: NIDEvent(type: NIDEventName.keyDown, tg: keydownTG))
+                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
+                keyDownEvent.v = lengthValue
+                captureEvent(event: keyDownEvent)
                 
                 // Text Change
                 let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
-                captureEvent(event: NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd))
+                var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                textChangeEvent.v = lengthValue
+                captureEvent(event:  textChangeEvent)
                 
                 // Input
                 let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
-                captureEvent(event: NIDEvent(type: NIDEventName.input, tg: inputTG))
+                var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
+                inputEvent.v = lengthValue
+                captureEvent(event: inputEvent)
             }
             
             detectPasting(view: textControl, text: textControl.text ?? "")
@@ -605,8 +613,11 @@ private extension NeuroIDTracker {
             if #available(iOS 12.0, *) {
                 if textControl.textContentType == .newPassword { return }
             }
+            let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextView")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg))
+            var uitextviewEvent = NIDEvent(type: eventType, tg: tg);
+            uitextviewEvent.v = lengthValue
+            captureEvent(event: uitextviewEvent)
             detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UISearchBar {
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar")
