@@ -84,7 +84,9 @@ public struct DataStore {
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
             return parsedEvents
         } catch {
-            print("No events..(or bad JSON event)")
+            if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+                print("No events..(or bad JSON event)")
+            }
             DataStore.removeSentEvents()
         }
         return []

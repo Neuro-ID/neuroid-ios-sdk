@@ -576,6 +576,7 @@ private extension NeuroIDTracker {
         ET - human readable tag
      */
     func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
+        
         if let textControl = notification.object as? UITextField {
             let inputType = "text"
             // isSecureText
@@ -605,19 +606,52 @@ private extension NeuroIDTracker {
                 var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
                 inputEvent.v = lengthValue
                 captureEvent(event: inputEvent)
+            } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
+                // Focus / Blur
+                let focusBlurEvent = NIDEvent(type: eventType, tg: [
+                    "tgs": TargetValue.string(textControl.id),
+                ])
+                captureEvent(event: focusBlurEvent)
             }
             
             detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UITextView {
+            let inputType = "text"
+            // isSecureText
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
                 if textControl.textContentType == .newPassword { return }
             }
-            let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
-            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextView")
-            var uitextviewEvent = NIDEvent(type: eventType, tg: tg);
-            uitextviewEvent.v = lengthValue
-            captureEvent(event: uitextviewEvent)
+
+            // If Text Input event, also capture KEYDOWN and TEXTCHANGE
+            if (eventType == NIDEventName.input) {
+                let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
+                
+                // Keydown
+                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
+                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
+                keyDownEvent.v = lengthValue
+                captureEvent(event: keyDownEvent)
+                
+                // Text Change
+                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                textChangeEvent.v = lengthValue
+                captureEvent(event:  textChangeEvent)
+                
+                // Input
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
+                var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
+                inputEvent.v = lengthValue
+                captureEvent(event: inputEvent)
+            } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
+                // Focus / Blur
+                let focusBlurEvent = NIDEvent(type: eventType, tg: [
+                    "tgs": TargetValue.string(textControl.id),
+                ])
+                captureEvent(event: focusBlurEvent)
+            }
+            
             detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UISearchBar {
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar")
@@ -832,7 +866,7 @@ struct ParamsCreator {
         var params: [String: TargetValue] = [:];
         
         switch eventName {
-        case NIDEventName.focus, NIDEventName.blur, NIDEventName.input, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange:
+        case  NIDEventName.input,NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange:
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
