@@ -15,6 +15,14 @@ public struct DataStore {
         if (NeuroID.isStopped()){
             return;
         }
+        
+        // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
+        if let eventURL = event.url {
+            if (eventURL.contains("RNScreensNavigationController")) {
+                return
+            }
+        }
+        
         DispatchQueue.global(qos:.utility).async {
             if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
                 print("DEBUG JSON IS SET, writing to Desktop")
@@ -84,7 +92,9 @@ public struct DataStore {
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as? Data ?? Data())
             return parsedEvents
         } catch {
-            print("No events..(or bad JSON event)")
+            if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+                print("No events..(or bad JSON event)")
+            }
             DataStore.removeSentEvents()
         }
         return []

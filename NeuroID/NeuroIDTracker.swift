@@ -49,6 +49,12 @@ public struct NeuroID {
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
         
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            let filemgr = FileManager.default
+            let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
+            print("DEBUG PATH \(path.absoluteString)");
+        }
+        
         #if DEBUG
         if NSClassFromString("XCTest") == nil {
             initTimer()
@@ -127,7 +133,7 @@ public struct NeuroID {
     }
     private static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
-        self.send()
+//        self.send()
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
             self.send()
             self.initTimer()
@@ -216,10 +222,7 @@ public struct NeuroID {
         var params = ParamsCreator.getDefaultSessionParams()
         
         params["events"] = base64Events
-        // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
-        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
-            saveDebugJSON(events: jsonEvents)
-        }
+        
         params["url"] = screen
         
         // Unwrap all optionals and convert to null if empty
@@ -230,6 +233,14 @@ public struct NeuroID {
         }
         
         let dataString = unwrappedParams.toKeyValueString();
+        
+        // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
+        if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
+            saveDebugJSON(events: "******************** New POST to NID Collector")
+            saveDebugJSON(events: dataString)
+            saveDebugJSON(events: jsonEvents)
+            saveDebugJSON(events: "******************** END")
+        }
         
         
         guard let data = dataString.data(using: .utf8) else { return }
@@ -315,13 +326,11 @@ public struct NeuroID {
      Save the params being sent to POST to collector endpoint to a local file
      */
     private static func saveDebugJSON(events: String){
-        print("DEBUG JSON IS SET, writing to Desktop")
         let jsonStringNIDEvents = "\(events)".data(using: .utf8)!
         do {
 
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
-            print("DEBUG PATH \(path.absoluteString)");
             if !filemgr.fileExists(atPath: (path.path)) {
                 filemgr.createFile(atPath: (path.path), contents: jsonStringNIDEvents, attributes: nil)
                 
@@ -567,32 +576,92 @@ private extension NeuroIDTracker {
         ET - human readable tag
      */
     func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
+        
         if let textControl = notification.object as? UITextField {
+            let inputType = "text"
+            // isSecureText
+            if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
+            if #available(iOS 12.0, *) {
+                if textControl.textContentType == .newPassword { return }
+            }
+            
+            let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
+            if (eventType == NIDEventName.input) {
+                
+//                // Keydown
+//                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
+//                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
+//                keyDownEvent.v = lengthValue
+//                captureEvent(event: keyDownEvent)
+                
+                // Input
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
+                var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
+                inputEvent.v = lengthValue
+                captureEvent(event: inputEvent)
+            } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
+                // Focus / Blur
+                let focusBlurEvent = NIDEvent(type: eventType, tg: [
+                    "tgs": TargetValue.string(textControl.id),
+                ])
+                captureEvent(event: focusBlurEvent)
+                
+                // If this is a blur event, that means we have a text change event
+                if (eventType == NIDEventName.blur) {
+                    // Text Change
+                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                    var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                    textChangeEvent.v = lengthValue
+                    captureEvent(event:  textChangeEvent)
+                }
+            }
+            
+            detectPasting(view: textControl, text: textControl.text ?? "")
+        } else if let textControl = notification.object as? UITextView {
+            let inputType = "text"
             // isSecureText
             if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
             if #available(iOS 12.0, *) {
                 if textControl.textContentType == .newPassword { return }
             }
 
-            // If Text Input event, also capture KEYDOWN and TEXTCHANGE
+            let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
             if (eventType == NIDEventName.input) {
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: "UITextField")
+                
                 // Keydown
-                captureEvent(event: NIDEvent(type: NIDEventName.keyDown, tg: inputTG))
+                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
+                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
+                keyDownEvent.v = lengthValue
+                captureEvent(event: keyDownEvent)
+                
                 // Text Change
-                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: "UITextField")
-                captureEvent(event: NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd))
+                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                textChangeEvent.v = lengthValue
+                captureEvent(event:  textChangeEvent)
+                
+                // Input
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
+                var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
+                inputEvent.v = lengthValue
+                captureEvent(event: inputEvent)
+            } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
+                // Focus / Blur
+                let focusBlurEvent = NIDEvent(type: eventType, tg: [
+                    "tgs": TargetValue.string(textControl.id),
+                ])
+                captureEvent(event: focusBlurEvent)
+                
+                // If this is a blur event, that means we have a text change event
+                if (eventType == NIDEventName.blur) {
+                    // Text Change
+                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                    var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                    textChangeEvent.v = lengthValue
+                    captureEvent(event:  textChangeEvent)
+                }
             }
-            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextField")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg))
-            detectPasting(view: textControl, text: textControl.text ?? "")
-        } else if let textControl = notification.object as? UITextView {
-            if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
-            if #available(iOS 12.0, *) {
-                if textControl.textContentType == .newPassword { return }
-            }
-            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UITextView")
-            captureEvent(event: NIDEvent(type: eventType, tg: tg))
+            
             detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UISearchBar {
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar")
@@ -735,13 +804,21 @@ private extension NeuroIDTracker {
     private func observeAppEvents() {
         if #available(iOS 13.0, *) {
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIScene.willDeactivateNotification, object: nil)
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIScene.willEnterForegroundNotification, object: nil)
         } else {
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         }
     }
 
     @objc func appMovedToBackground() {
-        captureEvent(event: NIDEvent(type: NIDEventName.userInactive, tg: nil, view: nil))
+        captureEvent(event: NIDEvent(type: NIDEventName.windowBlur))
+    }
+   
+    @objc func appMovedToForeground() {
+        captureEvent(event: NIDEvent(type: NIDEventName.windowFocus))
     }
 }
 
@@ -807,16 +884,10 @@ struct ParamsCreator {
         var params: [String: TargetValue] = [:];
         
         switch eventName {
-        case NIDEventName.focus:
+        case  NIDEventName.input,NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange:
             params = [
                 "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
-            ]
-        case NIDEventName.blur:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
+                "etn": TargetValue.string(view.id),
                 "et": TargetValue.string(type)
             ]
             // TODO
@@ -824,24 +895,6 @@ struct ParamsCreator {
         case NIDEventName.keyDown:
             params = [
                 "tgs": TargetValue.string(view.id),
-            ]
-        case NIDEventName.textChange:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
-            ]
-        case NIDEventName.checkboxChange:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
-            ]
-        case NIDEventName.radioChange:
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(type),
-                "et": TargetValue.string(type)
             ]
         default:
             print("Invalid type")
@@ -925,6 +978,7 @@ struct ParamsCreator {
     // If user idles for > 30 min
     static func getSessionID() -> String {
         let sidName =  "nid_sid"
+        let sidExpires = "nid_sid_expires"
         let defaults = UserDefaults.standard
         let sid = defaults.string(forKey: sidName)
         
@@ -1127,7 +1181,8 @@ private func registerSingleView(v: Any, screenName: String){
     case is UIDatePicker:
         print("Date picker")
     default:
-        print("Unknown type", v)
+        return
+//        print("Unknown type", v)
     }
         // Text
         // Inputs
@@ -1252,6 +1307,16 @@ private extension UIViewController {
         self.neuroIDViewWillAppear(animated: animated)
         captureEvent(eventName: .windowFocus)
         
+        if (NeuroID.isStopped() || UIApplication.shared.applicationState == .background ){
+            return
+        }
+        self.neuroIDViewDidLoad()
+        captureEvent(eventName: .windowLoad)
+        var subViews = self.view.subviews
+        var allViewControllers = self.children
+        allViewControllers.append(self)
+        registerSubViewsTargets(subViewControllers: allViewControllers)
+        
     }
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
@@ -1272,11 +1337,11 @@ private extension UIViewController {
             return
         }
         self.neuroIDViewDidLoad()
-        captureEvent(eventName: .windowLoad)
-        var subViews = self.view.subviews
-        var allViewControllers = self.children
-        allViewControllers.append(self)
-        registerSubViewsTargets(subViewControllers: allViewControllers)
+//        captureEvent(eventName: .windowLoad)
+//        var subViews = self.view.subviews
+//        var allViewControllers = self.children
+//        allViewControllers.append(self)
+//        registerSubViewsTargets(subViewControllers: allViewControllers)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
