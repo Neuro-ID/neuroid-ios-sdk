@@ -44,8 +44,14 @@ public struct NeuroID {
     public static func clearSession(){
         UserDefaults.standard.set(nil, forKey: "nid_sid")
     }
+    
+    public static func getSessionID() -> String? {
+        return UserDefaults.standard.string(forKey: "nid_sid")
+    }
+    
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(){
+        clearSession()
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
         
