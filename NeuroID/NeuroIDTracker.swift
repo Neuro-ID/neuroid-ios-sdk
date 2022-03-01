@@ -41,6 +41,15 @@ public struct NeuroID {
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
     
+    public static func setScreenName(screen: String) {
+        UserDefaults.standard.set(nil, forKey: "nid_screen")
+    }
+    
+    public static func getScreenName() -> String? {
+        let savedScreenName = UserDefaults.standard.string(forKey: "nid_screen")
+        return savedScreenName
+    }
+    
     public static func clearSession(){
         UserDefaults.standard.set(nil, forKey: "nid_sid")
     }
@@ -122,6 +131,7 @@ public struct NeuroID {
     
     public static func getBaseURL() -> String {
         return "https://api.neuro-id.com"
+//      return "http://localhost:9090"
 //      return "https://api.usw2-dev1.nidops.net";
     }
     
@@ -129,7 +139,6 @@ public struct NeuroID {
         let keyName = "nid_key";
         let defaults = UserDefaults.standard
         let key = defaults.string(forKey: keyName);
-        
         return key ?? ""
     }
     
@@ -164,33 +173,52 @@ public struct NeuroID {
             return
         }
         let dataStoreEvents = DataStore.getAllEvents()
+        let backupCopy = dataStoreEvents
+        // Clean event queue immediately after fetching
+        DataStore.removeSentEvents()
         if dataStoreEvents.isEmpty { return }
         // Group by screen, and send to API
-        let groupedEvents = Dictionary(grouping: dataStoreEvents, by: { (element: NIDEvent) in
-            return element.url
-        })
-        
-        for key in groupedEvents.keys {
-            var oldEvents = groupedEvents[key]
-            
-            // Since we are seriazling this object, we need to remove any values we don't want to send in the event object to the API. This is sort of a not pretty hack
-            var newEvents = oldEvents.map { (value: [NIDEvent]) -> [NIDEvent] in
-                let result = value.map { NIDEvent -> NIDEvent in
-                    var newEvent = NIDEvent
-                    newEvent.url = nil
-                    return newEvent
-                }
-                return result
-            }
-            post(events: newEvents ?? [], screen: key ?? "", onSuccess: { _ in
-                logInfo(category: "APICall", content: "Sending successfully")
-                    // send success -> delete
-                }, onFailure: { error in
-                    logError(category: "APICall", content: String(describing: error))
-                })
+//        let groupedEvents = Dictionary(grouping: dataStoreEvents, by: { (element: NIDEvent) in
+//            return element.url
+//        })
+//
+        /** Just send all the evnets*/
+        let cleanEvents = dataStoreEvents.map { (nidevent) -> NIDEvent in
+            var newEvent = nidevent
+            newEvent.url = nil
+            return newEvent
         }
+        
+        post(events: cleanEvents , screen: (self.getScreenName() ?? backupCopy[0].url) ?? "unnamed_screen", onSuccess: { _ in
+            logInfo(category: "APICall", content: "Sending successfully")
+                // send success -> delete
+                
+            }, onFailure: { error in
+                logError(category: "APICall", content: String(describing: error))
+//                DataStore.events = backupCopy
+            })
+        
+//        for key in groupedEvents.keys {
+//            var oldEvents = groupedEvents[key]
+//
+//            // Since we are seriazling this object, we need to remove any values we don't want to send in the event object to the API. This is sort of a not pretty hack
+//            var newEvents = oldEvents.map { (value: [NIDEvent]) -> [NIDEvent] in
+//                let result = value.map { NIDEvent -> NIDEvent in
+//                    var newEvent = NIDEvent
+//                    newEvent.url = nil
+//                    return newEvent
+//                }
+//                return result
+//            }
+//            post(events: newEvents ?? [], screen: key ?? "", onSuccess: { _ in
+//                logInfo(category: "APICall", content: "Sending successfully")
+//                    // send success -> delete
+//                }, onFailure: { error in
+//                    logError(category: "APICall", content: String(describing: error))
+//                })
+//        }
         // TODO, add more sophisticated removal of events (in case of failure)
-        DataStore.removeSentEvents()
+        
     }
     
     /// Direct send to API to create session
@@ -223,10 +251,11 @@ public struct NeuroID {
         let jsonEvents:String = String(data: jsonData,
                                        encoding: .utf8) ?? ""
         
+        let testEncoding = jsonData.base64EncodedString(options: [])
         let base64Events: String = Data(jsonEvents.utf8).base64EncodedString()
         
         var params = ParamsCreator.getDefaultSessionParams()
-        
+        var cleanedEventNoSpaces = base64Events.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         params["events"] = base64Events
         
         params["url"] = screen
@@ -238,8 +267,9 @@ public struct NeuroID {
             unwrappedParams[key] = newValue
         }
         
-        let dataString = unwrappedParams.toKeyValueString();
-        
+        let _dataString = unwrappedParams.toKeyValueString();
+        let dataString = _dataString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed)?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+
         // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             saveDebugJSON(events: "******************** New POST to NID Collector")
@@ -323,9 +353,7 @@ public struct NeuroID {
     }
 
     static func saveEventToLocalDataStore(_ event: NIDEvent) {
-        DispatchQueue.global(qos: .userInitiated).async {
             DataStore.insertEvent(screen: event.type, event: event)
-        }
     }
     
     /**
@@ -486,6 +514,8 @@ private extension NeuroIDTracker {
     }
 
     func createSession(screen: String) -> NIDEvent {
+        // Since we are creating a new session, clear any existing session ID
+        NeuroID.clearSession()
         // TODO, return session if already exists
         let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
@@ -1527,3 +1557,4 @@ extension Optional where Wrapped: Collection {
     return value.isEmpty
   }
 }
+
