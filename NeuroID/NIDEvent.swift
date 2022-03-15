@@ -76,10 +76,14 @@ public enum NIDEventName: String {
     }
 }
 
+public struct Attr: Codable, Equatable {
+    var n:String?
+    var v:String?
+}
 
 public enum TargetValue: Codable,Equatable {
     
-    case int(Int), string(String), bool(Bool), double(Double)
+    case int(Int), string(String), bool(Bool), double(Double), attr([Attr])
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -89,6 +93,8 @@ public enum TargetValue: Codable,Equatable {
             case .string(let value): try container.encode(value)
             case .bool(let value): try container.encode(value)
             case .double(let value): try container.encode(value)
+            case .attr(let value): try container.encode(value)
+
         }
     }
     
@@ -110,6 +116,11 @@ public enum TargetValue: Codable,Equatable {
         
         if let bool = try? decoder.singleValueContainer().decode(Bool.self) {
             self = .bool(bool)
+            return
+        }
+        
+        if let attr = try? decoder.singleValueContainer().decode(Attr.self) {
+            self = .attr([attr])
             return
         }
         
@@ -135,6 +146,7 @@ public struct NIDEvent: Codable {
     var en: String?
     var etn: String? // Tag name (input)
     var et: String? // Element Type (text)
+    var ec: String? // This is the currentl "URL" (or View) we are on
     var eid: String?
     var ts:Int64 = ParamsCreator.getTimeStamp()
     var x: CGFloat?
@@ -249,23 +261,25 @@ public struct NIDEvent: Codable {
         self.ns = ns
         self.jsv = jsv
     }
+    
     /** Register Target
    {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
      ET - Submit, Blank, Hidden
      
  */
 
-    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, v: String, url: String) {
+    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, url: String) {
         self.type = eventName.rawValue
         self.tgs = tgs;
         self.en = en;
         self.eid = tgs;
-        var ec = "";
+        self.ec = ec;
         self.etn = etn;
         self.et = et;
         var ef:Any = Optional<String>.none;
         self.v = v;
         self.url = url;
+        
     }
     
     /**
@@ -355,6 +369,7 @@ public struct NIDEvent: Codable {
     public init(type: NIDEventName, screenName: String){
         self.url = screenName
         self.type = type.rawValue
+        self.ts = ParamsCreator.getTimeStamp()
     }
     
     public init(type: NIDEventName, tg: [String: TargetValue]?) {
@@ -366,10 +381,12 @@ public struct NIDEvent: Codable {
         self.type = type.rawValue
         var newTg = tg ?? [String: TargetValue]()
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
         self.url = view?.className
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
+        self.ts = ParamsCreator.getTimeStamp()
     }
 
 //    public init(customEvent: String, tg: [String: TargetValue]?, view: UIView?) {
