@@ -12,16 +12,16 @@ public struct NeuroID {
     fileprivate static var userId: String?
     private static let SEND_INTERVAL: Double = 5
     fileprivate static var trackers = [String: NeuroIDTracker]()
-    fileprivate static var secrectViews = [UIView]()
-    fileprivate static var excludedViewsTestIDs = [String]()
+    fileprivate static var secretViews = [UIView]()
     fileprivate static let showDebugLog = false
+    static var excludedViewsTestIDs = [String]()
     static var currentScreenName: String?
     
-    // InputID, currentVal, newVal
     fileprivate static let localStorageNIDStopAll = "nid_stop_all"
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
+    public static var activeView: UIView?
     
 
     // MARK: - Setup
@@ -43,8 +43,9 @@ public struct NeuroID {
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
     
-    public static func excludeViewByTestID(newViews: String...) {
-        NeuroID.excludedViewsTestIDs = [newViews, NeuroID.excludedViewsTestIDs].flatMap { $0 }
+    public static func excludeViewByTestID(excludedView: String) {
+        print("Exclude view called - \(excludedView)")
+        NeuroID.excludedViewsTestIDs.append(excludedView)
     }
     
     public static func setScreenName(screen: String) {
@@ -474,7 +475,7 @@ public extension NeuroIDTracker {
 
     func excludeViews(views: UIView...) {
         for v in views {
-            NeuroID.secrectViews.append(v)
+            NeuroID.secretViews.append(v)
         }
     }
 
@@ -647,6 +648,7 @@ private extension NeuroIDTracker {
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
+                print("Control \(textControl.id)")
                 let focusBlurEvent = NIDEvent(type: eventType, tg: [
                     "tgs": TargetValue.string(textControl.id),
                 ])
@@ -798,6 +800,7 @@ private extension NeuroIDTracker {
     }
 
     @objc func controlTouchStart(sender: UIView) {
+        NeuroID.activeView = sender
         touchEvent(sender: sender, eventName: .touchStart)
     }
 
@@ -810,12 +813,12 @@ private extension NeuroIDTracker {
     }
 
     func touchEvent(sender: UIView, eventName: NIDEventName) {
-        if NeuroID.secrectViews.contains(sender) { return }
+        if NeuroID.secretViews.contains(sender) { return }
         let tg = ParamsCreator.getTgParams(
             view: sender,
             extraParams: ["sender": TargetValue.string(sender.className)])
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
+        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
     }
 }
 
@@ -874,8 +877,8 @@ private extension NeuroIDTracker {
         NotificationCenter.default.addObserver(self, selector: #selector(contentCopied), name: UIPasteboard.changedNotification, object: nil)
     }
 
-    @objc func contentCopied() {
-        captureEvent(event: NIDEvent(type: NIDEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: nil))
+    @objc func contentCopied(notification: Notification) {
+        captureEvent(event: NIDEvent(type: NIDEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: NeuroID.activeView))
     }
 }
 

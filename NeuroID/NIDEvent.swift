@@ -98,6 +98,21 @@ public enum TargetValue: Codable,Equatable {
         }
     }
     
+    public func toString()-> String{
+        switch self {
+        case .int(let int):
+            return String(int)
+        case .string(let string):
+            return string
+        case .bool(let bool):
+            return String(bool)
+        case .double(let double):
+            return String(double)
+        case .attr(let array):
+            return String(describing: array)
+        }
+    }
+    
     public init(from decoder: Decoder) throws {
         if let int = try? decoder.singleValueContainer().decode(Int.self) {
             self = .int(int)
