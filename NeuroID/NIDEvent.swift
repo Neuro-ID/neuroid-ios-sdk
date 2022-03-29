@@ -381,8 +381,8 @@ public struct NIDEvent: Codable {
      LOAD
      */
     
-    public init(type: NIDEventName, screenName: String){
-        self.url = screenName
+    public init(type: NIDEventName, view: UIView){
+        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
         self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
     }
@@ -398,7 +398,7 @@ public struct NIDEvent: Codable {
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
-        self.url = view?.className
+        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
