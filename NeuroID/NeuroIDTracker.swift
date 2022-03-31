@@ -609,9 +609,9 @@ private extension NeuroIDTracker {
             if let textControl = notification.object as? UITextField {
                 
                 // TODO Paste detection
-                if (UIPasteboard.general.string == textControl.text) {
-                   
-                }
+//                if (UIPasteboard.general.string == textControl.text) {
+//
+//                }
                 let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
                  similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
@@ -619,9 +619,9 @@ private extension NeuroIDTracker {
             } else if let textControl = notification.object as? UITextView {
                 let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
                 // TODO Finish Paste detection
-                if (UIPasteboard.general.string == textControl.text) {
-                   
-                }
+//                if (UIPasteboard.general.string == textControl.text) {
+//
+//                }
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
                  similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
                  percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")

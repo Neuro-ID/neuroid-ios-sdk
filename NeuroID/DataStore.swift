@@ -26,7 +26,9 @@ public struct DataStore {
                 return
             }
         }
-        events.append(event)
+        DispatchQueue.global(qos: .utility).sync {
+            DataStore.events.append(event)
+        }
     }
     
     static func getAllEvents() ->  [NIDEvent]{
