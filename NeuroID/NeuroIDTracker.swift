@@ -137,8 +137,8 @@ public struct NeuroID {
     }
     
     public static func getBaseURL() -> String {
-//      return "https://api.neuro-id.com"
-      return "https://rc.api.usw2-prod1.nidops.net"
+        return "https://api.neuro-id.com"
+//      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:9090"
 //      return "https://nidmobile.ngrok.io"
 //      return "https://api.usw2-dev1.nidops.net";
