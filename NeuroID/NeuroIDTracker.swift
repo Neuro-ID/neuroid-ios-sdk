@@ -977,7 +977,6 @@ struct ParamsCreator {
                 "et": TargetValue.string(type),
                 "attr": TargetValue.attr(attrArraryVal)
             ]
-            print("val\(params)")
             
         case NIDEventName.keyDown:
             params = [
