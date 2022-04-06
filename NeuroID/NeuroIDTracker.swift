@@ -676,7 +676,6 @@ private extension NeuroIDTracker {
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
-                print("Control \(textControl.id)")
                 let focusBlurEvent = NIDEvent(type: eventType, tg: [
                     "tgs": TargetValue.string(textControl.id),
                 ])
@@ -1247,7 +1246,6 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
     let screenName = NeuroID.getScreenName() ?? screenName
     let currView = v as? UIView
     let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: currView, screenName: screenName)
-    print("View \(fullViewString)")
     switch v {
     case is UITextField:
         let tfView = v as! UITextField
@@ -1293,7 +1291,6 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
 private func registerSubViewsTargets(subViewControllers: [UIViewController]){
     for ctrls in subViewControllers {
         let screenName = ctrls.className
-        print(ctrls.neuroScreenName)
         guard let view = ctrls.view else {
             return
         }
