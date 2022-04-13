@@ -152,7 +152,7 @@ public struct EventCache: Codable {
     
 }
 
-public struct NIDEvent: Codable {
+public struct NIDEvent: Codable, Equatable {
     public let type: String
     var tg: [String: TargetValue]? = nil
     var tgs: String?
