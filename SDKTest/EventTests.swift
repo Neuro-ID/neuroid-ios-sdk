@@ -208,4 +208,9 @@ class EventTests: XCTestCase {
         print("Percentdiff \(percentDiff)")
         
     }
+    
+    func testExcludeByStringID(){
+        NeuroID.excludeViewByTestID(excludedView: "DontTrackMeID")
+        assert(NeuroID.excludedViewsTestIDs.contains(where: { $0 == "DontTrackMeID"}))
+    }
 }

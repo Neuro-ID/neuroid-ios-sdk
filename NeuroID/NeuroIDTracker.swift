@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import os
 import WebKit
+import CommonCrypto
 
 public struct NeuroID {
     
@@ -12,14 +13,16 @@ public struct NeuroID {
     fileprivate static var userId: String?
     private static let SEND_INTERVAL: Double = 5
     fileprivate static var trackers = [String: NeuroIDTracker]()
-    fileprivate static var secrectViews = [UIView]()
+    fileprivate static var secretViews = [UIView]()
     fileprivate static let showDebugLog = false
+    static var excludedViewsTestIDs = [String]()
+    static var currentScreenName: String?
     
-    // InputID, currentVal, newVal
     fileprivate static let localStorageNIDStopAll = "nid_stop_all"
 
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
+    public static var activeView: UIView?
     
 
     // MARK: - Setup
@@ -41,13 +44,17 @@ public struct NeuroID {
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
     
+    public static func excludeViewByTestID(excludedView: String) {
+        print("Exclude view called - \(excludedView)")
+        NeuroID.excludedViewsTestIDs.append(excludedView)
+    }
+    
     public static func setScreenName(screen: String) {
-        UserDefaults.standard.set(nil, forKey: "nid_screen")
+        currentScreenName = screen
     }
     
     public static func getScreenName() -> String? {
-        let savedScreenName = UserDefaults.standard.string(forKey: "nid_screen")
-        return savedScreenName
+        return currentScreenName
     }
     
     public static func clearSession(){
@@ -131,7 +138,9 @@ public struct NeuroID {
     
     public static func getBaseURL() -> String {
         return "https://api.neuro-id.com"
+//      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:9090"
+//      return "https://nidmobile.ngrok.io"
 //      return "https://api.usw2-dev1.nidops.net";
     }
     
@@ -185,7 +194,9 @@ public struct NeuroID {
         /** Just send all the evnets*/
         let cleanEvents = dataStoreEvents.map { (nidevent) -> NIDEvent in
             var newEvent = nidevent
-            newEvent.url = nil
+            if (nidevent.type != NIDEventName.registerTarget.rawValue) {
+                newEvent.url = nil
+            }
             return newEvent
         }
         
@@ -413,7 +424,7 @@ public class NeuroIDTracker: NSObject {
         }
         className = controller?.className
     }
-
+    
     public func captureEvent(event: NIDEvent) {
         if (NeuroID.isStopped()){
             return
@@ -430,18 +441,35 @@ public class NeuroIDTracker: NSObject {
     func getCurrentSession() -> String? {
         return UserDefaults.standard.string(forKey: "nid_sid")
     }
+    
+    public static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String{
+        if (currView == nil) {
+            return screenName
+        }
+        let parentView = currView!.superview?.className
+        let grandParentView = currView!.superview?.superview?.className
+        var fullViewString = ""
+        if (grandParentView != nil){
+            fullViewString += "\(grandParentView ?? "")\\"
+            fullViewString += "\(parentView ?? "")\\"
+        } else if (parentView != nil) {
+            fullViewString = "\(parentView ?? "")\\"
+        }
+        fullViewString += screenName
+        return fullViewString
+    }
 }
 
 // MARK: - Custom events
 public extension NeuroIDTracker {
     func captureEventCheckBoxChange(isChecked: Bool, checkBox: UIView) {
-        let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.checkboxChange, view: checkBox, type: "UIView")
+        let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.checkboxChange, view: checkBox, type: "UIView", attrParams: nil)
         let event = NIDEvent(type: .checkboxChange, tg: tg, v: String(isChecked))
         captureEvent(event: event)
     }
 
     func captureEventRadioChange(isChecked: Bool, radioButton: UIView) {
-        let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.radioChange, view: radioButton, type: "UIView")
+        let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.radioChange, view: radioButton, type: "UIView", attrParams: nil)
         captureEvent(event: NIDEvent(type: .radioChange, tg: tg, v: String(isChecked)))
     }
 
@@ -465,9 +493,10 @@ public extension NeuroIDTracker {
 
     func excludeViews(views: UIView...) {
         for v in views {
-            NeuroID.secrectViews.append(v)
+            NeuroID.secretViews.append(v)
         }
     }
+
 }
 
 // MARK: - Private functions
@@ -570,19 +599,29 @@ private extension NeuroIDTracker {
         }
         logTextEvent(from: notification, eventType: .focus)
     }
-
+    
+    
     @objc func textChange(notification: Notification) {
         
         DispatchQueue.global(qos:.utility).async {
             var similarity:Double = 0;
             var percentDiff:Double = 0;
             if let textControl = notification.object as? UITextField {
+                
+                // TODO Paste detection
+//                if (UIPasteboard.general.string == textControl.text) {
+//
+//                }
                 let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
                  similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
                  percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
             } else if let textControl = notification.object as? UITextView {
                 let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
+                // TODO Finish Paste detection
+//                if (UIPasteboard.general.string == textControl.text) {
+//
+//                }
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
                  similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
                  percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
@@ -631,9 +670,9 @@ private extension NeuroIDTracker {
 //                captureEvent(event: keyDownEvent)
                 
                 // Input
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                 var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
-                inputEvent.v = lengthValue
+//                inputEvent.v = lengthValue
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
@@ -645,7 +684,7 @@ private extension NeuroIDTracker {
                 // If this is a blur event, that means we have a text change event
                 if (eventType == NIDEventName.blur) {
                     // Text Change
-                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
                     captureEvent(event:  textChangeEvent)
@@ -665,19 +704,19 @@ private extension NeuroIDTracker {
             if (eventType == NIDEventName.input) {
                 
                 // Keydown
-                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
+                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                 var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
                 keyDownEvent.v = lengthValue
                 captureEvent(event: keyDownEvent)
                 
                 // Text Change
-                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
                 var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                 textChangeEvent.v = lengthValue
                 captureEvent(event:  textChangeEvent)
                 
                 // Input
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType)
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: nil)
                 var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
                 inputEvent.v = lengthValue
                 captureEvent(event: inputEvent)
@@ -691,7 +730,7 @@ private extension NeuroIDTracker {
                 // If this is a blur event, that means we have a text change event
                 if (eventType == NIDEventName.blur) {
                     // Text Change
-                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType)
+                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
                     captureEvent(event:  textChangeEvent)
@@ -700,7 +739,7 @@ private extension NeuroIDTracker {
             
             detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UISearchBar {
-            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar")
+            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar", attrParams: nil)
             captureEvent(event: NIDEvent(type: eventType, tg: tg))
             detectPasting(view: textControl, text: textControl.text ?? "")
         }
@@ -788,6 +827,7 @@ private extension NeuroIDTracker {
     }
 
     @objc func controlTouchStart(sender: UIView) {
+        NeuroID.activeView = sender
         touchEvent(sender: sender, eventName: .touchStart)
     }
 
@@ -800,12 +840,12 @@ private extension NeuroIDTracker {
     }
 
     func touchEvent(sender: UIView, eventName: NIDEventName) {
-        if NeuroID.secrectViews.contains(sender) { return }
+        if NeuroID.secretViews.contains(sender) { return }
         let tg = ParamsCreator.getTgParams(
             view: sender,
             extraParams: ["sender": TargetValue.string(sender.className)])
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
+        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
     }
 }
 
@@ -864,8 +904,8 @@ private extension NeuroIDTracker {
         NotificationCenter.default.addObserver(self, selector: #selector(contentCopied), name: UIPasteboard.changedNotification, object: nil)
     }
 
-    @objc func contentCopied() {
-        captureEvent(event: NIDEvent(type: NIDEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: nil))
+    @objc func contentCopied(notification: Notification) {
+        captureEvent(event: NIDEvent(type: NIDEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: NeuroID.activeView))
     }
 }
 
@@ -883,8 +923,8 @@ private extension NeuroIDTracker {
             orientation = "Portrait"
         }
 
-        captureEvent(event: NIDEvent(type: NIDEventName.windowOrientationChange, tg: ["orientation": TargetValue.string(orientation)], view: nil))
-        captureEvent(event: NIDEvent(type: NIDEventName.deviceOrientation, tg: ["orientation": TargetValue.string(orientation)], view: nil))
+//        captureEvent(event: NIDEvent(type: NIDEventName.windowOrientationChange, tg: ["orientation": TargetValue.string(orientation)], view: nil))
+//        captureEvent(event: NIDEvent(type: NIDEventName.deviceOrientation, tg: ["orientation": TargetValue.string(orientation)], view: nil))
     }
 }
 
@@ -916,18 +956,27 @@ struct ParamsCreator {
         return params
     }
     
-    static func getTGParamsForInput(eventName: NIDEventName, view: UIView, type: String, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
+    static func getTGParamsForInput(eventName: NIDEventName, view: UIView, type: String, extraParams: [String: TargetValue] = [:], attrParams: [String: Any]?) -> [String: TargetValue] {
         var params: [String: TargetValue] = [:];
         
         switch eventName {
-        case  NIDEventName.input,NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange:
+        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange, NIDEventName.input:
+            
+//            var attrParams:Attr;
+            var inputValue = attrParams?["v"] as? String ?? "S~C~~"
+            var attrVal = Attr.init(n: "v", v: inputValue)
+            
+            var textValue = attrParams?["hash"] as? String ?? ""
+            var hashValue = Attr.init(n: "hash", v: textValue.sha256().prefix(8).string)
+            var attrArraryVal:[Attr] = [attrVal, hashValue]
+            
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
-                "et": TargetValue.string(type)
+                "et": TargetValue.string(type),
+                "attr": TargetValue.attr(attrArraryVal)
             ]
-            // TODO
-            // After a blur happens, save the state of this field, and on a subsequent blur compute the text change value
+            
         case NIDEventName.keyDown:
             params = [
                 "tgs": TargetValue.string(view.id),
@@ -1193,17 +1242,30 @@ extension UIView {
 
 }
 
-private func registerSingleView(v: Any, screenName: String){
+private func registerSingleView(v: Any, screenName: String, guid: String){
+    let screenName = NeuroID.getScreenName() ?? screenName
+    let currView = v as? UIView
+    let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: currView, screenName: screenName)
     switch v {
     case is UITextField:
         let tfView = v as! UITextField
-        NeuroID.saveEventToLocalDataStore(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName))
+
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
+        var attrVal = Attr.init(n: "guid", v: guid)
+        nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
+        NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UITextView:
         let tv = v as! UITextView
-        NeuroID.saveEventToLocalDataStore(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName))
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
+        var attrVal = Attr.init(n: "guid", v: guid)
+        nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
+        NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UIButton:
         let tb = v as! UIButton
-        NeuroID.saveEventToLocalDataStore(NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: tb.className, v: "S~C~~0" , url: screenName))
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: tb.className, ec: screenName, v: "S~C~~0" , url: screenName)
+        var attrVal = Attr.init(n: "guid", v: guid)
+        nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
+        NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UISlider:
         print("Slider")
     case is UISwitch:
@@ -1225,17 +1287,19 @@ private func registerSingleView(v: Any, screenName: String){
         // Checkbox/Radios inputs
 }
 
+
 private func registerSubViewsTargets(subViewControllers: [UIViewController]){
     for ctrls in subViewControllers {
         let screenName = ctrls.className
-        print(ctrls.neuroScreenName)
         guard let view = ctrls.view else {
             return
         }
-        registerSingleView(v: view, screenName: screenName)
+        let guid = UUID().uuidString
+
+        registerSingleView(v: view, screenName: screenName, guid: guid)
         let childViews = ctrls.view.subviewsRecursive()
         for _view in childViews {
-            registerSingleView(v: _view, screenName: screenName)
+            registerSingleView(v: _view, screenName: screenName, guid: guid)
         }
     }
 }
@@ -1301,7 +1365,7 @@ extension UIViewController {
     public func captureEvent(eventName: NIDEventName, params: [String: TargetValue]? = nil) {
         let event:NIDEvent;
         if (params.isEmptyOrNil) {
-            event = NIDEvent(type: eventName, screenName: neuroScreenName)
+            event = NIDEvent(type: eventName, view: self.view)
         } else {
             event = NIDEvent(type: eventName, tg: params, view: self.view)
         }
@@ -1557,4 +1621,40 @@ extension Optional where Wrapped: Collection {
     return value.isEmpty
   }
 }
+
+
+extension Data{
+    public func sha256() -> String{
+        return hexStringFromData(input: digest(input: self as NSData))
+    }
+    
+    private func digest(input : NSData) -> NSData {
+        let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
+        var hash = [UInt8](repeating: 0, count: digestLength)
+        CC_SHA256(input.bytes, UInt32(input.length), &hash)
+        return NSData(bytes: hash, length: digestLength)
+    }
+    
+    private  func hexStringFromData(input: NSData) -> String {
+        var bytes = [UInt8](repeating: 0, count: input.length)
+        input.getBytes(&bytes, length: input.length)
+        
+        var hexString = ""
+        for byte in bytes {
+            hexString += String(format:"%02x", UInt8(byte))
+        }
+        
+        return hexString
+    }
+}
+
+public extension String {
+    func sha256() -> String{
+        if let stringData = self.data(using: String.Encoding.utf8) {
+            return stringData.sha256()
+        }
+        return ""
+    }
+}
+
 
