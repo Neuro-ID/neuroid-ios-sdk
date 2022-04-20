@@ -6,7 +6,7 @@ s.name = "NeuroID"
 s.summary = "A Swift implementation of a custom UIControl for selecting a range of values on a slider bar."
 s.requires_arc = true
 s.swift_version = '5.0'
-
+s.dependency 'Alamofire'
 s.version = "0.0.1"
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>

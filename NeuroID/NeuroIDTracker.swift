@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import os
 import WebKit
+import Alamofire
 
 public struct NeuroID {
     
@@ -130,8 +131,8 @@ public struct NeuroID {
     }
     
     public static func getBaseURL() -> String {
-        return "https://api.neuro-id.com"
-//      return "http://localhost:9090"
+//        return "https://api.neuro-id.com"
+      return "http://localhost:9090"
 //      return "https://api.usw2-dev1.nidops.net";
     }
     
@@ -278,9 +279,25 @@ public struct NeuroID {
             saveDebugJSON(events: "******************** END")
         }
         
+        let redirector = Redirector(behavior: .doNotFollow)
+        let session = Session(redirectHandler: redirector)
+        
+       
         
         guard let data = dataString.data(using: .utf8) else { return }
-        request.httpBody = data
+        AF.upload(data, to: url, method: .post).responseData { response in
+            switch response.result {
+            case .success:
+                print("HTTP Successful")
+            case let .failure(error):
+                print("HTTP: \(error)")
+            }
+        }
+////        AF.upload(multipartFormData: {(multiFoormData) in
+//            multiFoormData.append(data, withName: "user")}, to: url, method: .post)
+        
+        
+//        request.httpBody = data
         
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
@@ -290,37 +307,37 @@ public struct NeuroID {
             print("*********** END ***************")
         }
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data,
-                  let response = response as? HTTPURLResponse,
-                  error == nil else {
-                NIDPrintLog("error", error ?? "Unknown error")
-//                onFailure(error ?? NSError(message: "Unknown"))
-                return
-            }
-
-            let responseDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            NIDPrintLog(responseDict as Any)
-
-            guard (200 ... 299) ~= response.statusCode else {
-                NIDPrintLog("statusCode: ", response.statusCode)
-                onFailure(error ?? NSError(domain: "unknown", code: response.statusCode, userInfo: nil))
-                return
-            }
-
-            if response.statusCode >= 200 && response.statusCode < 299 {
-                onSuccess("success")
-                return
-            }
-
-            guard let responseObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) else {
-                NIDPrintLog("Can't decode")
-                return
-            }
-            onSuccess(responseObject)
-        }
-
-        task.resume()
+//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//            guard let data = data,
+//                  let response = response as? HTTPURLResponse,
+//                  error == nil else {
+//                NIDPrintLog("error", error ?? "Unknown error")
+////                onFailure(error ?? NSError(message: "Unknown"))
+//                return
+//            }
+//
+//            let responseDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
+//            NIDPrintLog(responseDict as Any)
+//
+//            guard (200 ... 299) ~= response.statusCode else {
+//                NIDPrintLog("statusCode: ", response.statusCode)
+//                onFailure(error ?? NSError(domain: "unknown", code: response.statusCode, userInfo: nil))
+//                return
+//            }
+//
+//            if response.statusCode >= 200 && response.statusCode < 299 {
+//                onSuccess("success")
+//                return
+//            }
+//
+//            guard let responseObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) else {
+//                NIDPrintLog("Can't decode")
+//                return
+//            }
+//            onSuccess(responseObject)
+//        }
+//
+//        task.resume()
     }
 
     public static func setUserID(_ userId: String) {
@@ -1151,7 +1168,7 @@ struct ParamsCreator {
 
     /** Start with primar JS version as TrackJS requires to force correct session structure*/
     static func getSDKVersion() -> String {
-        return "4.-ios-1.0.0"
+        return "4-ios-1.2.1"
     }
     
     static func getCommandQueueNamespace() -> String {
