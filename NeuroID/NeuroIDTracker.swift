@@ -16,8 +16,15 @@ public struct NeuroID {
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secretViews = [UIView]()
     fileprivate static let showDebugLog = false
+    fileprivate static var _currentScreenName: String?
+    
     static var excludedViewsTestIDs = [String]()
-    static var currentScreenName: String?
+    private static let lock = NSLock()
+    
+    private static var currentScreenName: String? {
+        get { lock.withCriticalSection { _currentScreenName } }
+        set { lock.withCriticalSection { _currentScreenName = newValue } }
+    }
     
     fileprivate static let localStorageNIDStopAll = "nid_stop_all"
 
@@ -388,6 +395,7 @@ public class NeuroIDTracker: NSObject {
         self.screen = screen
         if (!NeuroID.isStopped()){
             if(getCurrentSession() == nil){
+                NeuroID.setScreenName(screen: "AppInit")
                 self.createSessionEvent = createSession(screen: screen)
             }
             subscribe(inScreen: controller)

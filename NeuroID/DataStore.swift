@@ -12,28 +12,35 @@ public struct DataStore {
 
     static func insertEvent(screen: String, event: NIDEvent)
     {
+        var mutableEvent = event
+        
         if (NeuroID.isStopped()){
             return;
         }
         
-        if (event.tg?["tgs"] != nil) {
-            if (NeuroID.excludedViewsTestIDs.contains(where: { $0 == event.tg!["tgs"]!.toString() })) {
+        if (!NeuroID.getScreenName().isEmptyOrNil){
+            mutableEvent.url = NeuroID.getScreenName()
+        }
+        // Grab the current set screen and set event URL to this
+        
+        if (mutableEvent.tg?["tgs"] != nil) {
+            if (NeuroID.excludedViewsTestIDs.contains(where: { $0 == mutableEvent.tg!["tgs"]!.toString() })) {
                 return;
             }
         }
         // Ensure this event is not on the exclude list
-        if (NeuroID.excludedViewsTestIDs.contains(where: {$0 == event.tgs || $0 == event.en})) {
+        if (NeuroID.excludedViewsTestIDs.contains(where: {$0 == mutableEvent.tgs || $0 == mutableEvent.en})) {
             return;
         }
                 
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
-        if let eventURL = event.url {
+        if let eventURL = mutableEvent.url {
             if (eventURL.contains("RNScreensNavigationController")) {
                 return
             }
         }
         DispatchQueue.global(qos: .utility).sync {
-            DataStore.events.append(event)
+            DataStore.events.append(mutableEvent)
         }
     }
     
