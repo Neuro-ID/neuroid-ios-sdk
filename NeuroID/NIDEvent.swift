@@ -17,6 +17,7 @@ internal enum NIDSessionEventName: String {
 }
 
 public enum NIDEventName: String {
+    case createSession = "CREATE_SESSION"
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -275,6 +276,7 @@ public struct NIDEvent: Codable {
         self.url = url
         self.ns = ns
         self.jsv = jsv
+        self.jsl = []
     }
     
     /** Register Target

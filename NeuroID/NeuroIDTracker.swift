@@ -202,7 +202,10 @@ public struct NeuroID {
         /** Just send all the evnets*/
         let cleanEvents = dataStoreEvents.map { (nidevent) -> NIDEvent in
             var newEvent = nidevent
-            if (nidevent.type != NIDEventName.registerTarget.rawValue) {
+            // TODO only send url on register target and create session.
+            
+       
+            if (nidevent.type != NIDEventName.registerTarget.rawValue && nidevent.type != "CREATE_SESSION") {
                 newEvent.url = nil
             }
             return newEvent
@@ -235,7 +238,7 @@ public struct NeuroID {
 //                }, onFailure: { error in
 //                    logError(category: "APICall", content: String(describing: error))
 //                })
-//        }        
+//        }
     }
     
     /// Direct send to API to create session
@@ -524,7 +527,7 @@ private extension NeuroIDTracker {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
-        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: nil, sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: screen, ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
+        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: "", sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(), url: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
         captureEvent(event: event)
         return event;
