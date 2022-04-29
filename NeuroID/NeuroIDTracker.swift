@@ -4,6 +4,7 @@ import os
 import WebKit
 import CommonCrypto
 import Alamofire
+import ObjectiveC
 
 public struct NeuroID {
     
@@ -1231,20 +1232,22 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
     switch v {
     case is UITextField:
         let tfView = v as! UITextField
-
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: tfView.className, ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
+        var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField\\\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
         nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
         NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UITextView:
         let tv = v as! UITextView
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: tv.className, ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
+        var temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
+
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView\\\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
         nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
         NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UIButton:
         let tb = v as! UIButton
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: tb.className, ec: screenName, v: "S~C~~0" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton\\\(tb.className)", ec: screenName, v: "S~C~~0" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
         nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
         NeuroID.saveEventToLocalDataStore(nidEvent)
@@ -1269,6 +1272,19 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
         // Checkbox/Radios inputs
 }
 
+private func getParentClasses(currView: UIView?, hierarchyString: String?) -> String? {
+    
+    var newHieraString = "\(currView?.className ?? "UIView")"
+    
+    if (hierarchyString != nil) {
+        newHieraString = "\(newHieraString)\\\(hierarchyString!)"
+    }
+
+    if (currView?.superview != nil){
+        getParentClasses(currView: currView?.superview, hierarchyString: newHieraString)
+    }
+   return newHieraString
+}
 
 private func registerSubViewsTargets(subViewControllers: [UIViewController]){
     for ctrls in subViewControllers {
