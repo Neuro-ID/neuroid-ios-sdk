@@ -432,10 +432,10 @@ public class NeuroIDTracker: NSObject {
         let grandParentView = currView!.superview?.superview?.className
         var fullViewString = ""
         if (grandParentView != nil){
-            fullViewString += "\(grandParentView ?? "")\\"
-            fullViewString += "\(parentView ?? "")\\"
+            fullViewString += "\(grandParentView ?? "")//"
+            fullViewString += "\(parentView ?? "")//"
         } else if (parentView != nil) {
-            fullViewString = "\(parentView ?? "")\\"
+            fullViewString = "\(parentView ?? "")//"
         }
         fullViewString += screenName
         return fullViewString
@@ -1233,23 +1233,29 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
     case is UITextField:
         let tfView = v as! UITextField
         var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField\\\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField//\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
-        nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
+        // Screen hierarchy
+        var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+        nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
         NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UITextView:
         let tv = v as! UITextView
         var temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView\\\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView//\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
-        nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
+        // Screen hierarchy
+        var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+        nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
         NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UIButton:
         let tb = v as! UIButton
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton\\\(tb.className)", ec: screenName, v: "S~C~~0" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton//\(tb.className)", ec: screenName, v: "S~C~~0" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
-        nidEvent.tg = ["attr": TargetValue.attr([attrVal])]
+        // Screen hierarchy
+        var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+        nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
         NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UISlider:
         print("Slider")
