@@ -39,6 +39,7 @@ public enum NIDEventName: String {
     case focus = "FOCUS"
     case blur = "BLUR"
     case copy = "COPY"
+    case click = "CLICK"
     case cut = "CUT"
     case paste = "PASTE"
     case input = "INPUT"

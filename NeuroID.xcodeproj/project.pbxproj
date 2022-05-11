@@ -155,7 +155,6 @@
 				200A87DF4310FC76D4864466 /* Pods-NeuroID.debug.xcconfig */,
 				0AA83910861DB1809C947A22 /* Pods-NeuroID.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

@@ -162,7 +162,9 @@ public struct NeuroID {
     
     private static func swizzle() {
         UIViewController.startSwizzling()
+        UITextField.startSwizzling()
         UINavigationController.swizzleNavigation()
+        UIButton.startSwizzling()
     }
     private static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
@@ -300,8 +302,9 @@ public struct NeuroID {
         AF.upload(data, to: url, method: .post).responseData { response in
             switch response.result {
             case .success:
-                logInfo(content: "Neuro-ID post Successful")
+                NIDPrintLog("Neuro-ID post to API Successfull")
             case let .failure(error):
+                NIDPrintLog("Neuro-ID FAIL to post API")
                 logError(content: "Neuro-ID post Error: \(error)")
             }
         }
@@ -318,6 +321,7 @@ public struct NeuroID {
     public static func setUserID(_ userId: String) {
         UserDefaults.standard.set(userId, forKey: "nid_user_id")
         let setUserEvent = NIDEvent(session: NIDSessionEventName.setUserId, uid: userId);
+        NIDPrintLog("NID userID = <\(userId)>")
         saveEventToLocalDataStore(setUserEvent)
     }
     public static func logInfo(category: String = "default", content: Any...) {
@@ -432,10 +436,10 @@ public class NeuroIDTracker: NSObject {
         let grandParentView = currView!.superview?.superview?.className
         var fullViewString = ""
         if (grandParentView != nil){
-            fullViewString += "\(grandParentView ?? "")//"
-            fullViewString += "\(parentView ?? "")//"
+            fullViewString += "\(grandParentView ?? "")/"
+            fullViewString += "\(parentView ?? "")/"
         } else if (parentView != nil) {
-            fullViewString = "\(parentView ?? "")//"
+            fullViewString = "\(parentView ?? "")/"
         }
         fullViewString += screenName
         return fullViewString
@@ -507,7 +511,7 @@ private extension NeuroIDTracker {
         }
         observeTextInputEvents()
         observeAppEvents()
-        observePasteboard()
+//        observePasteboard()
         observeRotation()
     }
 
@@ -540,11 +544,13 @@ private extension NeuroIDTracker {
 
 
     func observeTextInputEvents() {
+    
         // UITextField
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(textBeginEditing),
                                                name: UITextField.textDidBeginEditingNotification,
                                                object: nil)
+        
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(textChange),
                                                name: UITextField.textDidChangeNotification,
@@ -644,7 +650,7 @@ private extension NeuroIDTracker {
             
             let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
             if (eventType == NIDEventName.input) {
-                
+                NIDPrintLog("NID keydown field = <\(textControl.id)>")
 //                // Keydown
 //                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
 //                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
@@ -673,7 +679,7 @@ private extension NeuroIDTracker {
                 }
             }
             
-            detectPasting(view: textControl, text: textControl.text ?? "")
+//            detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UITextView {
             let inputType = "text"
             // isSecureText
@@ -684,6 +690,7 @@ private extension NeuroIDTracker {
 
             let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
             if (eventType == NIDEventName.input) {
+                NIDPrintLog("NID keydown field = <\(textControl.id)>")
                 
                 // Keydown
                 let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
@@ -719,30 +726,30 @@ private extension NeuroIDTracker {
                 }
             }
             
-            detectPasting(view: textControl, text: textControl.text ?? "")
+//            detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UISearchBar {
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar", attrParams: nil)
             captureEvent(event: NIDEvent(type: eventType, tg: tg))
-            detectPasting(view: textControl, text: textControl.text ?? "")
+//            detectPasting(view: textControl, text: textControl.text ?? "")
         }
 
     }
 
-    func detectPasting(view: UIView, text: String) {
-        var id = "\(Unmanaged.passUnretained(view).toOpaque())"
-        guard var savedText = textCapturing[id] else {
-           return
-        }
-        let savedCount = savedText.count
-        let newCount = text.count
-        if newCount > 0 && newCount - savedCount > 2 {
-            let tg = ParamsCreator.getTextTgParams(
-                view: view,
-                extraParams: ["etn": TargetValue.string(NIDEventName.input.rawValue)])
-            captureEvent(event: NIDEvent(type: .paste, tg: tg, view: view))
-        }
-        textCapturing[id] = text
-    }
+//    func detectPasting(view: UIView, text: String) {
+//        var id = "\(Unmanaged.passUnretained(view).toOpaque())"
+//        guard var savedText = textCapturing[id] else {
+//           return
+//        }
+//        let savedCount = savedText.count
+//        let newCount = text.count
+//        if newCount > 0 && newCount - savedCount > 2 {
+//            let tg = ParamsCreator.getTextTgParams(
+//                view: view,
+//                extraParams: ["etn": TargetValue.string(NIDEventName.input.rawValue)])
+//            captureEvent(event: NIDEvent(type: .paste, tg: tg, view: view))
+//        }
+//        textCapturing[id] = text
+//    }
     
     public func calcSimilarity(previousValue: String, currentValue: String) -> Double {
       var longer = previousValue;
@@ -880,16 +887,16 @@ private extension NeuroIDTracker {
     }
 }
 
-// MARK: - Pasteboard events
-private extension NeuroIDTracker {
-    func observePasteboard() {
-        NotificationCenter.default.addObserver(self, selector: #selector(contentCopied), name: UIPasteboard.changedNotification, object: nil)
-    }
-
-    @objc func contentCopied(notification: Notification) {
-        captureEvent(event: NIDEvent(type: NIDEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: NeuroID.activeView))
-    }
-}
+//// MARK: - Pasteboard events
+//private extension NeuroIDTracker {
+//    func observePasteboard() {
+//        NotificationCenter.default.addObserver(self, selector: #selector(contentCopied), name: UIPasteboard.changedNotification, object: nil)
+//    }
+//
+//    @objc func contentCopied(notification: Notification) {
+//        captureEvent(event: NIDEvent(type: NIDEventName.copy, tg: ParamsCreator.getCopyTgParams(), view: NeuroID.activeView))
+//    }
+//}
 
 // MARK: - Device events
 private extension NeuroIDTracker {
@@ -942,7 +949,7 @@ struct ParamsCreator {
         var params: [String: TargetValue] = [:];
         
         switch eventName {
-        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange, NIDEventName.input:
+        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange, NIDEventName.input, NIDEventName.copy, NIDEventName.paste:
             
 //            var attrParams:Attr;
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
@@ -1233,7 +1240,7 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
     case is UITextField:
         let tfView = v as! UITextField
         var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField//\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
         // Screen hierarchy
         var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
@@ -1243,7 +1250,7 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
         let tv = v as! UITextView
         var temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView//\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
         // Screen hierarchy
         var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
@@ -1251,7 +1258,7 @@ private func registerSingleView(v: Any, screenName: String, guid: String){
         NeuroID.saveEventToLocalDataStore(nidEvent)
     case is UIButton:
         let tb = v as! UIButton
-        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton//\(tb.className)", ec: screenName, v: "S~C~~0" , url: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)" , url: screenName)
         var attrVal = Attr.init(n: "guid", v: guid)
         // Screen hierarchy
         var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
@@ -1305,6 +1312,33 @@ private func registerSubViewsTargets(subViewControllers: [UIViewController]){
         for _view in childViews {
             registerSingleView(v: _view, screenName: screenName, guid: guid)
         }
+    }
+}
+
+private func uiButtonSwizzling(element: UIButton.Type,
+                       originalSelector: Selector,
+                       swizzledSelector: Selector) {
+
+    let originalMethod = class_getInstanceMethod(element, originalSelector)
+    let swizzledMethod = class_getInstanceMethod(element, swizzledSelector)
+
+    if let originalMethod = originalMethod,
+       let swizzledMethod = swizzledMethod {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
+
+private func textFieldSwizzling(element: UITextField.Type,
+                       originalSelector: Selector,
+                       swizzledSelector: Selector) {
+
+    let originalMethod = class_getInstanceMethod(element, originalSelector)
+    let swizzledMethod = class_getInstanceMethod(element, swizzledSelector)
+
+    if let originalMethod = originalMethod,
+       let swizzledMethod = swizzledMethod {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 }
 
@@ -1389,6 +1423,65 @@ extension UIViewController {
 //    }
 }
 
+private extension UIButton {
+    @objc static func startSwizzling() {
+        let uiButton = UIButton.self
+        
+        uiButtonSwizzling(element: uiButton,
+                          originalSelector: #selector(uiButton.touchesBegan(_:with:)),
+                  swizzledSelector: #selector(uiButton.nidButtonPress))
+    }
+    
+    @objc func nidButtonPress(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if (NeuroID.isStopped()){
+            return
+        }
+        let lengthValue = "S~C~~\(self.titleLabel?.text?.count ?? 0)"
+        let clickTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.click, view: self, type: NIDEventName.click.rawValue, attrParams: ["v": lengthValue, "hash": self.titleLabel?.text])
+        var clickEvent = NIDEvent(type: NIDEventName.click, tg: clickTG)
+        
+        let screenName = self.className ?? UUID().uuidString
+        var newEvent = clickEvent
+        // Make sure we have a valid url set
+        newEvent.url = screenName
+        DataStore.insertEvent(screen: screenName, event: newEvent)
+        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
+        
+        super.touchesBegan(touches, with: event)
+    }
+}
+
+
+private extension UITextField {
+    @objc static func startSwizzling() {
+        let textField = UITextField.self
+        
+        
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.paste(_:)),
+                  swizzledSelector: #selector(textField.neuroIDPaste))
+    }
+    
+    @objc func neuroIDPaste(caller: UIResponder) {
+        if (NeuroID.isStopped()){
+            return
+        }
+        let lengthValue = "S~C~~\(self.text?.count ?? 0)"
+        let pasteTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.paste, view: self, type: NIDEventName.paste.rawValue, attrParams: ["v": lengthValue, "hash": self.text])
+        var inputEvent = NIDEvent(type: NIDEventName.paste, tg: pasteTG)
+        
+        let screenName = self.className ?? UUID().uuidString
+        var newEvent = inputEvent
+        // Make sure we have a valid url set
+        newEvent.url = screenName
+        DataStore.insertEvent(screen: screenName, event: newEvent)
+        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
+        
+        super.paste(caller)
+    }
+    
+}
+
 private extension UIViewController {
     @objc static func startSwizzling() {
         let screen = UIViewController.self
@@ -1406,7 +1499,7 @@ private extension UIViewController {
                   originalSelector: #selector(screen.dismiss),
                   swizzledSelector: #selector(screen.neuroIDDismiss))
     }
-
+    
     @objc func neuroIDViewWillAppear(animated: Bool) {
         self.neuroIDViewWillAppear(animated: animated)
         captureEvent(eventName: .windowFocus)
@@ -1425,6 +1518,7 @@ private extension UIViewController {
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         self.neuroIDViewWillDisappear(animated: animated)
+        NotificationCenter.default.removeObserver(self)
         captureEvent(eventName: .windowBlur)
     }
 
