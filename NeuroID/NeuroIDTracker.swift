@@ -164,7 +164,7 @@ public struct NeuroID {
         UIViewController.startSwizzling()
         UITextField.startSwizzling()
         UINavigationController.swizzleNavigation()
-        UIButton.startSwizzling()
+//        UIButton.startSwizzling()
     }
     private static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
@@ -949,7 +949,7 @@ struct ParamsCreator {
         var params: [String: TargetValue] = [:];
         
         switch eventName {
-        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange, NIDEventName.input, NIDEventName.copy, NIDEventName.paste:
+        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange, NIDEventName.checkboxChange, NIDEventName.input, NIDEventName.copy, NIDEventName.paste, NIDEventName.click:
             
 //            var attrParams:Attr;
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
@@ -1423,33 +1423,41 @@ extension UIViewController {
 //    }
 }
 
-private extension UIButton {
-    @objc static func startSwizzling() {
-        let uiButton = UIButton.self
-        
-        uiButtonSwizzling(element: uiButton,
-                          originalSelector: #selector(uiButton.touchesBegan(_:with:)),
-                  swizzledSelector: #selector(uiButton.nidButtonPress))
-    }
-    
-    @objc func nidButtonPress(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if (NeuroID.isStopped()){
-            return
-        }
-        let lengthValue = "S~C~~\(self.titleLabel?.text?.count ?? 0)"
-        let clickTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.click, view: self, type: NIDEventName.click.rawValue, attrParams: ["v": lengthValue, "hash": self.titleLabel?.text])
-        var clickEvent = NIDEvent(type: NIDEventName.click, tg: clickTG)
-        
-        let screenName = self.className ?? UUID().uuidString
-        var newEvent = clickEvent
-        // Make sure we have a valid url set
-        newEvent.url = screenName
-        DataStore.insertEvent(screen: screenName, event: newEvent)
-        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
-        
-        super.touchesBegan(touches, with: event)
-    }
-}
+//private extension UIButton {
+//    @objc static func startSwizzling() {
+//        let uiButton = UIButton.self
+//
+//        uiButtonSwizzling(element: uiButton,
+//                          originalSelector: #selector(uiButton.touchesBegan(_:with:)),
+//                  swizzledSelector: #selector(uiButton.nidButtonPress))
+//    }
+//
+//    @objc func nidButtonPress(_ touches: Set<UITouch>, with event: UIEvent?) {
+//
+//
+//        self.nidButtonPress(touches, with: event)
+////        if (self.responds(to: #selector(touchesBegan))) {
+////            self.nidButtonPress(touches, with: event)
+////        }
+////
+//        if (NeuroID.isStopped()){
+//            return
+//        }
+//        if (self.responds(to: #selector(getter: titleLabel))) {
+//            let lengthValue = "S~C~~\(self.titleLabel?.text?.count ?? 0)"
+//            let clickTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.click, view: self, type: NIDEventName.click.rawValue, attrParams: ["v": lengthValue, "hash": self.titleLabel?.text])
+//            var clickEvent = NIDEvent(type: NIDEventName.click, tg: clickTG)
+//
+//            let screenName = self.className ?? UUID().uuidString
+//            var newEvent = clickEvent
+//            // Make sure we have a valid url set
+//            newEvent.url = screenName
+//            DataStore.insertEvent(screen: screenName, event: newEvent)
+//            NeuroID.logDebug(category: "saveEvent", content: "save event finish")
+//        }
+////        super.touchesBegan(touches, with: event)
+//    }
+//}
 
 
 private extension UITextField {
@@ -1504,7 +1512,7 @@ private extension UIViewController {
         self.neuroIDViewWillAppear(animated: animated)
         captureEvent(eventName: .windowFocus)
         
-        if (NeuroID.isStopped() || UIApplication.shared.applicationState == .background ){
+        if (NeuroID.isStopped()){
             return
         }
         self.neuroIDViewDidLoad()
@@ -1531,7 +1539,7 @@ private extension UIViewController {
           Register form events
      */
     @objc func neuroIDViewDidLoad() {
-        if (NeuroID.isStopped() || UIApplication.shared.applicationState == .background ){
+        if (NeuroID.isStopped()){
             return
         }
         self.neuroIDViewDidLoad()
