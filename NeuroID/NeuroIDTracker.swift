@@ -1233,8 +1233,11 @@ extension UIView {
 }
 
 private func registerSingleView(v: Any, screenName: String, guid: String){
+    
     let screenName = NeuroID.getScreenName() ?? screenName
     let currView = v as? UIView
+
+    NIDPrintLog("Registering view: \(screenName)")
     let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: currView, screenName: screenName)
     switch v {
     case is UITextField:
@@ -1302,6 +1305,7 @@ private func getParentClasses(currView: UIView?, hierarchyString: String?) -> St
 private func registerSubViewsTargets(subViewControllers: [UIViewController]){
     for ctrls in subViewControllers {
         let screenName = ctrls.className
+        NIDPrintLog("Registering view controllers \(screenName)")
         guard let view = ctrls.view else {
             return
         }
@@ -1310,6 +1314,7 @@ private func registerSubViewsTargets(subViewControllers: [UIViewController]){
         registerSingleView(v: view, screenName: screenName, guid: guid)
         let childViews = ctrls.view.subviewsRecursive()
         for _view in childViews {
+            NIDPrintLog("Registering single view.")
             registerSingleView(v: _view, screenName: screenName, guid: guid)
         }
     }
@@ -1468,6 +1473,7 @@ private extension UITextField {
         textFieldSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
                   swizzledSelector: #selector(textField.neuroIDPaste))
+        
     }
     
     @objc func neuroIDPaste(caller: UIResponder) {
@@ -1539,6 +1545,7 @@ private extension UIViewController {
           Register form events
      */
     @objc func neuroIDViewDidLoad() {
+        
         if (NeuroID.isStopped()){
             return
         }
