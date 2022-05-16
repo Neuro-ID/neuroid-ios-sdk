@@ -1523,18 +1523,6 @@ private extension UIViewController {
     
     @objc func neuroIDViewWillAppear(animated: Bool) {
         self.neuroIDViewWillAppear(animated: animated)
-        captureEvent(eventName: .windowFocus)
-        
-        if (NeuroID.isStopped()){
-            return
-        }
-        self.neuroIDViewDidLoad()
-        captureEvent(eventName: .windowLoad)
-        var subViews = self.view.subviews
-        var allViewControllers = self.children
-        allViewControllers.append(self)
-        registerSubViewsTargets(subViewControllers: allViewControllers)
-        
     }
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
@@ -1552,16 +1540,16 @@ private extension UIViewController {
           Register form events
      */
     @objc func neuroIDViewDidLoad() {
+        self.neuroIDViewDidLoad()
         
         if (NeuroID.isStopped()){
             return
         }
-        self.neuroIDViewDidLoad()
-//        captureEvent(eventName: .windowLoad)
-//        var subViews = self.view.subviews
-//        var allViewControllers = self.children
-//        allViewControllers.append(self)
-//        registerSubViewsTargets(subViewControllers: allViewControllers)
+        captureEvent(eventName: .windowFocus)
+        var subViews = self.view.subviews
+        var allViewControllers = self.children
+        allViewControllers.append(self)
+        registerSubViewsTargets(subViewControllers: allViewControllers)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
