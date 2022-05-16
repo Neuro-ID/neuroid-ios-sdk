@@ -33,6 +33,9 @@ public struct NeuroID {
     public static var logVisible = true
     public static var activeView: UIView?
     
+    public static var isSDKStarted = false;
+    public static var observingInputs = false;
+    
 
     // MARK: - Setup
     /// 1. Configure the SDK
@@ -76,6 +79,7 @@ public struct NeuroID {
     
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(){
+        NeuroID.isSDKStarted = true
         clearSession()
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
@@ -148,8 +152,7 @@ public struct NeuroID {
     public static func getBaseURL() -> String {
         return "https://api.neuro-id.com"
 //      return "https://rc.api.usw2-prod1.nidops.net"
-//      return "http://localhost:9090"
-//      return "https://nidmobile.ngrok.io"
+//      return "http://localhost:8080"
 //      return "https://api.usw2-dev1.nidops.net";
     }
     
@@ -509,10 +512,14 @@ private extension NeuroIDTracker {
         if let views = controller?.view.subviews {
             observeViews(views)
         }
-        observeTextInputEvents()
-        observeAppEvents()
-//        observePasteboard()
-        observeRotation()
+        
+        // Only run observations on first run
+        if (!NeuroID.observingInputs) {
+            NeuroID.observingInputs = true
+            observeTextInputEvents()
+            observeAppEvents()
+            observeRotation()
+        }
     }
 
     func observeViews(_ views: [UIView]) {
