@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - master
-      - ENG-17-github-actions-for-neuroid-ios-sdk
+      - 'ENG-17-github-actions-for-neuroid-ios-sdk'
  pull_request:
     branches: [ main ]
       
