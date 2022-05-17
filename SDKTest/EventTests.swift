@@ -129,13 +129,12 @@ class EventTests: XCTestCase {
     func testEventParams() throws {
 //        let urlName = "HomeScreen"
 //        let tracker = NeuroIDTracker(userUrl: urlName)
-        
         let urlName = "HomeScreen"
         let testView = UIViewController();
-
+        let userID = "atestUserID"
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
 //        let params = ParamsCreator.getDefaultSessionParams();
-
+        NeuroID.setUserID(userID)
 //        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
@@ -143,20 +142,20 @@ class EventTests: XCTestCase {
         XCTAssertTrue(params["key"] != nil)
         XCTAssertTrue(params["key"] as! String == clientKey)
 
-        XCTAssertTrue(params["sessionId"] != nil)
-        XCTAssertTrue((params["sessionId"] as! String).count == 16,
+        XCTAssertTrue(params["sid"] != nil)
+        XCTAssertTrue((params["sid"] as! String).count == 16,
                       "SessionId has 16 random digits")
 
-        XCTAssertTrue(params["userId"] != nil)
-        XCTAssertTrue(params["userId"] as! String == userId)
+        XCTAssertTrue(params["uid"] != nil)
+        XCTAssertTrue(params["uid"] as! String == userID)
 
-        XCTAssertTrue(params["pageId"] != nil)
-        XCTAssertTrue(params["events"] != nil)
-        XCTAssertTrue(params["events"] is [String: Any])
-        let events = params["events"] as! [String: Any]
-        XCTAssertTrue(events["type"] as! String == "COPY")
-        XCTAssertTrue(events["x"] as! Int == 10)
-        XCTAssertTrue(events["y"] as! Int == 10)
+        XCTAssertTrue(params["pid"] != nil)
+//        XCTAssertTrue(params["events"] != nil)
+//        XCTAssertTrue(params["events"] is [String: Any])
+//        let events = params["events"] as! [String: Any]
+//        XCTAssertTrue(events["type"] as! String == "COPY")
+//        XCTAssertTrue(events["x"] as! Int == 10)
+//        XCTAssertTrue(events["y"] as! Int == 10)
     }
     
     func testEventSubmitForm(){
