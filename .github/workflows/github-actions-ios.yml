@@ -6,8 +6,6 @@ on:
       - main
       - master
       - 'ENG-17-github-actions-for-neuroid-ios-sdk'
- pull_request:
-    branches: [ main ]
       
 jobs:
   test:
