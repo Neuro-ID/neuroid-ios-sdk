@@ -19,7 +19,7 @@ jobs:
         with:
          ruby-version: 2.7.2
         
-      - name: Run iOS unit testing for SDK
+      - name: Run iOS Unit testing for SDK
         uses: maierj/fastlane-action@v2.2.1
         with:
           lane: test
