@@ -22,5 +22,14 @@ jobs:
       - name: Bundle Install
         run: bundle install
         
+      - uses: actions/cache@v2
+        with:
+         path: Pods
+         key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+         restore-keys: |
+          ${{ runner.os }}-pods-
+      - name: CocoaPod Install
+        run: pod install
+        
       - name: Run iOS Unit testing for SDK
         run: bundle exec fastlane test
