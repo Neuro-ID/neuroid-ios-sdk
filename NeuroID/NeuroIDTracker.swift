@@ -1514,8 +1514,8 @@ private extension UIViewController {
                   originalSelector: #selector(screen.viewWillDisappear),
                   swizzledSelector: #selector(screen.neuroIDViewWillDisappear))
         swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewDidLoad),
-                  swizzledSelector: #selector(screen.neuroIDViewDidLoad))
+                  originalSelector: #selector(screen.viewDidAppear),
+                  swizzledSelector: #selector(screen.neuroIDViewDidAppear))
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.dismiss),
                   swizzledSelector: #selector(screen.neuroIDDismiss))
@@ -1528,7 +1528,7 @@ private extension UIViewController {
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         self.neuroIDViewWillDisappear(animated: animated)
         NotificationCenter.default.removeObserver(self)
-        captureEvent(eventName: .windowBlur)
+//        captureEvent(eventName: .windowBlur)
     }
 
     /**
@@ -1539,13 +1539,15 @@ private extension UIViewController {
           Form all eligible form events, check to see if they have a valid identifier and set one
           Register form events
      */
-    @objc func neuroIDViewDidLoad() {
-        self.neuroIDViewDidLoad()
+    @objc func neuroIDViewDidAppear() {
+        self.neuroIDViewDidAppear()
         
         if (NeuroID.isStopped()){
             return
         }
-        captureEvent(eventName: .windowFocus)
+        // We need to init the tracker on the views.
+        tracker
+//        captureEvent(eventName: .windowFocus)
         var subViews = self.view.subviews
         var allViewControllers = self.children
         allViewControllers.append(self)
@@ -1554,7 +1556,6 @@ private extension UIViewController {
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         self.neuroIDDismiss(animated: flag, completion: completion)
-        captureEvent(eventName: .windowUnload)
     }
 }
 
