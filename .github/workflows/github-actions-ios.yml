@@ -33,3 +33,12 @@ jobs:
         
       - name: Run iOS Unit testing for SDK
         run: bundle exec fastlane test
+        
+      - name: Running Sandbox actions
+        run: |
+             curl \
+                -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: ${{ secrets.API_TOKEN_GITHUB }}" \
+                https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
+                -d '{"event_type":"on-demand-testflight"}'          
