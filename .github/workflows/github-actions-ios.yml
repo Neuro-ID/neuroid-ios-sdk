@@ -5,7 +5,8 @@ on:
     branches:
       - main
       - master
-      - 'ENG-17-github-actions-for-neuroid-ios-sdk'
+  repository_dispatch:
+        types: [on-demand-testflight]
       
 jobs:
   test:
