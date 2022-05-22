@@ -1401,7 +1401,7 @@ extension UIViewController {
         return [
             "UICompatibilityInputViewController",
             "UISystemKeyboardDockController",
-            "UIInputWindowController",
+//            "UIInputWindowController",
             "UIPredictionViewController",
             "UIEditingOverlayViewController",
             "UISystemInputAssistantViewController"
