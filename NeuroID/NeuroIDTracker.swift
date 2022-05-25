@@ -459,9 +459,6 @@ public class NeuroIDTracker: NSObject {
         
 
     }
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
-        print("Gesture recognized")
-    }
 
     public static func registerSingleView(v: Any, screenName: String, guid: String){
         
@@ -478,17 +475,19 @@ public class NeuroIDTracker: NSObject {
 //            tfView.addGestureRecognizer(touchListener)
         case is UITextField:
             let tfView = v as! UITextField
-            
-            // Add view on top of textfield to get taps
-            var invisView = UIView(frame:tfView.frame)
-//            invisView.backgroundColor = UIColor(red: 100.0, green: 0.0, blue: 0.0, alpha: 0.0)
-            
-            invisView.backgroundColor = UIColor(red: 0.8, green: 0.1, blue: 0.5, alpha: 1)
-            tfView.addSubview(invisView)
-            let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
-            invisView.addGestureRecognizer(tap)
-            invisView.superview?.bringSubviewToFront(invisView)
-            invisView.superview?.superview?.bringSubviewToFront(invisView)
+                             
+//                             @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
+
+//            // Add view on top of textfield to get taps
+//            var invisView = UIView.init(frame: tfView.frame)
+////            invisView.backgroundColor = UIColor(red: 100.0, green: 0.0, blue: 0.0, alpha: 0.0)
+//
+//            invisView.backgroundColor = UIColor(red: 0.8, green: 0.1, blue: 0.5, alpha: 1)
+//            tfView.addSubview(invisView)
+//            let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
+//            invisView.addGestureRecognizer(tap)
+//            invisView.superview?.bringSubviewToFront(invisView)
+//            invisView.superview?.layer.zPosition = 10000000
             
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
@@ -674,12 +673,20 @@ private extension NeuroIDTracker {
 
     @objc func textBeginEditing(notification: Notification) {
         // Set the current value of the textDictionary
-        DispatchQueue.global(qos:.utility).async {
+        // Used for similarity and diff
+        
+        DispatchQueue.global(qos:.utility).async { [self] in
             if let textControl = notification.object as? UITextField {
+                // Touch event start
+                // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
+                self.touchEvent(sender: textControl, eventName: .touchStart)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
             } else if let textControl = notification.object as? UITextView {
+                // Touch event start
+                self.touchEvent(sender: textControl, eventName: .touchStart)
                 UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
             }
+
         }
         logTextEvent(from: notification, eventType: .focus)
     }
@@ -1548,7 +1555,7 @@ private extension UITextField {
 
     @objc static func startSwizzling() {
         let textField = UITextField.self
-        
+
         
         textFieldSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
@@ -1812,8 +1819,17 @@ extension Double {
 public extension UIView {
     var id: String {
         get {
-            // TODO insert generated ID
-            return (accessibilityIdentifier.isEmptyOrNil) ? ("todo-id") : (accessibilityIdentifier!)
+            var title = "UNKNOWN_NO_ID_SET"
+            
+            if #available(iOS 13.0, *) {
+                title = "UNKNOWN_NO_ID_SET"
+                title.replacingOccurrences(of: " ", with: "_")
+            } else {
+                // Fallback on earlier versions
+            }
+            title = "\(self.className)_\(title)"
+            var backupName = ("\(self.className)\(self.description.hashValue)")
+            return (accessibilityIdentifier.isEmptyOrNil) ? title : (accessibilityIdentifier!)
         }
         set {
             accessibilityIdentifier = newValue
