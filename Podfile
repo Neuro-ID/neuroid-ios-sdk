@@ -8,3 +8,8 @@ target 'NeuroID' do
 
   pod 'Alamofire'
 end
+target 'SDKTest' do
+  use_frameworks!
+
+  pod 'Alamofire'
+ end

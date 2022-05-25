@@ -20,7 +20,7 @@ class DataStoreTests: XCTestCase {
     }
     
     func testEncodeAndDecode() throws {
-        var nid1 = NIDEvent(type: .radioChange, tg: ["name":TargetValue.string("clay")], view: UIView())
+        let nid1 = NIDEvent(type: .radioChange, tg: ["name":TargetValue.string("clay")], view: UIView())
 
         let encoder = JSONEncoder()
 
@@ -29,7 +29,7 @@ class DataStoreTests: XCTestCase {
             UserDefaults.standard.setValue(jsonData, forKey: eventsKey)
             let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
             var parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
-            var nid2 = NIDEvent(type: .radioChange, tg: ["name":TargetValue.string("clay")], view: UIView())
+            let nid2 = NIDEvent(type: .radioChange, tg: ["name":TargetValue.string("clay")], view: UIView())
             parsedEvents.append(nid2)
             print(parsedEvents)
         } catch {
@@ -40,20 +40,25 @@ class DataStoreTests: XCTestCase {
     func testInsertDataStore() throws {
         // Reset the data store
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
-        let lv = LoanViewControllerPersonalDetails();
         let nid1 = NIDEvent(type: .radioChange, tg: ["name":TargetValue.string("clayton")], primaryViewController: LoanViewControllerPersonalDetails(), view: LoanViewControllerPersonalDetails().view)
         DataStore.insertEvent(screen: "screen1", event: nid1)
         let nid2 = NIDEvent(type: .radioChange, tg: ["name":TargetValue.string("bob")], primaryViewController: UIViewController(), view: UIView())
         DataStore.insertEvent(screen: "screen2", event: nid2)
-        let newEvents = UserDefaults.standard.object(forKey: eventsKey)
-        let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: newEvents as! Data)
-        // Test Grouping
-        let groupedEvents = Dictionary(grouping: parsedEvents, by: { (element: NIDEvent) in
-            return element.url
-        })
-        print("Events:", parsedEvents)
-        print("Grouped Events", groupedEvents)
-        XCTAssert(parsedEvents.count == 2)
+        do {
+            let jsonData = try JSONEncoder().encode(DataStore.getAllEvents())
+            UserDefaults.standard.setValue(jsonData, forKey: eventsKey)
+            let newEvents = UserDefaults.standard.object(forKey: eventsKey)
+            let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: newEvents as! Data)
+            // Test Grouping
+            let groupedEvents = Dictionary(grouping: parsedEvents, by: { (element: NIDEvent) in
+                return element.url
+            })
+            print("Events:", parsedEvents)
+            print("Grouped Events", groupedEvents)
+            XCTAssert(parsedEvents.count == 2)
+        } catch {
+            print(String(describing: error))
+        }
     }
 
     

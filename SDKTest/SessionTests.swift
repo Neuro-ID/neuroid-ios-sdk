@@ -31,7 +31,7 @@ class SessionTests: XCTestCase {
     }
     
     func testRandom() throws {
-        var dictRandom = ["events":"eventstringt", "status":"pending"]
+        let dictRandom = ["events":"eventstringt", "status":"pending"]
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
             print(key)
         }
@@ -58,8 +58,8 @@ class SessionTests: XCTestCase {
         }
     }
     
-    func testDetectingTextFieldsForRegsitering() throws {
-        let urlName = "TextFieldScreen"
+//    func testDetectingTextFieldsForRegsitering() throws {
+//        let urlName = "TextFieldScreen"
 //        let testView = LoanViewControllerPersonalDetails();
 //        let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
 //        sampleTextField.accessibilityLabel = "Lname"
@@ -76,7 +76,7 @@ class SessionTests: XCTestCase {
 //
         
         
-    }
+//    }
     
     func testSessionParams() throws {
         let urlName = "HomeScreen"
@@ -108,7 +108,7 @@ class SessionTests: XCTestCase {
         XCTAssertTrue(randomNumber <= Double(Int32.max),
                       "number was randomed in 0 ..< Int32.max")
 
-        XCTAssertTrue(params["url"] != nil)
+//        XCTAssertTrue(params["url"] != nil)
 //        XCTAssertTrue(params["url"] as! String == urlName)
 //
 //        XCTAssertTrue(params["language"] != nil)

@@ -1,0 +1,45 @@
+name: Github Actions for iOS NeuroID SDK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  repository_dispatch:
+        types: [on-demand-testflight]
+      
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - name: Branch Checkout
+        uses: actions/checkout@v3
+        
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+         ruby-version: 2.7.2
+        
+      - name: Bundle Install
+        run: bundle install
+        
+      - uses: actions/cache@v2
+        with:
+         path: Pods
+         key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+         restore-keys: |
+          ${{ runner.os }}-pods-
+      - name: CocoaPod Install
+        run: pod install
+        
+      - name: Run iOS Unit testing for SDK
+        run: bundle exec fastlane test
+        
+      - name: Running Sandbox actions
+        run: |
+             curl \
+                -X POST \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
+                https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
+                -d '{"event_type":"on-demand-testflight"}'          
