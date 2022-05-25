@@ -1,4 +1,3 @@
-source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/Alamofire/Alamofire.git'
 # Uncomment the next line to define a global platform for your project
 platform :ios, '11.0'
@@ -13,4 +12,4 @@ target 'SDKTest' do
   use_frameworks!
 
   pod 'Alamofire'
- end
+end
