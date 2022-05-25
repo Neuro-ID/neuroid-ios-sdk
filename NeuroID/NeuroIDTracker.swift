@@ -454,6 +454,14 @@ public class NeuroIDTracker: NSObject {
     @objc static func neuroTextTouchListener() {
          print("Hello World")
       }
+    
+    func  addTapGesture(){
+        
+
+    }
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        print("Gesture recognized")
+    }
 
     public static func registerSingleView(v: Any, screenName: String, guid: String){
         
@@ -470,7 +478,18 @@ public class NeuroIDTracker: NSObject {
 //            tfView.addGestureRecognizer(touchListener)
         case is UITextField:
             let tfView = v as! UITextField
-//            tfView.addTapGesture()
+            
+            // Add view on top of textfield to get taps
+            var invisView = UIView(frame:tfView.frame)
+//            invisView.backgroundColor = UIColor(red: 100.0, green: 0.0, blue: 0.0, alpha: 0.0)
+            
+            invisView.backgroundColor = UIColor(red: 0.8, green: 0.1, blue: 0.5, alpha: 1)
+            tfView.addSubview(invisView)
+            let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
+            invisView.addGestureRecognizer(tap)
+            invisView.superview?.bringSubviewToFront(invisView)
+            invisView.superview?.superview?.bringSubviewToFront(invisView)
+            
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
             var attrVal = Attr.init(n: "guid", v: guid)
@@ -1518,14 +1537,14 @@ private extension UIView {
 }
 
 private extension UITextField {
-    func  addTapGesture(){
-        let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
-        self.addGestureRecognizer(tap)
-
-    }
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
-        print("Gesture recognized")
-    }
+//    func  addTapGesture(){
+//        let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
+//        self.addGestureRecognizer(tap)
+//
+//    }
+//    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+//        print("Gesture recognized")
+//    }
 
     @objc static func startSwizzling() {
         let textField = UITextField.self
