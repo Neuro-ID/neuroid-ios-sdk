@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - "ENG-2285-get-internal-external-version-number"
   repository_dispatch:
         types: [on-demand-testflight]
 env:
