@@ -40,7 +40,7 @@ jobs:
         
       - name: Get last tag number
         run: |
-              echo "::set-env name=VERSION::git describe --tags"
+              echo "VERSION=git describe --tags" >> $GITHUB_ENV
         
       - name: Running Sandbox actions
         run: |
