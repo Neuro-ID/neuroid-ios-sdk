@@ -30,14 +30,18 @@ jobs:
          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
          restore-keys: |
           ${{ runner.os }}-pods-
-      - name: CocoaPod Install
-        run: pod install
+      
+      #- name: CocoaPod Install
+      #  run: pod install
         
-      - name: Run iOS Unit testing for SDK
-        run: bundle exec fastlane test
+      #- name: Run iOS Unit testing for SDK
+      #  run: bundle exec fastlane test
         
       - name: Get last tag number
-        run: git describe --tags  >> $VERSION
+        run: |
+             export VERSION_NUMBER="1.0.0"
+             git describe --flags
+             echo "::set-env name=VERSION::$VERSION_NUMBER"
         
       - name: Running Sandbox actions
         run: |
