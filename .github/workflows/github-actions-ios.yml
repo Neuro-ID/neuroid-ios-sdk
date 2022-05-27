@@ -36,9 +36,6 @@ jobs:
       - name: Run iOS Unit testing for SDK
         run: bundle exec fastlane test
         
-      - name: Get last tag number
-        run: git describe --tags  >> $VERSION
-        
       - name: Running Sandbox actions
         run: |
              curl \
@@ -46,4 +43,4 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight", "client_payload": { "version": $VERSION }' 
+                -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}' 
