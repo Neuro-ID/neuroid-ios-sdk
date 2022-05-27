@@ -41,7 +41,7 @@ jobs:
       - name: Get last tag number
         run: |
              export VERSION_NUMBER="1.0.0"
-             git describe --flags
+             git describe --tags
              echo "::set-env name=VERSION::$VERSION_NUMBER"
         
       - name: Running Sandbox actions
