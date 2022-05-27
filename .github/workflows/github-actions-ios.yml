@@ -40,9 +40,7 @@ jobs:
         
       - name: Get last tag number
         run: |
-             export VERSION_NUMBER="1.0.0"
-             git describe --tags
-             echo "::set-env name=VERSION::$VERSION_NUMBER"
+              echo "::set-env name=VERSION::git describe --tags"
         
       - name: Running Sandbox actions
         run: |
@@ -51,4 +49,4 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight", "client_payload": { "version": $VERSION }' 
+                -d '{"event_type":"on-demand-testflight", "client_payload": { "version": ${{env.VERSION}} }' 
