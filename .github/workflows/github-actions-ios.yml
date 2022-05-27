@@ -37,11 +37,9 @@ jobs:
         run: bundle exec fastlane test
         
       - name: Get last tag number
-        run: git decribe --tags | tee ${{ env.VERSION }}
+        run: git describe --tags  >> $VERSION
         
       - name: Running Sandbox actions
-        env: 
-         VERSION: ${{ env.VERSION }}
         run: |
              curl \
                 -X POST \
