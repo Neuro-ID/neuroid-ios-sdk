@@ -38,10 +38,6 @@ jobs:
       #- name: Run iOS Unit testing for SDK
       #  run: bundle exec fastlane test
         
-      - name: Get last tag number
-        run: |
-              echo "VERSION={ git describe --tags }" > $GITHUB_ENV
-        
       - name: Running Sandbox actions
         run: |
              curl \
