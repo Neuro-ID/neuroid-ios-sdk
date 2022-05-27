@@ -150,6 +150,7 @@ public struct NeuroID {
     }
     
     public static func getBaseURL() -> String {
+        // Prod URL
         return "https://api.neuro-id.com"
 //      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:8080"
