@@ -45,4 +45,4 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":${{env.VERSION}} }}' 
+                -d '{"event_type":"on-demand-testflight","client_payload":{"unit":" ${{env.VERSION}} "}}'
