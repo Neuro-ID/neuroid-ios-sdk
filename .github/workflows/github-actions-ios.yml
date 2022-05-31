@@ -23,6 +23,9 @@ jobs:
         
       - name: Bundle Install
         run: bundle install
+      
+      - name: Get the release tag
+        run: git describe --tags
         
       - uses: actions/cache@v2
         with:
