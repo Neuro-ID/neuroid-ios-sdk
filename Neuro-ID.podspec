@@ -7,7 +7,7 @@ s.summary = "A Swift implementation of a custom UIControl for selecting a range 
 s.requires_arc = true
 s.swift_version = '5.0'
 s.dependency 'Alamofire'
-s.version = "1.2.6"
+s.version = "1.3.0"
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>
 
