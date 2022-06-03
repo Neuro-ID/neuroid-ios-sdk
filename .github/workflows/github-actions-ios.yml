@@ -25,6 +25,14 @@ jobs:
       - name: Bundle Install
         run: bundle install
         
+      - name: Get last version from tags
+        run: |
+         echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+         
+      - name: Test ENV
+        run: |
+         echo " ${{ env.VERSION }}"
+        
       - uses: actions/cache@v2
         with:
          path: Pods
@@ -32,26 +40,26 @@ jobs:
          restore-keys: |
           ${{ runner.os }}-pods-
       
-      - name: CocoaPod Install
-        run: pod install
+      #- name: CocoaPod Install
+      #  run: pod install
         
-      - name: Run iOS Unit testing for SDK
-        run: bundle exec fastlane test
+      #- name: Run iOS Unit testing for SDK
+      #  run: bundle exec fastlane test
         
-      - name: Running iOS native Sandbox actions
-        run: |
-             curl \
-                -X POST \
-                -H "Accept: application/vnd.github.v3+json" \
-                -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
-                https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}'
+      #- name: Running iOS native Sandbox actions
+      #  run: |
+      #       curl \
+      #          -X POST \
+      #          -H "Accept: application/vnd.github.v3+json" \
+      #          -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
+      #          https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
+      #          -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}'
         
-      - name: Running ReactNative Sandbox actions
-        run: |
-             curl \
-                -X POST \
-                -H "Accept: application/vnd.github.v3+json" \
-                -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
-                https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}'
+      #- name: Running ReactNative Sandbox actions
+      #  run: |
+      #       curl \
+      #          -X POST \
+      #          -H "Accept: application/vnd.github.v3+json" \
+      #          -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
+      #          https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
+      #          -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}'
