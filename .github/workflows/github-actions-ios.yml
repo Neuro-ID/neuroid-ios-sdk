@@ -24,12 +24,18 @@ jobs:
       - name: Bundle Install
         run: bundle install
         
+      - name: Get last version from tags
+        run: |
+         git fetch --prune --unshallow
+         echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+         
       - uses: actions/cache@v2
         with:
          path: Pods
          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
          restore-keys: |
           ${{ runner.os }}-pods-
+      
       - name: CocoaPod Install
         run: pod install
         
@@ -43,7 +49,7 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}'
+                -d '{"event_type":"on-demand-testflight","client_payload":{"version":"4.ios-${{env.VERSION}} "}}'
         
       - name: Running ReactNative Sandbox actions
         run: |
@@ -52,4 +58,4 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":" ${{env.VERSION}} "}}'
+                -d '{"event_type":"on-demand-testflight","client_payload":{"version":"4.ios-${{env.VERSION}} "}}'

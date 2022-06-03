@@ -395,6 +395,12 @@ extension NeuroID {
     static func cleanUpForTesting() {
         clientKey = nil
     }
+    /// Get the current SDK versión from bundle
+    /// - Returns: String with the version format
+    public static func getSDKVersion() -> String? {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        return "4.ios-\(version ?? "1.0.0")"
+    }
 }
 
 // MARK: - NeuroIDTracker
