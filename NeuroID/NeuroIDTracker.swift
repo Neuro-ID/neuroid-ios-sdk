@@ -398,8 +398,7 @@ extension NeuroID {
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
     public static func getSDKVersion() -> String? {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        return "4.ios-\(version ?? "1.0.0")"
+        return  ParamsCreator.getSDKVersion()
     }
 }
 
@@ -1300,9 +1299,9 @@ struct ParamsCreator {
     /** Start with primar JS version as TrackJS requires to force correct session structure*/
     static func getSDKVersion() -> String {
         // Version MUST start with 4. in order to be processed correctly
-        return "4.ios-1.2.1"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        return "4.ios-\(version ?? "4.ios-1.2.1")"
     }
-    
     static func getCommandQueueNamespace() -> String {
         return "nid";
     }
