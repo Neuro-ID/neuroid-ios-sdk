@@ -502,6 +502,16 @@ public class NeuroIDTracker: NSObject {
             var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
             nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
             NeuroID.saveEventToLocalDataStore(nidEvent)
+            /// Register input view for custom inputs
+            if tfView.inputView is UIDatePicker, let datePickerView = tfView.inputView as? UIDatePicker {
+                var dptemp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
+                var nidEventInput = NIDEvent(eventName: NIDEventName.registerTarget, tgs: datePickerView.id, en: datePickerView.id, etn: "INPUT", et: "UIDatePicker::\(datePickerView.className)", ec: screenName, v: "S~C~~\(datePickerView.date)" , url: screenName)
+                var nAttrVal = Attr.init(n: "guid", v: guid)
+                // Screen hierarchy
+                var nshVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+                nidEventInput.tg = ["attr": TargetValue.attr([nAttrVal, nshVal])]
+                NeuroID.saveEventToLocalDataStore(nidEventInput)
+            }
         case is UITextView:
             let tv = v as! UITextView
 
@@ -533,6 +543,14 @@ public class NeuroIDTracker: NSObject {
             print("Picker")
         case is UIDatePicker:
             print("Date picker")
+            let dpicker = v as! UIDatePicker
+            var dptemp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
+            var nidEventInput = NIDEvent(eventName: NIDEventName.registerTarget, tgs: dpicker.id, en: dpicker.id, etn: "INPUT", et: "UIDatePicker::\(dpicker.className)", ec: screenName, v: "S~C~~\(dpicker.date)" , url: screenName)
+            var nAttrVal = Attr.init(n: "guid", v: guid)
+            // Screen hierarchy
+            var nshVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+            nidEventInput.tg = ["attr": TargetValue.attr([nAttrVal, nshVal])]
+            NeuroID.saveEventToLocalDataStore(nidEventInput)
         default:
             return
     //        print("Unknown type", v)
