@@ -505,7 +505,7 @@ public class NeuroIDTracker: NSObject {
             /// Register input view for custom inputs
             if tfView.inputView is UIDatePicker, let datePickerView = tfView.inputView as? UIDatePicker {
                 var dptemp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
-                var nidEventInput = NIDEvent(eventName: NIDEventName.registerTarget, tgs: datePickerView.id, en: datePickerView.id, etn: "INPUT", et: "UIDatePicker::\(datePickerView.className)", ec: screenName, v: "S~C~~\(datePickerView.date)" , url: screenName)
+                var nidEventInput = NIDEvent(eventName: NIDEventName.registerTarget, tgs: datePickerView.id, en: datePickerView.id, etn: "INPUT", et: "UIDatePicker::\(datePickerView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
                 var nAttrVal = Attr.init(n: "guid", v: guid)
                 // Screen hierarchy
                 var nshVal = Attr.init(n: "screenHierarchy", v: fullViewString)
