@@ -4,4 +4,4 @@ Neuro-ID's Mobile SDK makes it simple to embed behavioral analytics inside your 
 
 ## Installation
 
-Visit https://neuro-id.readme.io/docs/overview for full installation documentation
+Visit https://neuro-id.readme.io/docs/overview for full installation documentation.
