@@ -12,6 +12,8 @@ public struct DataStore {
 
     static func insertEvent(screen: String, event: NIDEvent)
     {
+        NeuroID.logDebug(category: "saveEvent", content: event.toDict())
+
         var mutableEvent = event
         
         if (NeuroID.isStopped()){
