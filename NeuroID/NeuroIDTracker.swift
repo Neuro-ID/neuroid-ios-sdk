@@ -46,7 +46,6 @@ public struct NeuroID {
             print("NeuroID Error: You already configured the SDK")
         }
         NeuroID.clientKey = clientKey
-        
         let key = "nid_key";
         let defaults = UserDefaults.standard
         defaults.set(clientKey, forKey: key)

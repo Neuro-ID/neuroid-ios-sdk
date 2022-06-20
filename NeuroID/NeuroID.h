@@ -1,8 +1,6 @@
 //
 //  NeuroID.h
 //  NeuroID
-//
-//
 
 #import <Foundation/Foundation.h>
 
