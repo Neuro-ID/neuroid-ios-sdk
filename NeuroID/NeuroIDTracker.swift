@@ -36,7 +36,6 @@ public struct NeuroID {
     public static var isSDKStarted = false;
     public static var observingInputs = false;
     
-
     // MARK: - Setup
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
