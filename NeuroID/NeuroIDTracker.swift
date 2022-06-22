@@ -36,7 +36,6 @@ public struct NeuroID {
     public static var isSDKStarted = false;
     public static var observingInputs = false;
     
-
     // MARK: - Setup
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
@@ -46,7 +45,6 @@ public struct NeuroID {
             print("NeuroID Error: You already configured the SDK")
         }
         NeuroID.clientKey = clientKey
-        
         let key = "nid_key";
         let defaults = UserDefaults.standard
         defaults.set(clientKey, forKey: key)
@@ -202,18 +200,14 @@ public struct NeuroID {
         let backupCopy = dataStoreEvents
         // Clean event queue immediately after fetching
         DataStore.removeSentEvents()
-        if dataStoreEvents.isEmpty { return }
-        // Group by screen, and send to API
-//        let groupedEvents = Dictionary(grouping: dataStoreEvents, by: { (element: NIDEvent) in
-//            return element.url
-//        })
-//
+        if dataStoreEvents.isEmpty {
+            return
+        }
+        
         /** Just send all the evnets*/
         let cleanEvents = dataStoreEvents.map { (nidevent) -> NIDEvent in
             var newEvent = nidevent
-            // TODO only send url on register target and create session.
-            
-       
+            // Only send url on register target and create session.
             if (nidevent.type != NIDEventName.registerTarget.rawValue && nidevent.type != "CREATE_SESSION") {
                 newEvent.url = nil
             }
@@ -226,28 +220,7 @@ public struct NeuroID {
                 
             }, onFailure: { error in
                 logError(category: "APICall", content: String(describing: error))
-//                DataStore.events = backupCopy
             })
-        
-//        for key in groupedEvents.keys {
-//            var oldEvents = groupedEvents[key]
-//
-//            // Since we are seriazling this object, we need to remove any values we don't want to send in the event object to the API. This is sort of a not pretty hack
-//            var newEvents = oldEvents.map { (value: [NIDEvent]) -> [NIDEvent] in
-//                let result = value.map { NIDEvent -> NIDEvent in
-//                    var newEvent = NIDEvent
-//                    newEvent.url = nil
-//                    return newEvent
-//                }
-//                return result
-//            }
-//            post(events: newEvents ?? [], screen: key ?? "", onSuccess: { _ in
-//                logInfo(category: "APICall", content: "Sending successfully")
-//                    // send success -> delete
-//                }, onFailure: { error in
-//                    logError(category: "APICall", content: String(describing: error))
-//                })
-//        }
     }
     
     /// Direct send to API to create session
@@ -426,13 +399,11 @@ public class NeuroIDTracker: NSObject {
         if (NeuroID.isStopped()){
             return
         }
-        NeuroID.logDebug(category: "saveEvent", content: event.toDict())
         let screenName = screen ?? UUID().uuidString
         var newEvent = event
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
-        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
     }
     
     func getCurrentSession() -> String? {
@@ -461,11 +432,6 @@ public class NeuroIDTracker: NSObject {
          print("Hello World")
       }
     
-    func  addTapGesture(){
-        
-
-    }
-
     public static func registerSingleView(v: Any, screenName: String, guid: String){
         
         let screenName = NeuroID.getScreenName() ?? screenName
@@ -1601,9 +1567,7 @@ private extension UITextField {
         var newEvent = inputEvent
         // Make sure we have a valid url set
         newEvent.url = screenName
-        DataStore.insertEvent(screen: screenName, event: newEvent)
-        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
-        
+        DataStore.insertEvent(screen: screenName, event: newEvent)        
     }
 }
 
@@ -1644,9 +1608,6 @@ private extension UITextView {
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
-        NeuroID.logDebug(category: "saveEvent", content: "save event finish")
-        
-        
     }
     
 }

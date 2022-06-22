@@ -406,16 +406,6 @@ public struct NIDEvent: Codable {
         self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
     }
-
-//    public init(customEvent: String, tg: [String: TargetValue]?, view: UIView?) {
-//        type = customEvent
-//        var newTg = tg ?? [String: TargetValue]()
-//        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
-//        self.tg = newTg
-//        self.x = view?.frame.origin.x
-//        self.y = view?.frame.origin.y
-//    }
-    
     
     var asDictionary : [String:Any] {
         let mirror = Mirror(reflecting: self)
