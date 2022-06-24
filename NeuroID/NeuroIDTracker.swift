@@ -50,6 +50,7 @@ public struct NeuroID {
         defaults.set(clientKey, forKey: key)
     }
     
+    // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
     public static func configure(clientKey: String, collectorEndPoint: String) {
         collectorURLFromConfig = collectorEndPoint
         configure(clientKey: clientKey)
