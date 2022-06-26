@@ -32,7 +32,7 @@ public struct NeuroID {
     /// Turn on/off printing the SDK log to your console
     public static var logVisible = true
     public static var activeView: UIView?
-    
+    public static var collectorURLFromConfig:String?
     public static var isSDKStarted = false;
     public static var observingInputs = false;
     
@@ -48,6 +48,12 @@ public struct NeuroID {
         let key = "nid_key";
         let defaults = UserDefaults.standard
         defaults.set(clientKey, forKey: key)
+    }
+    
+    // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
+    public static func configure(clientKey: String, collectorEndPoint: String) {
+        collectorURLFromConfig = collectorEndPoint
+        configure(clientKey: clientKey)
     }
     
     public static func stop(){
@@ -149,7 +155,7 @@ public struct NeuroID {
     
     public static func getBaseURL() -> String {
         // Prod URL
-        return "https://api.neuro-id.com"
+        return collectorURLFromConfig ?? "https://api.neuro-id.com"
 //      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:8080"
 //      return "https://api.usw2-dev1.nidops.net";
