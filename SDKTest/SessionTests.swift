@@ -19,11 +19,8 @@ class SessionTests: XCTestCase {
         DataStore.removeSentEvents()
     }
     
-    func testConfigureRetainsBaseURL() throws {
-        NeuroID.configure(clientKey: "test")
-        XCTAssertTrue(NeuroID.getBaseURL() == "https://api.neuro-id.com")
-    }
     func testConfigureEndpoint() throws {
+        XCTAssertTrue(NeuroID.getBaseURL() == "https://api.neuro-id.com")
         NeuroID.configure(clientKey: "test", collectorEndPoint: "myendpoint.com")
         XCTAssertTrue(NeuroID.collectorURLFromConfig == "myendpoint.com")
     }
