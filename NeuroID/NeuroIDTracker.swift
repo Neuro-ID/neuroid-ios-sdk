@@ -153,9 +153,9 @@ public struct NeuroID {
         return setCustomVariable
     }
     
-    public static func getBaseURL() -> String {
+    public static func getCollectionEndpointURL() -> String {
         // Prod URL
-        return collectorURLFromConfig ?? "https://api.neuro-id.com"
+        return collectorURLFromConfig ?? "https://api.neuro-id.com/v3/c"
 //      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:8080"
 //      return "https://api.usw2-dev1.nidops.net";
@@ -235,7 +235,7 @@ public struct NeuroID {
                                  screen: String,
                                  onSuccess: @escaping(Any) -> Void,
                                  onFailure: @escaping(Error) -> Void) {
-        guard let url = URL(string: NeuroID.getBaseURL() + "/v3/c") else {
+        guard let url = URL(string: NeuroID.getCollectionEndpointURL()) else {
             logError(content: "NeuroID base URL found")
             return
         }

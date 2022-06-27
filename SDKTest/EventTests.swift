@@ -86,7 +86,7 @@ class EventTests: XCTestCase {
     }
     
     func testGetBaseURL(){
-        let data = NeuroID.getBaseURL();
+        let data = NeuroID.getCollectionEndpointURL();
         print("URL: ", data)
         XCTAssertTrue(data != nil);
     }
