@@ -1649,6 +1649,7 @@ private extension UIViewController {
         var allViewControllers = self.children
         allViewControllers.append(self)
         registerSubViewsTargets(subViewControllers: allViewControllers)
+        NIDSensorManager.shared
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
