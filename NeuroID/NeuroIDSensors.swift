@@ -37,7 +37,7 @@ final class NIDSensorManager: NSObject {
     }
     /// Update data from sensor every 0.2 seconds
     private func update() {
-        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+        Timer.scheduledTimer(withTimeInterval: 0.11, repeats: true) { _ in
             NIDPrintLog(self.sensorData)
             if let accData = self.manager.accelerometerData?.acceleration {
                 let axisX: Double = accData.x
