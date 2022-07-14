@@ -724,7 +724,9 @@ private extension NeuroIDTracker {
         if let textControl = notification.object as? UITextField {
             let inputType = "text"
             // isSecureText
-            if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
+            if #available(iOS 11.0, *) {
+                if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
+            }
             if #available(iOS 12.0, *) {
                 if textControl.textContentType == .newPassword { return }
             }
