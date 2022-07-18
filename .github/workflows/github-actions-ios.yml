@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - release/*
   repository_dispatch:
         types: [on-demand-testflight]
 env:

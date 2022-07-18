@@ -12,9 +12,16 @@ public struct DataStore {
 
     static func insertEvent(screen: String, event: NIDEvent)
     {
-        NeuroID.logDebug(category: "saveEvent", content: event.toDict())
+        var newEvent = event
+        let sensorManager = NIDSensorManager.shared
+        NeuroID.logDebug(category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer))
+        NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
+        newEvent.gyro = sensorManager.getSensorData(sensor: .gyro)
+        newEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
+        
+        NeuroID.logDebug(category: "saveEvent", content: newEvent.toDict())
 
-        var mutableEvent = event
+        var mutableEvent = newEvent
         
         if (NeuroID.isStopped()){
             return;
