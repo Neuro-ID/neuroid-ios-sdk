@@ -262,7 +262,7 @@ public struct NeuroID {
         let base64Events: String = Data(jsonEvents.utf8).base64EncodedString()
         
         var params = ParamsCreator.getDefaultSessionParams()
-        params["events"] = base64Events
+        params["events"] = jsonEvents
         params["url"] = screen
         
         // Unwrap all optionals and convert to null if empty

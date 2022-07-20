@@ -420,33 +420,6 @@ public struct NIDEvent: Codable {
         let valuesAsDict = self.asDictionary;
         return valuesAsDict
     }
-
-    func toBase64() -> String? {
-        // Filter and remove any nil optionals
-        let dict = toDict().filter({ $0.value != nil }).mapValues({ $0! })
-
-        do {
-            let data = try JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)
-            let base64 = data.base64EncodedString()
-            return base64
-        } catch let error {
-            NIDPrintLog("Encode event", dict, "to base64 failed with error", error)
-            return nil
-        }
-    }
-}
-
-extension Array {
-    func toBase64() -> String? {
-        do {
-            let data = try JSONSerialization.data(withJSONObject: self, options: .fragmentsAllowed)
-            let base64 = data.base64EncodedString()
-            return base64
-        } catch let error {
-            NIDPrintLog("Encode event", self, "to base64 failed with error", error)
-            return nil
-        }
-    }
 }
 
 extension Collection where Iterator.Element == [String: Any?] {
