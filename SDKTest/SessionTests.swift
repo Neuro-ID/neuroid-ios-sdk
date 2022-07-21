@@ -99,8 +99,8 @@ class SessionTests: XCTestCase {
         XCTAssertTrue((params["sid"] as! String).count == 16,
                       "SessionId has 16 random digits")
 
-        XCTAssertTrue(params["cid"] != nil)
-        let clientId = params["cid"] as! String
+        XCTAssertTrue(params["clientId"] != nil)
+        let clientId = params["clientId"] as! String
         XCTAssertTrue(clientId.lastIndex(of: ".") == clientId.firstIndex(of: "."),
                       "Only one . in the clientId")
 

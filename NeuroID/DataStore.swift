@@ -21,7 +21,7 @@ public struct DataStore {
         }
         
         if (!NeuroID.getScreenName().isEmptyOrNil){
-            mutableEvent.url = NeuroID.getScreenName()
+            mutableEvent.pageTag = NeuroID.getScreenName()
         }
         // Grab the current set screen and set event URL to this
         
@@ -36,7 +36,7 @@ public struct DataStore {
         }
                 
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
-        if let eventURL = mutableEvent.url {
+        if let eventURL = mutableEvent.pageTag {
             if (eventURL.contains("RNScreensNavigationController")) {
                 return
             }

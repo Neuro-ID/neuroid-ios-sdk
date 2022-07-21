@@ -123,7 +123,7 @@ class EventTests: XCTestCase {
     func testSetIUserID(){
         NeuroID.setUserID("atestUserID")
         let params = ParamsCreator.getDefaultSessionParams()
-        let uid = params["uid"] as! String
+        let uid = params["userId"] as! String
         XCTAssert(uid == "atestUserID")
     }
     func testEventParams() throws {
@@ -146,8 +146,8 @@ class EventTests: XCTestCase {
         XCTAssertTrue((params["sid"] as! String).count == 16,
                       "SessionId has 16 random digits")
 
-        XCTAssertTrue(params["uid"] != nil)
-        XCTAssertTrue(params["uid"] as! String == userID)
+        XCTAssertTrue(params["userId"] != nil)
+        XCTAssertTrue(params["userId"] as! String == userID)
 
         XCTAssertTrue(params["pid"] != nil)
 //        XCTAssertTrue(params["events"] != nil)

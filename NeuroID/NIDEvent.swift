@@ -171,8 +171,8 @@ public struct NIDEvent: Codable {
     var f: String?
     var lsid: String?
     var sid: String? // Done
-    var siteId: String? // Unused
-    var cid: String? // Done
+    var siteId: String? // Form ID
+    var clientId: String? // Done
     var did: String? // Done
     var iid: String? // Done
     var loc: String? // Done
@@ -182,11 +182,11 @@ public struct NIDEvent: Codable {
     var p: String? // Done
     var dnt: Bool? // Done
     var tch: Bool? // Done
-    var url: String?
+    var pageTag: String?
     var ns: String? // Done
     var jsl: Array<String>?//  = ["iOS"];
-    var jsv: String? // Done
-    var uid: String?
+    var sdkVersion: String? // Done
+    var userId: String?
     var sm: Double?
     var pd: Double?
 
@@ -199,7 +199,7 @@ public struct NIDEvent: Codable {
              siteId: siteId,
              sid: sessionId,
              lsid: lastSessionId,
-             cid: clientId,
+             clientId: clientId,
              did: deviceId,
              iid: intermediateId,
              loc: locale,
@@ -219,9 +219,9 @@ public struct NIDEvent: Codable {
              jsl: jsLibraries,
              dnt: doNotTrack,
              tch: touch,
-             url: url,
+             pageTag: pageTag,
              ns: commandQueueNamespace,
-             jsv: jsVersion,
+            sdkVersion: sdkVersion,
              is: idleSince,
              ts: Date.now(),
      
@@ -245,7 +245,7 @@ public struct NIDEvent: Codable {
          siteId: String? = nil,
          sid: String? = nil,
          lsid: String? = nil,
-         cid: String? = nil,
+         clientId: String? = nil,
          did: String? = nil,
          iid: String? = nil,
          loc: String? = nil,
@@ -255,16 +255,16 @@ public struct NIDEvent: Codable {
          p: String? = nil,
          dnt: Bool? = nil,
          tch: Bool? = nil,
-         url: String? = nil,
+                  pageTag: String? = nil,
          ns: String? = nil,
-         jsv: String? = nil) {
+         sdkVersion: String? = nil) {
         
         self.type = session.rawValue
         self.f = f
         self.siteId = siteId
         self.sid = sid
         self.lsid = lsid
-        self.cid = cid
+        self.clientId = clientId
         self.did = did
         self.iid = iid
         self.loc = loc
@@ -274,9 +274,9 @@ public struct NIDEvent: Codable {
         self.p = p
         self.dnt = dnt
         self.tch = tch
-        self.url = url
+        self.pageTag =          pageTag
         self.ns = ns
-        self.jsv = jsv
+        self.sdkVersion = sdkVersion
         self.jsl = []
     }
     
@@ -286,7 +286,7 @@ public struct NIDEvent: Codable {
      
  */
 
-    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, url: String) {
+    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, pageTag: String) {
         self.type = eventName.rawValue
         self.tgs = tgs;
         self.en = en;
@@ -296,7 +296,7 @@ public struct NIDEvent: Codable {
         self.et = et;
         var ef:Any = Optional<String>.none;
         self.v = v;
-        self.url = url;
+        self.pageTag = pageTag;
         
     }
     
@@ -317,7 +317,7 @@ public struct NIDEvent: Codable {
         var newTg = tg ?? [String: TargetValue]()
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
-        self.url = primaryViewController?.className
+        self.pageTag = primaryViewController?.className
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
     }
@@ -359,8 +359,8 @@ public struct NIDEvent: Codable {
     /**
      Set UserID Event
      */
-    init(session: NIDSessionEventName, uid: String){
-        self.uid = uid
+    init(session: NIDSessionEventName, userId: String){
+        self.userId = userId
         self.type = session.rawValue
     }
     
@@ -385,7 +385,7 @@ public struct NIDEvent: Codable {
      */
     
     public init(type: NIDEventName, view: UIView){
-        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
+        self.pageTag = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
         self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
     }
@@ -401,7 +401,7 @@ public struct NIDEvent: Codable {
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
-        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
+        self.pageTag = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
