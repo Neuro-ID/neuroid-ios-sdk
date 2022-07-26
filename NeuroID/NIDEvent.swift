@@ -83,6 +83,28 @@ public struct Attr: Codable, Equatable {
     var v:String?
 }
 
+public struct NeuroHTTPRequest: Codable {
+    var clientId:String
+    var environment: String
+    var sdkVersion: String
+    var pageTag: String
+    var responseId: String
+    var siteId: String
+    var userId: String
+    var jsonEvents: [NIDEvent]
+    
+    init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent]){
+        self.clientId = clientId
+        self.environment = environment
+        self.sdkVersion = sdkVersion
+        self.pageTag = pageTag
+        self.responseId = responseId
+        self.siteId = siteId
+        self.userId = userId
+        self.jsonEvents = jsonEvents
+    }
+}
+
 public enum TargetValue: Codable,Equatable {
     
     case int(Int), string(String), bool(Bool), double(Double), attr([Attr])
