@@ -50,7 +50,7 @@ class SessionTests: XCTestCase {
         let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
         sampleTextField.accessibilityLabel = "FName"
         sampleTextField.placeholder = "First Name"
-        sampleTextField.id = "horray"
+        sampleTextField.id = "horray" 
         testView.view.addSubview(sampleTextField);
         testView.viewDidLoad()
         testView.beginAppearanceTransition(true, animated: false)

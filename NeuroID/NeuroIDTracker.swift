@@ -10,6 +10,7 @@ public struct NeuroID {
     
     fileprivate static var sequenceId = 1
     fileprivate static var clientKey: String?
+    fileprivate static var siteId: String?
     fileprivate static let sessionId: String = ParamsCreator.getSessionID()
     fileprivate static let clientId: String = ParamsCreator.getClientId()
     fileprivate static var userId: String?
@@ -22,6 +23,7 @@ public struct NeuroID {
     static var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
     
+    private static var environment: String = "TEST"
     private static var currentScreenName: String? {
         get { lock.withCriticalSection { _currentScreenName } }
         set { lock.withCriticalSection { _currentScreenName = newValue } }
@@ -56,6 +58,17 @@ public struct NeuroID {
         configure(clientKey: clientKey)
     }
     
+    public static func setEnvironmentProduction(_value: Bool) {
+        if (_value) {
+            environment = "PRODUCTION"
+        } else {
+            environment = "TEST"
+        }
+    }
+    
+    public static func getEnvironment() -> String {
+        return environment
+    }
     public static func stop(){
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
@@ -605,7 +618,7 @@ private extension NeuroIDTracker {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
-        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: "", sid: ParamsCreator.getSessionID(), lsid: nil, clientId: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), iid: ParamsCreator.getIntermediateId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), sdkVersion: ParamsCreator.getSDKVersion())
+        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: "", sid: ParamsCreator.getSessionID(), lsid: nil, clientId: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), sdkVersion: ParamsCreator.getSDKVersion())
         
         captureEvent(event: event)
         return event;
@@ -1100,17 +1113,13 @@ struct ParamsCreator {
 
     static func getDefaultSessionParams() -> [String: Any?] {
         let params = [
-            "key": NeuroID.clientKey,
-            "id": ParamsCreator.createRequestId(),
-            "siteId": nil,
-            "sid": ParamsCreator.getSessionID(),
             "clientId": ParamsCreator.getClientId(),
-            "aid": nil,
-            "did": ParamsCreator.getDeviceId(),
+            "environment": NeuroID.getEnvironment,
+            "sdkVersion": ParamsCreator.getSDKVersion(),
+            "pageTag": NeuroID.getScreenName,
+            "responseId": ParamsCreator.generateUniqueHexId(),
+            "siteId": NeuroID.siteId,
             "userId": ParamsCreator.getUserID() ?? nil,
-            "pid": ParamsCreator.getPageId(),
-            "iid": ParamsCreator.getIntermediateId(),
-            "sdkVersion": ParamsCreator.getSDKVersion()
         ] as [String: Any?]
 
         return params
@@ -1124,13 +1133,13 @@ struct ParamsCreator {
         return key
     }
 
-    static func createRequestId() -> String {
-        let epoch = 1488084578518
-        let now = Date().timeIntervalSince1970 * 1000
-        let rawId = (Int(now) - epoch) * 1024  + NeuroID.sequenceId
-        NeuroID.sequenceId += 1
-        return String(format: "%02X", rawId)
-    }
+//    static func createRequestId() -> String {
+//        let epoch = 1488084578518
+//        let now = Date().timeIntervalSince1970 * 1000
+//        let rawId = (Int(now) - epoch) * 1024  + NeuroID.sequenceId
+//        NeuroID.sequenceId += 1
+//        return String(format: "%02X", rawId)
+//    }
 
     // Sessions are created under conditions:
     // Launch of application
@@ -1212,19 +1221,6 @@ struct ParamsCreator {
         }
     }
     
-    static func getIntermediateId() -> String {
-        let intermediateIdCacheKey = "nid_iid";
-        var iid = UserDefaults.standard.string(forKey: intermediateIdCacheKey);
-        
-        if (iid != nil){
-            return iid!;
-        } else {
-            iid = self.genId()
-            UserDefaults.standard.set(iid, forKey: intermediateIdCacheKey)
-            return iid!
-        }
-    }
-    
     private static func genId() -> String {
         return UUID().uuidString;
     }
@@ -1274,13 +1270,13 @@ struct ParamsCreator {
     static func getSDKVersion() -> String {
         // Version MUST start with 4. in order to be processed correctly
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        return "4.ios-\(version ?? "4.ios-1.2.1")"
+        return "5.ios-\(version ?? "?")"
     }
     static func getCommandQueueNamespace() -> String {
         return "nid";
     }
 
-    static func getPageId() -> String {
+    static func generateUniqueHexId() -> String {
         let x = 1
         let now = Date().timeIntervalSince1970 * 1000
         let rawId = (Int(now) - 1488084578518) * 1024 + (x + 1)

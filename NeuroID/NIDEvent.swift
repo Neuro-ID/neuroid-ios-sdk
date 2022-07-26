@@ -174,7 +174,6 @@ public struct NIDEvent: Codable {
     var siteId: String? // Form ID
     var clientId: String? // Done
     var did: String? // Done
-    var iid: String? // Done
     var loc: String? // Done
     var ua: String? // Done
     var tzo: Int?  // Done
@@ -201,7 +200,6 @@ public struct NIDEvent: Codable {
              lsid: lastSessionId,
              clientId: clientId,
              did: deviceId,
-             iid: intermediateId,
              loc: locale,
              ua: userAgent,
              tzo: timezoneOffset,
@@ -247,7 +245,6 @@ public struct NIDEvent: Codable {
          lsid: String? = nil,
          clientId: String? = nil,
          did: String? = nil,
-         iid: String? = nil,
          loc: String? = nil,
          ua: String? = nil,
          tzo: Int? = nil,
@@ -266,7 +263,6 @@ public struct NIDEvent: Codable {
         self.lsid = lsid
         self.clientId = clientId
         self.did = did
-        self.iid = iid
         self.loc = loc
         self.ua = ua
         self.tzo = tzo

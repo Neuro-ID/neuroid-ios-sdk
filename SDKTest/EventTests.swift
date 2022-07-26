@@ -139,6 +139,7 @@ class EventTests: XCTestCase {
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 
+        print("EVENT: ", params)
         XCTAssertTrue(params["key"] != nil)
         XCTAssertTrue(params["key"] as! String == clientKey)
 
