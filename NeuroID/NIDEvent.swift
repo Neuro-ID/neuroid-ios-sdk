@@ -278,7 +278,7 @@ public struct NIDEvent: Codable {
          tch: Bool? = nil,
                   pageTag: String? = nil,
          ns: String? = nil,
-         jsv: String? = nil,
+         sdkVersion: String? = nil,
          gyro: NIDSensorData? = nil,
          accel: NIDSensorData? = nil) {
         
