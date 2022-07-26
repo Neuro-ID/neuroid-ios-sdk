@@ -189,6 +189,8 @@ public struct NIDEvent: Codable {
     var uid: String?
     var sm: Double?
     var pd: Double?
+    var gyro: NIDSensorData?
+    var accel: NIDSensorData?
 
         /**
             Use to initiate a new session
@@ -257,7 +259,9 @@ public struct NIDEvent: Codable {
          tch: Bool? = nil,
          url: String? = nil,
          ns: String? = nil,
-         jsv: String? = nil) {
+         jsv: String? = nil,
+         gyro: NIDSensorData? = nil,
+         accel: NIDSensorData? = nil) {
         
         self.type = session.rawValue
         self.f = f
@@ -278,6 +282,8 @@ public struct NIDEvent: Codable {
         self.ns = ns
         self.jsv = jsv
         self.jsl = []
+        self.gyro = gyro
+        self.accel = accel
     }
     
     /** Register Target
