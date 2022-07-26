@@ -168,7 +168,7 @@ public struct NeuroID {
     
     public static func getCollectionEndpointURL() -> String {
         // Prod URL
-        return collectorURLFromConfig ?? "https://api.neuro-id.com/v3/c"
+        return collectorURLFromConfig ?? "https://receiver.neuroid.cloud/c"
 //      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:8080"
 //      return "https://api.usw2-dev1.nidops.net";

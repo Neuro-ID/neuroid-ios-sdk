@@ -140,17 +140,13 @@ class EventTests: XCTestCase {
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 
         print("EVENT: ", params)
-        XCTAssertTrue(params["key"] != nil)
-        XCTAssertTrue(params["key"] as! String == clientKey)
+        XCTAssertTrue(params["environment"] != nil)
 
-        XCTAssertTrue(params["sid"] != nil)
-        XCTAssertTrue((params["sid"] as! String).count == 16,
-                      "SessionId has 16 random digits")
+        XCTAssertTrue(params["sdkVersion"] != nil)
 
-        XCTAssertTrue(params["userId"] != nil)
+        XCTAssertTrue(params["responseId"] != nil)
         XCTAssertTrue(params["userId"] as! String == userID)
 
-        XCTAssertTrue(params["pid"] != nil)
 //        XCTAssertTrue(params["events"] != nil)
 //        XCTAssertTrue(params["events"] is [String: Any])
 //        let events = params["events"] as! [String: Any]
