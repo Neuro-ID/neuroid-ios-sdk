@@ -60,10 +60,14 @@ public struct NeuroID {
     
     public static func setEnvironmentProduction(_value: Bool) {
         if (_value) {
-            environment = "PRODUCTION"
+            self.environment = "PRODUCTION"
         } else {
-            environment = "TEST"
+            self.environment = "TEST"
         }
+    }
+    
+    public static func setSiteId(siteId: String) {
+        self.siteId = siteId
     }
     
     public static func getEnvironment() -> String {
@@ -157,10 +161,10 @@ public struct NeuroID {
         var setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v )
         let myKeys: [String] = trackers.map{String($0.key) }
         // Set the screen to the last active view
-        setCustomVariable.pageTag = myKeys.last
+        setCustomVariable.url = myKeys.last
         // If we don't have a valid URL, that means this was called before any views were tracked. Use "AppDelegate" as default
-        if (setCustomVariable.pageTag == nil || setCustomVariable.pageTag!.isEmpty) {
-            setCustomVariable.pageTag = "AppDelegate"
+        if (setCustomVariable.url == nil || setCustomVariable.url!.isEmpty) {
+            setCustomVariable.url = "AppDelegate"
         }
         saveEventToLocalDataStore(setCustomVariable);
         return setCustomVariable
@@ -228,12 +232,12 @@ public struct NeuroID {
             var newEvent = nidevent
             // Only send url on register target and create session.
             if (nidevent.type != NIDEventName.registerTarget.rawValue && nidevent.type != "CREATE_SESSION") {
-                newEvent.pageTag = nil
+                newEvent.url = nil
             }
             return newEvent
         }
         
-        post(events: cleanEvents , screen: (self.getScreenName() ?? backupCopy[0].pageTag) ?? "unnamed_screen", onSuccess: { _ in
+        post(events: cleanEvents , screen: (self.getScreenName() ?? backupCopy[0].url) ?? "unnamed_screen", onSuccess: { _ in
             logInfo(category: "APICall", content: "Sending successfully")
                 // send success -> delete
                 
@@ -429,7 +433,7 @@ public class NeuroIDTracker: NSObject {
         let screenName = screen ?? UUID().uuidString
         var newEvent = event
         // Make sure we have a valid url set
-        newEvent.pageTag = screenName
+        newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
     }
     
@@ -489,7 +493,7 @@ public class NeuroIDTracker: NSObject {
 //            invisView.superview?.layer.zPosition = 10000000
             
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
-            var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , pageTag: screenName)
+            var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
             var attrVal = Attr.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
@@ -500,7 +504,7 @@ public class NeuroIDTracker: NSObject {
 
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
-            var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , pageTag: screenName)
+            var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
             var attrVal = Attr.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
@@ -508,7 +512,7 @@ public class NeuroIDTracker: NSObject {
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
             let tb = v as! UIButton
-            var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)" , pageTag: screenName)
+            var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)" , url: screenName)
             var attrVal = Attr.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
@@ -626,7 +630,7 @@ private extension NeuroIDTracker {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
-        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), siteId: "", sid: ParamsCreator.getSessionID(), lsid: nil, clientId: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), sdkVersion: ParamsCreator.getSDKVersion())
+        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
         
         captureEvent(event: event)
         return event;
@@ -1560,7 +1564,7 @@ private extension UITextField {
         let screenName = self.className ?? UUID().uuidString
         var newEvent = inputEvent
         // Make sure we have a valid url set
-        newEvent.pageTag = screenName
+        newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)        
     }
 }
@@ -1600,7 +1604,7 @@ private extension UITextView {
         let screenName = self.className ?? UUID().uuidString
         var newEvent = inputEvent
         // Make sure we have a valid url set
-        newEvent.pageTag = screenName
+        newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
     }
     
