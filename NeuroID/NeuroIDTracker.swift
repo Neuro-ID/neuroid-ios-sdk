@@ -256,58 +256,29 @@ public struct NeuroID {
             logError(content: "NeuroID base URL found")
             return
         }
-        guard let clientKey = clientKey else {
-            logError(content: "NeuroID client key not setup")
-            return
-        }
-        var request = URLRequest(url: url)
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.setValue(ParamsCreator.getClientKey(), forHTTPHeaderField: "site_key")
-        request.httpMethod = "POST"
-        
+
+
         let encoder = JSONEncoder()
 //        var params = ParamsCreator.getDefaultSessionParams()
 //        params["jsonEvents"] = jsonEvents
 //        params["pageTag"] = screen
 //
-        var neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events)
-        var jsonData:Data;
-        do {
-            jsonData = try encoder.encode(neuroHTTPRequest)
-        }catch{
-            return
-        }
-        let jsonEvents:String = String(data: jsonData,
-                                       encoding: .utf8) ?? ""
-        
-        let base64Events: String = Data(jsonEvents.utf8).base64EncodedString()
-        
-//        var params = ParamsCreator.getDefaultSessionParams()
-//        params["jsonEvents"] = jsonEvents
-//        params["pageTag"] = screen
-        
-        // Unwrap all optionals and convert to null if empty
-//        var unwrappedParams: [String: Any] = [:]
-//        for (key, value) in params {
-//           let newValue = value ?? "null"
-//            unwrappedParams[key] = newValue
-//        }
-//
-//        let _dataString = unwrappedParams.toKeyValueString();
-//        let dataString = _dataString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed)?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+        let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events)
 
-        // If we are set to debugJSON, don't base64 encode the events so we can easily see what is in the payload
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             saveDebugJSON(events: "******************** New POST to NID Collector")
 //            saveDebugJSON(events: dataString)
 //            saveDebugJSON(events: jsonEvents)
             saveDebugJSON(events: "******************** END")
         }
+        
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "site_key": ParamsCreator.getClientKey(),
+            "authority": "receiver.neuroid.cloud"
+        ]
 
-//        guard let data = dataString.data(using: .utf8) else { return }
-        
-        
-        AF.request(url, method: .post, parameters: jsonData, encoder: JSONParameterEncoder.default).responseData { response in
+        AF.request(url, method: .post, parameters: neuroHTTPRequest, encoder: JSONParameterEncoder.default, headers: headers).responseData { response in
                 switch response.result {
                 case .success:
                     NIDPrintLog("Neuro-ID post to API Successfull")
@@ -316,15 +287,6 @@ public struct NeuroID {
                     logError(content: "Neuro-ID post Error: \(error)")
                 }
             }
-//        AF.upload(data, to: url, method: .post).responseData { response in
-//            switch response.result {
-//            case .success:
-//                NIDPrintLog("Neuro-ID post to API Successfull")
-//            case let .failure(error):
-//                NIDPrintLog("Neuro-ID FAIL to post API")
-//                logError(content: "Neuro-ID post Error: \(error)")
-//            }
-//        }
 
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
