@@ -307,8 +307,15 @@ public struct NeuroID {
 //        guard let data = dataString.data(using: .utf8) else { return }
         
         
-        AF.request(url, method: .post, parameters: jsonData, encoder: JSONParameterEncoder.default)
-
+        AF.request(url, method: .post, parameters: jsonData, encoder: JSONParameterEncoder.default).responseData { response in
+                switch response.result {
+                case .success:
+                    NIDPrintLog("Neuro-ID post to API Successfull")
+                case let .failure(error):
+                    NIDPrintLog("Neuro-ID FAIL to post API")
+                    logError(content: "Neuro-ID post Error: \(error)")
+                }
+            }
 //        AF.upload(data, to: url, method: .post).responseData { response in
 //            switch response.result {
 //            case .success:
