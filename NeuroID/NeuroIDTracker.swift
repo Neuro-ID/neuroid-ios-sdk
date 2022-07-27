@@ -292,7 +292,7 @@ public struct NeuroID {
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             print("*********** BEGIN **************")
 //            print(dataString.description)
-            print(jsonEvents.description)
+//            print(jsonEvents.description)
             print("*********** END ***************")
         }
     }
