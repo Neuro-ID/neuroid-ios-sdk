@@ -193,8 +193,7 @@ public struct NIDEvent: Codable {
     var f: String?
     var lsid: String?
     var sid: String? // Done
-    var siteId: String? // Form ID
-    var clientId: String? // Done
+    var cid: String? // Done
     var did: String? // Done
     var loc: String? // Done
     var ua: String? // Done
@@ -203,11 +202,11 @@ public struct NIDEvent: Codable {
     var p: String? // Done
     var dnt: Bool? // Done
     var tch: Bool? // Done
-    var pageTag: String?
+    var url: String?
     var ns: String? // Done
     var jsl: Array<String>?//  = ["iOS"];
-    var sdkVersion: String? // Done
-    var userId: String?
+    var jsv: String? // Done
+    var uid: String?
     var sm: Double?
     var pd: Double?
     var gyro: NIDSensorData?
@@ -264,10 +263,9 @@ public struct NIDEvent: Codable {
 //    }
     init(session: NIDSessionEventName,
          f: String? = nil,
-         siteId: String? = nil,
          sid: String? = nil,
          lsid: String? = nil,
-         clientId: String? = nil,
+         cid: String? = nil,
          did: String? = nil,
          loc: String? = nil,
          ua: String? = nil,
@@ -278,16 +276,15 @@ public struct NIDEvent: Codable {
          tch: Bool? = nil,
                   pageTag: String? = nil,
          ns: String? = nil,
-         sdkVersion: String? = nil,
+         jsv: String? = nil,
          gyro: NIDSensorData? = nil,
          accel: NIDSensorData? = nil) {
         
         self.type = session.rawValue
         self.f = f
-        self.siteId = siteId
         self.sid = sid
         self.lsid = lsid
-        self.clientId = clientId
+        self.cid = cid
         self.did = did
         self.loc = loc
         self.ua = ua
@@ -296,9 +293,9 @@ public struct NIDEvent: Codable {
         self.p = p
         self.dnt = dnt
         self.tch = tch
-        self.pageTag =          pageTag
+        self.url =          pageTag
         self.ns = ns
-        self.sdkVersion = sdkVersion
+        self.jsv = jsv
         self.jsl = []
         self.gyro = gyro
         self.accel = accel
@@ -310,7 +307,7 @@ public struct NIDEvent: Codable {
      
  */
 
-    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, pageTag: String) {
+    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, url: String) {
         self.type = eventName.rawValue
         self.tgs = tgs;
         self.en = en;
@@ -320,7 +317,7 @@ public struct NIDEvent: Codable {
         self.et = et;
         var ef:Any = Optional<String>.none;
         self.v = v;
-        self.pageTag = pageTag;
+        self.url = url;
         
     }
     
@@ -341,7 +338,7 @@ public struct NIDEvent: Codable {
         var newTg = tg ?? [String: TargetValue]()
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
-        self.pageTag = primaryViewController?.className
+        self.url = primaryViewController?.className
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
     }
@@ -384,7 +381,7 @@ public struct NIDEvent: Codable {
      Set UserID Event
      */
     init(session: NIDSessionEventName, userId: String){
-        self.userId = userId
+        self.uid = userId
         self.type = session.rawValue
     }
     
@@ -409,7 +406,7 @@ public struct NIDEvent: Codable {
      */
     
     public init(type: NIDEventName, view: UIView){
-        self.pageTag = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
+        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
         self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
     }
@@ -425,7 +422,7 @@ public struct NIDEvent: Codable {
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
-        self.pageTag = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
+        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
