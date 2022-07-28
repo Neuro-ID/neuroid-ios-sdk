@@ -51,7 +51,7 @@ class DataStoreTests: XCTestCase {
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: newEvents as! Data)
             // Test Grouping
             let groupedEvents = Dictionary(grouping: parsedEvents, by: { (element: NIDEvent) in
-                return element.url
+                return element.pageTag
             })
             print("Events:", parsedEvents)
             print("Grouped Events", groupedEvents)

@@ -20,7 +20,7 @@ class SessionTests: XCTestCase {
     }
     
     func testConfigureEndpoint() throws {
-        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://api.neuro-id.com/v3/c")
+        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
         NeuroID.configure(clientKey: "test", collectorEndPoint: "myendpoint.com")
         XCTAssertTrue(NeuroID.collectorURLFromConfig == "myendpoint.com")
     }
@@ -50,7 +50,7 @@ class SessionTests: XCTestCase {
         let sampleTextField =  UITextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40))
         sampleTextField.accessibilityLabel = "FName"
         sampleTextField.placeholder = "First Name"
-        sampleTextField.id = "horray"
+        sampleTextField.id = "horray" 
         testView.view.addSubview(sampleTextField);
         testView.viewDidLoad()
         testView.beginAppearanceTransition(true, animated: false)
@@ -92,26 +92,24 @@ class SessionTests: XCTestCase {
         let params = ParamsCreator.getDefaultSessionParams();
 //            tracker.getSessionParams(userUrl: urlName)
 
-        XCTAssertTrue(params["key"] != nil)
-        XCTAssertTrue(params["key"] as! String == clientKey)
+        XCTAssertTrue(params["environment"] != nil)
 
-        XCTAssertTrue(params["sid"] != nil)
-        XCTAssertTrue((params["sid"] as! String).count == 16,
-                      "SessionId has 16 random digits")
+        XCTAssertTrue(params["sdkVersion"] != nil)
 
-        XCTAssertTrue(params["cid"] != nil)
-        let clientId = params["cid"] as! String
+        XCTAssertTrue(params["responseId"] != nil)
+        XCTAssertTrue(params["clientId"] != nil)
+        let clientId = params["clientId"] as! String
         XCTAssertTrue(clientId.lastIndex(of: ".") == clientId.firstIndex(of: "."),
                       "Only one . in the clientId")
 
-        let clientIdComponents = clientId.components(separatedBy: ".")
-        let time = Double(clientIdComponents[0])!
-        XCTAssertTrue(time < Date().timeIntervalSince1970 * 1000,
-                      "Created time should be in the past")
-
-        let randomNumber = Double(clientIdComponents[1])!
-        XCTAssertTrue(randomNumber <= Double(Int32.max),
-                      "number was randomed in 0 ..< Int32.max")
+//        let clientIdComponents = clientId.components(separatedBy: ".")
+//        let time = Double(clientIdComponents[0])!
+//        XCTAssertTrue(time < Date().timeIntervalSince1970 * 1000,
+//                      "Created time should be in the past")
+//
+//        let randomNumber = Double(clientIdComponents[1])!
+//        XCTAssertTrue(randomNumber <= Double(Int32.max),
+//                      "number was randomed in 0 ..< Int32.max")
 
 //        XCTAssertTrue(params["url"] != nil)
 //        XCTAssertTrue(params["url"] as! String == urlName)
