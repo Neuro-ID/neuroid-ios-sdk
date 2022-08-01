@@ -7,7 +7,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Neuro-ID",
+    name: "NeuroID",
     platforms: [.iOS(.v11)],
     products: [
         .library(
