@@ -33,6 +33,13 @@ jobs:
             ls schema/
             cp schema/src/schema.json neuroid-ios-sdk/NeuroID/
 
+            cd neuroid-ios-sdk
+            git config --global user.email "robot@neuro-id.com"
+            git config --global user.name "robot"
+            git add .
+            git diff-index --quiet HEAD || git commit -m "Github workflow: New schema.json added"
+            git push
+
   test:
     runs-on: macos-latest
     steps:
