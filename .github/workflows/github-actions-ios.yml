@@ -10,6 +10,35 @@ on:
 env:
  VERSION: "1.3.0"
 jobs:
+  updateSchema:
+    name: Retrieve new Schema.json
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout main
+        uses: actions/checkout@v3
+        with:
+          path: neuroid-ios-sdk
+          
+      - name: Checkout schema
+        uses: actions/checkout@v3  
+        with:
+          repository: Neuro-ID/nid-event-schema
+          token: ${{ secrets.SCHEMA_PAT }}
+          path: schema
+          
+      - name: Update Internal Library
+        run: |
+            ls neuroid-ios-sdk/
+            ls schema/
+            cp schema/src/schema.json neuroid-ios-sdk/NeuroID/
+            cd neuroid-ios-sdk
+            git config --global user.email "robot@neuro-id.com"
+            git config --global user.name "robot"
+            git add .
+            git diff-index --quiet HEAD || git commit -m "Github workflow: New schema.json added"
+            git push
+
   test:
     runs-on: macos-latest
     steps:
