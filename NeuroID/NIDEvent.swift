@@ -93,7 +93,7 @@ public struct NeuroHTTPRequest: Codable {
     var userId: String
     var jsonEvents: [NIDEvent]
     
-    init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent]){
+    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent]){
         self.clientId = clientId
         self.environment = environment
         self.sdkVersion = sdkVersion
