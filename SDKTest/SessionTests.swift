@@ -20,7 +20,13 @@ class SessionTests: XCTestCase {
     }
     
     func testConfigureEndpoint() throws {
+        #if DEBUG
+        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuro-dev.com/c")
+        #elseif STAGING
         XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
+        #else
+        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://api.neuro-id.com/v3/c")
+        #endif
         NeuroID.configure(clientKey: "test", collectorEndPoint: "myendpoint.com")
         XCTAssertTrue(NeuroID.collectorURLFromConfig == "myendpoint.com")
     }
