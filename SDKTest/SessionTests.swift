@@ -21,7 +21,7 @@ class SessionTests: XCTestCase {
     
     func testConfigureEndpoint() throws {
         #if DEBUG
-        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
+        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuro-dev.com/c")
         #elseif STAGING
         XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
         #else
