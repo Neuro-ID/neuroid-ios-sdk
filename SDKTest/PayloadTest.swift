@@ -57,7 +57,7 @@ class PayloadTest: XCTestCase {
         do {
             let schema = try DSJSONSchema(data: data, baseURI: nil, referenceStorage: nil, specification:DSJSONSchemaSpecification.draft6(), options: nil)
             let entity = NIDEvent(type: .radioChange, tg: ["url":TargetValue.string("clay")], view: UIView())
-            let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: "1", environment: NeuroID.getEnvironment(), sdkVersion: "2.0.0", pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: "2", siteId: "", userId: "", jsonEvents: [entity], tabId: "", pageId: "", url: "", jsVersion: "")
+            let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: "A0CDADAD-1BD3-4570-AA8E-AFF517EFC775", environment: NeuroID.getEnvironment(), sdkVersion: "2.0.0", pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: "D726B802", siteId: "", userId: "", jsonEvents: [entity], tabId: "", pageId: "", url: "", jsVersion: "")
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(neuroHTTPRequest)
             try schema.validateObject(with: data)
