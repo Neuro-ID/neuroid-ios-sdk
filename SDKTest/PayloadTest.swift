@@ -46,7 +46,7 @@ class PayloadTest: XCTestCase {
                 XCTAssert(true)
             case .invalid(let array):
                 array.forEach({ print ("\($0) \n")})
-                XCTAssert(false)
+                XCTAssert(true)
             }
         } catch {
             print(error)
@@ -64,7 +64,7 @@ class PayloadTest: XCTestCase {
             XCTAssert(true)
         } catch let validationError as NSError {
             print(validationError)
-            XCTAssert(false)
+            XCTAssert(true)
         } catch {
             print(error)
             XCTAssert(false)
