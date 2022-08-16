@@ -58,8 +58,8 @@ public struct NeuroID {
         configure(clientKey: clientKey)
     }
     
-    public static func setEnvironmentProduction(_value: Bool) {
-        if (_value) {
+    public static func setEnvironmentProduction(_ value: Bool) {
+        if (value) {
             self.environment = "PRODUCTION"
         } else {
             self.environment = "TEST"
