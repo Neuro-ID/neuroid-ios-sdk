@@ -92,8 +92,12 @@ public struct NeuroHTTPRequest: Codable {
     var siteId: String
     var userId: String
     var jsonEvents: [NIDEvent]
+    var tabId: String
+    var pageId:String
+    var url:String
+    var jsVersion:String
     
-    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent]){
+    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent], tabId: String, pageId:String, url:String, jsVersion:String){
         self.clientId = clientId
         self.environment = environment
         self.sdkVersion = sdkVersion
@@ -102,6 +106,10 @@ public struct NeuroHTTPRequest: Codable {
         self.siteId = siteId
         self.userId = userId
         self.jsonEvents = jsonEvents
+        self.tabId = tabId
+        self.pageId = pageId
+        self.url = url
+        self.jsVersion = jsVersion
     }
 }
 

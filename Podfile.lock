@@ -1,21 +1,25 @@
 PODS:
   - Alamofire (5.6.1)
+  - DSJSONSchemaValidation (2.0.7)
   - JSONSchema (0.5.0)
 
 DEPENDENCIES:
   - Alamofire
+  - DSJSONSchemaValidation
   - JSONSchema (= 0.5.0)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - DSJSONSchemaValidation
     - JSONSchema
   trunk:
     - Alamofire
 
 SPEC CHECKSUMS:
   Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
+  DSJSONSchemaValidation: 46e30ccfa9908c49d184f453d556f55aa0aac1ff
   JSONSchema: 52453ed2f570370b5e3ccd1c943afdfa5ea70db5
 
-PODFILE CHECKSUM: 6477838cf3c76968e9dba2a811b4690bfbe8659d
+PODFILE CHECKSUM: 79c9aa5692041525b823b21e08071f57c7d0b2d3
 
 COCOAPODS: 1.11.3
