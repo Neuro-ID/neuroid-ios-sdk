@@ -21,6 +21,11 @@ let package = Package(
             url: "https://github.com/Alamofire/Alamofire.git",
             from: "5.6.0"
         ),
+        .package(
+            name: "JSONSchema",
+            url: "https://github.com/kylef/JSONSchema.swift.git",
+            from: "0.5.0"
+        )
     ],
     targets: [
         .target(
@@ -33,11 +38,21 @@ let package = Package(
         ),
         .testTarget(
             name: "SDKTest",
+            dependencies: [
+                "NeuroID",
+                .product(name: "Alamofire", package: "Alamofire"),
+                "JSONSchema"
+            ],
             path: "SDKTest",
             exclude: ["Info.plist"]
         ),
         .testTarget(
             name: "SDKUITest",
+            dependencies: [
+                "NeuroID",
+                .product(name: "Alamofire", package: "Alamofire"),
+                "JSONSchema"
+            ],
             path: "SDKUITest",
             exclude: ["Info.plist"]
         )
