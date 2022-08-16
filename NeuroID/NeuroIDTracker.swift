@@ -186,8 +186,8 @@ public struct NeuroID {
         return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
         #elseif RELEASE
         return  "https://api.neuro-id.com/v3/c"
-        /// return "https://receiver.neuroid.cloud/c"
         #endif
+        return "https://receiver.neuroid.cloud/c"
     }
     
     static func getClientKeyFromLocalStorage() -> String {
@@ -305,6 +305,11 @@ public struct NeuroID {
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             print("*********** BEGIN **************")
+            do {
+                let data = try JSONEncoder().encode(neuroHTTPRequest)
+                let str = String(data: data, encoding: .utf8)
+                print(str)
+            } catch {}
 //            print(dataString.description)
 //            print(jsonEvents.description)
             print("*********** END ***************")
