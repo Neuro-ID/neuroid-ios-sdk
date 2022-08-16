@@ -93,6 +93,12 @@ public struct Attr: Codable, Equatable {
     }
 }
 
+public struct NIDTouches: Codable, Equatable {
+    var x:CGFloat?
+    var y: CGFloat?
+    var tid: Int?
+}
+
 public struct NeuroHTTPRequest: Codable {
     var clientId:String
     var environment: String
@@ -229,6 +235,7 @@ public struct NIDEvent: Codable {
     var pd: Double?
     var gyro: NIDSensorData?
     var accel: NIDSensorData?
+    var touches: [NIDTouches]?
 
         /**
             Use to initiate a new session
@@ -441,9 +448,16 @@ public struct NIDEvent: Codable {
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
         self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
+        switch type {
+        case .touchStart, .touchMove, .touchEnd, .touchCancel:
+            let touch = NIDTouches(x: view?.frame.origin.x, y: view?.frame.origin.y, tid: Int.random(in: 0...10000))
+            self.touches = []
+            self.touches?.append(touch)
+        default:
+            self.x = view?.frame.origin.x
+            self.y = view?.frame.origin.y
+        }
     }
     
     var asDictionary : [String:Any] {
