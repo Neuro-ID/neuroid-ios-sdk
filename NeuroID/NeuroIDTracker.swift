@@ -87,6 +87,9 @@ public struct NeuroID {
     }
     
     public static func getScreenName() -> String? {
+        if (!currentScreenName.isEmptyOrNil) {
+            return "ios://\(currentScreenName ?? "")"
+        }
         return currentScreenName
     }
     
@@ -274,12 +277,12 @@ public struct NeuroID {
 //
         let tabId = UUID()
         let pageid = UUID()
-        let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: "https://", jsVersion: "")
+        let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: NeuroID.getScreenName() ?? "ios://", jsVersion: "")
 
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             saveDebugJSON(events: "******************** New POST to NID Collector")
 //            saveDebugJSON(events: dataString)
-//            saveDebugJSON(events: jsonEvents)
+//            saveDebugJSON(events: jsonEvents):
             saveDebugJSON(events: "******************** END")
         }
         
