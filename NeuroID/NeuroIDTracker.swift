@@ -179,14 +179,14 @@ public struct NeuroID {
 //      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:8080"
 //      return "https://api.usw2-dev1.nidops.net";
-        
-        #if DEBUG
-        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-        #elseif STAGING
-        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-        #elseif RELEASE
-        return  "https://api.neuro-id.com/v3/c"
-        #endif
+//
+//        #if DEBUG
+//        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
+//        #elseif STAGING
+//        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
+//        #elseif RELEASE
+//        return  "https://api.neuro-id.com/v3/c"
+//        #endif
         return "https://receiver.neuroid.cloud/c"
     }
     
