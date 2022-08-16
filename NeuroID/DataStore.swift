@@ -33,7 +33,7 @@ public struct DataStore {
         }
         
         if (!NeuroID.getScreenName().isEmptyOrNil){
-            mutableEvent.url = NeuroID.getScreenName()
+            mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
         }
         // Grab the current set screen and set event URL to this
         

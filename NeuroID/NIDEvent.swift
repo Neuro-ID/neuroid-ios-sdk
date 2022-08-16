@@ -79,8 +79,24 @@ public enum NIDEventName: String {
 }
 
 public struct Attr: Codable, Equatable {
-    var n:String?
+    var guid:String?
+    var screenHierarchy:String?
     var v:String?
+    var hash:String?
+    init(guid:String?, screenHierarchy:String?) {
+        self.guid = guid
+        self.screenHierarchy = screenHierarchy
+    }
+    init(v:String?, hash:String?) {
+        self.v = v
+        self.hash = hash
+    }
+}
+
+public struct NIDTouches: Codable, Equatable {
+    var x:CGFloat?
+    var y: CGFloat?
+    var tid: Int?
 }
 
 public struct NeuroHTTPRequest: Codable {
@@ -92,8 +108,12 @@ public struct NeuroHTTPRequest: Codable {
     var siteId: String
     var userId: String
     var jsonEvents: [NIDEvent]
+    var tabId: String
+    var pageId:String
+    var url:String
+    var jsVersion:String
     
-    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent]){
+    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent], tabId: String, pageId:String, url:String, jsVersion:String){
         self.clientId = clientId
         self.environment = environment
         self.sdkVersion = sdkVersion
@@ -102,12 +122,16 @@ public struct NeuroHTTPRequest: Codable {
         self.siteId = siteId
         self.userId = userId
         self.jsonEvents = jsonEvents
+        self.tabId = tabId
+        self.pageId = pageId
+        self.url = url
+        self.jsVersion = jsVersion
     }
 }
 
 public enum TargetValue: Codable,Equatable {
     
-    case int(Int), string(String), bool(Bool), double(Double), attr([Attr])
+    case int(Int), string(String), bool(Bool), double(Double), attr(Attr)
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -159,7 +183,7 @@ public enum TargetValue: Codable,Equatable {
         }
         
         if let attr = try? decoder.singleValueContainer().decode(Attr.self) {
-            self = .attr([attr])
+            self = .attr(attr)
             return
         }
         
@@ -211,6 +235,7 @@ public struct NIDEvent: Codable {
     var pd: Double?
     var gyro: NIDSensorData?
     var accel: NIDSensorData?
+    var touches: [NIDTouches]?
 
         /**
             Use to initiate a new session
@@ -423,9 +448,16 @@ public struct NIDEvent: Codable {
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
         self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
+        switch type {
+        case .touchStart, .touchMove, .touchEnd, .touchCancel:
+            let touch = NIDTouches(x: view?.frame.origin.x, y: view?.frame.origin.y, tid: Int.random(in: 0...10000))
+            self.touches = []
+            self.touches?.append(touch)
+        default:
+            self.x = view?.frame.origin.x
+            self.y = view?.frame.origin.y
+        }
     }
     
     var asDictionary : [String:Any] {

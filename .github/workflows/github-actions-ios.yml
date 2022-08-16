@@ -32,7 +32,6 @@ jobs:
             ls neuroid-ios-sdk/
             ls schema/
             cp schema/src/schema.json neuroid-ios-sdk/NeuroID/
-
   test:
     runs-on: macos-latest
     steps:

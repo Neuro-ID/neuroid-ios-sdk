@@ -87,6 +87,9 @@ public struct NeuroID {
     }
     
     public static func getScreenName() -> String? {
+        if (!currentScreenName.isEmptyOrNil) {
+            return "\(currentScreenName ?? "")"
+        }
         return currentScreenName
     }
     
@@ -176,15 +179,15 @@ public struct NeuroID {
 //      return "https://rc.api.usw2-prod1.nidops.net"
 //      return "http://localhost:8080"
 //      return "https://api.usw2-dev1.nidops.net";
-        
-        #if DEBUG
-        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-        #elseif STAGING
-        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-        #elseif RELEASE
-        return  "https://api.neuro-id.com/v3/c"
-        /// return "https://receiver.neuroid.cloud/c"
-        #endif
+//
+//        #if DEBUG
+//        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
+//        #elseif STAGING
+//        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
+//        #elseif RELEASE
+//        return  "https://api.neuro-id.com/v3/c"
+//        #endif
+        return "https://receiver.neuroid.cloud/c"
     }
     
     static func getClientKeyFromLocalStorage() -> String {
@@ -272,12 +275,14 @@ public struct NeuroID {
 //        params["jsonEvents"] = jsonEvents
 //        params["pageTag"] = screen
 //
-        let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events)
+        let tabId = UUID()
+        let pageid = UUID()
+        let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: "ios://\(NeuroID.getScreenName() ?? "")" , jsVersion: "")
 
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             saveDebugJSON(events: "******************** New POST to NID Collector")
 //            saveDebugJSON(events: dataString)
-//            saveDebugJSON(events: jsonEvents)
+//            saveDebugJSON(events: jsonEvents):
             saveDebugJSON(events: "******************** END")
         }
         
@@ -300,6 +305,11 @@ public struct NeuroID {
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             print("*********** BEGIN **************")
+            do {
+                let data = try JSONEncoder().encode(neuroHTTPRequest)
+                let str = String(data: data, encoding: .utf8)
+                print(str)
+            } catch {}
 //            print(dataString.description)
 //            print(jsonEvents.description)
             print("*********** END ***************")
@@ -472,10 +482,11 @@ public class NeuroIDTracker: NSObject {
             
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
-            var attrVal = Attr.init(n: "guid", v: guid)
-            // Screen hierarchy
-            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
+//            var attrVal = Attr.init(n: "guid", v: guid)
+//            // Screen hierarchy
+//            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+            var attrVal = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrVal)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
             let tv = v as! UITextView
@@ -483,18 +494,20 @@ public class NeuroIDTracker: NSObject {
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
-            var attrVal = Attr.init(n: "guid", v: guid)
-            // Screen hierarchy
-            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
+//            var attrVal = Attr.init(n: "guid", v: guid)
+//            // Screen hierarchy
+//            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+            var attrVal = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrVal)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
             let tb = v as! UIButton
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)" , url: screenName)
-            var attrVal = Attr.init(n: "guid", v: guid)
-            // Screen hierarchy
-            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrVal, shVal])]
+//            var attrVal = Attr.init(n: "guid", v: guid)
+//            // Screen hierarchy
+//            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
+            var attrVal = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrVal)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
@@ -1041,17 +1054,17 @@ struct ParamsCreator {
             
 //            var attrParams:Attr;
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
-            var attrVal = Attr.init(n: "v", v: inputValue)
-            
+//            var attrVal = Attr.init(n: "v", v: inputValue)
+//
             var textValue = attrParams?["hash"] as? String ?? ""
-            var hashValue = Attr.init(n: "hash", v: textValue.sha256().prefix(8).string)
-            var attrArraryVal:[Attr] = [attrVal, hashValue]
-            
+//            var hashValue = Attr.init(n: "hash", v: textValue.sha256().prefix(8).string)
+//            var attrArraryVal:[Attr] = [attrVal, hashValue]
+            var attrVal = Attr.init(v: inputValue, hash: textValue.sha256().prefix(8).string)
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
                 "et": TargetValue.string(type),
-                "attr": TargetValue.attr(attrArraryVal)
+                "attr": TargetValue.attr(attrVal)
             ]
             
         case NIDEventName.keyDown:
