@@ -12,6 +12,7 @@ class DataStoreTests: XCTestCase {
     let eventsKey = "events_pending"
     override func setUpWithError() throws {
         UserDefaults.standard.setValue(nil, forKey: "events_ending")
+        NeuroID.start()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 

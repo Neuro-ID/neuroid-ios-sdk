@@ -79,13 +79,59 @@ public enum NIDEventName: String {
 }
 
 public struct Attr: Codable, Equatable {
-    var n:String?
+    var guid:String?
+    var screenHierarchy:String?
     var v:String?
+    var hash:String?
+    init(guid:String?, screenHierarchy:String?) {
+        self.guid = guid
+        self.screenHierarchy = screenHierarchy
+    }
+    init(v:String?, hash:String?) {
+        self.v = v
+        self.hash = hash
+    }
+}
+
+public struct NIDTouches: Codable, Equatable {
+    var x:CGFloat?
+    var y: CGFloat?
+    var tid: Int?
+}
+
+public struct NeuroHTTPRequest: Codable {
+    var clientId:String
+    var environment: String
+    var sdkVersion: String
+    var pageTag: String
+    var responseId: String
+    var siteId: String
+    var userId: String
+    var jsonEvents: [NIDEvent]
+    var tabId: String
+    var pageId:String
+    var url:String
+    var jsVersion:String
+    
+    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String, responseId:String, siteId:String, userId:String, jsonEvents:[NIDEvent], tabId: String, pageId:String, url:String, jsVersion:String){
+        self.clientId = clientId
+        self.environment = environment
+        self.sdkVersion = sdkVersion
+        self.pageTag = pageTag
+        self.responseId = responseId
+        self.siteId = siteId
+        self.userId = userId
+        self.jsonEvents = jsonEvents
+        self.tabId = tabId
+        self.pageId = pageId
+        self.url = url
+        self.jsVersion = jsVersion
+    }
 }
 
 public enum TargetValue: Codable,Equatable {
     
-    case int(Int), string(String), bool(Bool), double(Double), attr([Attr])
+    case int(Int), string(String), bool(Bool), double(Double), attr(Attr)
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -137,7 +183,7 @@ public enum TargetValue: Codable,Equatable {
         }
         
         if let attr = try? decoder.singleValueContainer().decode(Attr.self) {
-            self = .attr([attr])
+            self = .attr(attr)
             return
         }
         
@@ -171,10 +217,8 @@ public struct NIDEvent: Codable {
     var f: String?
     var lsid: String?
     var sid: String? // Done
-    var siteId: String? // Unused
     var cid: String? // Done
     var did: String? // Done
-    var iid: String? // Done
     var loc: String? // Done
     var ua: String? // Done
     var tzo: Int?  // Done
@@ -189,6 +233,9 @@ public struct NIDEvent: Codable {
     var uid: String?
     var sm: Double?
     var pd: Double?
+    var gyro: NIDSensorData?
+    var accel: NIDSensorData?
+    var touches: [NIDTouches]?
 
         /**
             Use to initiate a new session
@@ -199,9 +246,8 @@ public struct NIDEvent: Codable {
              siteId: siteId,
              sid: sessionId,
              lsid: lastSessionId,
-             cid: clientId,
+             clientId: clientId,
              did: deviceId,
-             iid: intermediateId,
              loc: locale,
              ua: userAgent,
              tzo: timezoneOffset,
@@ -219,9 +265,9 @@ public struct NIDEvent: Codable {
              jsl: jsLibraries,
              dnt: doNotTrack,
              tch: touch,
-             url: url,
+             pageTag: pageTag,
              ns: commandQueueNamespace,
-             jsv: jsVersion,
+            sdkVersion: sdkVersion,
              is: idleSince,
              ts: Date.now(),
      
@@ -242,12 +288,10 @@ public struct NIDEvent: Codable {
 //    }
     init(session: NIDSessionEventName,
          f: String? = nil,
-         siteId: String? = nil,
          sid: String? = nil,
          lsid: String? = nil,
          cid: String? = nil,
          did: String? = nil,
-         iid: String? = nil,
          loc: String? = nil,
          ua: String? = nil,
          tzo: Int? = nil,
@@ -255,18 +299,18 @@ public struct NIDEvent: Codable {
          p: String? = nil,
          dnt: Bool? = nil,
          tch: Bool? = nil,
-         url: String? = nil,
+                  pageTag: String? = nil,
          ns: String? = nil,
-         jsv: String? = nil) {
+         jsv: String? = nil,
+         gyro: NIDSensorData? = nil,
+         accel: NIDSensorData? = nil) {
         
         self.type = session.rawValue
         self.f = f
-        self.siteId = siteId
         self.sid = sid
         self.lsid = lsid
         self.cid = cid
         self.did = did
-        self.iid = iid
         self.loc = loc
         self.ua = ua
         self.tzo = tzo
@@ -274,10 +318,12 @@ public struct NIDEvent: Codable {
         self.p = p
         self.dnt = dnt
         self.tch = tch
-        self.url = url
+        self.url =          pageTag
         self.ns = ns
         self.jsv = jsv
         self.jsl = []
+        self.gyro = gyro
+        self.accel = accel
     }
     
     /** Register Target
@@ -359,8 +405,8 @@ public struct NIDEvent: Codable {
     /**
      Set UserID Event
      */
-    init(session: NIDSessionEventName, uid: String){
-        self.uid = uid
+    init(session: NIDSessionEventName, userId: String){
+        self.uid = userId
         self.type = session.rawValue
     }
     
@@ -402,9 +448,16 @@ public struct NIDEvent: Codable {
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
         self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
         self.ts = ParamsCreator.getTimeStamp()
+        switch type {
+        case .touchStart, .touchMove, .touchEnd, .touchCancel:
+            let touch = NIDTouches(x: view?.frame.origin.x, y: view?.frame.origin.y, tid: Int.random(in: 0...10000))
+            self.touches = []
+            self.touches?.append(touch)
+        default:
+            self.x = view?.frame.origin.x
+            self.y = view?.frame.origin.y
+        }
     }
     
     var asDictionary : [String:Any] {
@@ -419,33 +472,6 @@ public struct NIDEvent: Codable {
     func toDict() -> [String: Any?] {
         let valuesAsDict = self.asDictionary;
         return valuesAsDict
-    }
-
-    func toBase64() -> String? {
-        // Filter and remove any nil optionals
-        let dict = toDict().filter({ $0.value != nil }).mapValues({ $0! })
-
-        do {
-            let data = try JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed)
-            let base64 = data.base64EncodedString()
-            return base64
-        } catch let error {
-            NIDPrintLog("Encode event", dict, "to base64 failed with error", error)
-            return nil
-        }
-    }
-}
-
-extension Array {
-    func toBase64() -> String? {
-        do {
-            let data = try JSONSerialization.data(withJSONObject: self, options: .fragmentsAllowed)
-            let base64 = data.base64EncodedString()
-            return base64
-        } catch let error {
-            NIDPrintLog("Encode event", self, "to base64 failed with error", error)
-            return nil
-        }
     }
 }
 

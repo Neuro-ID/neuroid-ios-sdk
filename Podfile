@@ -11,6 +11,7 @@ target 'NeuroID' do
 end
 target 'SDKTest' do
   use_frameworks!
-
   pod 'Alamofire'
+  pod 'JSONSchema', '0.5.0'
+  pod 'DSJSONSchemaValidation'
 end
