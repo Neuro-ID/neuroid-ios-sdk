@@ -123,7 +123,7 @@ class EventTests: XCTestCase {
     func testSetIUserID(){
         NeuroID.setUserID("atestUserID")
         let params = ParamsCreator.getDefaultSessionParams()
-        let uid = params["uid"] as! String
+        let uid = params["userId"] as! String
         XCTAssert(uid == "atestUserID")
     }
     func testEventParams() throws {
@@ -139,17 +139,14 @@ class EventTests: XCTestCase {
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
 
-        XCTAssertTrue(params["key"] != nil)
-        XCTAssertTrue(params["key"] as! String == clientKey)
+        print("EVENT: ", params)
+        XCTAssertTrue(params["environment"] != nil)
 
-        XCTAssertTrue(params["sid"] != nil)
-        XCTAssertTrue((params["sid"] as! String).count == 16,
-                      "SessionId has 16 random digits")
+        XCTAssertTrue(params["sdkVersion"] != nil)
 
-        XCTAssertTrue(params["uid"] != nil)
-        XCTAssertTrue(params["uid"] as! String == userID)
+        XCTAssertTrue(params["responseId"] != nil)
+        XCTAssertTrue(params["userId"] as! String == userID)
 
-        XCTAssertTrue(params["pid"] != nil)
 //        XCTAssertTrue(params["events"] != nil)
 //        XCTAssertTrue(params["events"] is [String: Any])
 //        let events = params["events"] as! [String: Any]
