@@ -1196,7 +1196,7 @@ struct ParamsCreator {
         let clientIdName = "nid_cid";
         var cid = UserDefaults.standard.string(forKey: clientIdName);
         
-        if (cid != nil){
+        if (cid != nil && cid!.contains("_")){
             return cid!;
         } else {
             cid = genId()
@@ -1215,7 +1215,7 @@ struct ParamsCreator {
         let deviceIdCacheKey = "nid_did";
         var did = UserDefaults.standard.string(forKey: deviceIdCacheKey);
         
-        if (did != nil){
+        if (did != nil && did!.contains("_")){
             return did!;
         } else {
             did = self.genId()
@@ -1556,7 +1556,7 @@ private extension UITextField {
         var newEvent = inputEvent
         // Make sure we have a valid url set
         newEvent.url = screenName
-        DataStore.insertEvent(screen: screenName, event: newEvent)        
+        DataStore.insertEvent(screen: screenName, event: newEvent)
     }
 }
 
