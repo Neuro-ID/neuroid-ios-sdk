@@ -60,7 +60,7 @@ public struct NeuroID {
     
     public static func setEnvironmentProduction(_ value: Bool) {
         if (value) {
-            self.environment = "PRODUCTION"
+            self.environment = "LIVE"
         } else {
             self.environment = "TEST"
         }

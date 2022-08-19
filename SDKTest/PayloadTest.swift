@@ -19,6 +19,7 @@ class PayloadTest: XCTestCase {
         do {
             /// This path may point to your on file system
             let url = URL(fileURLWithPath: "/Users/runner/work/neuroid-ios-sdk/neuroid-ios-sdk/NeuroID/schema.json")
+            
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
             self.data = data
             let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
