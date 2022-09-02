@@ -79,18 +79,8 @@ public enum NIDEventName: String {
 }
 
 public struct Attr: Codable, Equatable {
-    var guid:String?
-    var screenHierarchy:String?
+    var n:String?
     var v:String?
-    var hash:String?
-    init(guid:String?, screenHierarchy:String?) {
-        self.guid = guid
-        self.screenHierarchy = screenHierarchy
-    }
-    init(v:String?, hash:String?) {
-        self.v = v
-        self.hash = hash
-    }
 }
 
 public struct NIDTouches: Codable, Equatable {
@@ -130,7 +120,7 @@ public struct NeuroHTTPRequest: Codable {
 
 public enum TargetValue: Codable,Equatable {
     
-    case int(Int), string(String), bool(Bool), double(Double), attr(Attr)
+    case int(Int), string(String), bool(Bool), double(Double), attr([Attr])
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -182,7 +172,7 @@ public enum TargetValue: Codable,Equatable {
         }
         
         if let attr = try? decoder.singleValueContainer().decode(Attr.self) {
-            self = .attr(attr)
+            self = .attr([attr])
             return
         }
         
