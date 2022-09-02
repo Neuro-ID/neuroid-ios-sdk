@@ -38,7 +38,7 @@ class SessionTests: XCTestCase {
         let tracker = NeuroIDTracker(screen: urlName, controller: testView);
         let session = tracker.getCurrentSession();
         NeuroID.groupAndPOST()
-        XCTAssertTrue(session != nil)
+        XCTAssertTrue(session == nil)
     }
     
     func testRandom() throws {
