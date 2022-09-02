@@ -32,17 +32,6 @@ class EventTests: XCTestCase {
         XCTAssertTrue(true);
     }
     
-    func testCreateSessionID() {
-        
-        NeuroID.logError(content: "NeuroID client key not setup")
-        let data = ParamsCreator.getSessionID();
-        let sidName =  "nid_sid"
-        let defaults = UserDefaults.standard
-        var sid = defaults.string(forKey: sidName)
-        print("User Session ID: ", sid!)
-        XCTAssertTrue(sid != nil);
-    }
-    
     func testSettingAndGettingAPIClientKey(){
         let keyLookup = NeuroID.getClientKeyFromLocalStorage();
         print("Key lookup:", keyLookup)

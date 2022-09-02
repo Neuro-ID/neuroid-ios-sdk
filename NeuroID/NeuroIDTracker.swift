@@ -1212,7 +1212,8 @@ struct ParamsCreator {
         let clientIdName = "nid_cid";
         var cid = UserDefaults.standard.string(forKey: clientIdName);
         
-        if (cid != nil && cid!.contains("_")){
+        // Ensure we aren't on old client id
+        if (cid != nil && !cid!.contains("_")){
             return cid!;
         } else {
             cid = genId()
