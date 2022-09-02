@@ -16,10 +16,11 @@ class PayloadTest: XCTestCase {
     var data: Data!
     
     override func setUpWithError() throws {
-        do {f
-            /// This path may point to your on file system
-            let url = URL(fileURLWithPath: "/Users/runner/work/neuroid-ios-sdk/neuroid-ios-sdk/NeuroID/schema.json")
+        do {
             
+            /// This path may point to your on file system
+            var url = URL(fileURLWithPath: #file).deletingLastPathComponent().deletingLastPathComponent()
+            url.appendPathComponent("/NeuroID/schema.json")
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
             self.data = data
             let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
@@ -29,6 +30,7 @@ class PayloadTest: XCTestCase {
             
         } catch {
             print("Not Found")
+            self.data = Data()
         }
     }
     func testPaylaodSchema() {
