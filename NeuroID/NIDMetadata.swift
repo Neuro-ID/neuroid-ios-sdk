@@ -28,6 +28,7 @@ final public class NIDMetadata: Codable {
     var batteryLevel: Double
     var isJailBreak: Bool
     var isWifiOn:Bool
+    var isSimulator:Bool
     
     // Init with local data
     public init() {
@@ -44,6 +45,7 @@ final public class NIDMetadata: Codable {
         self.totalMemory = NIDMetadata.getTotalMemory()
         self.batteryLevel = NIDMetadata.getBaterryLevel()
         self.isJailBreak = NIDMetadata.hasJailbreak()
+        self.isSimulator = NIDMetadata.isSimulator()
     }
 }
 
@@ -106,6 +108,12 @@ extension NIDMetadata {
         return self.canEditSystemFiles()
         
     }
+    
+    static func isSimulator() -> Bool {
+        if UIDevice.current.isSimulator { return true }
+        return false
+    }
+    
     static func isWifiEnable() -> Bool {
         if #available(iOS 12.0, *) {
             let networkStatus = NetworkStatus.shared
