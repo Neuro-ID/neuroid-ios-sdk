@@ -46,10 +46,16 @@ public struct NeuroID {
         if NeuroID.clientKey != nil {
             print("NeuroID Error: You already configured the SDK")
         }
+        
         NeuroID.clientKey = clientKey
         let key = "nid_key";
         let defaults = UserDefaults.standard
         defaults.set(clientKey, forKey: key)
+        
+        // Reset tab id on configure
+        UserDefaults.standard.set(nil, forKey: "nid_tid")
+        
+        NeuroID.createSession()
     }
     
     // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
@@ -108,6 +114,15 @@ public struct NeuroID {
         return UserDefaults.standard.string(forKey: "nid_sid")
     }
     
+    
+    static func createSession() {
+        // Since we are creating a new session, clear any existing session ID
+        NeuroID.clearSession()
+        // TODO, return session if already exists
+        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
+        
+        saveEventToLocalDataStore(event)
+    }
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(){
         NeuroID.isSDKStarted = true
@@ -282,7 +297,7 @@ public struct NeuroID {
 //        params["jsonEvents"] = jsonEvents
 //        params["pageTag"] = screen
 //
-        let tabId = UUID()
+        let tabId = ParamsCreator.getTabId()
         let pageid = UUID()
         let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: "ios://\(NeuroID.getScreenName() ?? "")")
 
@@ -414,14 +429,11 @@ public class NeuroIDTracker: NSObject {
         super.init()
         self.screen = screen
         if (!NeuroID.isStopped()){
-            if(getCurrentSession() == nil){
-                NeuroID.setScreenName(screen: "AppInit")
-                self.createSessionEvent = createSession(screen: screen)
-            }
             subscribe(inScreen: controller)
         }
         className = controller?.className
     }
+
     
     public func captureEvent(event: NIDEvent) {
         if (NeuroID.isStopped()){
@@ -628,16 +640,6 @@ private extension NeuroIDTracker {
             }
         }
     }
-
-    func createSession(screen: String) -> NIDEvent {
-        // Since we are creating a new session, clear any existing session ID
-        NeuroID.clearSession()
-        // TODO, return session if already exists
-        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
-        
-        captureEvent(event: event)
-        return event;
-    }
 }
 
 // MARK: - Text control events
@@ -789,7 +791,7 @@ private extension NeuroIDTracker {
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
-                    textChangeEvent.hv = hashValue
+//                    textChangeEvent.hv = hashValue
                     captureEvent(event:  textChangeEvent)
                 }
             }
@@ -814,7 +816,7 @@ private extension NeuroIDTracker {
                 let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                 var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
                 keyDownEvent.v = lengthValue
-                keyDownEvent.hv = hashValue
+//                keyDownEvent.hv = hashValue
                 captureEvent(event: keyDownEvent)
                 
                 // Text Change
@@ -843,7 +845,7 @@ private extension NeuroIDTracker {
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
-                    textChangeEvent.hv = hashValue
+//                    textChangeEvent.hv = hashValue
                     captureEvent(event:  textChangeEvent)
                 }
             }
@@ -1222,6 +1224,18 @@ struct ParamsCreator {
         }
     }
     
+    static func getTabId() -> String {
+        let tabIdName = "nid_tid";
+        var tid = UserDefaults.standard.string(forKey: tabIdName);
+        
+        if (tid != nil){
+            return tid!;
+        } else {
+            tid = genId()
+            UserDefaults.standard.set(tid, forKey: tabIdName)
+            return tid!
+        }
+    }
     
     static func getUserID() -> String? {
         let nidUserID = "nid_user_id";
