@@ -78,9 +78,15 @@ public enum NIDEventName: String {
     }
 }
 
-public struct Attr: Codable, Equatable {
+public struct Attrs: Codable, Equatable {
     var n:String?
     var v:String?
+}
+public struct Attr: Codable, Equatable {
+    var guid:String?
+    var screenHierarchy:String?
+    var n:String?
+    var hash:String?
 }
 
 public struct NIDTouches: Codable, Equatable {
@@ -120,7 +126,7 @@ public struct NeuroHTTPRequest: Codable {
 
 public enum TargetValue: Codable,Equatable {
     
-    case int(Int), string(String), bool(Bool), double(Double), attr([Attr])
+    case int(Int), string(String), bool(Bool), double(Double), attrs([Attrs]), attr(Attr)
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -130,6 +136,7 @@ public enum TargetValue: Codable,Equatable {
             case .string(let value): try container.encode(value)
             case .bool(let value): try container.encode(value)
             case .double(let value): try container.encode(value)
+            case .attrs(let value): try container.encode(value)
             case .attr(let value): try container.encode(value)
 
         }
@@ -146,6 +153,8 @@ public enum TargetValue: Codable,Equatable {
         case .double(let double):
             return String(double)
         case .attr(let array):
+            return String(describing: array)
+        case .attrs(let array):
             return String(describing: array)
         }
     }
@@ -171,8 +180,12 @@ public enum TargetValue: Codable,Equatable {
             return
         }
         
+        if let attrs = try? decoder.singleValueContainer().decode(Attrs.self) {
+            self = .attrs([attrs])
+            return
+        }
         if let attr = try? decoder.singleValueContainer().decode(Attr.self) {
-            self = .attr([attr])
+            self = .attr(attr)
             return
         }
         
@@ -223,6 +236,7 @@ public struct NIDEvent: Codable {
     var uid: String?
     var sm: Double?
     var pd: Double?
+    var attrs:[Attrs]?
     var gyro: NIDSensorData?
     var accel: NIDSensorData?
     var touches: [NIDTouches]?

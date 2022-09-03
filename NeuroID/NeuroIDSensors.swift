@@ -64,7 +64,9 @@ final public class NIDSensorManager: NSObject {
     /// - Parameter sensor: Type of sensor
     /// - Returns: Lastest data or nil
     public func getSensorData(sensor: NIDSensorType) -> NIDSensorData? {
-        update()
+        DispatchQueue.main.async {
+            self.update()
+        }
         if let data = sensorData[sensor] {
             return data
         }
