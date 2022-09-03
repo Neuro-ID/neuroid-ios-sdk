@@ -492,10 +492,12 @@ public class NeuroIDTracker: NSObject {
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)" , url: screenName)
             nidEvent.hv = tfView.placeholder?.sha256().prefix(8).string
-            var attrVal = Attr.init(n: "guid", v: guid)
+            var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
-            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrVal,shVal])]
+            var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
             let tv = v as! UITextView
@@ -504,19 +506,23 @@ public class NeuroIDTracker: NSObject {
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)" , url: screenName)
             nidEvent.hv = tv.text?.sha256().prefix(8).string
-            var attrVal = Attr.init(n: "guid", v: guid)
+            var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
-            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrVal,shVal])]
+            var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
             let tb = v as! UIButton
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)" , url: screenName)
             nidEvent.hv = tb.titleLabel?.text?.sha256().prefix(8).string
-            var attrVal = Attr.init(n: "guid", v: guid)
+            var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
-            var shVal = Attr.init(n: "screenHierarchy", v: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrVal,shVal])]
+            var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.attrs = [attrVal,shVal]
+            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
@@ -1072,11 +1078,11 @@ struct ParamsCreator {
             
 //            var attrParams:Attr;
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
-            var attrVal = Attr.init(n: "v", v: inputValue)
+            //var attrVal = Attrs.init(n: "v", v: inputValue)
 //
             var textValue = attrParams?["hash"] as? String ?? ""
-            var hashValue = Attr.init(n: "hash", v: textValue.sha256().prefix(8).string)
-            var attrArraryVal:[Attr] = [attrVal, hashValue]
+            //var hashValue = Attrs.init(n: "hash", v: textValue.sha256().prefix(8).string)
+            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
