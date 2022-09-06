@@ -367,6 +367,7 @@ public struct NIDEvent: Codable {
         var newTg = tg ?? [String: TargetValue]()
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
+        self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
         self.url = primaryViewController?.className
         self.x = view?.frame.origin.x
         self.y = view?.frame.origin.y
@@ -447,6 +448,7 @@ public struct NIDEvent: Codable {
 
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
         self.type = type.rawValue
+        self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
         var newTg = tg ?? [String: TargetValue]()
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()

@@ -783,9 +783,10 @@ private extension NeuroIDTracker {
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
-                let focusBlurEvent = NIDEvent(type: eventType, tg: [
+                var focusBlurEvent = NIDEvent(type: eventType, tg: [
                     "tgs": TargetValue.string(textControl.id),
                 ])
+                focusBlurEvent.tgs = TargetValue.string(textControl.id).toString()
                 captureEvent(event: focusBlurEvent)
                 
                 // If this is a blur event, that means we have a text change event
@@ -837,9 +838,10 @@ private extension NeuroIDTracker {
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
-                let focusBlurEvent = NIDEvent(type: eventType, tg: [
+                var focusBlurEvent = NIDEvent(type: eventType, tg: [
                     "tgs": TargetValue.string(textControl.id),
                 ])
+                focusBlurEvent.tgs = TargetValue.string(textControl.id).toString()
                 captureEvent(event: focusBlurEvent)
                 
                 // If this is a blur event, that means we have a text change event
