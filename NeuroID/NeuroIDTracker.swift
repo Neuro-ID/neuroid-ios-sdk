@@ -831,6 +831,7 @@ private extension NeuroIDTracker {
                 var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                 textChangeEvent.v = lengthValue
                 textChangeEvent.hv = hashValue
+                textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
                 captureEvent(event:  textChangeEvent)
                 
                 // Input
@@ -838,6 +839,7 @@ private extension NeuroIDTracker {
                 var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
                 inputEvent.v = lengthValue
                 inputEvent.hv = hashValue
+                inputEvent.tgs = TargetValue.string(textControl.id).toString()
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
@@ -862,7 +864,9 @@ private extension NeuroIDTracker {
 //            detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UISearchBar {
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar", attrParams: nil)
-            captureEvent(event: NIDEvent(type: eventType, tg: tg))
+            var searchEvent = NIDEvent(type: eventType, tg: tg)
+            searchEvent.tgs = TargetValue.string(textControl.id).toString()
+            captureEvent(event: searchEvent)
 //            detectPasting(view: textControl, text: textControl.text ?? "")
         }
 
