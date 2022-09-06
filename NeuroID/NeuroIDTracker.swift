@@ -507,8 +507,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
@@ -521,8 +521,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
@@ -532,9 +532,9 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
             nidEvent.attrs = [attrVal,shVal]
-            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
@@ -1082,14 +1082,14 @@ struct ParamsCreator {
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
             //var attrVal = Attrs.init(n: "v", v: inputValue)
 //
-            var textValue = attrParams?["hash"] as? String ?? ""
+//            var textValue = attrParams?["hash"] as? String ?? ""
             //var hashValue = Attrs.init(n: "hash", v: textValue.sha256().prefix(8).string)
-            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
+//            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
                 "et": TargetValue.string(type),
-                "attr": TargetValue.attr(attrArraryVal)
+//                "attr": TargetValue.attr(attrArraryVal)
             ]
             
         case NIDEventName.keyDown:
