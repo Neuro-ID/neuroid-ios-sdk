@@ -780,6 +780,7 @@ private extension NeuroIDTracker {
 //                inputEvent.v = lengthValue
                 inputEvent.v = lengthValue
                 inputEvent.hv = hashValue
+                inputEvent.tgs = TargetValue.string(textControl.id).toString()
                 captureEvent(event: inputEvent)
             } else if (eventType == NIDEventName.focus || eventType == NIDEventName.blur) {
                 // Focus / Blur
@@ -795,6 +796,7 @@ private extension NeuroIDTracker {
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
+                    textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
 //                    textChangeEvent.hv = hashValue
                     captureEvent(event:  textChangeEvent)
                 }
@@ -820,6 +822,7 @@ private extension NeuroIDTracker {
                 let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                 var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
                 keyDownEvent.v = lengthValue
+                inputEvent.tgs = TargetValue.string(textControl.id).toString()
 //                keyDownEvent.hv = hashValue
                 captureEvent(event: keyDownEvent)
                 
@@ -850,6 +853,7 @@ private extension NeuroIDTracker {
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
+                    textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
 //                    textChangeEvent.hv = hashValue
                     captureEvent(event:  textChangeEvent)
                 }
