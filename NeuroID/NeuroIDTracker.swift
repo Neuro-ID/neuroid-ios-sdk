@@ -810,6 +810,7 @@ private extension NeuroIDTracker {
                     textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
 //                    textChangeEvent.hv = hashValue
                     captureEvent(event:  textChangeEvent)
+                    NeuroID.send()
                 }
             }
             
@@ -833,7 +834,7 @@ private extension NeuroIDTracker {
                 let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                 var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
                 keyDownEvent.v = lengthValue
-                keyDownEvent.tgs = TargetValue.string(textControl.id).toString()
+                keyDownEvent     .tgs = TargetValue.string(textControl.id).toString()
 //                keyDownEvent.hv = hashValue
                 captureEvent(event: keyDownEvent)
                 
