@@ -72,7 +72,7 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":"4.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
+                -d '{"event_type":"on-demand-testflight","client_payload":{"version":"4.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
         
       - name: Running ReactNative Sandbox actions
         run: |
@@ -81,4 +81,4 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-                -d '{"event_type":"on-demand-testflight","client_payload":{"version":"4.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
+                -d '{"event_type":"on-demand-testflight","client_payload":{"version":"4.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
