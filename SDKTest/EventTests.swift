@@ -16,6 +16,16 @@ class EventTests: XCTestCase {
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey)
     }
+    
+    func testSetScreeName(){
+        NeuroID.setScreenName(screen: "WOW")
+        assert(NeuroID.getScreenName() == "WOW")
+    }
+    
+    func testInvalidScreenName(){
+        NeuroID.setScreenName(screen: "WOW A SPACE")
+        assert(NeuroID.getScreenName() == "WOW_A_SPACE")
+    }
 
     func testLocale() {
         print("Locale: ", ParamsCreator.getLocale())
