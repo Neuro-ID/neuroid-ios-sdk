@@ -95,8 +95,15 @@ public struct NeuroID {
         NeuroID.excludedViewsTestIDs.append(excludedView)
     }
     
+    /**
+     Set screen name. We ensure that this is a URL valid name by replacing non alphanumber chars with underscore
+     */
     public static func setScreenName(screen: String) {
-        currentScreenName = screen
+        if let regex = try? NSRegularExpression(pattern: "[^a-zA-Z0-9]", options: .caseInsensitive) {
+            let modString = regex.stringByReplacingMatches(in: screen, options: [], range: NSRange(location: 0, length:  screen.count), withTemplate: "_")
+            currentScreenName = modString
+        }
+        logError(content: "Invalid Screenname for NeuroID. Must be alphanubmer")
     }
     
     public static func getScreenName() -> String? {
