@@ -296,20 +296,19 @@ public struct NeuroID {
     fileprivate static func post(events: [NIDEvent],
                                  screen: String,
                                  onSuccess: @escaping(Any) -> Void,
-                                 onFailure: @escaping(Error) -> Void) {
+                                 onFailure: @escaping
+    (Error) -> Void) {
         guard let url = URL(string: NeuroID.getCollectionEndpointURL()) else {
             logError(content: "NeuroID base URL found")
             return
         }
 
-
-        let encoder = JSONEncoder()
-//        var params = ParamsCreator.getDefaultSessionParams()
-//        params["jsonEvents"] = jsonEvents
-//        params["pageTag"] = screen
-//
+        
         let tabId = ParamsCreator.getTabId()
-        let pageid = UUID()
+        
+        let randomString = UUID().uuidString
+        let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
+        
         let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: NeuroID.siteId ?? "", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: "ios://\(NeuroID.getScreenName() ?? "")")
 
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
@@ -339,15 +338,11 @@ public struct NeuroID {
 
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
-            print("*********** BEGIN **************")
             do {
                 let data = try JSONEncoder().encode(neuroHTTPRequest)
                 let str = String(data: data, encoding: .utf8)
                 print(str)
             } catch {}
-//            print(dataString.description)
-//            print(jsonEvents.description)
-            print("*********** END ***************")
         }
     }
 
@@ -518,8 +513,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
@@ -532,8 +527,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
@@ -543,9 +538,9 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
             nidEvent.attrs = [attrVal,shVal]
-//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
@@ -1104,14 +1099,14 @@ struct ParamsCreator {
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
             //var attrVal = Attrs.init(n: "v", v: inputValue)
 //
-//            var textValue = attrParams?["hash"] as? String ?? ""
-            //var hashValue = Attrs.init(n: "hash", v: textValue.sha256().prefix(8).string)
-//            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
+            var textValue = attrParams?["hash"] as? String ?? ""
+            var hashValue = Attrs.init(n: "hash", v: textValue.sha256().prefix(8).string)
+            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
                 "et": TargetValue.string(type),
-//                "attr": TargetValue.attr(attrArraryVal)
+                "attr": TargetValue.attr(attrArraryVal)
             ]
             
         case NIDEventName.keyDown:
@@ -1252,12 +1247,13 @@ struct ParamsCreator {
         let tabIdName = "nid_tid";
         var tid = UserDefaults.standard.string(forKey: tabIdName);
         
-        if (tid != nil){
+        if (tid != nil && !tid!.contains("-")){
             return tid!;
         } else {
-            tid = genId()
+            let randString = UUID().uuidString
+            let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
             UserDefaults.standard.set(tid, forKey: tabIdName)
-            return tid!
+            return "\(tid)"
         }
     }
     
