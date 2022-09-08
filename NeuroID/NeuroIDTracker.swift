@@ -1102,11 +1102,11 @@ struct ParamsCreator {
             
 //            var attrParams:Attr;
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
-            var attrVal = Attrs.init(n: "v", v: inputValue)
+            var attrVal = Attr.init(n: "v", v: inputValue)
 
             var textValue = attrParams?["hash"] as? String ?? ""
-            var hashValue = Attrs.init(n: "hash", v: textValue.sha256().prefix(8).string)
-            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
+            var hashValue = Attr.init(n: "hash", v: textValue.sha256().prefix(8).string)
+            var attrArraryVal:[Attr] = [attrVal, hashValue]
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),

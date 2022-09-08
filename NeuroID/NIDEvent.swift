@@ -86,6 +86,7 @@ public struct Attr: Codable, Equatable {
     var guid:String?
     var screenHierarchy:String?
     var n:String?
+    var v:String?
     var hash:String?
 }
 
@@ -126,7 +127,7 @@ public struct NeuroHTTPRequest: Codable {
 
 public enum TargetValue: Codable,Equatable {
     
-    case int(Int), string(String), bool(Bool), double(Double), attrs([Attrs]), attr(Attr)
+    case int(Int), string(String), bool(Bool), double(Double), attrs([Attrs]), attr([Attr])
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -185,7 +186,7 @@ public enum TargetValue: Codable,Equatable {
             return
         }
         if let attr = try? decoder.singleValueContainer().decode(Attr.self) {
-            self = .attr(attr)
+            self = .attr([attr])
             return
         }
         
