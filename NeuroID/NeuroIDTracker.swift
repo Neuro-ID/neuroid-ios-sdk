@@ -1604,7 +1604,6 @@ private extension UITextField {
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
-        text = UIPasteboard.general.string
     }
 }
 
@@ -1645,7 +1644,6 @@ private extension UITextView {
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
-        text = UIPasteboard.general.string
     }
     
 }
