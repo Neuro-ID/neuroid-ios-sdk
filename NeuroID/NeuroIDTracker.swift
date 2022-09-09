@@ -99,15 +99,11 @@ public struct NeuroID {
      Set screen name. We ensure that this is a URL valid name by replacing non alphanumber chars with underscore
      */
     public static func setScreenName(screen: String) {
-        if (screen == ""){
-            logError(content: "Invalid Screenname for NeuroID. Must be alphanumeric")
-            return
+        if let urlEncode = screen.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
+            currentScreenName = urlEncode
+        } else {
+            logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
         }
-        if let regex = try? NSRegularExpression(pattern: "[^a-zA-Z0-9]", options: .caseInsensitive) {
-            let modString = regex.stringByReplacingMatches(in: screen, options: [], range: NSRange(location: 0, length:  screen.count), withTemplate: "_")
-            currentScreenName = modString
-        }
-        logError(content: "Invalid Screenname for NeuroID. Must be alphanumeric")
     }
     
     public static func getScreenName() -> String? {
