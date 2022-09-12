@@ -1587,7 +1587,6 @@ private extension UITextField {
     @objc static func startSwizzling() {
         let textField = UITextField.self
 
-        
         textFieldSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
                   swizzledSelector: #selector(textField.neuroIDPaste))
@@ -1609,6 +1608,7 @@ private extension UITextField {
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
+        self.neuroIDPaste(caller: caller)
     }
 }
 
@@ -1627,7 +1627,6 @@ private extension UITextView {
     
     @objc static func startSwizzling() {
         let textField = UITextView.self
-        
         
         textViewSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
