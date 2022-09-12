@@ -24,7 +24,7 @@ class EventTests: XCTestCase {
     
     func testInvalidScreenName(){
         NeuroID.setScreenName(screen: "WOW A SPACE")
-        assert(NeuroID.getScreenName() == "WOW_A_SPACE")
+        assert(NeuroID.getScreenName() == "WOW%20A%20SPACE")
     }
 
     func testLocale() {
