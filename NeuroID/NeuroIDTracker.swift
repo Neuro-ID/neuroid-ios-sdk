@@ -509,8 +509,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr([attrValue])]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
@@ -523,8 +523,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr([attrValue])]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
@@ -534,9 +534,9 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
             nidEvent.attrs = [attrVal,shVal]
-//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+            nidEvent.tg = ["attr": TargetValue.attr([attrValue])]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
