@@ -509,8 +509,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
@@ -523,8 +523,8 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
@@ -534,9 +534,9 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
+//            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
             nidEvent.attrs = [attrVal,shVal]
-            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
+//            nidEvent.tg = ["attr": TargetValue.attr(attrValue)]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
@@ -798,6 +798,11 @@ private extension NeuroIDTracker {
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
                     var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
                     textChangeEvent.v = lengthValue
+                    var shaText = textControl.text ?? ""
+                    if (shaText != "") {
+                     shaText = shaText.sha256().prefix(8).string
+                    }
+                    textChangeEvent.hv = shaText
                     textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
 //                    textChangeEvent.hv = hashValue
                     captureEvent(event:  textChangeEvent)
@@ -1093,11 +1098,11 @@ struct ParamsCreator {
             
 //            var attrParams:Attr;
             var inputValue = attrParams?["v"] as? String ?? "S~C~~"
-            //var attrVal = Attrs.init(n: "v", v: inputValue)
-//
+            var attrVal = Attr.init(n: "v", v: inputValue)
+
             var textValue = attrParams?["hash"] as? String ?? ""
-            var hashValue = Attrs.init(n: "hash", v: textValue.sha256().prefix(8).string)
-            var attrArraryVal:Attr = Attr.init(n: inputValue, hash: textValue.sha256().prefix(8).string)
+            var hashValue = Attr.init(n: "hash", v: textValue.sha256().prefix(8).string)
+            var attrArraryVal:[Attr] = [attrVal, hashValue]
             params = [
                 "tgs": TargetValue.string(view.id),
                 "etn": TargetValue.string(view.id),
