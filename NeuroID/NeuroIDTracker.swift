@@ -1595,7 +1595,6 @@ private extension UITextField {
     
    
     @objc func neuroIDPaste(caller: UIResponder) {
-        super.paste(caller)
         if (NeuroID.isStopped()){
             return
         }
@@ -1635,7 +1634,6 @@ private extension UITextView {
     }
     
     @objc func neuroIDPaste(caller: UIResponder) {
-        super.paste(caller)
         if (NeuroID.isStopped()){
             return
         }
