@@ -509,8 +509,9 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue])]
+            var guidValue = Attr.init(n: "guid", v: guid)
+            var attrValue = Attr.init(n: "screenHierarchy", v: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
@@ -523,8 +524,9 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue])]
+            var guidValue = Attr.init(n: "guid", v: guid)
+            var attrValue = Attr.init(n: "screenHierarchy", v: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal,shVal]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
@@ -534,9 +536,11 @@ public class NeuroIDTracker: NSObject {
             var attrVal = Attrs.init(n: "guid", v: guid)
             // Screen hierarchy
             var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
-            var attrValue = Attr.init(guid: guid, screenHierarchy: fullViewString)
             nidEvent.attrs = [attrVal,shVal]
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue])]
+            
+            var guidValue = Attr.init(n: "guid", v: guid)
+            var attrValue = Attr.init(n: "screenHierarchy", v: fullViewString)
+            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
             print("Slider")
