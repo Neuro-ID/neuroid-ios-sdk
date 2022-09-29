@@ -115,6 +115,7 @@ public struct NeuroID {
     
     public static func clearSession(){
         UserDefaults.standard.set(nil, forKey: "nid_sid")
+        UserDefaults.standard.set(nil, forKey: "nid_cid")
     }
     
     public static func getSessionID() -> String? {
@@ -126,8 +127,9 @@ public struct NeuroID {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
-        let event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
-        
+        var event = NIDEvent(session: .createSession, f: ParamsCreator.getClientKey(), sid: ParamsCreator.getSessionID(), lsid: nil, cid: ParamsCreator.getClientId(), did: ParamsCreator.getDeviceId(), loc: ParamsCreator.getLocale(), ua: ParamsCreator.getUserAgent(), tzo: ParamsCreator.getTimezone(), lng: ParamsCreator.getLanguage(),p: ParamsCreator.getPlatform(), dnt: false, tch: ParamsCreator.getTouch(),          pageTag: NeuroID.getScreenName(), ns: ParamsCreator.getCommandQueueNamespace(), jsv: ParamsCreator.getSDKVersion())
+        event.sh = UIScreen.main.bounds.height
+        event.sw = UIScreen.main.bounds.width
         saveEventToLocalDataStore(event)
     }
     // When start is called, enable swizzling, as well as dispatch queue to send to API
@@ -372,7 +374,7 @@ public struct NeuroID {
         Log.log(category: category, contents: content, type: .info)
     }
 
-    static func saveEventToLocalDataStore(_ event: NIDEvent) {
+    public static func saveEventToLocalDataStore(_ event: NIDEvent) {
             DataStore.insertEvent(screen: event.type, event: event)
     }
     

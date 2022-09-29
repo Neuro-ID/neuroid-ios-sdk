@@ -2,6 +2,7 @@ import UIKit
 
 internal enum NIDSessionEventName: String {
     case createSession = "CREATE_SESSION"
+    case stopSession = "STOP_SESSION"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
     case setVariable = "SET_VARIABLE"
@@ -18,6 +19,7 @@ internal enum NIDSessionEventName: String {
 
 public enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
+    case stopSession = "STOP_SESSION"
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -241,6 +243,8 @@ public struct NIDEvent: Codable {
     var gyro: NIDSensorData?
     var accel: NIDSensorData?
     var touches: [NIDTouches]?
+    var sh: CGFloat?
+    var sw: CGFloat?
 
         /**
             Use to initiate a new session
@@ -337,6 +341,10 @@ public struct NIDEvent: Codable {
      
  */
 
+    init(type: NIDEventName) {
+        self.type = type.rawValue
+    }
+    
     init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, url: String) {
         self.type = eventName.rawValue
         self.tgs = tgs;
@@ -384,8 +392,8 @@ public struct NIDEvent: Codable {
     /**
      * Form submit, Sucess Submit, Failure Submit
      */
-    init(type: NIDEventName){
-        self.type = type.rawValue
+    init(typeName: NIDEventName){
+        self.type = typeName.rawValue
     }
     
     init(type: NIDEventName, tg: [String: TargetValue]?, v: String){
