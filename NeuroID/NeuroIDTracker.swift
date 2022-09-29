@@ -12,7 +12,7 @@ public struct NeuroID {
     fileprivate static var clientKey: String?
     fileprivate static var siteId: String?
     fileprivate static let sessionId: String = ParamsCreator.getSessionID()
-    fileprivate static let clientId: String = ParamsCreator.getClientId()
+    public static var clientId: String?
     fileprivate static var userId: String?
     private static let SEND_INTERVAL: Double = 5
     fileprivate static var trackers = [String: NeuroIDTracker]()
@@ -132,6 +132,13 @@ public struct NeuroID {
         event.sw = UIScreen.main.bounds.width
         saveEventToLocalDataStore(event)
     }
+    
+    public static func closeSession() {
+        var closeEvent = NIDEvent(type: NIDEventName.closeSession, view: UIView.init())
+        closeEvent.ct = "JS_EVENT"
+        saveEventToLocalDataStore(closeEvent)
+    }
+    
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(){
         NeuroID.isSDKStarted = true
@@ -1239,12 +1246,16 @@ struct ParamsCreator {
     static func getClientId() -> String {
         let clientIdName = "nid_cid";
         var cid = UserDefaults.standard.string(forKey: clientIdName);
-        
+        if (NeuroID.clientId != nil)
+        {
+            cid = NeuroID.clientId
+        }
         // Ensure we aren't on old client id
         if (cid != nil && !cid!.contains("_")){
             return cid!;
         } else {
             cid = genId()
+            NeuroID.clientId = cid
             UserDefaults.standard.set(cid, forKey: clientIdName)
             return cid!
         }

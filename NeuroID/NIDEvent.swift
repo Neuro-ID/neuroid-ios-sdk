@@ -2,7 +2,7 @@ import UIKit
 
 internal enum NIDSessionEventName: String {
     case createSession = "CREATE_SESSION"
-    case stopSession = "STOP_SESSION"
+    case closeSession = "CLOSE_SESSION"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
     case setVariable = "SET_VARIABLE"
@@ -19,7 +19,7 @@ internal enum NIDSessionEventName: String {
 
 public enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
-    case stopSession = "STOP_SESSION"
+    case closeSession = "CLOSE_SESSION"
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -210,6 +210,7 @@ public struct NIDEvent: Codable {
     var tg: [String: TargetValue]? = nil
     var tgs: String?
     var key: String?
+    var ct: String?
     var v: String?
     var hv: String?
     var en: String?
