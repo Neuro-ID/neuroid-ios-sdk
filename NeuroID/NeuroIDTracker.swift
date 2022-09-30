@@ -13,7 +13,7 @@ public struct NeuroID {
     fileprivate static var siteId: String?
     fileprivate static let sessionId: String = ParamsCreator.getSessionID()
     public static var clientId: String?
-    fileprivate static var userId: String?
+    public static var userId: String?
     private static let SEND_INTERVAL: Double = 5
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secretViews = [UIView]()
@@ -270,6 +270,7 @@ public struct NeuroID {
             return
         }
         let dataStoreEvents = DataStore.getAllEvents()
+
         let backupCopy = dataStoreEvents
         // Clean event queue immediately after fetching
         DataStore.removeSentEvents()
@@ -354,9 +355,16 @@ public struct NeuroID {
     public static func setUserID(_ userId: String) {
         UserDefaults.standard.set(userId, forKey: "nid_user_id")
         let setUserEvent = NIDEvent(session: NIDSessionEventName.setUserId, userId: userId);
+        NeuroID.userId = userId
         NIDPrintLog("NID userID = <\(userId)>")
         saveEventToLocalDataStore(setUserEvent)
     }
+    
+    public static func getUserID() -> String {
+        var userId = UserDefaults.standard.string(forKey: "nid_user_id")
+        return NeuroID.userId ?? userId ?? ""
+    }
+    
     public static func logInfo(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .info)
     }
