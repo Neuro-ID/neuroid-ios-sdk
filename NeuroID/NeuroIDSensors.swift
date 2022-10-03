@@ -14,6 +14,8 @@ final public class NIDSensorManager: NSObject {
     private let manager: CMMotionManager?
     /// Motion Sensor Data
     private var sensorData: [NIDSensorType: NIDSensorData] = [:]
+    /// Dispatch
+    private let dispatchQueue = DispatchQueue(label: "com.neuroid.sensor", attributes: .concurrent)
     override init() {
         self.manager = CMMotionManager()
         super.init()
@@ -30,18 +32,26 @@ final public class NIDSensorManager: NSObject {
             let axisY: Double = accData.y
             let axisZ: Double = accData.z
             let data: NIDSensorData = NIDSensorData(axisX: axisX, axisY: axisY, axisZ: axisZ)
-            self.sensorData[.accelerometer] = data
+            dispatchQueue.async(flags: .barrier) {
+                self.sensorData[.accelerometer] = data
+            }
         } else  {
-            self.sensorData[.accelerometer] = nil
+            dispatchQueue.async(flags: .barrier) {
+                self.sensorData[.accelerometer] = nil
+            }
         }
         if let gyroData = self.manager?.gyroData?.rotationRate {
             let axisX: Double = gyroData.x
             let axisY: Double = gyroData.y
             let axisZ: Double = gyroData.z
             let data: NIDSensorData = NIDSensorData(axisX: axisX, axisY: axisY, axisZ: axisZ)
-            self.sensorData[.gyro] = data
+            dispatchQueue.async(flags: .barrier) {
+                self.sensorData[.gyro] = data
+            }
         } else  {
-            self.sensorData[.gyro] = nil
+            dispatchQueue.async(flags: .barrier) {
+                self.sensorData[.gyro] = nil
+            }
         }
     }
     /// A Boolean value that indicates whether an sensor is available on the device.
@@ -64,13 +74,14 @@ final public class NIDSensorManager: NSObject {
     /// - Parameter sensor: Type of sensor
     /// - Returns: Lastest data or nil
     public func getSensorData(sensor: NIDSensorType) -> NIDSensorData? {
-        DispatchQueue.main.async {
-            self.update()
+        self.update()
+        var result: NIDSensorData?
+        dispatchQueue.sync {
+            if let data = sensorData[sensor] {
+                result = data
+            }
         }
-        if let data = sensorData[sensor] {
-            return data
-        }
-        return nil
+        return result
     }
 }
 /// Type of sensor available to map
