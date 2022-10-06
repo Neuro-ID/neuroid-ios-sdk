@@ -1349,7 +1349,7 @@ struct ParamsCreator {
     /** Start with primar JS version as TrackJS requires to force correct session structure*/
     static func getSDKVersion() -> String {
         // Version MUST start with 4. in order to be processed correctly
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         return "5.ios-\(version ?? "?")"
     }
     static func getCommandQueueNamespace() -> String {
