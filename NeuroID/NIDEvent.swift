@@ -244,6 +244,7 @@ public struct NIDEvent: Codable {
     var gyro: NIDSensorData?
     var accel: NIDSensorData?
     var touches: [NIDTouches]?
+    var metadata: NIDMetadata?
     var sh: CGFloat?
     var sw: CGFloat?
 
