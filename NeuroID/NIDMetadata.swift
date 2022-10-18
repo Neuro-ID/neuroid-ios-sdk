@@ -14,7 +14,7 @@ import SwiftUI
     
 
 
-final public class NIDMetadata: Codable {
+final class NIDMetadata: Codable {
     var brand: String
     var device: String
     var display: String
@@ -75,8 +75,17 @@ extension NIDMetadata {
     }
     static func getCurrentCarrier() -> String {
         if #available(iOS 12.0, *) {
-              let carriers = CTTelephonyNetworkInfo().serviceSubscriberCellularProviders?.values
-            let current = carriers?.first?.carrierName ?? ""
+            let coreTelephony = CTTelephonyNetworkInfo()
+            var current = ""
+            var name = ""
+            if #available(iOS 13.0, *) {
+                if let currentName = coreTelephony.dataServiceIdentifier {
+                    name = currentName
+                }
+            }
+            if let data = coreTelephony.serviceSubscriberCellularProviders, let carrierName = data[name]?.carrierName {
+                current = carrierName
+            }
             return current
         } else {
             return ""
