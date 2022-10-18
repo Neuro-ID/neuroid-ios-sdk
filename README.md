@@ -14,4 +14,4 @@ Visit https://neuro-id.readme.io/docs/overview for full installation documentati
 * Additional device metadata.
 * New signal capture allowing for synthetic device detection.
 * Device automation via simulator/emulator/bot/script
-* Performance improvements and additional bug fixes
+* Performance improvements and additional bug fixes.
