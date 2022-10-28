@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Log level: $version"
+          echo "Log level: $version" | grep -Po '(?<=divider-bin-)[^;]+'
         env:
           version: ${{ inputs.version_checker }}
 
