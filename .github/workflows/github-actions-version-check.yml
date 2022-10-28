@@ -1,6 +1,6 @@
 on:
   workflow_dispatch:
-  inputs:
+    inputs:
       version_checker:
         description: 'Enter title'
         required: true
