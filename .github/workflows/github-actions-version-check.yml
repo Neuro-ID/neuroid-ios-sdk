@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Log level: $version" | grep -Po '(?<=divider-bin-)[^;]+'
+          v=$( $version | perl -pe '($_)=/([0-9]+([.][0-9]+)+)/' )
+          echo "Version number: $version"
         env:
           version: ${{ inputs.version_checker }}
 
