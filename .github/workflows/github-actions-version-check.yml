@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get the version number
-      - run: |
+        run: |
           v=`echo $version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/'`
           echo "Version number $v"
           if [ "$version" = "$v" ]; then
@@ -27,5 +27,5 @@ jobs:
           version: ${{ inputs.version_checker }}
         
       - name: Show new version
-      - run: echo $version_number
+        run: echo $version_number
 
