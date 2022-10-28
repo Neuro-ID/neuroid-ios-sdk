@@ -32,7 +32,7 @@ jobs:
   createTags:
    runs-on: ubuntu-latest
    name: Create tag and release
-   if: env.VERSION != "-1"
+   if: "${{env.VERSION != '-1'}}" 
    steps:
      - name: Create tag to last commit
        run: |
