@@ -12,7 +12,7 @@ jobs:
     name: Pull request version number validation
     runs-on: ubuntu-latest
     outputs:
-        version: ${{ steps.version.outputs.version_number }}
+        version: ${{ steps.version.outputs.version }}
     steps:
       - id: version
         name: Get the version number
@@ -23,7 +23,7 @@ jobs:
           else
             echo "version=$v" >> $GITHUB_OUTPUT
           fi
-          echo "Version number ${{ steps.version.outputs.version_number }}"
+          echo "Version number ${{ steps.version.outputs.version }}"
         env:
           version: ${{ inputs.version_checker }}
         
