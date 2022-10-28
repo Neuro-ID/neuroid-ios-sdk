@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          v=$( $version | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/" )
+          v=$( $version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/' )
           echo "Version number: $v"
         env:
           version: ${{ inputs.version_checker }}
