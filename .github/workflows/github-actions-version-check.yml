@@ -34,7 +34,7 @@ jobs:
    steps:
      - name: Create tag to last commit
        run: |
-          echo ${{ needs.versionCheck.outputs.version }}
+          echo "${{ needs.versionCheck.outputs.version }}"
           echo "update podspec"
           echo "update xcode version"
           echo "Commit version"
