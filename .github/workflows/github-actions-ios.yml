@@ -1,7 +1,9 @@
 name: Github Actions for iOS NeuroID SDK
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
       - master
