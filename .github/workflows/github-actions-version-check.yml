@@ -25,7 +25,7 @@ jobs:
         env:
           version: ${{ inputs.version_checker }}
     outputs:
-        version_number: ${{ steps.identify.outputs.VERSION}}
+        version_number: ${{ steps.identify.outputs.version_number }}
         
   createTags:
    runs-on: ubuntu-latest
