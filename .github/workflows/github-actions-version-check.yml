@@ -7,32 +7,32 @@ on:
         description: 'Enter title'
         required: true
         type: string
-env:
- VERSION: "-1"
 jobs:
   versionCheck:
     name: Pull request version number validation
     runs-on: ubuntu-latest
     steps:
       - name: Get the version number
+        id: identify
         run: |
           v=`echo $version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/'`
           echo "Version number $v"
           if [ "$version" = "$v" ]; then
-            echo "VERSION="-1"" >> $GITHUB_ENV
+            export VERSION="-1"
+            echo "::set-output name=version_number::${VERSION}"
           else
-            echo "VERSION=$v" >> $GITHUB_ENV
+            export VERSION="$v"
+            echo "::set-output name=version_number::${VERSION}"
           fi
         env:
           version: ${{ inputs.version_checker }}
-        
-      - name: Show new version
-        run: echo $VERSION
+        outputs:
+          version_number: ${{ steps.identify.outputs.VERSION}}
         
   createTags:
    runs-on: ubuntu-latest
    name: Create tag and release
-   if: "${{env.VERSION != '-1'}}" 
+   if: "${{needs.versionCheck.outputs.version_number != '-1'}}" 
    steps:
      - name: Create tag to last commit
        run: |
