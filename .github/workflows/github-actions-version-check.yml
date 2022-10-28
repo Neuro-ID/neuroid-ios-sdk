@@ -27,6 +27,5 @@ jobs:
           version: ${{ inputs.version_checker }}
         
       - name: Show new version
-      - run: |
-          echo "varaible = $version_number"
+      - run: echo $version_number
 
