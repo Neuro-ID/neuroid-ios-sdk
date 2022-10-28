@@ -18,11 +18,9 @@ jobs:
           v=`echo $version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/'`
           echo "Version number $v"
           if [ "$version" = "$v" ]; then
-            export VERSION="-1"
-            echo "::set-output name=version_number::${VERSION}"
+            echo "version_number="-1"" >> $GITHUB_OUTPUT
           else
-            export VERSION="$v"
-            echo "::set-output name=version_number::${VERSION}"
+            echo "version_number=$v" >> $GITHUB_OUTPUT
           fi
         env:
           version: ${{ inputs.version_checker }}
@@ -32,7 +30,7 @@ jobs:
   createTags:
    runs-on: ubuntu-latest
    name: Create tag and release
-   if: "${{needs.versionCheck.outputs.version_number != '-1'}}" 
+   if: needs.versionCheck.outputs.version_number != '-1' 
    steps:
      - name: Create tag to last commit
        run: |
