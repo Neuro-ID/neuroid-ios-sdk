@@ -11,6 +11,7 @@ env:
  VERSION: "-1"
 jobs:
   versionCheck:
+    name: Pull request version number validation
     runs-on: ubuntu-latest
     steps:
       - name: Get the version number
@@ -26,5 +27,19 @@ jobs:
           version: ${{ inputs.version_checker }}
         
       - name: Show new version
-        run: echo $version_number
-
+        run: echo $VERSION
+        
+  createTags:
+   name: Create tag and release
+   if: $VERSION != "-1"
+   steps:
+     - name: Create tag to last commit
+       run: |
+          echo "update podspec"
+          echo "update xcode version"
+          echo "Commit version"
+          echo "Create tag to last commit"
+          echo "Create release"
+          echo "Run test"
+       
+  
