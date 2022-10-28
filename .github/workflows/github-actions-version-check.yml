@@ -1,3 +1,5 @@
+name: Pull request version check
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,17 +9,24 @@ on:
         type: string
 
 jobs:
-  log-the-inputs:
+  version_check:
     runs-on: ubuntu-latest
     steps:
+      - name: Get the version number
       - run: |
           v=`echo $version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/'`
           echo "Version number $v"
           if [ "$version" = "$v" ]; then
-              echo "-1"
+              export version_number="-1"
+              echo "::set-env name=version_number::$version_number"
           else
-              echo "$v"
+              export version_number=$v
+              echo "::set-env name=version_number::$version_number"
           fi
         env:
           version: ${{ inputs.version_checker }}
+        
+      - name: Show new version
+      - run: |
+          echo "varaible = $version_number"
 
