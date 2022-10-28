@@ -11,30 +11,30 @@ jobs:
   versionCheck:
     name: Pull request version number validation
     runs-on: ubuntu-latest
+    outputs:
+        version: ${{ steps.version.outputs.version_number }}
     steps:
-      - name: Get the version number
-        id: identify
+      - id: version
+        name: Get the version number
         run: |
           v=`echo $version | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/'`
           echo "Version number $v"
           if [ "$version" = "$v" ]; then
-            echo "version_number="-1"" >> $GITHUB_OUTPUT
+            echo "version="-1"" >> $GITHUB_OUTPUT
           else
-            echo "version_number=$v" >> $GITHUB_OUTPUT
+            echo "version=$v" >> $GITHUB_OUTPUT
           fi
         env:
           version: ${{ inputs.version_checker }}
-    outputs:
-        version_number: ${{ steps.identify.outputs.version_number }}
         
   createTags:
    runs-on: ubuntu-latest
    name: Create tag and release
-   if: needs.versionCheck.outputs.version_number != '-1' 
+   if: needs.versionCheck.outputs.version != '-1' 
    steps:
      - name: Create tag to last commit
        run: |
-          echo ${{needs.versionCheck.outputs.version_number}}
+          echo echo ${{ needs.versionCheck.outputs.version }}
           echo "update podspec"
           echo "update xcode version"
           echo "Commit version"
