@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  version_check:
+  versionCheck:
     runs-on: ubuntu-latest
     steps:
       - name: Get the version number
