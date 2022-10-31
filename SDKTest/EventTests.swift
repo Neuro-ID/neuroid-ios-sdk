@@ -208,4 +208,12 @@ class EventTests: XCTestCase {
         NeuroID.excludeViewByTestID(excludedView: "DontTrackMeID")
         assert(NeuroID.excludedViewsTestIDs.contains(where: { $0 == "DontTrackMeID"}))
     }
+    
+    func testSha256Salt() {
+        var myTestString = "test"
+        var hash = myTestString.sha256()
+        print("Raw hash \(hash)")
+        print("Prefixed hash \(hash.prefix(8))")
+        assert(!hash.prefix(8).isEmpty)
+    }
 }
