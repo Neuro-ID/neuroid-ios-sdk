@@ -23,9 +23,17 @@ platform :ios do
   desc "Update project version"
   lane :update_version do
     version = version_bump_podspec(path: "Neuro-ID.podspec", version_number: ENV["newVersion"])
-    increment_version_number(
-    version_number: ENV["newVersion"],      # specify specific version number (optional, omitting it increments patch version number)
-    xcodeproj: "./NeuroID.xcodeproj"  
+    currentversion = get_version_number(
+    xcodeproj: "Project.xcodeproj",
+    target: "App"
     )
+    if currentversion != ENV["newVersion"]
+      increment_version_number(
+      version_number: ENV["newVersion"],      # specify specific version number (optional, omitting it increments patch version number)
+      xcodeproj: "./NeuroID.xcodeproj"  
+      )
+    else
+      UI.error "The project version is the same as the new version" 
+    end
   end
 end
