@@ -48,7 +48,7 @@ jobs:
       run: bundle install
       
     - name: Create cache for pods 
-    - uses: actions/cache@v2
+      uses: actions/cache@v2
       with:
        path: Pods
        key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
