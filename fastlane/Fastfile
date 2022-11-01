@@ -24,7 +24,7 @@ platform :ios do
   lane :update_version do
     version = version_bump_podspec(path: "Neuro-ID.podspec", version_number: ENV["newVersion"])
     currentversion = get_version_number(
-    xcodeproj: "Neuro-ID.xcodeproj",
+    xcodeproj: "NeuroID.xcodeproj",
     target: "NeuroID"
     )
     if currentversion != ENV["newVersion"]
