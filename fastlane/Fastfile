@@ -20,4 +20,12 @@ platform :ios do
   lane :test do
     run_tests(scheme: "NeuroID")
   end
+  desc "Update project version"
+  lane :update_version do
+    version = version_bump_podspec(path: "Neuro-ID.podspec", version_number: ENV["newVersion"])
+    increment_version_number(
+    version_number: ENV["newVersion"],      # specify specific version number (optional, omitting it increments patch version number)
+    xcodeproj: "./NeuroID.xcodeproj"  
+    )
+  end
 end
