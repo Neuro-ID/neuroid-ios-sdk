@@ -9,7 +9,6 @@ on:
         type: string
 jobs:
   versionCheck:
-    if: github.event.pull_request.merged == true
     name: Pull request version number validation
     runs-on: ubuntu-latest
     outputs:
