@@ -134,10 +134,12 @@ public struct NeuroID {
         saveEventToLocalDataStore(event)
     }
     
-    public static func closeSession() {
-        var closeEvent = NIDEvent(type: NIDEventName.closeSession, view: UIView.init())
-        closeEvent.ct = "JS_EVENT"
+    public static func closeSession() -> NIDEvent {
+        var closeEvent = NIDEvent(type: NIDEventName.closeSession)
+        closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
+        NeuroID.stop()
+        return closeEvent
     }
     
     // When start is called, enable swizzling, as well as dispatch queue to send to API

@@ -216,4 +216,10 @@ class EventTests: XCTestCase {
         print("Prefixed hash \(hash.prefix(8))")
         assert(!hash.prefix(8).isEmpty)
     }
+    
+    func testCloseSession(){
+        var closeSession = NeuroID.closeSession()
+        XCTAssertTrue(NeuroID.isStopped())
+        assert(closeSession.ct == "SDK_EVENT")
+    }
 }
