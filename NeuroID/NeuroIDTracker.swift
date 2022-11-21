@@ -279,7 +279,7 @@ public struct NeuroID {
     }
     
     /** React Native API for manual registration */
-    public static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) {
+    public static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
         let guid = UUID().uuidString
         let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: nil, screenName: screenName)
         var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: id, en: id, etn: "INPUT", et: "UITextField::\(className)", ec: screenName, v: "S~C~~\(placeHolder)" , url: screenName)
@@ -292,6 +292,7 @@ public struct NeuroID {
         nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
         nidEvent.attrs = [attrVal,shVal]
         NeuroID.saveEventToLocalDataStore(nidEvent)
+        return nidEvent
     }
     
     
