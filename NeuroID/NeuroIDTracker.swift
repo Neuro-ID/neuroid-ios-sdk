@@ -265,6 +265,20 @@ public struct NeuroID {
         }
     }
     
+    /** Public API for manually registering a target. This should only be used when automatic fails.*/
+    public static func manuallyRegisterTarget(view: UIView) {
+        let screenName = view.id
+        let guid = UUID().uuidString
+        NIDPrintLog("Registering single view: \(screenName)")
+        NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
+        let childViews = view.subviewsRecursive()
+        for _view in childViews {
+            NIDPrintLog("Registering subview Parent: \(screenName) Child: \(_view)")
+            NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
+        }
+    }
+    
+    
     /**
      Publically exposed just for testing. This should not be any reason to call this directly.
      */
