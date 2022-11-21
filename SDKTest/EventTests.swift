@@ -232,4 +232,14 @@ class EventTests: XCTestCase {
         var validEvent = events.filter {  $0.type == "REGISTER_TARGET"}
         assert(validEvent.count == 1)
     }
+    
+    func testRNManuallyTargetRegister(){
+        NeuroID.start()
+        var testView = UITextView();
+        testView.id = "wow"
+        NeuroID.manuallyRegisterRNTarget(id: "WOW2", className: "UITextView", screenName: "HOME", placeHolder: "name here")
+        var events = DataStore.getAllEvents()
+        var validEvent = events.filter {  $0.type == "REGISTER_TARGET"}
+        assert(validEvent.count == 1)
+    }
 }

@@ -278,6 +278,22 @@ public struct NeuroID {
         }
     }
     
+    /** React Native API for manual registration */
+    public static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) {
+        let guid = UUID().uuidString
+        let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: nil, screenName: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: id, en: id, etn: "INPUT", et: "UITextField::\(className)", ec: screenName, v: "S~C~~\(placeHolder)" , url: screenName)
+        nidEvent.hv = placeHolder.sha256().prefix(8).string
+        var attrVal = Attrs.init(n: "guid", v: guid)
+        // Screen hierarchy
+        var shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
+        var guidValue = Attr.init(n: "guid", v: guid)
+        var attrValue = Attr.init(n: "screenHierarchy", v: fullViewString)
+        nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
+        nidEvent.attrs = [attrVal,shVal]
+        NeuroID.saveEventToLocalDataStore(nidEvent)
+    }
+    
     
     /**
      Publically exposed just for testing. This should not be any reason to call this directly.
