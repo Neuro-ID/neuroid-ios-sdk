@@ -222,4 +222,24 @@ class EventTests: XCTestCase {
         XCTAssertTrue(NeuroID.isStopped())
         assert(closeSession.ct == "SDK_EVENT")
     }
+     
+    func testManuallyTargetRegister(){
+        NeuroID.start()
+        var testView = UITextView();
+        testView.id = "wow"
+        NeuroID.manuallyRegisterTarget(view: testView)
+        var events = DataStore.getAllEvents()
+        var validEvent = events.filter {  $0.type == "REGISTER_TARGET"}
+        assert(validEvent.count == 1)
+    }
+    
+    func testRNManuallyTargetRegister(){
+        NeuroID.start()
+        var testView = UITextView();
+        testView.id = "wow"
+        var event = NeuroID.manuallyRegisterRNTarget(id: "WOW2", className: "UITextView", screenName: "HOME", placeHolder: "name here")
+        var events = DataStore.getAllEvents()
+        var validEvent = events.filter {  $0.type == "REGISTER_TARGET"}
+        assert(event.etn == "INPUT")
+    }
 }

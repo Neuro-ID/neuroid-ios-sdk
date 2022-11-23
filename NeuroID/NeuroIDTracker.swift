@@ -266,6 +266,37 @@ public struct NeuroID {
         }
     }
     
+    /** Public API for manually registering a target. This should only be used when automatic fails.*/
+    public static func manuallyRegisterTarget(view: UIView) {
+        let screenName = view.id
+        let guid = UUID().uuidString
+        NIDPrintLog("Registering single view: \(screenName)")
+        NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
+        let childViews = view.subviewsRecursive()
+        for _view in childViews {
+            NIDPrintLog("Registering subview Parent: \(screenName) Child: \(_view)")
+            NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
+        }
+    }
+    
+    /** React Native API for manual registration */
+    public static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
+        let guid = UUID().uuidString
+        let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: nil, screenName: screenName)
+        var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: id, en: id, etn: "INPUT", et: "\(className)", ec: screenName, v: "S~C~~\(placeHolder.count)" , url: screenName)
+        nidEvent.hv = placeHolder.sha256().prefix(8).string
+        let attrVal = Attrs.init(n: "guid", v: guid)
+        // Screen hierarchy
+        let shVal = Attrs.init(n: "screenHierarchy", v: fullViewString)
+        let guidValue = Attr.init(n: "guid", v: guid)
+        let attrValue = Attr.init(n: "screenHierarchy", v: fullViewString)
+        nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
+        nidEvent.attrs = [attrVal,shVal]
+        NeuroID.saveEventToLocalDataStore(nidEvent)
+        return nidEvent
+    }
+    
+    
     /**
      Publically exposed just for testing. This should not be any reason to call this directly.
      */
