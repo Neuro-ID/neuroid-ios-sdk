@@ -6,6 +6,7 @@ import CommonCrypto
 import Alamofire
 import ObjectiveC
 
+// MARK: - Neuro ID Class
 public struct NeuroID {
     
     fileprivate static var sequenceId = 1
@@ -243,7 +244,7 @@ public struct NeuroID {
         UITextField.startSwizzling()
         UITextView.startSwizzling()
         UINavigationController.swizzleNavigation()
-        
+        UITableView.tableviewSwizzle()
 //        UIButton.startSwizzling()
     }
     private static func initTimer() {
@@ -459,7 +460,7 @@ public struct NeuroID {
         }
     }
 }
-
+// MARK: - NeuroID for testing functions
 extension NeuroID {
     static func cleanUpForTesting() {
         clientKey = nil
@@ -1402,6 +1403,9 @@ extension UIView {
     var className: String {
         return String(describing: type(of: self))
     }
+    var subviewsDescriptions: [String] {
+        return subviews.map { $0.description }
+    }
 }
 
 extension UIViewController {
@@ -1441,7 +1445,8 @@ private func getParentClasses(currView: UIView?, hierarchyString: String?) -> St
 }
 
 private func registerSubViewsTargets(subViewControllers: [UIViewController]){
-    for ctrls in subViewControllers {
+    let filtered = subViewControllers.filter({ !$0.ignoreLists.contains($0.className) })
+    for ctrls in filtered {
         let screenName = ctrls.className
         NIDPrintLog("Registering view controllers \(screenName)")
         guard let view = ctrls.view else {
@@ -1498,6 +1503,19 @@ private func textFieldSwizzling(element: UITextField.Type,
     }
 }
 
+private func tableViewSwizzling(element: UITableView.Type,
+                       originalSelector: Selector,
+                       swizzledSelector: Selector) {
+
+    let originalMethod = class_getInstanceMethod(element, originalSelector)
+    let swizzledMethod = class_getInstanceMethod(element, swizzledSelector)
+
+    if let originalMethod = originalMethod,
+       let swizzledMethod = swizzledMethod {
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
 private func swizzling(viewController: UIViewController.Type,
                        originalSelector: Selector,
                        swizzledSelector: Selector) {
@@ -1513,14 +1531,23 @@ private func swizzling(viewController: UIViewController.Type,
 
 // MARK: - Swizzling
 extension UIViewController {
-    private var ignoreLists: [String] {
+    fileprivate var ignoreLists: [String] {
         return [
             "UICompatibilityInputViewController",
             "UISystemKeyboardDockController",
-//            "UIInputWindowController",
+            "UIInputWindowController",
             "UIPredictionViewController",
             "UIEditingOverlayViewController",
-            "UISystemInputAssistantViewController"
+            "UISystemInputAssistantViewController",
+            "UIKBVisualEffectView",
+            "TUISystemInputAssistantPageView",
+            "UIKeyboardAutomatic",
+            "UIKeyboardImpl",
+            "TUIKeyboardPathEffectView",
+            "UIInputSetHostView",
+            "UIKBKeyView",
+            "UIKeyboardDockItemButton",
+            "UIEditingOverlayGestureView"
         ]
     }
 
@@ -1710,6 +1737,14 @@ private extension UITextView {
 }
 
 private extension UIViewController {
+    private var registerViews: [String]? {
+        get {
+            return UserDefaults(suiteName: "ViewHierarchy")?.object(forKey: "registerViews") as? [String]
+        }
+        set {
+            UserDefaults(suiteName: "ViewHierarchy")?.set(newValue, forKey: "registerViews")
+        }
+    }
     @objc static func startSwizzling() {
         let screen = UIViewController.self
     
@@ -1725,15 +1760,20 @@ private extension UIViewController {
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.dismiss),
                   swizzledSelector: #selector(screen.neuroIDDismiss))
+        swizzling(viewController: screen,
+                  originalSelector: #selector(screen.viewDidLayoutSubviews),
+                  swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
     }
     
     @objc func neuroIDViewWillAppear(animated: Bool) {
         self.neuroIDViewWillAppear(animated: animated)
+        registerViews = nil
     }
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         self.neuroIDViewWillDisappear(animated: animated)
         NotificationCenter.default.removeObserver(self)
+        registerViews = nil
 //        captureEvent(eventName: .windowBlur)
     }
 
@@ -1758,10 +1798,39 @@ private extension UIViewController {
         var allViewControllers = self.children
         allViewControllers.append(self)
         registerSubViewsTargets(subViewControllers: allViewControllers)
+        registerViews = self.view.subviewsDescriptions
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         self.neuroIDDismiss(animated: flag, completion: completion)
+    }
+    @objc func neuroIDViewDidLayoutSubviews() {
+        if (NeuroID.isStopped()){
+            return
+        }
+        neuroIDViewDidLayoutSubviews()
+        if self.description.contains(className), let registerViews = registerViews {
+//            print("Old Views saved it")
+//            registerViews.forEach({ print( "Old : \($0)\n" )})
+//            print("Current Views saved it")
+//            self.view.subviews.forEach({ print( "Current : \($0.description)\n" )})
+//            print("New views to register")
+            let newViews = self.view.subviews.filter({ !$0.description.compareDescriptions(registerViews) && !ignoreLists.contains($0.className) })
+//            newViews.forEach({ print( "New : \($0.description)\n" )})
+//            print("**************************")
+            for newView in newViews {
+                let screenName = className
+                NIDPrintLog("Registering view after load viewController")
+                let guid = UUID().uuidString
+                NeuroIDTracker.registerSingleView(v: newView, screenName: screenName, guid: guid)
+                let childViews = newView.subviewsRecursive()
+                for _view in childViews {
+                    NIDPrintLog("Registering single subview.")
+                    NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
+                }
+            }
+            self.registerViews = self.view.subviewsDescriptions
+        }
     }
 }
 
@@ -1794,7 +1863,31 @@ extension UINavigationController {
         return self.neuroIDPopToRootViewController(animated: animated)
     }
 }
-
+extension UITableView {
+    fileprivate static func tableviewSwizzle() {
+        let table = UITableView.self
+        tableViewSwizzling(element: table, originalSelector: #selector(table.reloadData), swizzledSelector: #selector(table.neuroIDReloadData))
+    }
+    @objc private func neuroIDReloadData() {
+        if (NeuroID.isStopped()){
+            return
+        }
+        let guid = UUID().uuidString
+        let oldCells = visibleCells
+        neuroIDReloadData()
+        let newCells  = visibleCells
+        let currentNewViews = newCells.filter({ !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.className) })
+        
+        for cell in currentNewViews {
+            let cellName = cell.className
+            let childViews = cell.contentView.subviewsRecursive()
+            for _view in childViews {
+                NIDPrintLog("Registering single view for cell.")
+                NeuroIDTracker.registerSingleView(v: _view, screenName: cellName, guid: guid)
+            }
+        }
+    }
+}
 //extension NSError {
 //    convenience init(message: String) {
 //        self.init(domain: message, code: 0, userInfo: nil)
@@ -1841,6 +1934,17 @@ extension String {
             return nil
         }
 
+    }
+    func compareDescriptions(_ descriptions: [String]) -> Bool {
+        let currentLocation = self.components(separatedBy: ";")[0]
+        for desc in descriptions {
+            let oldLocation = desc.components(separatedBy: ";")[0]
+            if currentLocation == oldLocation {
+                return true
+            }
+        }
+        
+        return false
     }
 }
 
