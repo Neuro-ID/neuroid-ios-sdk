@@ -12,7 +12,7 @@ jobs:
     name: Pull request version number validation
     runs-on: ubuntu-latest
     outputs:
-        version: ${{ github.event.pull_request.title }}
+        version: ${{ steps.version.outputs.version }}
     steps:
       - id: version
         name: Get the version number
@@ -25,7 +25,7 @@ jobs:
           fi
           echo "Version number ${{ steps.version.outputs.version }}"
         env:
-          version: ${{ inputs.version_checker }}
+          version: ${{ github.event.pull_request.title }}
   updateProjectVersion:
    runs-on: macos-latest
    needs: versionCheck
