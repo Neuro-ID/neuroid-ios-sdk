@@ -218,9 +218,14 @@ class EventTests: XCTestCase {
     }
     
     func testCloseSession(){
-        var closeSession = NeuroID.closeSession()
-        XCTAssertTrue(NeuroID.isStopped())
-        assert(closeSession.ct == "SDK_EVENT")
+        do {
+            NeuroID.start()
+            var closeSession = try NeuroID.closeSession()
+            XCTAssertTrue(NeuroID.isStopped())
+            assert(closeSession.ct == "SDK_EVENT")
+        } catch {
+            XCTFail()
+        }
     }
      
     func testManuallyTargetRegister(){
