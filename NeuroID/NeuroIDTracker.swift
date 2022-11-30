@@ -135,7 +135,10 @@ public struct NeuroID {
         saveEventToLocalDataStore(event)
     }
     
-    public static func closeSession() -> NIDEvent {
+    public static func closeSession() throws -> NIDEvent {
+        if ( !NeuroID.isSDKStarted) {
+            throw NIDError.sdkNotStarted
+        }
         var closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
