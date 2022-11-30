@@ -220,7 +220,7 @@ class EventTests: XCTestCase {
     func testCloseSession(){
         do {
             NeuroID.start()
-            var closeSession = try NeuroID.closeSession()
+            let closeSession = try NeuroID.closeSession()
             XCTAssertTrue(NeuroID.isStopped())
             assert(closeSession.ct == "SDK_EVENT")
         } catch {
