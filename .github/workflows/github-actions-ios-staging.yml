@@ -51,14 +51,27 @@ jobs:
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
                 -d '{"event_type":"on-demand-testflight-staging","client_payload":{"version":"4.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
       
-      - name: Send Slack Notification on Failure
-          if: ${{ failure() }}
+      - name: Send Slack Notification on Success
+          if: ${{ success() }}
           uses: rtCamp/action-slack-notify@v2
           env:
             SLACK_CHANNEL: mobile-sdk-tech-team
             SLACK_COLOR: ${{ job.status }}
             SLACK_ICON: https://github.com/rtCamp.png?size=48
-            SLACK_MESSAGE: "Failed execution on master iOS sdk build"
+            SLACK_MESSAGE: "Success execution on release iOS sdk build"
+            SLACK_TITLE: Success release iOS SDK
+            SLACK_USERNAME: rtBot
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Send Slack Notification on Failure
+          if: ${{ failure() }}
+          needs: 
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: mobile-sdk-tech-team
+            SLACK_COLOR: ${{ job.status }}
+            SLACK_ICON: https://github.com/rtCamp.png?size=48
+            SLACK_MESSAGE: "Failed execution on release iOS sdk build"
             SLACK_TITLE: Failed release iOS SDK
             SLACK_USERNAME: rtBot
             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
