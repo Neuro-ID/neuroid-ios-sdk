@@ -5,6 +5,7 @@ import WebKit
 import CommonCrypto
 import Alamofire
 import ObjectiveC
+import SwiftUI
 
 // MARK: - Neuro ID Class
 public struct NeuroID {
@@ -15,6 +16,7 @@ public struct NeuroID {
     fileprivate static let sessionId: String = ParamsCreator.getSessionID()
     public static var clientId: String?
     public static var userId: String?
+    public static var registeredTargets = [String]()
     private static let SEND_INTERVAL: Double = 5
     fileprivate static var trackers = [String: NeuroIDTracker]()
     fileprivate static var secretViews = [UIView]()
@@ -530,7 +532,6 @@ public class NeuroIDTracker: NSObject {
       }
     
     public static func registerSingleView(v: Any, screenName: String, guid: String){
-        
         let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
 
@@ -544,6 +545,7 @@ public class NeuroIDTracker: NSObject {
 //            tfView.addGestureRecognizer(touchListener)
         case is UITextField:
             let tfView = v as! UITextField
+            NeuroID.registeredTargets.append(tfView.id)
                              
 //                             @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
 
@@ -571,6 +573,7 @@ public class NeuroIDTracker: NSObject {
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
             let tv = v as! UITextView
+            NeuroID.registeredTargets.append(tv.id)
 
             var temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
@@ -586,6 +589,7 @@ public class NeuroIDTracker: NSObject {
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
             let tb = v as! UIButton
+            NeuroID.registeredTargets.append(tb.id)
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)" , url: screenName)
             nidEvent.hv = tb.titleLabel?.text?.sha256().prefix(8).string
             var attrVal = Attrs.init(n: "guid", v: guid)
@@ -808,14 +812,23 @@ private extension NeuroIDTracker {
         logTextEvent(from: notification, eventType: .blur)
     }
 
+    func registerViewIfNotRegistered(view: UIView){
+        if (!NeuroID.registeredTargets.contains(view.id)) {
+            NeuroID.registeredTargets.append(view.id)
+            let guid = UUID().uuidString
+            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid)
+        }
+    }
     /**
      Target values:
         ETN - Input
         ET - human readable tag
      */
+    
     func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
         
         if let textControl = notification.object as? UITextField {
+            registerViewIfNotRegistered(view: textControl)
             let inputType = "text"
             // isSecureText
             if #available(iOS 11.0, *) {
@@ -871,6 +884,7 @@ private extension NeuroIDTracker {
             
 //            detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UITextView {
+            registerViewIfNotRegistered(view: textControl)
             let inputType = "text"
             // isSecureText
             if #available(iOS 11.0, *) {
