@@ -625,6 +625,17 @@ public class NeuroIDTracker: NSObject {
 
 // MARK: - Custom events
 public extension NeuroIDTracker {
+    
+    public static func registerViewIfNotRegistered(view: UIView) -> Bool {
+        if (!NeuroID.registeredTargets.contains(view.id)) {
+            NeuroID.registeredTargets.append(view.id)
+            let guid = UUID().uuidString
+            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid)
+            return true
+        }
+        return false
+    }
+    
     func captureEventCheckBoxChange(isChecked: Bool, checkBox: UIView) {
         let tg = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.checkboxChange, view: checkBox, type: "UIView", attrParams: nil)
         let event = NIDEvent(type: .checkboxChange, tg: tg, v: String(isChecked))
@@ -812,13 +823,6 @@ private extension NeuroIDTracker {
         logTextEvent(from: notification, eventType: .blur)
     }
 
-    func registerViewIfNotRegistered(view: UIView){
-        if (!NeuroID.registeredTargets.contains(view.id)) {
-            NeuroID.registeredTargets.append(view.id)
-            let guid = UUID().uuidString
-            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid)
-        }
-    }
     /**
      Target values:
         ETN - Input
@@ -828,7 +832,7 @@ private extension NeuroIDTracker {
     func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
         
         if let textControl = notification.object as? UITextField {
-            registerViewIfNotRegistered(view: textControl)
+            NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
             let inputType = "text"
             // isSecureText
             if #available(iOS 11.0, *) {
@@ -884,7 +888,7 @@ private extension NeuroIDTracker {
             
 //            detectPasting(view: textControl, text: textControl.text ?? "")
         } else if let textControl = notification.object as? UITextView {
-            registerViewIfNotRegistered(view: textControl)
+            NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
             let inputType = "text"
             // isSecureText
             if #available(iOS 11.0, *) {
