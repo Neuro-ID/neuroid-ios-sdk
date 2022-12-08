@@ -93,8 +93,8 @@ jobs:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Success execution on release iOS sdk build"
-          SLACK_TITLE: Success release iOS SDK
+          SLACK_MESSAGE: "Success execution on main iOS sdk build"
+          SLACK_TITLE: Success main iOS SDK
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
@@ -105,7 +105,7 @@ jobs:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Failed execution on release iOS sdk build"
-          SLACK_TITLE: Failed release iOS SDK
+          SLACK_MESSAGE: "Failed execution on main iOS sdk build"
+          SLACK_TITLE: Failed main iOS SDK
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}         

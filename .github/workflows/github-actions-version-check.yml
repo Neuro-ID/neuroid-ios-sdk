@@ -63,9 +63,9 @@ jobs:
     - name: Update Current Version
       run: bundle exec fastlane update_version
       env:
-       newVersion: ${{ needs.versionCheck.outputs.version }}
+       newVersion:  ${{ needs.versionCheck.outputs.version }}
        
-    - name: Commit version change
+    - name: Commit version changes
       run: |
           git config --global user.email jose.perez@neuro-id.com
           git config --global user.name joseperezNID
@@ -78,27 +78,27 @@ jobs:
           git push
           set -e
 
-      - name: Send Slack Notification on Success
-        if: ${{ success() }}
-        uses: rtCamp/action-slack-notify@v2
-        env:
+    - name: Send Slack Notification on Success
+      if: ${{ success() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Success execution on release iOS sdk build"
-          SLACK_TITLE: Success release iOS SDK
+          SLACK_MESSAGE: "Success execution on version build iOS sdk build"
+          SLACK_TITLE: Success version build iOS SDK
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: Send Slack Notification on Failure
-        if: ${{ failure() }}
-        uses: rtCamp/action-slack-notify@v2
-        env:
+    - name: Send Slack Notification on Failure
+      if: ${{ failure() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Failed execution on release iOS sdk build"
-          SLACK_TITLE: Failed release iOS SDK
+          SLACK_MESSAGE: "Failed execution on version build iOS sdk build"
+          SLACK_TITLE: Failed version build iOS SDK
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}     
        
