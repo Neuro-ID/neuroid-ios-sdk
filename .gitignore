@@ -64,3 +64,4 @@ fastlane/test_output
 
 iOSInjectionProject/
 node_modules/
+.github/.DS_Store

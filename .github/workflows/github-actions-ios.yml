@@ -11,7 +11,7 @@ env:
  VERSION: "1.3.0"
 jobs:
   updateSchema:
-    if: github.event.pull_request.merged == false
+    if: github.event.pull_request == null
     name: Retrieve new Schema.json
     runs-on: ubuntu-latest
     steps:
@@ -35,8 +35,9 @@ jobs:
             cp schema/src/schema.json neuroid-ios-sdk/NeuroID/
 
   test:
-    if: github.event.pull_request.merged == false
+    if: github.event.pull_request == null
     runs-on: macos-latest
+    needs: updateSchema
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v3
@@ -84,3 +85,27 @@ jobs:
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
                 -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+
+      - name: Send Slack Notification on Success
+          if: ${{ success() }}
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: mobile-sdk-tech-team
+            SLACK_COLOR: ${{ job.status }}
+            SLACK_ICON: https://github.com/rtCamp.png?size=48
+            SLACK_MESSAGE: "Success execution on master iOS sdk build"
+            SLACK_TITLE: Success master iOS SDK
+            SLACK_USERNAME: rtBot
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      
+      - name: Send Slack Notification on Failure
+          if: ${{ failure() }}
+          uses: rtCamp/action-slack-notify@v2
+          env:
+            SLACK_CHANNEL: mobile-sdk-tech-team
+            SLACK_COLOR: ${{ job.status }}
+            SLACK_ICON: https://github.com/rtCamp.png?size=48
+            SLACK_MESSAGE: "Failed execution on master ios sdk build"
+            SLACK_TITLE: Failed master iOS SDK
+            SLACK_USERNAME: rtBot
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}          
