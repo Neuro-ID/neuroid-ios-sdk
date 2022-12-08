@@ -174,6 +174,16 @@ class EventTests: XCTestCase {
         XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
     }
     
+    func testLateRegistration(){
+        var view = UITextView()
+        view.id = "myTextView"
+        var view2 = UITextView()
+        view2.id = "myTextView2"
+        XCTAssertTrue(NeuroIDTracker.registerViewIfNotRegistered(view: view))
+        
+        // Ensure we dont re-add it
+        XCTAssertFalse(NeuroIDTracker.registerViewIfNotRegistered(view: view))
+    }
     func testCalcSimilarity(){
         let urlName = "HomeScreen"
         let testView = UIViewController();
@@ -218,9 +228,14 @@ class EventTests: XCTestCase {
     }
     
     func testCloseSession(){
-        var closeSession = NeuroID.closeSession()
-        XCTAssertTrue(NeuroID.isStopped())
-        assert(closeSession.ct == "SDK_EVENT")
+        do {
+            NeuroID.start()
+            let closeSession = try NeuroID.closeSession()
+            XCTAssertTrue(NeuroID.isStopped())
+            assert(closeSession.ct == "SDK_EVENT")
+        } catch {
+            XCTFail()
+        }
     }
      
     func testManuallyTargetRegister(){
