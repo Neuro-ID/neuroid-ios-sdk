@@ -49,10 +49,14 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-                -d '{"event_type":"on-demand-testflight-staging","client_payload":{"version":"4.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
-      
+                -d '{"event_type":"on-demand-testflight-staging","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
+
+  notifications:
+    runs-on: ubuntu-latest
+    needs: test
+    steps: 
       - name: Send Slack Notification on Success
-        if: ${{ success() }}
+        if: ${{ needs.test.result == 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team
@@ -64,7 +68,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Send Slack Notification on Failure
-        if: ${{ failure() }}
+        if: ${{ needs.test.result != 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team
