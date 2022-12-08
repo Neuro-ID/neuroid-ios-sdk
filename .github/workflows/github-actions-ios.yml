@@ -85,9 +85,13 @@ jobs:
                 -H "Authorization: token ${{ secrets.API_TOKEN_GITHUB }}" \
                 https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
                 -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
-
+  
+  notifications:
+    runs-on: ubuntu-latest
+    needs: test
+    steps: 
       - name: Send Slack Notification on Success
-        if: ${{ success() }}
+        if: ${{ needs.test.result == 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team
@@ -99,7 +103,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Send Slack Notification on Failure
-        if: ${{ failure() }}
+        if: ${{ needs.test.result != 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team
@@ -108,4 +112,4 @@ jobs:
           SLACK_MESSAGE: "Failed execution on main iOS sdk build"
           SLACK_TITLE: Failed main iOS SDK
           SLACK_USERNAME: rtBot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}         
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}        
