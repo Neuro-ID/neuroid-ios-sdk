@@ -63,8 +63,7 @@ jobs:
     - name: Update Current Version
       run: bundle exec fastlane update_version
       env:
-       newVersion: ${{ needs.versionCheck.outputs.version }}
-
+        newVersion: ${{ needs.versionCheck.outputs.version }}
     - name: Commit version changes
       run: |
           git config --global user.email jose.perez@neuro-id.com
