@@ -64,8 +64,8 @@ jobs:
       run: bundle exec fastlane update_version
       env:
        newVersion: ${{ needs.versionCheck.outputs.version }}
-       
-    - name: Commit version change
+
+    - name: Commit version changes
       run: |
           git config --global user.email jose.perez@neuro-id.com
           git config --global user.name joseperezNID
