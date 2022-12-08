@@ -78,28 +78,28 @@ jobs:
           git push
           set -e
 
-    - name: Send Slack Notification on Success
-          if: ${{ success() }}
-          uses: rtCamp/action-slack-notify@v2
-          env:
-            SLACK_CHANNEL: mobile-sdk-tech-team
-            SLACK_COLOR: ${{ job.status }}
-            SLACK_ICON: https://github.com/rtCamp.png?size=48
-            SLACK_MESSAGE: "Success execution on master ios sdk update version"
-            SLACK_TITLE: Success master ios SDK
-            SLACK_USERNAME: rtBot
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-    
-    - name: Send Slack Notification on Failure
-          if: ${{ failure() }}
-          uses: rtCamp/action-slack-notify@v2
-          env:
-            SLACK_CHANNEL: mobile-sdk-tech-team
-            SLACK_COLOR: ${{ job.status }}
-            SLACK_ICON: https://github.com/rtCamp.png?size=48
-            SLACK_MESSAGE: "Failed execution on master ios sdk update version"
-            SLACK_TITLE: Failed master ios SDK
-            SLACK_USERNAME: rtBot
-            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}      
+      - name: Send Slack Notification on Success
+        if: ${{ success() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: mobile-sdk-tech-team
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: "Success execution on release iOS sdk build"
+          SLACK_TITLE: Success release iOS SDK
+          SLACK_USERNAME: rtBot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Send Slack Notification on Failure
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: mobile-sdk-tech-team
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: "Failed execution on release iOS sdk build"
+          SLACK_TITLE: Failed release iOS SDK
+          SLACK_USERNAME: rtBot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}     
        
   
