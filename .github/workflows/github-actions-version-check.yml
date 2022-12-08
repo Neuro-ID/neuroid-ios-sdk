@@ -64,7 +64,7 @@ jobs:
       run: bundle exec fastlane update_version
       env:
        newVersion:  ${{ needs.versionCheck.outputs.version }}
-
+       
     - name: Commit version changes
       run: |
           git config --global user.email jose.perez@neuro-id.com
@@ -78,10 +78,10 @@ jobs:
           git push
           set -e
 
-      - name: Send Slack Notification on Success
-        if: ${{ success() }}
-        uses: rtCamp/action-slack-notify@v2
-        env:
+    - name: Send Slack Notification on Success
+      if: ${{ success() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
@@ -90,10 +90,10 @@ jobs:
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: Send Slack Notification on Failure
-        if: ${{ failure() }}
-        uses: rtCamp/action-slack-notify@v2
-        env:
+    - name: Send Slack Notification on Failure
+      if: ${{ failure() }}
+      uses: rtCamp/action-slack-notify@v2
+      env:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
