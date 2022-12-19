@@ -1702,6 +1702,7 @@ private extension UITextField {
     
    
     @objc func neuroIDPaste(caller: UIResponder) {
+        self.neuroIDPaste(caller: caller)
         if (NeuroID.isStopped()){
             return
         }
@@ -1714,7 +1715,6 @@ private extension UITextField {
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
-        self.neuroIDPaste(caller: caller)
     }
 }
 
@@ -1741,6 +1741,7 @@ private extension UITextView {
     }
     
     @objc func neuroIDPaste(caller: UIResponder) {
+        self.neuroIDPaste(caller: caller)
         if (NeuroID.isStopped()){
             return
         }
@@ -1826,10 +1827,10 @@ private extension UIViewController {
         self.neuroIDDismiss(animated: flag, completion: completion)
     }
     @objc func neuroIDViewDidLayoutSubviews() {
+        neuroIDViewDidLayoutSubviews()
         if (NeuroID.isStopped()){
             return
         }
-        neuroIDViewDidLayoutSubviews()
         if self.description.contains(className), let registerViews = registerViews {
 //            print("Old Views saved it")
 //            registerViews.forEach({ print( "Old : \($0)\n" )})
@@ -1890,12 +1891,12 @@ extension UITableView {
         tableViewSwizzling(element: table, originalSelector: #selector(table.reloadData), swizzledSelector: #selector(table.neuroIDReloadData))
     }
     @objc private func neuroIDReloadData() {
+        neuroIDReloadData()
         if (NeuroID.isStopped()){
             return
         }
         let guid = UUID().uuidString
         let oldCells = visibleCells
-        neuroIDReloadData()
         let newCells  = visibleCells
         let currentNewViews = newCells.filter({ !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.className) })
         
