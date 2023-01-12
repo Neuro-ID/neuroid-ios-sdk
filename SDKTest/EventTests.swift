@@ -321,6 +321,15 @@ class EventTests: XCTestCase {
         textChangeEvent.hv = shaText
         textChangeEvent.tgs = TargetValue.string(textfield.id).toString()
         tracker?.captureEvent(event: textChangeEvent)
+        
+        /// Touch a button
+        let tg2 = ParamsCreator.getTgParams(
+            view: button,
+            extraParams: ["sender": TargetValue.string(button.className)])
+
+        let touch2 = NIDEvent(type: .touchStart, tg: tg2, view: button)
+        tracker?.captureEvent(event: touch2)
+        
         /// Get all events
         let events = DataStore.getAllEvents()
         /// Create http request
