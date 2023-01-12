@@ -257,4 +257,100 @@ class EventTests: XCTestCase {
         let validEvent = events.filter {  $0.type == "REGISTER_TARGET"}
         assert(event.etn == "INPUT")
     }
+    func testFullPayload() {
+        NeuroID.start()
+        var tracker: NeuroIDTracker?
+        /// Create a textfield
+        lazy var textfield: UITextField = {
+            let textfield = UITextField(frame: CGRect(x: 100, y: 100, width: 100, height: 20))
+            textfield.id = "MainTextfield"
+            return textfield
+        }()
+        lazy var button: UIButton = {
+            let button = UIButton(frame: CGRect(x: 150, y: 100, width: 100, height: 20))
+            button.id = "Button"
+            return button
+        }()
+        /// Create UIViewcontroller
+        let viewController: UIViewController = {
+            let viewController = UIViewController()
+            tracker = NeuroIDTracker(screen: "MainController", controller: viewController)
+            return viewController
+        }()
+        viewController.view.addSubview(textfield)
+        viewController.view.addSubview(button)
+        NeuroID.manuallyRegisterTarget(view: textfield)
+        NeuroID.manuallyRegisterTarget(view: button)
+        /// Create touch event
+        let tg = ParamsCreator.getTgParams(
+            view: textfield,
+            extraParams: ["sender": TargetValue.string(textfield.className)])
+
+        let touch = NIDEvent(type: .touchStart, tg: tg, view: textfield)
+        tracker?.captureEvent(event: touch)
+        /// Create Focus event
+        var focusBlurEvent = NIDEvent(type: .focus, tg: [
+            "tgs": TargetValue.string(textfield.id),
+        ])
+        focusBlurEvent.tgs = TargetValue.string(textfield.id).toString()
+        tracker?.captureEvent(event: focusBlurEvent)
+        
+        /// Input event
+        // Create Input
+        textfield.text = "text"
+        let lengthValue = "S~C~~\(textfield.text?.count ?? 0)"
+        let hashValue = textfield.text?.sha256().prefix(8).string
+        let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text])
+        var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
+        inputEvent.v = lengthValue
+        inputEvent.hv = hashValue
+        inputEvent.tgs = TargetValue.string(textfield.id).toString()
+        tracker?.captureEvent(event: inputEvent)
+        
+        /// Create Text change and blur
+        textfield.text = "text_match"
+        let sm = tracker?.calcSimilarity(previousValue: "text", currentValue: "text_match") ?? 0
+        let pd = tracker?.percentageDifference(newNumOrig: "text", originalNumOrig: "text_match") ?? 0
+        let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text])
+        var textChangeEvent = NIDEvent(type:NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+        textChangeEvent.v = lengthValue
+        var shaText = textfield.text ?? ""
+        if (shaText != "") {
+         shaText = shaText.sha256().prefix(8).string
+        }
+        textChangeEvent.hv = shaText
+        textChangeEvent.tgs = TargetValue.string(textfield.id).toString()
+        tracker?.captureEvent(event: textChangeEvent)
+        
+        /// Touch a button
+        let tg2 = ParamsCreator.getTgParams(
+            view: button,
+            extraParams: ["sender": TargetValue.string(button.className)])
+
+        let touch2 = NIDEvent(type: .touchStart, tg: tg2, view: button)
+        tracker?.captureEvent(event: touch2)
+        
+        /// Get all events
+        let events = DataStore.getAllEvents()
+        /// Create http request
+        let tabId = ParamsCreator.getTabId()
+        
+        let randomString = UUID().uuidString
+        let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
+        
+        let neuroHTTPRequest = NeuroHTTPRequest.init(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: "_", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: "ios://\(NeuroID.getScreenName() ?? "")")
+        /// Transform event into json
+        do {
+            let encoder = JSONEncoder()
+            let values = try encoder.encode(neuroHTTPRequest)
+            let str = String(data: values, encoding: .utf8)
+            print(str)
+            let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
+            print("************\(filename)*************")
+            try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            print(error)
+        }
+        assert(neuroHTTPRequest != nil)
+    }
 }
