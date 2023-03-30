@@ -67,6 +67,9 @@ public struct NeuroID {
         configure(clientKey: clientKey)
     }
     
+    public static func enableLogging(_ value: Bool){
+        logVisible = value;
+    }
     /**
      Public user facing getClientID function
      */
@@ -90,11 +93,12 @@ public struct NeuroID {
         return environment
     }
     public static func stop(){
+        NIDPrintLog("NeuroID Stopped")
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
     
     public static func excludeViewByTestID(excludedView: String) {
-        print("Exclude view called - \(excludedView)")
+        NIDPrintLog("Exclude view called - \(excludedView)")
         NeuroID.excludedViewsTestIDs.append(excludedView)
     }
     
@@ -158,7 +162,7 @@ public struct NeuroID {
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
-            print("DEBUG PATH \(path.absoluteString)");
+            NIDPrintLog("DEBUG PATH \(path.absoluteString)");
         }
         
         #if DEBUG
@@ -373,6 +377,7 @@ public struct NeuroID {
         AF.request(url, method: .post, parameters: neuroHTTPRequest, encoder: JSONParameterEncoder.default, headers: headers).responseData { response in
                 // 204 invalid, 200 valid
                 NIDPrintLog("NID Response \(response.response?.statusCode)")
+                NIDPrintLog("NID Payload: \(neuroHTTPRequest)")
                 switch response.result {
                 case .success:
                     NIDPrintLog("Neuro-ID post to API Successfull")
@@ -387,10 +392,11 @@ public struct NeuroID {
             do {
                 let data = try JSONEncoder().encode(neuroHTTPRequest)
                 let str = String(data: data, encoding: .utf8)
-                print(str)
+                NIDPrintLog(str)
             } catch {}
         }
     }
+    
 
     public static func setUserID(_ userId: String) {
         UserDefaults.standard.set(userId, forKey: "nid_user_id")
@@ -526,11 +532,6 @@ public class NeuroIDTracker: NSObject {
         return fullViewString
     }
     
-    // function which is triggered when handleTap is called
-    @objc static func neuroTextTouchListener() {
-         print("Hello World")
-      }
-    
     public static func registerSingleView(v: Any, screenName: String, guid: String){
         let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
@@ -602,17 +603,17 @@ public class NeuroIDTracker: NSObject {
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
-            print("Slider")
+            NIDPrintLog("Slider")
         case is UISwitch:
-            print("Switch")
+            NIDPrintLog("Switch")
         case is UITableViewCell:
-            print("Table view cell")
+            NIDPrintLog("Table view cell")
             break
         case is UIPickerView:
             let pv = v as! UIPickerView
-            print("Picker")
+            NIDPrintLog("Picker")
         case is UIDatePicker:
-            print("Date picker")
+            NIDPrintLog("Date picker")
         default:
             return
     //        print("Unknown type", v)

@@ -20,11 +20,6 @@ public struct DataStore {
         newEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
         
         NeuroID.logDebug(category: "saveEvent", content: newEvent.toDict())
-        
-        #if DEBUG
-        print("Accelerometer: ", newEvent.accel)
-        print("Gyroscope: ", newEvent.gyro)
-        #endif
 
         var mutableEvent = newEvent
         
