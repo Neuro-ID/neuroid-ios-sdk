@@ -76,6 +76,13 @@ public enum NeuroID {
     }
 
     /**
+     Enable or disable the NeuroID debug logging
+     */
+    public static func enableLogging(_ value: Bool) {
+        logVisible = value
+    }
+
+    /**
      Public user facing getClientID function
      */
     public static func getClientID() -> String {
@@ -99,11 +106,12 @@ public enum NeuroID {
     }
 
     public static func stop() {
+        NIDPrintLog("NeuroID Stopped")
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
     }
 
     public static func excludeViewByTestID(excludedView: String) {
-        print("Exclude view called - \(excludedView)")
+        NIDPrintLog("Exclude view called - \(excludedView)")
         NeuroID.excludedViewsTestIDs.append(excludedView)
     }
 
@@ -166,7 +174,7 @@ public enum NeuroID {
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
-            print("DEBUG PATH \(path.absoluteString)")
+            NIDPrintLog("DEBUG PATH \(path.absoluteString)")
         }
 
         #if DEBUG
@@ -382,6 +390,7 @@ public enum NeuroID {
         AF.request(url, method: .post, parameters: neuroHTTPRequest, encoder: JSONParameterEncoder.default, headers: headers).responseData { response in
             // 204 invalid, 200 valid
             NIDPrintLog("NID Response \(response.response?.statusCode ?? 000)")
+            NIDPrintLog("NID Payload: \(neuroHTTPRequest)")
             switch response.result {
             case .success:
                 NIDPrintLog("Neuro-ID post to API Successfull")
@@ -396,7 +405,7 @@ public enum NeuroID {
             do {
                 let data = try JSONEncoder().encode(neuroHTTPRequest)
                 let str = String(data: data, encoding: .utf8)
-                print(str as Any)
+                NIDPrintLog(str as Any)
             } catch {}
         }
     }

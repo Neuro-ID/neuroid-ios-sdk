@@ -56,11 +56,6 @@ public class NeuroIDTracker: NSObject {
         return fullViewString
     }
 
-    // function which is triggered when handleTap is called
-    @objc static func neuroTextTouchListener() {
-        print("Hello World")
-    }
-
     public static func registerSingleView(v: Any, screenName: String, guid: String) {
         let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
@@ -126,16 +121,16 @@ public class NeuroIDTracker: NSObject {
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
-            print("Slider")
+            NIDPrintLog("Slider")
         case is UISwitch:
-            print("Switch")
+            NIDPrintLog("Switch")
         case is UITableViewCell:
-            print("Table view cell")
+            NIDPrintLog("Table view cell")
         case is UIPickerView:
             let pv = v as! UIPickerView
-            print("Picker")
+            NIDPrintLog("Picker")
         case is UIDatePicker:
-            print("Date picker")
+            NIDPrintLog("Date picker")
 
             let dp = v as! UIDatePicker
             NeuroID.registeredTargets.append(dp.id)

@@ -19,11 +19,6 @@ public enum DataStore {
         newEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
         
         NeuroID.logDebug(category: "saveEvent", content: newEvent.toDict())
-        
-        #if DEBUG
-        print("Accelerometer: ", newEvent.accel ?? "N/A")
-        print("Gyroscope: ", newEvent.gyro ?? "N/A")
-        #endif
 
         var mutableEvent = newEvent
         
