@@ -26,7 +26,7 @@ public enum NeuroID {
     public static var registeredTargets = [String]()
     private static let SEND_INTERVAL: Double = 5
     internal static var trackers = [String: NeuroIDTracker]()
-    internal static var secretViews = [UIView]() // internal ok or just fileprivate?
+    internal static var secretViews = [UIView]()
     internal static let showDebugLog = false
     fileprivate static var _currentScreenName: String?
 
@@ -229,19 +229,19 @@ public enum NeuroID {
     }
 
     public static func getCollectionEndpointURL() -> String {
-        // Prod URL
-//      return collectorURLFromConfig ?? "https://api.neuro-id.com/v3/c"
-//      return "https://rc.api.usw2-prod1.nidops.net"
-//      return "http://localhost:8080"
-//      return "https://api.usw2-dev1.nidops.net";
-//
-//        #if DEBUG
-//        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-//        #elseif STAGING
-//        return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-//        #elseif RELEASE
-//        return  "https://api.neuro-id.com/v3/c"
-//        #endif
+        //  Prod URL
+        //    return collectorURLFromConfig ?? "https://api.neuro-id.com/v3/c"
+        //    return "https://rc.api.usw2-prod1.nidops.net"
+        //    return "http://localhost:8080"
+        //    return "https://api.usw2-dev1.nidops.net";
+        //
+        //    #if DEBUG
+        //    return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
+        //    #elseif STAGING
+        //    return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
+        //    #elseif RELEASE
+        //    return  "https://api.neuro-id.com/v3/c"
+        //    #endif
         return "https://receiver.neuroid.cloud/c"
     }
 
@@ -381,7 +381,7 @@ public enum NeuroID {
 
         AF.request(url, method: .post, parameters: neuroHTTPRequest, encoder: JSONParameterEncoder.default, headers: headers).responseData { response in
             // 204 invalid, 200 valid
-            NIDPrintLog("NID Response \(response.response?.statusCode)")
+            NIDPrintLog("NID Response \(response.response?.statusCode ?? 000)")
             switch response.result {
             case .success:
                 NIDPrintLog("Neuro-ID post to API Successfull")
@@ -410,7 +410,7 @@ public enum NeuroID {
     }
 
     public static func getUserID() -> String {
-        var userId = UserDefaults.standard.string(forKey: "nid_user_id")
+        let userId = UserDefaults.standard.string(forKey: "nid_user_id")
         return NeuroID.userId ?? userId ?? ""
     }
 

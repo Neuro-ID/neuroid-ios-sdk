@@ -41,18 +41,6 @@ internal extension UITextField {
     }
 
     @objc func neuroIDPaste(caller: UIResponder) {
-        neuroIDPaste(caller: caller)
-        if NeuroID.isStopped() {
-            return
-        }
-        let lengthValue = "S~C~~\(text?.count ?? 0)"
-        let pasteTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.paste, view: self, type: NIDEventName.paste.rawValue, attrParams: ["v": lengthValue, "hash": text])
-        var inputEvent = NIDEvent(type: NIDEventName.paste, tg: pasteTG)
-
-        let screenName = className ?? UUID().uuidString
-        var newEvent = inputEvent
-        // Make sure we have a valid url set
-        newEvent.url = screenName
-        DataStore.insertEvent(screen: screenName, event: newEvent)
+        neuroIDPasteUtil(caller: caller, view: self, text: text, className: className)
     }
 }

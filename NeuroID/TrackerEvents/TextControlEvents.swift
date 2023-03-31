@@ -40,6 +40,20 @@ internal extension NeuroIDTracker {
                                                selector: #selector(textEndEditing),
                                                name: UITextView.textDidEndEditingNotification,
                                                object: nil)
+
+        // UIDatePicker
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(textBeginEditing),
+//                                               name: UIDatePicker.,
+//                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(textChange),
+//                                               name: UITextView.textDidChangeNotification,
+//                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(textEndEditing),
+//                                               name: UITextView.textDidEndEditingNotification,
+//                                               object: nil)
     }
 
     @objc func textBeginEditing(notification: Notification) {
@@ -112,7 +126,7 @@ internal extension NeuroIDTracker {
     func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
         if let textControl = notification.object as? UITextField {
             NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
-            let inputType = "text"
+
             // isSecureText
             if #available(iOS 11.0, *) {
                 if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
@@ -121,8 +135,13 @@ internal extension NeuroIDTracker {
                 if textControl.textContentType == .newPassword { return }
             }
 
+            let inputType = "text"
+            let textValue = textControl.text ?? ""
             let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
             let hashValue = textControl.text?.sha256().prefix(8).string
+            let tgs = TargetValue.string(textControl.id)
+            let attrParams = ["v": lengthValue, "hash": textValue]
+
             if eventType == NIDEventName.input {
                 NIDPrintLog("NID keydown field = <\(textControl.id)>")
 //                // Keydown
@@ -132,33 +151,34 @@ internal extension NeuroIDTracker {
 //                captureEvent(event: keyDownEvent)
 
                 // Input
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
+                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: attrParams)
                 var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
-//                inputEvent.v = lengthValue
+
                 inputEvent.v = lengthValue
                 inputEvent.hv = hashValue
-                inputEvent.tgs = TargetValue.string(textControl.id).toString()
+                inputEvent.tgs = tgs.toString()
+
                 captureEvent(event: inputEvent)
             } else if eventType == NIDEventName.focus || eventType == NIDEventName.blur {
                 // Focus / Blur
                 var focusBlurEvent = NIDEvent(type: eventType, tg: [
-                    "tgs": TargetValue.string(textControl.id),
+                    "tgs": tgs,
                 ])
-                focusBlurEvent.tgs = TargetValue.string(textControl.id).toString()
+
+                focusBlurEvent.tgs = tgs.toString()
+
                 captureEvent(event: focusBlurEvent)
 
                 // If this is a blur event, that means we have a text change event
                 if eventType == NIDEventName.blur {
                     // Text Change
-                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
+                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: attrParams)
                     var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+
                     textChangeEvent.v = lengthValue
-                    var shaText = textControl.text ?? ""
-                    if shaText != "" {
-                        shaText = shaText.sha256().prefix(8).string
-                    }
-                    textChangeEvent.hv = shaText
-                    textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
+                    textChangeEvent.hv = hashValue
+                    textChangeEvent.tgs = tgs.toString()
+
 //                    textChangeEvent.hv = hashValue
                     captureEvent(event: textChangeEvent)
                     NeuroID.send()
@@ -183,7 +203,7 @@ internal extension NeuroIDTracker {
                 NIDPrintLog("NID keydown field = <\(textControl.id)>")
 
                 // Keydown
-                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text])
+                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text ?? ""])
                 var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
                 keyDownEvent.v = lengthValue
                 keyDownEvent.tgs = TargetValue.string(textControl.id).toString()
@@ -251,7 +271,7 @@ internal extension NeuroIDTracker {
 //        textCapturing[id] = text
 //    }
 
-    public func calcSimilarity(previousValue: String, currentValue: String) -> Double {
+    func calcSimilarity(previousValue: String, currentValue: String) -> Double {
         var longer = previousValue
         var shorter = currentValue
 
@@ -282,7 +302,7 @@ internal extension NeuroIDTracker {
         return last.last!
     }
 
-    public func percentageDifference(newNumOrig: String, originalNumOrig: String) -> Double {
+    func percentageDifference(newNumOrig: String, originalNumOrig: String) -> Double {
         let originalNum = originalNumOrig.replacingOccurrences(of: " ", with: "")
         let newNum = newNumOrig.replacingOccurrences(of: " ", with: "")
 

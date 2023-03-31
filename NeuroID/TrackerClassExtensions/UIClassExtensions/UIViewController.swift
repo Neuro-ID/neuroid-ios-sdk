@@ -118,6 +118,12 @@ public extension UIViewController {
 //    }
 }
 
+extension UIViewController {
+    var className: String {
+        return String(describing: type(of: self))
+    }
+}
+
 internal extension UIViewController {
     private var registerViews: [String]? {
         get {

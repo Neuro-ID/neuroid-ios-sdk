@@ -18,7 +18,7 @@ class EventTests: XCTestCase {
     
     override func setUp() {
         // Clear out the DataStore Events after each test
-        DataStore.events = []
+        DataStore.removeSentEvents()
     }
     
     func testSetScreeName() {

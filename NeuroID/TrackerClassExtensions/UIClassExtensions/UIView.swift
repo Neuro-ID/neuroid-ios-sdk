@@ -37,6 +37,14 @@ extension UIView {
     func subviewsRecursive() -> [Any] {
         return subviews + subviews.flatMap { $0.subviewsRecursive() }
     }
+
+    var className: String {
+        return String(describing: type(of: self))
+    }
+
+    var subviewsDescriptions: [String] {
+        return subviews.map { $0.description }
+    }
 }
 
 public extension UIView {
