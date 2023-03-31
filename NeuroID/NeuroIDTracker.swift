@@ -67,6 +67,9 @@ public struct NeuroID {
         configure(clientKey: clientKey)
     }
     
+    /**
+     Enable or disable the NeuroID debug logging
+     */
     public static func enableLogging(_ value: Bool){
         logVisible = value;
     }
