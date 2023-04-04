@@ -41,6 +41,7 @@ internal extension UITextField {
     }
 
     @objc func neuroIDPaste(caller: UIResponder) {
+        neuroIDPaste(caller: caller)
         neuroIDPasteUtil(caller: caller, view: self, text: text, className: className)
     }
 }
