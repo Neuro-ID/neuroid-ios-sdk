@@ -57,63 +57,22 @@ internal extension NeuroIDTracker {
     }
 
     @objc func textBeginEditing(notification: Notification) {
-        // Set the current value of the textDictionary
-        // Used for similarity and diff
-
-        DispatchQueue.global(qos: .utility).async { [self] in
-            if let textControl = notification.object as? UITextField {
-                // Touch event start
-                // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
-                self.touchEvent(sender: textControl, eventName: .touchStart)
-                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
-            } else if let textControl = notification.object as? UITextView {
-                // Touch event start
-                self.touchEvent(sender: textControl, eventName: .touchStart)
-                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
-            }
+        if let textControl = notification.object as? UITextField {
+            // Touch event start
+            // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
+            self.touchEvent(sender: textControl, eventName: .touchStart)
+        } else if let textControl = notification.object as? UITextView {
+            // Touch event start
+            self.touchEvent(sender: textControl, eventName: .touchStart)
         }
         logTextEvent(from: notification, eventType: .focus)
     }
 
     @objc func textChange(notification: Notification) {
-        DispatchQueue.global(qos: .utility).async {
-            var similarity: Double = 0
-            var percentDiff: Double = 0
-            if let textControl = notification.object as? UITextField {
-                // TODO: Paste detection
-//                if (UIPasteboard.general.string == textControl.text) {
-//
-//                }
-                let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
-                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
-                similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
-                percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
-            } else if let textControl = notification.object as? UITextView {
-                let existingTextValue = UserDefaults.standard.value(forKey: textControl.id)
-                // TODO: Finish Paste detection
-//                if (UIPasteboard.general.string == textControl.text) {
-//
-//                }
-                UserDefaults.standard.setValue(textControl.text, forKey: textControl.id)
-                similarity = self.calcSimilarity(previousValue: existingTextValue as? String ?? "", currentValue: textControl.text ?? "")
-                percentDiff = self.percentageDifference(newNumOrig: textControl.text ?? "", originalNumOrig: existingTextValue as? String ?? "")
-            }
-            self.logTextEvent(from: notification, eventType: .input, sm: similarity, pd: percentDiff)
-        }
-        // count the number of letters in 10ms (for instance) -> consider paste action
+        self.logTextEvent(from: notification, eventType: .input)
     }
 
     @objc func textEndEditing(notification: Notification) {
-        /**
-         We want to make sure to erase user defaults on blur for security
-         */
-        DispatchQueue.global(qos: .utility).async {
-            if let textControl = notification.object as? UITextField {
-                UserDefaults.standard.setValue("", forKey: textControl.id)
-            } else if let textControl = notification.object as? UITextView {
-                UserDefaults.standard.setValue("", forKey: textControl.id)
-            }
-        }
         logTextEvent(from: notification, eventType: .blur)
     }
 
@@ -123,7 +82,7 @@ internal extension NeuroIDTracker {
         ET - human readable tag
      */
 
-    func logTextEvent(from notification: Notification, eventType: NIDEventName, sm: Double = 0, pd: Double = 0) {
+    func logTextEvent(from notification: Notification, eventType: NIDEventName) {
         if let textControl = notification.object as? UITextField {
             NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
@@ -144,13 +103,6 @@ internal extension NeuroIDTracker {
 
             if eventType == NIDEventName.input {
                 NIDPrintLog("NID keydown field = <\(textControl.id)>")
-//                // Keydown
-//                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType)
-//                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
-//                keyDownEvent.v = lengthValue
-//                captureEvent(event: keyDownEvent)
-
-                // Input
                 let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: attrParams)
                 var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
 
@@ -173,7 +125,7 @@ internal extension NeuroIDTracker {
                 if eventType == NIDEventName.blur {
                     // Text Change
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: attrParams)
-                    var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                    var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: 0, pd: 0)
 
                     textChangeEvent.v = lengthValue
                     textChangeEvent.hv = hashValue
@@ -212,7 +164,7 @@ internal extension NeuroIDTracker {
 
                 // Text Change
                 let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
-                var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: 0, pd: 0)
                 textChangeEvent.v = lengthValue
                 textChangeEvent.hv = hashValue
                 textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
@@ -237,7 +189,7 @@ internal extension NeuroIDTracker {
                 if eventType == NIDEventName.blur {
                     // Text Change
                     let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
-                    var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
+                    var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: 0, pd: 0)
                     textChangeEvent.v = lengthValue
                     textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
 //                    textChangeEvent.hv = hashValue
