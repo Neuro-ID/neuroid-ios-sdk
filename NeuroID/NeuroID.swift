@@ -58,6 +58,9 @@ public enum NeuroID {
             print("NeuroID Error: You already configured the SDK")
         }
 
+        // Call clear session here
+        clearSession()
+
         NeuroID.clientKey = clientKey
         let key = "nid_key"
         let defaults = UserDefaults.standard
@@ -167,7 +170,6 @@ public enum NeuroID {
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start() {
         NeuroID.isSDKStarted = true
-        clearSession()
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
         swizzle()
 

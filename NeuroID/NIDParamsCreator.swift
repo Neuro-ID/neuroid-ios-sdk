@@ -152,6 +152,7 @@ enum ParamsCreator {
 
         let id = UUID().uuidString
         print("Session ID:", id)
+        defaults.setValue(id, forKey: sidName)
         return id
     }
 
