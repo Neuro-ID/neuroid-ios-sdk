@@ -51,7 +51,6 @@
 		F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CB29D5D5E800133A1C /* Bundle.swift */; };
 		F21702CE29D5DB3F00133A1C /* UIDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */; };
 		F21702D029D5E9D800133A1C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CF29D5E9D800133A1C /* Utils.swift */; };
-		F21702D229D6040800133A1C /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D129D6040800133A1C /* NeuroIDTrackerTests.swift */; };
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
 		F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */; };
 /* End PBXBuildFile section */
@@ -120,7 +119,6 @@
 		F21702CB29D5D5E800133A1C /* Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDatePicker.swift; sourceTree = "<group>"; };
 		F21702CF29D5E9D800133A1C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		F21702D129D6040800133A1C /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
 		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -218,7 +216,6 @@
 				6F39E8E026CEAA7900BE9834 /* EventTests.swift */,
 				07BB4F61287FE8A200910665 /* SensorsTest.swift */,
 				07A2668B28A6A5BC00E973E2 /* PayloadTest.swift */,
-				F21702D129D6040800133A1C /* NeuroIDTrackerTests.swift */,
 				F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */,
 			);
 			path = SDKTest;
@@ -548,7 +545,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */,
-				F21702D229D6040800133A1C /* NeuroIDTrackerTests.swift in Sources */,
 				6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */,
 				6F39E8E126CEAA7900BE9834 /* EventTests.swift in Sources */,
 				07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */,
