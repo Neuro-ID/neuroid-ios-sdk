@@ -161,7 +161,7 @@ internal extension UIViewController {
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         neuroIDViewWillDisappear(animated: animated)
-        NotificationCenter.default.removeObserver(self)
+//        NotificationCenter.default.removeObserver(self)
         registerViews = nil
 //        captureEvent(eventName: .windowBlur)
     }
