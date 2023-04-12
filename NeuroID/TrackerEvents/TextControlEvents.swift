@@ -60,16 +60,16 @@ internal extension NeuroIDTracker {
         if let textControl = notification.object as? UITextField {
             // Touch event start
             // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
-            self.touchEvent(sender: textControl, eventName: .touchStart)
+            touchEvent(sender: textControl, eventName: .touchStart)
         } else if let textControl = notification.object as? UITextView {
             // Touch event start
-            self.touchEvent(sender: textControl, eventName: .touchStart)
+            touchEvent(sender: textControl, eventName: .touchStart)
         }
         logTextEvent(from: notification, eventType: .focus)
     }
 
     @objc func textChange(notification: Notification) {
-        self.logTextEvent(from: notification, eventType: .input)
+        logTextEvent(from: notification, eventType: .input)
     }
 
     @objc func textEndEditing(notification: Notification) {
@@ -275,5 +275,15 @@ internal extension NeuroIDTracker {
         }
 
         return round(Double((newNumParsed - originalNumParsed) / originalNumParsed) * 100) / 100.0
+    }
+}
+
+extension Notification.Name {
+    static var loginSuccess: Notification.Name {
+        return UITextView.textDidEndEditingNotification
+    }
+
+    static var verifyUserSession: Notification.Name {
+        return .init(rawValue: "VerifyUser.session")
     }
 }
