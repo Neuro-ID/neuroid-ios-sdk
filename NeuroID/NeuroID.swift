@@ -34,7 +34,7 @@ public enum NeuroID {
     private static let lock = NSLock()
 
     private static var environment: String = "TEST"
-    private static var currentScreenName: String? {
+    public static var currentScreenName: String? {
         get { lock.withCriticalSection { _currentScreenName } }
         set { lock.withCriticalSection { _currentScreenName = newValue } }
     }
@@ -177,6 +177,14 @@ public enum NeuroID {
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nidJSONPOSTFormat.txt")
             NIDPrintLog("DEBUG PATH \(path.absoluteString)")
+        }
+        
+        // We need to init the tracker on the views.
+        if !NeuroID.observingInputs {
+            observingInputs = true
+            NeuroIDTracker.observeTextInputEvents()
+            NeuroIDTracker.observeAppEvents()
+            NeuroIDTracker.observeRotation()
         }
 
         #if DEBUG

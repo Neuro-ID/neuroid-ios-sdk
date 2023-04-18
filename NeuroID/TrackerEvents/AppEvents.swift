@@ -11,23 +11,23 @@ import UIKit
 // MARK: - App events
 
 internal extension NeuroIDTracker {
-    func observeAppEvents() {
+    static func observeAppEvents() {
         if #available(iOS 13.0, *) {
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIScene.willDeactivateNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(NeuroIDTracker.appMovedToBackground), name: UIScene.willDeactivateNotification, object: nil)
 
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIScene.willEnterForegroundNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(NeuroIDTracker.appMovedToForeground), name: UIScene.willEnterForegroundNotification, object: nil)
         } else {
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(NeuroIDTracker.appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
 
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(NeuroIDTracker.appMovedToForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         }
     }
 
-    @objc func appMovedToBackground() {
-        captureEvent(event: NIDEvent(type: NIDEventName.windowBlur))
+    @objc static func appMovedToBackground() {
+        NeuroIDTracker.captureEvent(event: NIDEvent(type: NIDEventName.windowBlur))
     }
 
-    @objc func appMovedToForeground() {
-        captureEvent(event: NIDEvent(type: NIDEventName.windowFocus))
+    @objc static func appMovedToForeground() {
+        NeuroIDTracker.captureEvent(event: NIDEvent(type: NIDEventName.windowFocus))
     }
 }

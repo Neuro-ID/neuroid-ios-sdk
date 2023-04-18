@@ -66,14 +66,6 @@ public extension UIViewController {
         return className
     }
 
-    var tracker: NeuroIDTracker? {
-        if ignoreLists.contains(className) { return nil }
-        if self is UINavigationController, className == "UINavigationController" { return nil }
-        let tracker = NeuroID.trackers[className] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
-        NeuroID.trackers[className] = tracker
-        return tracker
-    }
-
     func captureEvent(event: NIDEvent) {
         if ignoreLists.contains(className) { return }
         var tg: [String: TargetValue] = event.tg ?? [:]
@@ -91,7 +83,7 @@ public extension UIViewController {
 //            tracker?.captureEvent(event: newEvent)
 //        } else {
 //            let newEvent = NIDEvent(customEvent: event.type, tg: tg, x: event.x, y: event.y)
-        tracker?.captureEvent(event: event)
+        NeuroIDTracker.captureEvent(event: event)
 //        }
     }
 
@@ -180,8 +172,6 @@ internal extension UIViewController {
         if NeuroID.isStopped() {
             return
         }
-        // We need to init the tracker on the views.
-        tracker
 //        captureEvent(eventName: .windowFocus)
         var subViews = view.subviews
         var allViewControllers = children

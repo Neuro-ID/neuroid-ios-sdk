@@ -31,6 +31,6 @@ internal extension NeuroIDTracker {
             eventName = .inputChange
         }
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
+        NeuroIDTracker.captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
     }
 }

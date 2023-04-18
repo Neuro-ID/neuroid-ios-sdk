@@ -12,25 +12,25 @@ import UIKit
 
 internal extension NeuroIDTracker {
     func observeTouchEvents(_ sender: UIControl) {
-        sender.addTarget(self, action: #selector(controlTouchStart), for: .touchDown)
-        sender.addTarget(self, action: #selector(controlTouchEnd), for: .touchUpInside)
-        sender.addTarget(self, action: #selector(controlTouchMove), for: .touchUpOutside)
+        sender.addTarget(self, action: #selector(NeuroIDTracker.controlTouchStart), for: .touchDown)
+        sender.addTarget(self, action: #selector(NeuroIDTracker.controlTouchEnd), for: .touchUpInside)
+        sender.addTarget(self, action: #selector(NeuroIDTracker.controlTouchMove), for: .touchUpOutside)
     }
 
     @objc func controlTouchStart(sender: UIView) {
         NeuroID.activeView = sender
-        touchEvent(sender: sender, eventName: .touchStart)
+        NeuroIDTracker.touchEvent(sender: sender, eventName: .touchStart)
     }
 
     @objc func controlTouchEnd(sender: UIView) {
-        touchEvent(sender: sender, eventName: .touchEnd)
+        NeuroIDTracker.touchEvent(sender: sender, eventName: .touchEnd)
     }
 
     @objc func controlTouchMove(sender: UIView) {
-        touchEvent(sender: sender, eventName: .touchMove)
+        NeuroIDTracker.touchEvent(sender: sender, eventName: .touchMove)
     }
 
-    func touchEvent(sender: UIView, eventName: NIDEventName) {
+    static func touchEvent(sender: UIView, eventName: NIDEventName) {
         if NeuroID.secretViews.contains(sender) { return }
         let tg = ParamsCreator.getTgParams(
             view: sender,

@@ -11,11 +11,11 @@ import UIKit
 // MARK: - Device events
 
 internal extension NeuroIDTracker {
-    func observeRotation() {
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: UIDevice.orientationDidChangeNotification, object: nil)
+    static func observeRotation() {
+        NotificationCenter.default.addObserver(self, selector: #selector(NeuroIDTracker.deviceRotated), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 
-    @objc func deviceRotated(notification: Notification) {
+    @objc static func deviceRotated(notification: Notification) {
         let orientation: String
         if UIDevice.current.orientation.isLandscape {
             orientation = "Landscape"

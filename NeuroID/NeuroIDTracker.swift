@@ -10,25 +10,25 @@ import WebKit
 // MARK: - NeuroIDTracker
 
 public class NeuroIDTracker: NSObject {
-    private var screen: String?
+//    private var screen: String?
     private var className: String?
     private var createSessionEvent: NIDEvent?
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
-    public init(screen: String, controller: UIViewController?) {
-        super.init()
-        self.screen = screen
-        if !NeuroID.isStopped() {
-            subscribe(inScreen: controller)
-        }
-        className = controller?.className
-    }
+//    public init(screen: String, controller: UIViewController?) {
+//        super.init()
+//        self.screen = screen
+//        if !NeuroID.isStopped() {
+//            subscribe(inScreen: controller)
+//        }
+//        className = controller?.className
+//    }
 
-    public func captureEvent(event: NIDEvent) {
+    public static func captureEvent(event: NIDEvent) {
         if NeuroID.isStopped() {
             return
         }
-        let screenName = screen ?? UUID().uuidString
+        let screenName = NeuroID.currentScreenName ?? UUID().uuidString
         var newEvent = event
         // Make sure we have a valid url set
         newEvent.url = screenName
@@ -170,12 +170,12 @@ private extension NeuroIDTracker {
         }
 
         // Only run observations on first run
-        if !NeuroID.observingInputs {
+//        if !NeuroID.observingInputs {
             NeuroID.observingInputs = true
-            observeTextInputEvents()
-            observeAppEvents()
-            observeRotation()
-        }
+//            observeTextInputEvents()
+//            observeAppEvents()
+//            observeRotation()
+//        }
     }
 
     func observeViews(_ views: [UIView]) {

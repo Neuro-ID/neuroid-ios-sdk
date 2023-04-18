@@ -11,33 +11,33 @@ import UIKit
 // MARK: - Text control events
 
 internal extension NeuroIDTracker {
-    func observeTextInputEvents() {
+    static func observeTextInputEvents() {
         // UITextField
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(textBeginEditing),
-                                               name: UITextField.textDidBeginEditingNotification,
-                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(textBeginEditing),
+//                                               name: UITextField.textDidBeginEditingNotification,
+//                                               object: nil)
 
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(textChange),
+                                               selector: #selector(self.textChange),
                                                name: UITextField.textDidChangeNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(textEndEditing),
+                                               selector: #selector(self.textEndEditing),
                                                name: UITextField.textDidEndEditingNotification,
                                                object: nil)
 
         // UITextView
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(textBeginEditing),
+                                               selector: #selector(self.textBeginEditing),
                                                name: UITextView.textDidBeginEditingNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(textChange),
+                                               selector: #selector(self.textChange),
                                                name: UITextView.textDidChangeNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(textEndEditing),
+                                               selector: #selector(self.textEndEditing),
                                                name: UITextView.textDidEndEditingNotification,
                                                object: nil)
 
@@ -56,7 +56,7 @@ internal extension NeuroIDTracker {
 //                                               object: nil)
     }
 
-    @objc func textBeginEditing(notification: Notification) {
+    @objc static func textBeginEditing(notification: Notification) {
         if let textControl = notification.object as? UITextField {
             // Touch event start
             // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
@@ -65,15 +65,15 @@ internal extension NeuroIDTracker {
             // Touch event start
             self.touchEvent(sender: textControl, eventName: .touchStart)
         }
-        logTextEvent(from: notification, eventType: .focus)
+        NeuroIDTracker.logTextEvent(from: notification, eventType: .focus)
     }
 
-    @objc func textChange(notification: Notification) {
-        self.logTextEvent(from: notification, eventType: .input)
+    @objc static  func textChange(notification: Notification) {
+        NeuroIDTracker.logTextEvent(from: notification, eventType: .input)
     }
 
-    @objc func textEndEditing(notification: Notification) {
-        logTextEvent(from: notification, eventType: .blur)
+    @objc static func textEndEditing(notification: Notification) {
+        NeuroIDTracker.logTextEvent(from: notification, eventType: .blur)
     }
 
     /**
@@ -82,7 +82,7 @@ internal extension NeuroIDTracker {
         ET - human readable tag
      */
 
-    func logTextEvent(from notification: Notification, eventType: NIDEventName) {
+    static func logTextEvent(from notification: Notification, eventType: NIDEventName) {
         if let textControl = notification.object as? UITextField {
             NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
@@ -110,7 +110,7 @@ internal extension NeuroIDTracker {
                 inputEvent.hv = hashValue
                 inputEvent.tgs = tgs.toString()
 
-                captureEvent(event: inputEvent)
+                NeuroIDTracker.captureEvent(event: inputEvent)
             } else if eventType == NIDEventName.focus || eventType == NIDEventName.blur {
                 // Focus / Blur
                 var focusBlurEvent = NIDEvent(type: eventType, tg: [
@@ -118,8 +118,8 @@ internal extension NeuroIDTracker {
                 ])
 
                 focusBlurEvent.tgs = tgs.toString()
-
-                captureEvent(event: focusBlurEvent)
+                
+                NeuroIDTracker.captureEvent(event: focusBlurEvent)
 
                 // If this is a blur event, that means we have a text change event
                 if eventType == NIDEventName.blur {
