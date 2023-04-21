@@ -53,6 +53,13 @@
 		F21702D029D5E9D800133A1C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CF29D5E9D800133A1C /* Utils.swift */; };
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
 		F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */; };
+<<<<<<< Updated upstream
+=======
+		F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */; };
+		F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */; };
+		F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */; };
+		F25F4C7829F3008100E31B32 /* IntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */; };
+>>>>>>> Stashed changes
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +128,12 @@
 		F21702CF29D5E9D800133A1C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
 		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
+<<<<<<< Updated upstream
+=======
+		F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
+		F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
+		F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealth.swift; sourceTree = "<group>"; };
+>>>>>>> Stashed changes
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +201,7 @@
 				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
 				F21702D329D6077600133A1C /* NIDParamsCreator.swift */,
 				F21702C129D4CECD00133A1C /* NeuroID.swift */,
+				F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */,
 				6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */,
 				076252EE2876294400FBA209 /* NeuroIDSensors.swift */,
 				07A05C2028B91B4D00509509 /* NIDMetadata.swift */,
@@ -518,6 +532,7 @@
 				F21702C029D4CE7E00133A1C /* Sequence.swift in Sources */,
 				F21702C829D5D5D000133A1C /* TextControlEvents.swift in Sources */,
 				F21702CE29D5DB3F00133A1C /* UIDatePicker.swift in Sources */,
+				F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */,
 				F21702A829D4CAD300133A1C /* UIButton.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
@@ -550,6 +565,7 @@
 				07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */,
 				07A2668C28A6A5BC00E973E2 /* PayloadTest.swift in Sources */,
 				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
+				F25F4C7829F3008100E31B32 /* IntegrationHealth.swift in Sources */,
 				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

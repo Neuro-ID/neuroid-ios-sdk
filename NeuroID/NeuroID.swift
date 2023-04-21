@@ -48,6 +48,9 @@ public enum NeuroID {
     public static var isSDKStarted = false
     public static var observingInputs = false
 
+    public static var debugIntegrationHealth = false
+    public static var debugIntegrationHealthEvents: [NIDEvent] = []
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -330,6 +333,10 @@ public enum NeuroID {
         }
         let dataStoreEvents = DataStore.getAllEvents()
 
+        if debugIntegrationHealth {
+            debugIntegrationHealthEvents.append(contentsOf: dataStoreEvents)
+        }
+
         let backupCopy = dataStoreEvents
         // Clean event queue immediately after fetching
         DataStore.removeSentEvents()
@@ -485,15 +492,35 @@ public enum NeuroID {
 
 // MARK: - NeuroID for testing functions
 
-extension NeuroID {
-    static func cleanUpForTesting() {
+public extension NeuroID {
+    internal static func cleanUpForTesting() {
         clientKey = nil
     }
 
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
-    public static func getSDKVersion() -> String? {
+    static func getSDKVersion() -> String? {
         return ParamsCreator.getSDKVersion()
+    }
+
+    static func startIntegrationHealthCheck() {
+        debugIntegrationHealth = true
+    }
+
+    internal static func stopIntegrationHealthCheck() {
+        debugIntegrationHealth = false
+        debugIntegrationHealthEvents = []
+    }
+
+    // REMOVE JUST FOR TESTING
+    internal static func getIntegrationHealthEvents() -> [NIDEvent] {
+        return debugIntegrationHealthEvents
+    }
+
+    static func generateNIDIntegrationHealthReport() {
+        ParamsCreator.integrationHealthReport()
+        NeuroID.stopIntegrationHealthCheck()
+//        IntegrationHealth.generateIntegrationHealthReport()
     }
 }
 
