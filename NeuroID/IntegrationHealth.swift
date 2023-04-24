@@ -6,6 +6,50 @@
 //
 
 import Foundation
+import UIKit
+
+internal struct EventIntegration {
+    let target: String
+    var registered: [NIDEvent] = []
+    var blur: [NIDEvent] = []
+    var focus: [NIDEvent] = []
+    var input: [NIDEvent] = []
+    var inputChange: [NIDEvent] = []
+    var textChange: [NIDEvent] = []
+
+    var createSession: [NIDEvent] = []
+
+    init(_ target: String) {
+        self.target = target
+    }
+
+    mutating func addEvent(_ event: NIDEvent) {
+        switch event.type {
+            case NIDEventName.createSession.rawValue:
+                self.createSession.append(event)
+
+            case NIDEventName.registerTarget.rawValue:
+                self.registered.append(event)
+
+            case NIDEventName.blur.rawValue:
+                self.blur.append(event)
+
+            case NIDEventName.focus.rawValue:
+                self.focus.append(event)
+
+            case NIDEventName.input.rawValue:
+                self.input.append(event)
+
+            case NIDEventName.inputChange.rawValue:
+                self.inputChange.append(event)
+
+            case NIDEventName.textChange.rawValue:
+                self.textChange.append(event)
+            default:
+                print("not recognized")
+        }
+    }
+}
 
 func formatDate(date: Date) -> String {
     let df = DateFormatter()
@@ -81,104 +125,130 @@ func generateHTMLTable(tableName: String, columns: [String], tableContent: Strin
     """
 }
 
-func formatEventRows(events: [NIDEvent], rowFormatFn: (_: NIDEvent, _: Double) -> String) -> String {
+func formatEventRows(events: [NIDEvent], rowFormatFn: (_: EventIntegration, _: Double) -> String) -> String {
+    var targetDict: [String: EventIntegration] = [:]
+    for e in events {
+//        let eDict = e.asDictionary
+        let targetName = (e.tg?["tgs"]?.toString() ?? "NO_ID")
+
+        if targetDict[targetName] != nil {
+            targetDict[targetName]?.addEvent(e)
+        }
+        else {
+            targetDict[targetName] = EventIntegration(targetName)
+            targetDict[targetName]?.addEvent(e)
+        }
+    }
+
     var eventContent = ""
     var eventCount: Double = 0
-    for event in events {
-        let row = rowFormatFn(event, eventCount)
+    for target in targetDict.values {
+        let row = rowFormatFn(target, eventCount)
         eventContent += row
 
         eventCount += 1
     }
 
+//    for event in events {}
+
     return eventContent
 }
 
-func generateGeneralSessionEvents(events: [NIDEvent]) -> String {
-    var eventContent = formatEventRows(events: events) { event, eventCount in
-        """
-            <tr>
-                <td>\(event.type)</td>
-                <td>\(formatDate(date: Date() + eventCount))</td>
-                <td></td>
-            </tr>
-        """
-    }
+func generateGeneralSessionEvents(_ events: [NIDEvent]) -> String {
+//    var eventContent = formatEventRows(events: events) { event, eventCount in
+//        """
+//            <tr>
+//                <td>\(event.type)</td>
+//                <td>\(formatDate(date: Date() + eventCount))</td>
+//                <td></td>
+//            </tr>
+//        """
+//    }
+
+    var eventContent = ""
 
     return generateHTMLTable(tableName: "General Session Markers", columns: ["Event Type", "Timestamp", "Additional"], tableContent: eventContent)
 }
 
-func generateTargetEvents(events: [NIDEvent]) -> String {
-//    var targetDict: [String: [NIDEvent]] = [:]
-//
-//    for e in events {
-//        let eDict = e.asDictionary
-//        let targetName = (eDict["tgs"] ?? "n/a" as String) as! String
-//
-//        if targetDict[targetName] != nil {
-//            targetDict[targetName]?.append(e)
-//        }
-//        else {
-//            targetDict[targetName] = [e]
-//        }
-//    }
-
-    var eventContent = formatEventRows(events: events) { event, eventCount in
-        let eDict = event.asDictionary
-        let targetName = (eDict["tgs"] ?? "n/a" as String) as! String
-
-        return
-            """
-                <tr>
-                    <td>\(targetName)</td>
-                    <td>\(event.type)</td>
-                    <td>\(formatDate(date: Date() + eventCount))</td>
-                </tr>
-            """
-    }
-
-    return generateHTMLTable(tableName: "Target Events", columns: ["Target", "Event Type", "Observed"], tableContent: eventContent)
-}
-
-public enum IntegrationHealth {
-    static func generateIntegrationHealthReport() {
-        let events = NeuroID.getIntegrationHealthEvents()
-        //    let events: [NIDEvent] = [generateEvent(), generateEvent(NIDEventName.input), generateEvent(NIDEventName.textChange), generateEvent(NIDEventName.registerTarget), generateEvent(NIDEventName.applicationSubmit), generateEvent(NIDEventName.createSession)]
-
-        let fileName = "\(formatDate(date: Date()))-integration.html"
-
-        let mainContent = """
-        <html>
-            \(generateHTMLHeader(tables: ["General Session Markers", "Target Events"]))
-            <body style="max-width: 92%; margin: 0px 2%">
-                </br>
-                <h1>Integration Health Report</h1>
-                <p>SDK Version: \(NeuroID.getSDKVersion() ?? "1.0.0")</p>
-                </br>
-
-                \(generateGeneralSessionEvents(events: events))
-
-                </br>
-                </br>
-                \(generateTargetEvents(events: events))
-            </body>
-        <html>
+func generateTargetEvents(_ events: [NIDEvent]) -> String {
+    let eventContent = formatEventRows(events: events) { event, eventCount in
         """
-
-        createFile(fileName: fileName, content: mainContent)
+            <tr>
+                <td>\(event.target)</td>
+                <td>\(event.registered.count > 0 ? "true" : "false")</td>
+                <td>\(event.blur.count)</td>
+                <td>\(event.focus.count)</td>
+                <td>\(event.input.count)</td>
+                <td>\(event.inputChange.count)</td>
+                <td>\(event.textChange.count)</td>
+                <td>\(formatDate(date: Date() + eventCount))</td>
+            </tr>
+        """
     }
+
+    return generateHTMLTable(tableName: "Target Events",
+                             columns: ["Target", "Registered", "Blur",
+                                       "Focus", "Input", "Input Change",
+                                       "Text Change", "Observed"],
+                             tableContent: eventContent)
 }
 
-// func generateEvent(_ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
-//    let textControl = UITextField()
-//    textControl.text = "test Text"
-//
-//    let textValue = textControl.text ?? ""
-//    let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
-//
-//    // Text Change
-//    let textChangeTG = ["tgs": TargetValue.string("id")]
-//    let textChangeEvent = NIDEvent(type: eventType, tg: textChangeTG)
-//
-//    return textChangeEvent
-// }
+func generateIntegrationHealthReport() {
+//    let events = NeuroID.getIntegrationHealthEvents()
+    let events: [NIDEvent] = generateEvents()
+
+    let fileName = "\(formatDate(date: Date()))-integration.html"
+
+    let mainContent = """
+    <html>
+        \(generateHTMLHeader(tables: ["General Session Markers", "Target Events"]))
+        <body style="max-width: 92%; margin: 0px 2%">
+            </br>
+            <h1>Integration Health Report</h1>
+            <p>SDK Version: \(NeuroID.getSDKVersion() ?? "1.0.0")</p>
+            </br>
+
+            \(generateGeneralSessionEvents(events))
+
+            </br>
+            </br>
+            \(generateTargetEvents(events))
+        </body>
+    <html>
+    """
+
+    createFile(fileName: fileName, content: mainContent)
+}
+
+func generateEvents() -> [NIDEvent] {
+    let textControl = UITextField()
+    textControl.accessibilityIdentifier = "text 1"
+    textControl.text = "test Text"
+
+    let textControl2 = UITextField()
+    textControl2.accessibilityIdentifier = "text 2"
+    textControl2.text = "test Text 2"
+
+    let events = [generateEvent(textControl), generateEvent(textControl, NIDEventName.input),
+                  generateEvent(textControl, NIDEventName.textChange), generateEvent(textControl, NIDEventName.registerTarget),
+                  generateEvent(textControl, NIDEventName.applicationSubmit), generateEvent(textControl, NIDEventName.createSession),
+                  generateEvent(textControl, NIDEventName.blur),
+
+                  generateEvent(textControl2), generateEvent(textControl2, NIDEventName.input),
+                  generateEvent(textControl2, NIDEventName.textChange), generateEvent(textControl2, NIDEventName.registerTarget),
+                  generateEvent(textControl2, NIDEventName.applicationSubmit), generateEvent(textControl2, NIDEventName.createSession),
+                  generateEvent(textControl2, NIDEventName.blur)]
+
+    return events
+}
+
+func generateEvent(_ target: UIView, _ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
+//    let textValue = target.text ?? ""
+//    let lengthValue = "S~C~~\(target.text?.count ?? 0)"
+
+    // Text Change
+    let textChangeTG = ["tgs": TargetValue.string(target.id)]
+    let textChangeEvent = NIDEvent(type: eventType, tg: textChangeTG)
+
+    return textChangeEvent
+}

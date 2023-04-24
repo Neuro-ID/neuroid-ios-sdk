@@ -518,9 +518,8 @@ public extension NeuroID {
     }
 
     static func generateNIDIntegrationHealthReport() {
-        ParamsCreator.integrationHealthReport()
         NeuroID.stopIntegrationHealthCheck()
-//        IntegrationHealth.generateIntegrationHealthReport()
+        generateIntegrationHealthReport()
     }
 }
 
