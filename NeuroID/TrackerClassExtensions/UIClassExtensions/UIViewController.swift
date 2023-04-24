@@ -178,6 +178,7 @@ internal extension UIViewController {
         allViewControllers.append(self)
         registerSubViewsTargets(subViewControllers: allViewControllers)
         registerViews = view.subviewsDescriptions
+        NeuroIDTracker.subscribe(inScreen: self)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {

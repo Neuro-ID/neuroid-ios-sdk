@@ -28,7 +28,7 @@ public class NeuroIDTracker: NSObject {
         if NeuroID.isStopped() {
             return
         }
-        let screenName = NeuroID.currentScreenName ?? UUID().uuidString
+        let screenName = NeuroID.getScreenName() ?? UUID().uuidString
         var newEvent = event
         // Make sure we have a valid url set
         newEvent.url = screenName
@@ -68,6 +68,9 @@ public class NeuroIDTracker: NSObject {
         let guidValue = Attr(n: "guid", v: guid)
         let attrValue = Attr(n: "screenHierarchy", v: fullViewString)
 
+        let tgDict = ["attr": TargetValue.attr([attrValue, guidValue])]
+        let attrsArray = [attrVal, shVal]
+
         switch v {
 //        case is UIView:
 //            let tfView = v as! UIView
@@ -93,9 +96,10 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)", url: screenName)
-            nidEvent.hv = tfView.placeholder?.sha256().prefix(8).string
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-            nidEvent.attrs = [attrVal, shVal]
+
+            nidEvent.addHvTgAttrs(hv: tfView.placeholder?.sha256().prefix(8).string ?? "",
+                                  tg: tgDict,
+                                  attrs: attrsArray)
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UITextView:
@@ -105,9 +109,10 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)", url: screenName)
-            nidEvent.hv = tv.text?.sha256().prefix(8).string
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-            nidEvent.attrs = [attrVal, shVal]
+
+            nidEvent.addHvTgAttrs(hv: tv.text?.sha256().prefix(8).string ?? "",
+                                  tg: tgDict,
+                                  attrs: attrsArray)
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UIButton:
@@ -115,9 +120,10 @@ public class NeuroIDTracker: NSObject {
             NeuroID.registeredTargets.append(tb.id)
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)", url: screenName)
-            nidEvent.hv = tb.titleLabel?.text?.sha256().prefix(8).string
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-            nidEvent.attrs = [attrVal, shVal]
+
+            nidEvent.addHvTgAttrs(hv: tb.titleLabel?.text?.sha256().prefix(8).string ?? "",
+                                  tg: tgDict,
+                                  attrs: attrsArray)
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
         case is UISlider:
@@ -142,9 +148,10 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: dp.id, en: dp.id, etn: "INPUT", et: "UIDatePicker::\(dp.className)", ec: screenName, v: "S~C~~\(dpValue.count)", url: screenName)
-            nidEvent.hv = dpValue.sha256().prefix(8).string
-            nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-            nidEvent.attrs = [attrVal, shVal]
+
+            nidEvent.addHvTgAttrs(hv: dpValue.sha256().prefix(8).string,
+                                  tg: tgDict,
+                                  attrs: attrsArray)
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
         default:
@@ -159,8 +166,8 @@ public class NeuroIDTracker: NSObject {
 
 // MARK: - Private functions
 
-private extension NeuroIDTracker {
-    func subscribe(inScreen controller: UIViewController?) {
+internal extension NeuroIDTracker {
+    static func subscribe(inScreen controller: UIViewController?) {
         // Early exit if we are stopped
         if NeuroID.isStopped() {
             return
@@ -171,14 +178,14 @@ private extension NeuroIDTracker {
 
         // Only run observations on first run
 //        if !NeuroID.observingInputs {
-            NeuroID.observingInputs = true
+        NeuroID.observingInputs = true
 //            observeTextInputEvents()
 //            observeAppEvents()
 //            observeRotation()
 //        }
     }
 
-    func observeViews(_ views: [UIView]) {
+    static func observeViews(_ views: [UIView]) {
         for v in views {
             if let sender = v as? UIControl {
                 observeTouchEvents(sender)

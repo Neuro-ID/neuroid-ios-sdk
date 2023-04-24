@@ -11,7 +11,7 @@ import UIKit
 // MARK: - Touch events
 
 internal extension NeuroIDTracker {
-    func observeTouchEvents(_ sender: UIControl) {
+    static func observeTouchEvents(_ sender: UIControl) {
         sender.addTarget(self, action: #selector(NeuroIDTracker.controlTouchStart), for: .touchDown)
         sender.addTarget(self, action: #selector(NeuroIDTracker.controlTouchEnd), for: .touchUpInside)
         sender.addTarget(self, action: #selector(NeuroIDTracker.controlTouchMove), for: .touchUpOutside)

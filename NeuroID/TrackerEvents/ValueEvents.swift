@@ -11,7 +11,7 @@ import UIKit
 // MARK: - value events
 
 internal extension NeuroIDTracker {
-    func observeValueChanged(_ sender: UIControl) {
+    static func observeValueChanged(_ sender: UIControl) {
         sender.addTarget(self, action: #selector(valueChanged), for: .valueChanged)
     }
 

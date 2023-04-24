@@ -479,6 +479,15 @@ public struct NIDEvent: Codable {
         }
     }
     
+    internal mutating func addHvTgAttrs(hv: String,
+                                        tg: [String: TargetValue],
+                                        attrs: [Attrs])
+    {
+        self.hv = hv
+        self.tg = tg
+        self.attrs = attrs
+    }
+    
     var asDictionary: [String: Any] {
         let mirror = Mirror(reflecting: self)
         let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map { (label: String?, value: Any) -> (String, Any)? in
