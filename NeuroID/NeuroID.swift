@@ -171,6 +171,7 @@ public enum NeuroID {
     public static func start() {
         NeuroID.isSDKStarted = true
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+        NeuroID.createSession()
         swizzle()
 
         if ProcessInfo.processInfo.environment["debugJSON"] == "true" {

@@ -105,7 +105,7 @@ class NeuroIDClassTests: XCTestCase {
     func test_getClientID() {
         let value = NeuroID.getClientID()
 
-        assert(value.count == 36)
+        assert(value == "test-cid")
     }
 
     func test_getEnvironment() {
@@ -143,6 +143,7 @@ class NeuroIDClassTests: XCTestCase {
 
     func test_excludeViewByTestID() {
         clearOutDataStore()
+        NeuroID.excludedViewsTestIDs = []
         let expectedValue = "testScreenName"
 
         NeuroID.excludeViewByTestID(excludedView: expectedValue)
