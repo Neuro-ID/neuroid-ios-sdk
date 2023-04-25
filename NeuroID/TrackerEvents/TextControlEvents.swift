@@ -277,13 +277,3 @@ internal extension NeuroIDTracker {
         return round(Double((newNumParsed - originalNumParsed) / originalNumParsed) * 100) / 100.0
     }
 }
-
-extension Notification.Name {
-    static var loginSuccess: Notification.Name {
-        return UITextView.textDidEndEditingNotification
-    }
-
-    static var verifyUserSession: Notification.Name {
-        return .init(rawValue: "VerifyUser.session")
-    }
-}
