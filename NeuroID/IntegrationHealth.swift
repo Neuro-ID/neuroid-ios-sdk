@@ -10,50 +10,73 @@ import UIKit
 
 internal struct EventIntegration {
     let target: String
+    let pageUrl: String
     var registered: [NIDEvent] = []
     var blur: [NIDEvent] = []
     var focus: [NIDEvent] = []
     var input: [NIDEvent] = []
     var inputChange: [NIDEvent] = []
     var textChange: [NIDEvent] = []
+    var touchStart: [NIDEvent] = []
 
     var createSession: [NIDEvent] = []
 
-    init(_ target: String) {
+    var urls: [String] = []
+
+    init(_ target: String, _ pageUrl: String) {
         self.target = target
+        self.pageUrl = pageUrl
     }
 
     mutating func addEvent(_ event: NIDEvent) {
         switch event.type {
             case NIDEventName.createSession.rawValue:
                 self.createSession.append(event)
+                self.addUrl(event.url ?? "NO_URL")
 
             case NIDEventName.registerTarget.rawValue:
                 self.registered.append(event)
+                self.addUrl(event.url ?? "NO_URL")
 
             case NIDEventName.blur.rawValue:
                 self.blur.append(event)
+                self.addUrl(event.url ?? "NO_URL")
 
             case NIDEventName.focus.rawValue:
                 self.focus.append(event)
+                self.addUrl(event.url ?? "NO_URL")
 
             case NIDEventName.input.rawValue:
                 self.input.append(event)
+                self.addUrl(event.url ?? "NO_URL")
 
             case NIDEventName.inputChange.rawValue:
                 self.inputChange.append(event)
+                self.addUrl(event.url ?? "NO_URL")
 
             case NIDEventName.textChange.rawValue:
                 self.textChange.append(event)
+                self.addUrl(event.url ?? "NO_URL")
+
+            case NIDEventName.touchStart.rawValue:
+                self.touchStart.append(event)
+                self.addUrl(event.url ?? "NO_URL")
+
             default:
-                print("not recognized")
+                print("not recognized \(event.type)")
+        }
+    }
+
+    private mutating func addUrl(_ url: String) {
+        if !self.urls.contains(url) {
+            self.urls.append(url)
         }
     }
 }
 
 func formatDate(date: Date) -> String {
     let df = DateFormatter()
-    df.dateFormat = "yyyy-MM-dd hh:mm:ss"
+    df.dateFormat = "yyyy-MM-dd hh-mm-ss"
     let now = df.string(from: date)
 
     return now
@@ -79,12 +102,19 @@ func createFile(fileName: String, content: String) {
     print("File Saved: \(test)")
 }
 
+func addBreakLines(_ content: String, _ add: Bool = false) -> String {
+    return add ? "</br></br> \(content)" : content
+}
+
 func generateHTMLHeader(tables: [String] = ["EventTable"]) -> String {
     var tableString = ""
 
     for tableName in tables {
         tableString += """
-            $('#\(tableName.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: ""))').DataTable();
+            $('#\(tableName.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: ""))').DataTable({
+                        "scrollY": "800px",
+                        "scrollCollapse": true,
+                    });
         """
     }
 
@@ -103,6 +133,15 @@ func generateHTMLHeader(tables: [String] = ["EventTable"]) -> String {
     """
 }
 
+func generateHeaderSection() -> String {
+    return """
+        <section>
+            <h1>Integration Health Report</h1>
+            <p>SDK Version: \(NeuroID.getSDKVersion() ?? "1.0.0")</p>
+        </section>
+    """
+}
+
 func generateHTMLTable(tableName: String, columns: [String], tableContent: String) -> String {
     var columnString = ""
     for column in columns {
@@ -111,7 +150,7 @@ func generateHTMLTable(tableName: String, columns: [String], tableContent: Strin
 
     return """
         <h3>\(tableName)</h3>
-        <table id="\(tableName.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: ""))" class="display">
+        <table id="\(tableName.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: ""))" class="display" data-page-length="25">
             <caption>\(tableName)</caption>
             <thead>
                 <tr>
@@ -128,14 +167,14 @@ func generateHTMLTable(tableName: String, columns: [String], tableContent: Strin
 func formatEventRows(events: [NIDEvent], rowFormatFn: (_: EventIntegration, _: Double) -> String) -> String {
     var targetDict: [String: EventIntegration] = [:]
     for e in events {
-//        let eDict = e.asDictionary
-        let targetName = (e.tg?["tgs"]?.toString() ?? "NO_ID")
+        let targetName = (e.tg?["tgs"]?.toString() ?? e.tgs ?? "NO_ID")
 
         if targetDict[targetName] != nil {
             targetDict[targetName]?.addEvent(e)
         }
         else {
-            targetDict[targetName] = EventIntegration(targetName)
+            print("Adding Target: -\(targetName)- \(e.url ?? "url") - \(e.type)")
+            targetDict[targetName] = EventIntegration(targetName, e.url ?? "NO_URL")
             targetDict[targetName]?.addEvent(e)
         }
     }
@@ -144,17 +183,15 @@ func formatEventRows(events: [NIDEvent], rowFormatFn: (_: EventIntegration, _: D
     var eventCount: Double = 0
     for target in targetDict.values {
         let row = rowFormatFn(target, eventCount)
-        eventContent += row
 
+        eventContent += row
         eventCount += 1
     }
-
-//    for event in events {}
 
     return eventContent
 }
 
-func generateGeneralSessionEvents(_ events: [NIDEvent]) -> String {
+func generateGeneralSessionEvents(_ events: [NIDEvent], addBreakLinesBool: Bool = false) -> String {
 //    var eventContent = formatEventRows(events: events) { event, eventCount in
 //        """
 //            <tr>
@@ -167,52 +204,78 @@ func generateGeneralSessionEvents(_ events: [NIDEvent]) -> String {
 
     var eventContent = ""
 
-    return generateHTMLTable(tableName: "General Session Markers", columns: ["Event Type", "Timestamp", "Additional"], tableContent: eventContent)
+    return addBreakLines(generateHTMLTable(tableName: "General Session Markers", columns: ["Event Type", "Timestamp", "Additional"], tableContent: eventContent), addBreakLinesBool)
 }
 
-func generateTargetEvents(_ events: [NIDEvent]) -> String {
+func generateTargetEvents(_ events: [NIDEvent], addBreakLinesBool: Bool = false) -> String {
     let eventContent = formatEventRows(events: events) { event, eventCount in
         """
             <tr>
                 <td>\(event.target)</td>
-                <td>\(event.registered.count > 0 ? "true" : "false")</td>
+                <td>\(event.pageUrl) \(event.urls.count > 1 ? "(+\(event.urls.count))" : "")</td>
+                <td>\(event.registered.count)</td>
                 <td>\(event.blur.count)</td>
                 <td>\(event.focus.count)</td>
                 <td>\(event.input.count)</td>
                 <td>\(event.inputChange.count)</td>
                 <td>\(event.textChange.count)</td>
+                <td>\(event.touchStart.count)</td>
                 <td>\(formatDate(date: Date() + eventCount))</td>
             </tr>
         """
     }
 
-    return generateHTMLTable(tableName: "Target Events",
-                             columns: ["Target", "Registered", "Blur",
-                                       "Focus", "Input", "Input Change",
-                                       "Text Change", "Observed"],
-                             tableContent: eventContent)
+    return addBreakLines(generateHTMLTable(tableName: "Target Events",
+                                           columns: ["Target", "URL", "Registered", "Blur",
+                                                     "Focus", "Input", "Input Change",
+                                                     "Text Change", "Touch Start", "Observed"],
+                                           tableContent: eventContent), addBreakLinesBool)
+}
+
+func generateRawEventsTable(_ events: [NIDEvent], addBreakLinesBool: Bool = false) -> String {
+    var eventContent = ""
+    for event in events {
+        eventContent += """
+            <tr>
+                <td>\(event.tg?["tgs"]?.toString() ?? event.tgs ?? "NO_ID")</td>
+                <td>\(event.type)</td>
+                <td>\(event.et ?? "NO_ET")</td>
+                <td>\(event.url ?? "no_url")</td>
+                <td>\(event.toDict().toKeyValueString())</td>
+                <td>\(formatDate(date: Date()))</td>
+            </tr>
+        """
+    }
+
+    return addBreakLines(generateHTMLTable(tableName: "Raw Target Events",
+                                           columns: ["Target", "Type", "ET",
+                                                     "Url", "Raw", "Observed"],
+                                           tableContent: eventContent), addBreakLinesBool)
 }
 
 func generateIntegrationHealthReport() {
-//    let events = NeuroID.getIntegrationHealthEvents()
-    let events: [NIDEvent] = generateEvents()
+    let events = NeuroID.getIntegrationHealthEvents()
+//    let events: [NIDEvent] = generateEvents()
 
     let fileName = "\(formatDate(date: Date()))-integration.html"
 
     let mainContent = """
     <html>
-        \(generateHTMLHeader(tables: ["General Session Markers", "Target Events"]))
+        \(generateHTMLHeader(tables: [
+            "General Session Markers",
+            "Target Events",
+            "Raw Target Events",
+        ]
+        ))
         <body style="max-width: 92%; margin: 0px 2%">
             </br>
-            <h1>Integration Health Report</h1>
-            <p>SDK Version: \(NeuroID.getSDKVersion() ?? "1.0.0")</p>
-            </br>
+            \(generateHeaderSection())
 
-            \(generateGeneralSessionEvents(events))
+            \(generateGeneralSessionEvents(events, addBreakLinesBool: true))
 
-            </br>
-            </br>
-            \(generateTargetEvents(events))
+            \(generateTargetEvents(events, addBreakLinesBool: true))
+
+            \(generateRawEventsTable(events, addBreakLinesBool: true))
         </body>
     <html>
     """
@@ -220,6 +283,7 @@ func generateIntegrationHealthReport() {
     createFile(fileName: fileName, content: mainContent)
 }
 
+// TESTING FUNCTIONS ONLY
 func generateEvents() -> [NIDEvent] {
     let textControl = UITextField()
     textControl.accessibilityIdentifier = "text 1"

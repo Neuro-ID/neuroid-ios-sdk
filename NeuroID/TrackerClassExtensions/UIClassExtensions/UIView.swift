@@ -60,6 +60,10 @@ public extension UIView {
             }
             title = "\(className)_\(title)"
             var backupName = "\(className)\(description.hashValue)"
+
+//            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")
+//            print("view ID: \((accessibilityIdentifier.isEmptyOrNil) ? title : accessibilityIdentifier!)")
+
             return (accessibilityIdentifier.isEmptyOrNil) ? title : accessibilityIdentifier!
         }
         set {

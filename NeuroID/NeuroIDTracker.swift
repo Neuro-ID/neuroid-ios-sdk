@@ -98,6 +98,8 @@ public class NeuroIDTracker: NSObject {
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(tfView.className) - \(tfView.id)-")
         case is UITextView:
             let tv = v as! UITextView
             NeuroID.registeredTargets.append(tv.id)
@@ -110,6 +112,8 @@ public class NeuroIDTracker: NSObject {
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(tv.className) - \(tv.id)-")
         case is UIButton:
             let tb = v as! UIButton
             NeuroID.registeredTargets.append(tb.id)
@@ -120,15 +124,28 @@ public class NeuroIDTracker: NSObject {
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(tb.className) - \(tb.id)-")
         case is UISlider:
+            let slider = v as! UISlider
             NIDPrintLog("Slider")
+
+            NIDPrintLog("*****************   Actually Registered View: \(slider.className) - \(slider.id)-")
         case is UISwitch:
+            let uiSwitch = v as! UISwitch
             NIDPrintLog("Switch")
+
+            NIDPrintLog("*****************   Actually Registered View: \(uiSwitch.className) - \(uiSwitch.id)-")
         case is UITableViewCell:
+            let tableView = v as! UITableViewCell
             NIDPrintLog("Table view cell")
+
+            NIDPrintLog("*****************   Actually Registered View: \(tableView.className) - \(tableView.id)-")
         case is UIPickerView:
             let pv = v as! UIPickerView
             NIDPrintLog("Picker")
+
+            NIDPrintLog("*****************   Actually Registered View: \(pv.className) - \(pv.id)-")
         case is UIDatePicker:
             NIDPrintLog("Date picker")
 
@@ -147,7 +164,11 @@ public class NeuroIDTracker: NSObject {
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(dp.className) - \(dp.id)-")
         default:
+            let view = v as! UIView
+            NIDPrintLog("NOT registering: \(view.className)")
             return
                 //        print("Unknown type", v)
         }
