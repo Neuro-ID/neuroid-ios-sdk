@@ -85,7 +85,11 @@ enum ParamsCreator {
         } else if let control = sender as? UISlider {
             tg["value"] = TargetValue.double(Double(control.value))
         } else if let control = sender as? UIDatePicker {
-            tg["value"] = TargetValue.string("\(control.date)")
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd hh:mm:ss"
+            let dpValue = df.string(from: control.date)
+
+            tg["value"] = TargetValue.string("S~C~~\(dpValue.count)")
         }
         return tg
     }
