@@ -30,6 +30,9 @@ internal extension NeuroIDTracker {
         } else if let _ = sender as? UIDatePicker {
 //            print("DATE PICKER VALUE CHANGE \(sender.id)")
             eventName = .inputChange
+
+            // This is the only listener the UIDatePicker element will trigger, so we register here if not found
+            NeuroIDTracker.registerViewIfNotRegistered(view: sender)
         }
 
         // Add target ID here?
