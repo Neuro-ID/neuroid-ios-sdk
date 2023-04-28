@@ -334,10 +334,6 @@ public enum NeuroID {
         }
         let dataStoreEvents = DataStore.getAllEvents()
 
-        if debugIntegrationHealth {
-            debugIntegrationHealthEvents.append(contentsOf: dataStoreEvents)
-        }
-
         let backupCopy = dataStoreEvents
         // Clean event queue immediately after fetching
         DataStore.removeSentEvents()
@@ -353,6 +349,10 @@ public enum NeuroID {
                 newEvent.url = nil
             }
             return newEvent
+        }
+
+        if debugIntegrationHealth {
+            saveIntegrationHealthEvents()
         }
 
         post(events: cleanEvents, screen: (getScreenName() ?? backupCopy[0].url) ?? "unnamed_screen", onSuccess: { _ in
@@ -518,9 +518,13 @@ public extension NeuroID {
         return debugIntegrationHealthEvents
     }
 
+    internal static func saveIntegrationHealthEvents() {
+        writeNIDEventsToJSON(Contstants.integrationHealthFile.rawValue, items: getIntegrationHealthEvents())
+    }
+
     static func generateNIDIntegrationHealthReport() {
-        NeuroID.stopIntegrationHealthCheck()
         generateIntegrationHealthReport()
+        stopIntegrationHealthCheck()
     }
 }
 

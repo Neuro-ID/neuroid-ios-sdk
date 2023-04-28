@@ -33,6 +33,12 @@ public class NeuroIDTracker: NSObject {
         // Make sure we have a valid url set
         newEvent.url = screenName
         DataStore.insertEvent(screen: screenName, event: newEvent)
+
+        if NeuroID.debugIntegrationHealth {
+//            NeuroID.debugIntegrationHealthEvents.append(contentsOf: dataStoreEvents)
+            print("adding health event")
+            NeuroID.debugIntegrationHealthEvents.append(newEvent)
+        }
     }
 
     func getCurrentSession() -> String? {
@@ -60,7 +66,7 @@ public class NeuroIDTracker: NSObject {
         let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
 
-        NIDPrintLog("Registering view: \(screenName)")
+//        NIDPrintLog("Registering view: \(screenName)")
         let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: currView, screenName: screenName)
 
         let attrVal = Attrs(n: "guid", v: guid)
@@ -168,7 +174,7 @@ public class NeuroIDTracker: NSObject {
             NIDPrintLog("*****************   Actually Registered View: \(dp.className) - \(dp.id)-")
         default:
             let view = v as! UIView
-            NIDPrintLog("NOT registering: \(view.className)")
+//            NIDPrintLog("NOT registering: \(view.className)")
             return
                 //        print("Unknown type", v)
         }

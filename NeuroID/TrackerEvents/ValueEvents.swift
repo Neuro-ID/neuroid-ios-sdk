@@ -28,14 +28,14 @@ internal extension NeuroIDTracker {
         } else if let _ = sender as? UISlider {
             eventName = .sliderChange
         } else if let _ = sender as? UIDatePicker {
-//            print("DATE PICKER VALUE CHANGE \(sender.id)")
+            print("DATE PICKER VALUE CHANGE \(sender.id) - \(tg)")
             eventName = .inputChange
 
             // This is the only listener the UIDatePicker element will trigger, so we register here if not found
             NeuroIDTracker.registerViewIfNotRegistered(view: sender)
         }
 
-        // Add target ID here?
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
+        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
+//        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
     }
 }

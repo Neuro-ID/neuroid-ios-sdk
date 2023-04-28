@@ -13,8 +13,6 @@ class IntegrationHealthTests: XCTestCase {
         let events = generateEvents()
         assert(events.count == 14)
 
-        let text = generateTargetEvents(events)
-
-        print(text)
+        writeNIDEventsToJSON(Contstants.integrationHealthFile.rawValue, items: events)
     }
 }
