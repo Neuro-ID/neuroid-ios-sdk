@@ -8,8 +8,26 @@
 import Foundation
 import UIKit
 
-func filterEventsByType(_ events: [NIDEvent], _ type: String) -> [NIDEvent] {
-    return events.filter { $0.type == type }
+struct IntegrationHealthDeviceInfo: Codable {
+    var name: String
+    var systemName: String
+    var systemVersion: String
+    var isSimulator: Bool
+    var Orientation: DeviceOrientation // different type
+
+    var model: String
+    var type: String
+    var customDeviceType: String
+
+    var nidSDKVersion: String
+}
+
+struct DeviceOrientation: Codable {
+    var rawValue: Int
+    var isFlat: Bool
+    var isPortrait: Bool
+    var isLandscape: Bool
+    var isValid: Bool
 }
 
 func formatDate(date: Date, dashSeparator: Bool = false) -> String {
@@ -21,17 +39,105 @@ func formatDate(date: Date, dashSeparator: Bool = false) -> String {
     return now
 }
 
-func generateIntegrationHealthReport() {
+func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
+    let orientation = DeviceOrientation(rawValue: device.orientation.rawValue,
+                                        isFlat: device.orientation.isFlat,
+                                        isPortrait: device.orientation.isPortrait,
+                                        isLandscape: device.orientation.isLandscape,
+                                        isValid: device.orientation.isValidInterfaceOrientation)
+
+    let deviceInfo = IntegrationHealthDeviceInfo(
+        name: device.name,
+        systemName: device.systemName,
+        systemVersion: device.systemVersion,
+        isSimulator: device.isSimulator,
+        Orientation: orientation,
+        model: device.model,
+        type: device.type.rawValue,
+        customDeviceType: "",
+        nidSDKVersion: NeuroID.getSDKVersion() ?? "1.0.0"
+    )
+
+    writeDeviceInfoToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)", items: deviceInfo)
+}
+
+func generateIntegrationHealthReport(saveCopy: Bool = false) {
     let events = NeuroID.getIntegrationHealthEvents()
 //    let events: [NIDEvent] = generateEvents()
 
-    let fileName = "\(formatDate(date: Date(), dashSeparator: true))-integration.html"
+    // save to directory where Health Report is HTML is stored
+    writeNIDEventsToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationHealthFile.rawValue)", items: events)
 
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = .prettyPrinted
-    print("**** event count \(events.count)")
+    // Save a backup copy that won't be overwritten on next health check
+    if saveCopy {
+        let fileName = "\(formatDate(date: Date(), dashSeparator: true))-\(Contstants.integrationHealthFile.rawValue)"
+        writeNIDEventsToJSON("\(fileName)", items: events)
+    }
+}
 
-    writeNIDEventsToJSON(Contstants.integrationHealthFile.rawValue, items: events)
+internal extension NeuroID {
+    static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
+        if verifyIntegrationHealth, getEnvironment() == "TEST" {
+            ifTrueCB()
+        }
+    }
+
+    static func startIntegrationHealthCheck() {
+        shouldDebugIntegrationHealth {
+            debugIntegrationHealthEvents = []
+            generateIntegrationHealthDeviceReport(UIDevice.current)
+            generateNIDIntegrationHealthReport()
+        }
+    }
+
+    static func captureIntegrationHealthEvent(_ event: NIDEvent) {
+        shouldDebugIntegrationHealth {
+            NIDPrintLog("adding health event \(event.type)")
+            NeuroID.debugIntegrationHealthEvents.append(event)
+        }
+    }
+
+    static func getIntegrationHealthEvents() -> [NIDEvent] {
+        return debugIntegrationHealthEvents
+    }
+
+    static func saveIntegrationHealthEvents() {
+        shouldDebugIntegrationHealth {
+            generateNIDIntegrationHealthReport()
+        }
+    }
+
+    static func generateNIDIntegrationHealthReport(saveIntegrationHealthReport: Bool = false) {
+        shouldDebugIntegrationHealth {
+            generateIntegrationHealthReport(saveCopy: saveIntegrationHealthReport)
+        }
+    }
+}
+
+public extension NeuroID {
+    static func printIntegrationHealthInstruction() {
+        shouldDebugIntegrationHealth {
+            do {
+                let serverFile = try getFileURL("\(Contstants.integrationFilePath.rawValue)")
+
+                print("""
+                \nℹ️ NeuroID Integration Health Instructions:
+                1. Open a terminal command prompt
+                2. Cd to \(serverFile.absoluteString.replacingOccurrences(of: "%20", with: "\\ ").replacingOccurrences(of: "file://", with: ""))
+                3. Run `node server.js`
+                4. Open a web browser to the URL shown in the terminal
+                """)
+            } catch {}
+        }
+    }
+
+    static func setVerifyIntegrationHealth(_ verify: Bool) {
+        verifyIntegrationHealth = verify
+
+        if verify {
+            printIntegrationHealthInstruction()
+        }
+    }
 }
 
 // TESTING FUNCTIONS ONLY

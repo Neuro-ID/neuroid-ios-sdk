@@ -13,6 +13,24 @@ class IntegrationHealthTests: XCTestCase {
         let events = generateEvents()
         assert(events.count == 14)
 
-        writeNIDEventsToJSON(Contstants.integrationHealthFile.rawValue, items: events)
+//        writeNIDEventsToJSON(Contstants.integrationHealthFile.rawValue, items: events)
+//
+//        generateIntegrationHealthDeviceReport(UIDevice.current)
+
+//        copyFolders()
+//        copyFilesFromBundleToDocumentsFolderWith(fileExtension: ".html")
+//        copyFolders()
+//        var filePath = Bundle.main.url(forResource: "index", withExtension: "html")
+//
+//        print(filePath)
+//        let path = Bundle.main.resourcePath
+//        print("p \(path)")
+//
+//        if let fileURL = Bundle.main.url(forResource: "test.swift", withExtension: "swift") {
+//            // we found the file in our bundle!
+//            print("file url")
+//        } else {
+//            print("nope")
+//        }
     }
 }

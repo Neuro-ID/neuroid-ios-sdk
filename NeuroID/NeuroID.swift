@@ -48,8 +48,8 @@ public enum NeuroID {
     public static var isSDKStarted = false
     public static var observingInputs = false
 
-    public static var debugIntegrationHealth = false
-    public static var debugIntegrationHealthEvents: [NIDEvent] = []
+    internal static var verifyIntegrationHealth: Bool = false
+    internal static var debugIntegrationHealthEvents: [NIDEvent] = []
 
     // MARK: - Setup
 
@@ -114,6 +114,15 @@ public enum NeuroID {
     public static func stop() {
         NIDPrintLog("NeuroID Stopped")
         UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
+
+        do {
+            try closeSession(skipStop: true)
+        } catch {
+            NIDPrintLog("Failed to Stop because: \(error)")
+        }
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
     }
 
     public static func excludeViewByTestID(excludedView: String) {
@@ -159,13 +168,17 @@ public enum NeuroID {
         saveEventToLocalDataStore(event)
     }
 
-    public static func closeSession() throws -> NIDEvent {
+    public static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         if !NeuroID.isSDKStarted {
             throw NIDError.sdkNotStarted
         }
         var closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
+        if skipStop {
+            return closeEvent
+        }
+
         NeuroID.stop()
         return closeEvent
     }
@@ -174,6 +187,9 @@ public enum NeuroID {
     public static func start() {
         NeuroID.isSDKStarted = true
         UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+
+        NeuroID.startIntegrationHealthCheck()
+
         NeuroID.createSession()
         swizzle()
 
@@ -190,6 +206,9 @@ public enum NeuroID {
         #else
         initTimer()
         #endif
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
     }
 
     public static func isStopped() -> Bool {
@@ -206,18 +225,27 @@ public enum NeuroID {
     public static func formSubmit() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
         saveEventToLocalDataStore(submitEvent)
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
         return submitEvent
     }
 
     public static func formSubmitFailure() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
         saveEventToLocalDataStore(submitEvent)
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
         return submitEvent
     }
 
     public static func formSubmitSuccess() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
         saveEventToLocalDataStore(submitEvent)
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
         return submitEvent
     }
 
@@ -351,9 +379,8 @@ public enum NeuroID {
             return newEvent
         }
 
-        if debugIntegrationHealth {
-            saveIntegrationHealthEvents()
-        }
+        // save captured health events to file
+        saveIntegrationHealthEvents()
 
         post(events: cleanEvents, screen: (getScreenName() ?? backupCopy[0].url) ?? "unnamed_screen", onSuccess: { _ in
             logInfo(category: "APICall", content: "Sending successfully")
@@ -458,6 +485,7 @@ public enum NeuroID {
     }
 
     public static func saveEventToLocalDataStore(_ event: NIDEvent) {
+        NeuroID.captureIntegrationHealthEvent(event)
         DataStore.insertEvent(screen: event.type, event: event)
     }
 
@@ -502,29 +530,6 @@ public extension NeuroID {
     /// - Returns: String with the version format
     static func getSDKVersion() -> String? {
         return ParamsCreator.getSDKVersion()
-    }
-
-    static func startIntegrationHealthCheck() {
-        debugIntegrationHealth = true
-    }
-
-    internal static func stopIntegrationHealthCheck() {
-        debugIntegrationHealth = false
-        debugIntegrationHealthEvents = []
-    }
-
-    // REMOVE JUST FOR TESTING
-    internal static func getIntegrationHealthEvents() -> [NIDEvent] {
-        return debugIntegrationHealthEvents
-    }
-
-    internal static func saveIntegrationHealthEvents() {
-        writeNIDEventsToJSON(Contstants.integrationHealthFile.rawValue, items: getIntegrationHealthEvents())
-    }
-
-    static func generateNIDIntegrationHealthReport() {
-        generateIntegrationHealthReport()
-        stopIntegrationHealthCheck()
     }
 }
 

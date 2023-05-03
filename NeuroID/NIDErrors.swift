@@ -8,5 +8,6 @@
 import Foundation
 
 enum NIDError: Error {
-   case sdkNotStarted
+    case sdkNotStarted
+    case urlError
 }

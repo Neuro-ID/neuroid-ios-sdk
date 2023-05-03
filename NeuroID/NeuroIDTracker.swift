@@ -31,14 +31,10 @@ public class NeuroIDTracker: NSObject {
         let screenName = screen ?? UUID().uuidString
         var newEvent = event
         // Make sure we have a valid url set
-        newEvent.url = screenName
+        newEvent.url = NeuroID.getScreenName()
         DataStore.insertEvent(screen: screenName, event: newEvent)
 
-        if NeuroID.debugIntegrationHealth {
-//            NeuroID.debugIntegrationHealthEvents.append(contentsOf: dataStoreEvents)
-            print("adding health event")
-            NeuroID.debugIntegrationHealthEvents.append(newEvent)
-        }
+        NeuroID.captureIntegrationHealthEvent(newEvent)
     }
 
     func getCurrentSession() -> String? {
