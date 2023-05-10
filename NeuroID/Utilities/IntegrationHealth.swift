@@ -63,7 +63,6 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
 
 func generateIntegrationHealthReport(saveCopy: Bool = false) {
     let events = NeuroID.getIntegrationHealthEvents()
-//    let events: [NIDEvent] = generateEvents()
 
     // save to directory where Health Report is HTML is stored
     writeNIDEventsToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationHealthFile.rawValue)", items: events)
@@ -75,9 +74,26 @@ func generateIntegrationHealthReport(saveCopy: Bool = false) {
     }
 }
 
+func saveIntegrationHealthResources() {
+    if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Contstants.integrationHealthResourceBundle.rawValue, withExtension: "bundle")
+
+    {
+        let NIDDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(Contstants.integrationFilePath.rawValue)
+
+        // Copy Static Folder (Css/Js)
+        copyResourceBundleFolder(folderName: "static", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+
+        // copy Index HTML
+        copyResourceBundleFile(fileName: "index.html", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+
+        // copy Server.JS
+        copyResourceBundleFile(fileName: "server.js", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+    }
+}
+
 internal extension NeuroID {
     static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
-        if verifyIntegrationHealth, getEnvironment() == "TEST" {
+        if verifyIntegrationHealth, getEnvironment() == Contstants.environmentTest.rawValue {
             ifTrueCB()
         }
     }
@@ -128,6 +144,7 @@ public extension NeuroID {
                 4. Open a web browser to the URL shown in the terminal
                 """)
             } catch {}
+            saveIntegrationHealthResources()
         }
     }
 
@@ -138,38 +155,4 @@ public extension NeuroID {
             printIntegrationHealthInstruction()
         }
     }
-}
-
-// TESTING FUNCTIONS ONLY
-func generateEvents() -> [NIDEvent] {
-    let textControl = UITextField()
-    textControl.accessibilityIdentifier = "text 1"
-    textControl.text = "test Text"
-
-    let textControl2 = UITextField()
-    textControl2.accessibilityIdentifier = "text 2"
-    textControl2.text = "test Text 2"
-
-    let events = [generateEvent(textControl), generateEvent(textControl, NIDEventName.input),
-                  generateEvent(textControl, NIDEventName.textChange), generateEvent(textControl, NIDEventName.registerTarget),
-                  generateEvent(textControl, NIDEventName.applicationSubmit), generateEvent(textControl, NIDEventName.createSession),
-                  generateEvent(textControl, NIDEventName.blur),
-
-                  generateEvent(textControl2), generateEvent(textControl2, NIDEventName.input),
-                  generateEvent(textControl2, NIDEventName.textChange), generateEvent(textControl2, NIDEventName.registerTarget),
-                  generateEvent(textControl2, NIDEventName.applicationSubmit), generateEvent(textControl2, NIDEventName.createSession),
-                  generateEvent(textControl2, NIDEventName.blur)]
-
-    return events
-}
-
-func generateEvent(_ target: UIView, _ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
-//    let textValue = target.text ?? ""
-//    let lengthValue = "S~C~~\(target.text?.count ?? 0)"
-
-    // Text Change
-    let textChangeTG = ["tgs": TargetValue.string(target.id)]
-    let textChangeEvent = NIDEvent(type: eventType, tg: textChangeTG)
-
-    return textChangeEvent
 }

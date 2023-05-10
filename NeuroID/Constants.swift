@@ -11,4 +11,7 @@ internal enum Contstants: String {
     case integrationFilePath = "nid"
     case integrationHealthFile = "integrationHealthEvents.json"
     case integrationDeviceInfoFile = "integrationHealthDetails.json"
+    case integrationHealthResourceBundle = "Resources"
+
+    case environmentTest = "TEST"
 }

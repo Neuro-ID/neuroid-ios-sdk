@@ -7,7 +7,7 @@
 
 import Foundation
 
-func getFileURL(_ fileName: String?) throws -> URL {
+internal func getFileURL(_ fileName: String?) throws -> URL {
     do {
         var fileURL = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
@@ -18,13 +18,14 @@ func getFileURL(_ fileName: String?) throws -> URL {
         return fileURL
     }
     catch {
-        print("Error Generating URL")
+        // DECIDE HOW TO HANDLE ERRORS?
+//        print("Error Generating URL")
     }
 
     throw NIDError.urlError
 }
 
-func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) {
+internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) {
     do {
         let fileURL = try getFileURL(fileName)
 
@@ -36,7 +37,7 @@ func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) {
     }
 }
 
-func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInfo) {
+internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInfo) {
     do {
         let fileURL = try getFileURL(fileName)
 
@@ -48,131 +49,44 @@ func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInf
     }
 }
 
-//
-// func copyFilesFromBundleToDocumentsFolderWith(fileExtension: String) {
-//    if let resPath = Bundle.main.resourcePath {
-//        do {
-//            let dirContents = try FileManager.default.contentsOfDirectory(atPath: resPath)
-//            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-//
-//            print("res: \(resPath)")
-//            let filteredFiles = dirContents.filter { $0.contains(fileExtension) }
-//
-//            print("coppying: \(filteredFiles.count)")
-//            for fileName in filteredFiles {
-//                print("FILE: \(fileName)")
-//                if let documentsURL = documentsURL {
-//                    let sourceURL = Bundle.main.bundleURL.appendingPathComponent(fileName)
-//                    let destURL = documentsURL.appendingPathComponent(fileName)
-//                    do { try FileManager.default.copyItem(at: sourceURL, to: destURL) } catch {}
-//                }
-//            }
-//        }
-//        catch {}
-//    }
-// }
-//
-// func copyFolders() {
-//    let fileManager = FileManager.default
-//
-//    let documentsUrl = fileManager.urls(for: .documentDirectory,
-//                                        in: .userDomainMask)
-//
-//    guard documentsUrl.count != 0 else {
-//        print("NO DOCS")
-//        return // Could not find documents URL
-//    }
-//
-//    let finalDatabaseURL = documentsUrl.first!.appendingPathComponent("IntegrationHealthStatic")
-//
-//    if !((try? finalDatabaseURL.checkResourceIsReachable()) ?? false) {
-//        print("DB does not exist in documents folder")
-//
-//        let documentsURL = Bundle.main.resourceURL?.appendingPathComponent("IntegrationHealthStatic")
-//
-//        print(documentsURL)
-//        do {
-//            if !FileManager.default.fileExists(atPath: finalDatabaseURL.path) {
-//                try FileManager.default.createDirectory(atPath: finalDatabaseURL.path, withIntermediateDirectories: false, attributes: nil)
-//            }
-//            copyFiles(pathFromBundle: (documentsURL?.path)!, pathDestDocs: finalDatabaseURL.path)
-//        }
-//        catch let error as NSError {
-//            print("Couldn't copy file to final location! Error:\(error.description)")
-//        }
-//    }
-//    else {
-//        print("Database file found at path: \(finalDatabaseURL.path)")
-//    }
-// }
-//
-// func copyFiles(pathFromBundle: String, pathDestDocs: String) {
-//    let fileManagerIs = FileManager.default
-//    do {
-//        print("trying to print \(pathFromBundle)")
-//        let filelist = try fileManagerIs.contentsOfDirectory(atPath: pathFromBundle)
-//        try? fileManagerIs.copyItem(atPath: pathFromBundle, toPath: pathDestDocs)
-//
-//        print("COPYING \(filelist.count) FIles")
-//
-//        for filename in filelist {
-//            print("COPYING: \(filename)")
-//            try? fileManagerIs.copyItem(atPath: "\(pathFromBundle)/\(filename)", toPath: "\(pathDestDocs)/\(filename)")
-//        }
-//    }
-//    catch {
-//        print("\nError: \(error)\n")
-//    }
-// }
+internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundleURL: URL) {
+    let fileManager = FileManager.default
 
-/// OLD
-func saveToJsonFile(fileName: String, JSONData: [Any]) {
-    // Get the url of Persons.json in document directory
-    guard let documentDirectoryUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return }
-    let fileUrl = documentDirectoryUrl.appendingPathComponent(fileName)
-//
-
-    let fileMang = FileManager.default
-    print("Saving Integration Health Events at: \(fileUrl)")
-    if fileMang.fileExists(atPath: fileUrl.path) {
-        do {
-            try fileMang.removeItem(atPath: fileUrl.path)
-        }
-        catch {}
-    }
-
-    // Transform array into data and save it into file
+    let serverURL = bundleURL.appendingPathComponent(fileName)
     do {
-        print("**************TRY CONVERTING \(JSONData)")
-        let data = try JSONSerialization.data(withJSONObject: JSONData, options: [])
-        print("**************TRY SAVING")
-        try data.write(to: fileUrl, options: [])
+        try fileManager.copyItem(at: serverURL, to: fileDirectory)
     }
     catch let error as NSError {
-        print("Array to JSON conversion failed: \(error.localizedDescription)")
-    }
-    catch {
-        print("****ERRROR \(error)")
+        if error.code == NSFileWriteFileExistsError {
+            try? fileManager.removeItem(at: fileDirectory.appendingPathComponent(fileName))
+            try! fileManager.copyItem(at: serverURL, to: fileDirectory.appendingPathComponent(fileName))
+        }
+        else {
+            // DECIDE HOW TO HANDLE ERRORS?
+//            print("Error copying file: \(error.localizedDescription)")
+        }
     }
 }
 
-func createFile(fileName: String, content: String) {
-    let fileMang = FileManager.default
-    var filePath = NSHomeDirectory()
+internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, bundleURL: URL) {
+    let fileManager = FileManager.default
+
+    // CREATE NID FOLDER
     do {
-        let appSupportDir = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        filePath = appSupportDir.appendingPathComponent(fileName).path
+        try fileManager.createDirectory(at: fileDirectory, withIntermediateDirectories: false, attributes: nil)
     }
-    catch {}
-
-    print("Saving Integration Health File at: \(filePath)")
-    if fileMang.fileExists(atPath: filePath) {
-        do {
-            try fileMang.removeItem(atPath: filePath)
-        }
-        catch {}
+    catch let error as NSError {
+        // DECIDE HOW TO HANDLE ERRORS?
+//        print("Error creating directory: \(error.localizedDescription)")
     }
 
-    let test = fileMang.createFile(atPath: filePath, contents: content.data(using: String.Encoding.utf8), attributes: nil)
-    print("File Saved: \(test)")
+    // copy static files
+    let resourcesURL = bundleURL.appendingPathComponent(folderName)
+    do {
+        try fileManager.copyItem(at: resourcesURL, to: fileDirectory.appendingPathComponent(folderName))
+    }
+    catch let error as NSError {
+        // DECIDE HOW TO HANDLE ERRORS?
+//        print("Error copying resources folder: \(error.localizedDescription)")
+    }
 }
