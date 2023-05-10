@@ -40,11 +40,13 @@ func formatDate(date: Date, dashSeparator: Bool = false) -> String {
 }
 
 func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
-    let orientation = DeviceOrientation(rawValue: device.orientation.rawValue,
-                                        isFlat: device.orientation.isFlat,
-                                        isPortrait: device.orientation.isPortrait,
-                                        isLandscape: device.orientation.isLandscape,
-                                        isValid: device.orientation.isValidInterfaceOrientation)
+    let orientation = DeviceOrientation(
+        rawValue: device.orientation.rawValue,
+        isFlat: device.orientation.isFlat,
+        isPortrait: device.orientation.isPortrait,
+        isLandscape: device.orientation.isLandscape,
+        isValid: device.orientation.isValidInterfaceOrientation
+    )
 
     let deviceInfo = IntegrationHealthDeviceInfo(
         name: device.name,
@@ -58,7 +60,10 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
         nidSDKVersion: NeuroID.getSDKVersion() ?? "1.0.0"
     )
 
-    writeDeviceInfoToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)", items: deviceInfo)
+    writeDeviceInfoToJSON(
+        "\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)",
+        items: deviceInfo
+    )
 }
 
 func generateIntegrationHealthReport(saveCopy: Bool = false) {
