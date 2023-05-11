@@ -103,6 +103,8 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_getClientID() {
+        UserDefaults.standard.setValue("test-cid", forKey: "nid_cid")
+        NeuroID.clientId = nil
         let value = NeuroID.getClientID()
 
         assert(value == "test-cid")

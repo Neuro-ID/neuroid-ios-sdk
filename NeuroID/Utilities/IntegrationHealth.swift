@@ -60,22 +60,28 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
         nidSDKVersion: NeuroID.getSDKVersion() ?? "1.0.0"
     )
 
-    writeDeviceInfoToJSON(
-        "\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)",
-        items: deviceInfo
-    )
+    do {
+        try? writeDeviceInfoToJSON(
+            "\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)",
+            items: deviceInfo
+        )
+    }
 }
 
 func generateIntegrationHealthReport(saveCopy: Bool = false) {
     let events = NeuroID.getIntegrationHealthEvents()
 
     // save to directory where Health Report is HTML is stored
-    writeNIDEventsToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationHealthFile.rawValue)", items: events)
+    do {
+        try? writeNIDEventsToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationHealthFile.rawValue)", items: events)
+    }
 
     // Save a backup copy that won't be overwritten on next health check
     if saveCopy {
         let fileName = "\(formatDate(date: Date(), dashSeparator: true))-\(Contstants.integrationHealthFile.rawValue)"
-        writeNIDEventsToJSON("\(fileName)", items: events)
+        do {
+            try? writeNIDEventsToJSON("\(fileName)", items: events)
+        }
     }
 }
 
@@ -85,14 +91,16 @@ func saveIntegrationHealthResources() {
     {
         let NIDDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(Contstants.integrationFilePath.rawValue)
 
-        // Copy Static Folder (Css/Js)
-        copyResourceBundleFolder(folderName: "static", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+        do {
+            // Copy Static Folder (Css/Js)
+            try? copyResourceBundleFolder(folderName: "static", fileDirectory: NIDDirectory, bundleURL: bundleURL)
 
-        // copy Index HTML
-        copyResourceBundleFile(fileName: "index.html", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+            // copy Index HTML
+            try? copyResourceBundleFile(fileName: "index.html", fileDirectory: NIDDirectory, bundleURL: bundleURL)
 
-        // copy Server.JS
-        copyResourceBundleFile(fileName: "server.js", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+            // copy Server.JS
+            try? copyResourceBundleFile(fileName: "server.js", fileDirectory: NIDDirectory, bundleURL: bundleURL)
+        }
     }
 }
 
@@ -113,7 +121,7 @@ internal extension NeuroID {
 
     static func captureIntegrationHealthEvent(_ event: NIDEvent) {
         shouldDebugIntegrationHealth {
-            NIDPrintLog("adding health event \(event.type)")
+            NIDPrintLog("Adding NID Health Event \(event.type)")
             NeuroID.debugIntegrationHealthEvents.append(event)
         }
     }

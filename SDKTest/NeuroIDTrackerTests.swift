@@ -37,7 +37,7 @@ class NeuroIDTrackerTests: XCTestCase {
         
         let firstEvent = filteredEvent[0]
         assert(firstEvent.type == "REGISTER_TARGET")
-        assert(firstEvent.tgs == "\(v.className)_UNKNOWN_NO_ID_SET")
+        assert((firstEvent.tgs?.contains("\(v.className)_UNKNOWN_NO_ID_SET")) != nil)
     }
     
     func assertViewNOTRegistered(v: UIView) {

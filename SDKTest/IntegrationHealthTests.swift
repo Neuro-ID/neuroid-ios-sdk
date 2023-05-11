@@ -39,89 +39,13 @@ class IntegrationHealthTests: XCTestCase {
         NeuroID.setEnvironmentProduction(false)
     }
 
-//    func getFileMngAndDirectory() -> (FileManager, URL) {
-//        let fileManager = FileManager.default
-//        let documentsDirectory = tempDirectoryURL!
-//
-//        return (fileManager, documentsDirectory)
-//    }
-//
-//    func verifyFileExists(_ fileName: String) -> Bool {
-//        let (fileManager, documentsDirectory) = getFileMngAndDirectory()
-//        let fileURL = documentsDirectory.appendingPathComponent(fileName)
-//
-//        if fileManager.fileExists(atPath: fileURL.path) {
-//            print("File exists")
-//            return true
-//        } else {
-//            print("File does not exist")
-//            return false
-//        }
-//    }
-//
-//    func removeFile(_ fileName: String) {
-//        let (fileManager, documentsDirectory) = getFileMngAndDirectory()
-//        let fileURL = documentsDirectory.appendingPathComponent(fileName)
-//
-//        do {
-//            try fileManager.removeItem(at: fileURL)
-//            print("File deleted successfully")
-//        } catch let error as NSError {
-//            print("Error deleting file: \(error.localizedDescription)")
-//        }
-//    }
-//
-//    func removeDir(directory: String) {
-//        let (fileManager, documentsDirectory) = getFileMngAndDirectory()
-//        let directoryURL = documentsDirectory.appendingPathComponent(directory)
-//
-//        if fileManager.fileExists(atPath: directoryURL.path) {
-//            do {
-//                try fileManager.removeItem(at: directoryURL)
-//                print("Directory deleted successfully")
-//            } catch let error as NSError {
-//                print("Error deleting directory: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-
-//    func generateTestEvents() -> [NIDEvent] {
-//        let textControl = UITextField()
-//        textControl.accessibilityIdentifier = "text 1"
-//        textControl.text = "test Text"
-//
-//        let textControl2 = UITextField()
-//        textControl2.accessibilityIdentifier = "text 2"
-//        textControl2.text = "test Text 2"
-//
-//        let events = [generateEvent(textControl), generateEvent(textControl, NIDEventName.input),
-//                      generateEvent(textControl, NIDEventName.textChange), generateEvent(textControl, NIDEventName.registerTarget),
-//                      generateEvent(textControl, NIDEventName.applicationSubmit), generateEvent(textControl, NIDEventName.createSession),
-//                      generateEvent(textControl, NIDEventName.blur),
-//
-//                      generateEvent(textControl2), generateEvent(textControl2, NIDEventName.input),
-//                      generateEvent(textControl2, NIDEventName.textChange), generateEvent(textControl2, NIDEventName.registerTarget),
-//                      generateEvent(textControl2, NIDEventName.applicationSubmit), generateEvent(textControl2, NIDEventName.createSession),
-//                      generateEvent(textControl2, NIDEventName.blur)]
-//
-//        return events
-//    }
-//
     func generateTestEvent(_ target: UIView = UITextField(), _ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
-        //    let textValue = target.text ?? ""
-        //    let lengthValue = "S~C~~\(target.text?.count ?? 0)"
-
         // Text Change
         let textChangeTG = ["tgs": TargetValue.string(target.id)]
         let textChangeEvent = NIDEvent(type: eventType, tg: textChangeTG)
 
         return textChangeEvent
     }
-
-//    func test_generateTargetEvents() {
-//        let events = generateEvents()
-//        assert(events.count == 14)
-//    }
 
     func test_formatDate() {
         let rawValue = "1992 05 04 11 00 00"
@@ -143,27 +67,14 @@ class IntegrationHealthTests: XCTestCase {
         assert(dashValue == expectedDashValue)
     }
 
+//    TO-DO
 //    func test_generateIntegrationHealthDeviceReport() {
-//        print("TEMP: \(tempDirectoryURL)")
-//        let fileName = "\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)"
-//        // remove pre-test
-//        removeFile(fileName)
-//
-//        generateIntegrationHealthDeviceReport(UIDevice())
-//
-//        let exists = verifyFileExists(fileName)
-//
-//        assert(exists)
 //    }
 //
 //    func test_generateIntegrationHealthReport() {
-//        let events = generateEvents()
-//        assert(events.count == 14)
 //    }
 //
 //    func test_saveIntegrationHealthResources() {
-//        let events = generateEvents()
-//        assert(events.count == 14)
 //    }
 
     func test_shouldDebugIntegrationHealth() {
@@ -225,20 +136,14 @@ class IntegrationHealthTests: XCTestCase {
         assert(events2.count == 1)
     }
 
-//
+//    TO-DO
 //    func test_saveIntegrationHealthEvents() {
-//        let events = generateEvents()
-//        assert(events.count == 14)
 //    }
 //
 //    func test_generateNIDIntegrationHealthReport() {
-//        let events = generateEvents()
-//        assert(events.count == 14)
 //    }
 //
 //    func test_printIntegrationHealthInstruction() {
-//        let events = generateEvents()
-//        assert(events.count == 14)
 //    }
 //
     func test_setVerifyIntegrationHealth() {

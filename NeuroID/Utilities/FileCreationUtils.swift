@@ -18,14 +18,12 @@ internal func getFileURL(_ fileName: String?) throws -> URL {
         return fileURL
     }
     catch {
-        // DECIDE HOW TO HANDLE ERRORS?
-//        print("Error Generating URL")
+        NIDPrintLog("Error Retrieving the FileURL: \(fileName) - \(error.localizedDescription)")
+        throw error
     }
-
-    throw NIDError.urlError
 }
 
-internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) {
+internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) throws {
     do {
         let fileURL = try getFileURL(fileName)
 
@@ -33,11 +31,12 @@ internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) {
         try encoder.encode(items).write(to: fileURL)
     }
     catch {
-        print(error.localizedDescription)
+        NIDPrintLog("Error Writing to File: \(fileName) - \(error.localizedDescription)")
+        throw error
     }
 }
 
-internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInfo) {
+internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInfo) throws {
     do {
         let fileURL = try getFileURL(fileName)
 
@@ -45,11 +44,12 @@ internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealth
         try encoder.encode(items).write(to: fileURL)
     }
     catch {
-        print(error.localizedDescription)
+        NIDPrintLog("Error Writing to File: \(fileName) - \(error.localizedDescription)")
+        throw error
     }
 }
 
-internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundleURL: URL) {
+internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundleURL: URL) throws {
     let fileManager = FileManager.default
 
     let serverURL = bundleURL.appendingPathComponent(fileName)
@@ -62,13 +62,13 @@ internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundl
             try! fileManager.copyItem(at: serverURL, to: fileDirectory.appendingPathComponent(fileName))
         }
         else {
-            // DECIDE HOW TO HANDLE ERRORS?
-//            print("Error copying file: \(error.localizedDescription)")
+            NIDPrintLog("Error Copying Resource: \(fileName) - \(error.localizedDescription)")
+            throw error
         }
     }
 }
 
-internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, bundleURL: URL) {
+internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, bundleURL: URL) throws {
     let fileManager = FileManager.default
 
     // CREATE NID FOLDER
@@ -76,8 +76,8 @@ internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, b
         try fileManager.createDirectory(at: fileDirectory, withIntermediateDirectories: false, attributes: nil)
     }
     catch let error as NSError {
-        // DECIDE HOW TO HANDLE ERRORS?
-//        print("Error creating directory: \(error.localizedDescription)")
+        NIDPrintLog("Error Copying Resource Directory: \(folderName) - \(error.localizedDescription)")
+        throw error
     }
 
     // copy static files
@@ -86,7 +86,7 @@ internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, b
         try fileManager.copyItem(at: resourcesURL, to: fileDirectory.appendingPathComponent(folderName))
     }
     catch let error as NSError {
-        // DECIDE HOW TO HANDLE ERRORS?
-//        print("Error copying resources folder: \(error.localizedDescription)")
+        NIDPrintLog("Error Copying Resource Directory: \(resourcesURL) - \(error.localizedDescription)")
+        throw error
     }
 }
