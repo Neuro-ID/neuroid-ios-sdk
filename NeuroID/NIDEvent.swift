@@ -495,9 +495,11 @@ public class NIDEvent: Codable {
         let valuesAsDict = self.asDictionary
         return valuesAsDict
     }
-    
-    func setRTS() -> Void {
-        rts = "targetInteractionEvent"
+
+    func setRTS(_ addRts: Bool? = false) {
+        if addRts ?? false {
+            self.rts = "targetInteractionEvent"
+        }
     }
 }
 
