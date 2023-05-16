@@ -15,7 +15,7 @@ public extension NeuroIDTracker {
         if !NeuroID.registeredTargets.contains(view.id) {
             NeuroID.registeredTargets.append(view.id)
             let guid = UUID().uuidString
-            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid)
+            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid, rts: true)
             return true
         }
         return false

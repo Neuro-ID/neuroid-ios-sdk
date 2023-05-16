@@ -207,7 +207,7 @@ public struct EventCache: Codable {
     var nidEvents: [NIDEvent]
 }
 
-public struct NIDEvent: Codable {
+public class NIDEvent: Codable {
     public let type: String
     var tg: [String: TargetValue]? = nil
     var tgs: String?
@@ -249,6 +249,7 @@ public struct NIDEvent: Codable {
     var metadata: NIDMetadata?
     var sh: CGFloat?
     var sw: CGFloat?
+    var rts: String?
 
     /**
         Use to initiate a new session
@@ -316,7 +317,8 @@ public struct NIDEvent: Codable {
          ns: String? = nil,
          jsv: String? = nil,
          gyro: NIDSensorData? = nil,
-         accel: NIDSensorData? = nil)
+         accel: NIDSensorData? = nil,
+         rts: String? = nil)
     {
         self.type = session.rawValue
         self.f = f
@@ -337,6 +339,7 @@ public struct NIDEvent: Codable {
         self.jsl = []
         self.gyro = gyro
         self.accel = accel
+        self.rts = rts
     }
 
     /** Register Target
@@ -491,6 +494,10 @@ public struct NIDEvent: Codable {
     func toDict() -> [String: Any?] {
         let valuesAsDict = self.asDictionary
         return valuesAsDict
+    }
+    
+    func setRTS() -> Void {
+        rts = "targetInteractionEvent"
     }
 }
 

@@ -58,7 +58,7 @@ public class NeuroIDTracker: NSObject {
         return fullViewString
     }
 
-    public static func registerSingleView(v: Any, screenName: String, guid: String) {
+    public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
         let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
 
@@ -95,6 +95,10 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)", url: screenName)
+            
+            // If RTS is set, set rts on focus events
+            rts ?? false ? nidEvent.setRTS() : nil
+            
             nidEvent.hv = tfView.placeholder?.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
@@ -109,6 +113,10 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)", url: screenName)
+            
+            // If RTS is set, set rts on focus events
+            rts ?? false ? nidEvent.setRTS() : nil
+            
             nidEvent.hv = tv.text?.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
@@ -121,6 +129,9 @@ public class NeuroIDTracker: NSObject {
             NeuroID.registeredTargets.append(tb.id)
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)", url: screenName)
+            // If RTS is set, set rts on focus events
+            rts ?? false ? nidEvent.setRTS() : nil
+            
             nidEvent.hv = tb.titleLabel?.text?.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
@@ -161,6 +172,8 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: dp.id, en: dp.id, etn: "INPUT", et: "UIDatePicker::\(dp.className)", ec: screenName, v: "S~C~~\(dpValue.count)", url: screenName)
+            // If RTS is set, set rts on focus events
+            rts ?? false ? nidEvent.setRTS() : nil
             nidEvent.hv = dpValue.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
