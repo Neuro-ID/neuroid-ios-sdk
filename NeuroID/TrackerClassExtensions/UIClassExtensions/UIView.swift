@@ -59,8 +59,17 @@ public extension UIView {
                 // Fallback on earlier versions
             }
             title = "\(className)_\(title)"
-            var backupName = "\(className)\(description.hashValue)"
-            return (accessibilityIdentifier.isEmptyOrNil) ? title : accessibilityIdentifier!
+            let backupName = "\(description.hashValue)"
+
+            var placeholder = ""
+            if let textControl = self as? UITextField {
+                placeholder = textControl.placeholder ?? ""
+            }
+
+            //            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")
+            //            print("view ID: \((accessibilityIdentifier.isEmptyOrNil) ? title : accessibilityIdentifier!)")
+
+            return (accessibilityIdentifier.isEmptyOrNil) ? placeholder != "" ? placeholder : "\(title)_\(backupName)" : accessibilityIdentifier!
         }
         set {
             accessibilityIdentifier = newValue

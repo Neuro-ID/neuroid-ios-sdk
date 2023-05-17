@@ -31,8 +31,10 @@ public class NeuroIDTracker: NSObject {
         let screenName = screen ?? UUID().uuidString
         var newEvent = event
         // Make sure we have a valid url set
-        newEvent.url = screenName
+        newEvent.url = NeuroID.getScreenName()
         DataStore.insertEvent(screen: screenName, event: newEvent)
+
+        NeuroID.captureIntegrationHealthEvent(newEvent)
     }
 
     func getCurrentSession() -> String? {
@@ -56,11 +58,11 @@ public class NeuroIDTracker: NSObject {
         return fullViewString
     }
 
-    public static func registerSingleView(v: Any, screenName: String, guid: String) {
+    public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
         let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
 
-        NIDPrintLog("Registering view: \(screenName)")
+//        NIDPrintLog("Registering view: \(screenName)")
         let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: currView, screenName: screenName)
 
         let attrVal = Attrs(n: "guid", v: guid)
@@ -93,11 +95,17 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "S~C~~\(tfView.placeholder?.count ?? 0)", url: screenName)
+
+            // If RTS is set, set rts on focus events
+            nidEvent.setRTS(rts)
+
             nidEvent.hv = tfView.placeholder?.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(tfView.className) - \(tfView.id)-")
         case is UITextView:
             let tv = v as! UITextView
             NeuroID.registeredTargets.append(tv.id)
@@ -105,30 +113,52 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "S~C~~\(tv.text?.count ?? 0)", url: screenName)
+
+            // If RTS is set, set rts on focus events
+            nidEvent.setRTS(rts)
+
             nidEvent.hv = tv.text?.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(tv.className) - \(tv.id)-")
         case is UIButton:
             let tb = v as! UIButton
             NeuroID.registeredTargets.append(tb.id)
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "S~C~~\(tb.titleLabel?.text?.count ?? 0)", url: screenName)
+            // If RTS is set, set rts on focus events
+            nidEvent.setRTS(rts)
+
             nidEvent.hv = tb.titleLabel?.text?.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(tb.className) - \(tb.id)-")
         case is UISlider:
+            let slider = v as! UISlider
             NIDPrintLog("Slider")
+
+            NIDPrintLog("*****************   Actually Registered View: \(slider.className) - \(slider.id)-")
         case is UISwitch:
+            let uiSwitch = v as! UISwitch
             NIDPrintLog("Switch")
+
+            NIDPrintLog("*****************   Actually Registered View: \(uiSwitch.className) - \(uiSwitch.id)-")
         case is UITableViewCell:
+            let tableView = v as! UITableViewCell
             NIDPrintLog("Table view cell")
+
+            NIDPrintLog("*****************   Actually Registered View: \(tableView.className) - \(tableView.id)-")
         case is UIPickerView:
             let pv = v as! UIPickerView
             NIDPrintLog("Picker")
+
+            NIDPrintLog("*****************   Actually Registered View: \(pv.className) - \(pv.id)-")
         case is UIDatePicker:
             NIDPrintLog("Date picker")
 
@@ -142,12 +172,18 @@ public class NeuroIDTracker: NSObject {
             let temp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
 
             var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: dp.id, en: dp.id, etn: "INPUT", et: "UIDatePicker::\(dp.className)", ec: screenName, v: "S~C~~\(dpValue.count)", url: screenName)
+            // If RTS is set, set rts on focus events
+            nidEvent.setRTS(rts)
             nidEvent.hv = dpValue.sha256().prefix(8).string
             nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
             nidEvent.attrs = [attrVal, shVal]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
+
+            NIDPrintLog("*****************   Actually Registered View: \(dp.className) - \(dp.id)-")
         default:
+            let view = v as! UIView
+//            NIDPrintLog("NOT registering: \(view.className)")
             return
                 //        print("Unknown type", v)
         }

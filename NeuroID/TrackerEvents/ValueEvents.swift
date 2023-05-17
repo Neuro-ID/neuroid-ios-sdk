@@ -34,6 +34,7 @@ internal extension NeuroIDTracker {
             NeuroIDTracker.registerViewIfNotRegistered(view: sender)
         }
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
+        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
+//        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
     }
 }

@@ -109,17 +109,30 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(v == ev)
     }
 
+    func assertTVDictValueContains(v: TargetValue, ev: TargetValue) {
+        assert(v.toString().contains(ev.toString()))
+    }
+
     func assertExpectedTVDictValues(expected: [String: TargetValue], value: [String: TargetValue]) {
         assertDictCount(value: value, count: expected.count)
 
         expected.forEach { (key: String, evTarget: TargetValue) in
-            assertTVDictValue(v: value[key] ?? defaultTargetValue, ev: evTarget)
+            if key == "tgs" || key == "etn" {
+                assertTVDictValueContains(v: value[key] ?? defaultTargetValue, ev: evTarget)
+            } else {
+                assertTVDictValue(v: value[key] ?? defaultTargetValue, ev: evTarget)
+            }
         }
     }
 
     func assertSpecificTVDictKeyValues(keyList: [String], expectedDict: [String: TargetValue], value: [String: TargetValue]) {
         keyList.forEach { key in
-            assertTVDictValue(v: value[key] ?? defaultTargetValue, ev: expectedDict[key] ?? defaultTargetValue)
+
+            if key == "tgs" || key == "etn" {
+                assertTVDictValueContains(v: value[key] ?? defaultTargetValue, ev: expectedDict[key] ?? defaultTargetValue)
+            } else {
+                assertTVDictValue(v: value[key] ?? defaultTargetValue, ev: expectedDict[key] ?? defaultTargetValue)
+            }
         }
     }
 
