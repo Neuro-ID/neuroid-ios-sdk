@@ -9,6 +9,15 @@ import Alamofire
 import Foundation
 
 public extension NeuroID {
+    private static func initTimer() {
+        // Send up the first payload, and then setup a repeating timer
+//        self.send()
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
+            self.send()
+            self.initTimer()
+        }
+    }
+
     static func getCollectionEndpointURL() -> String {
         //  Prod URL
         //    return collectorURLFromConfig ?? "https://api.neuro-id.com/v3/c"

@@ -131,27 +131,6 @@ public enum NeuroID {
         return false
     }
 
-    /**
-     Set a custom variable with a key and value.
-        - Parameters:
-            - key: The string value of the variable key
-            - v: The string value of variable
-        - Returns: An `NIDEvent` object of type `SET_VARIABLE`
-
-     */
-    public static func setCustomVariable(key: String, v: String) -> NIDEvent {
-        var setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v)
-        let myKeys: [String] = trackers.map { String($0.key) }
-        // Set the screen to the last active view
-        setCustomVariable.url = myKeys.last
-        // If we don't have a valid URL, that means this was called before any views were tracked. Use "AppDelegate" as default
-        if setCustomVariable.url == nil || setCustomVariable.url!.isEmpty {
-            setCustomVariable.url = "AppDelegate"
-        }
-        saveEventToLocalDataStore(setCustomVariable)
-        return setCustomVariable
-    }
-
     private static func swizzle() {
         UIViewController.startSwizzling()
         UITextField.startSwizzling()
@@ -159,15 +138,6 @@ public enum NeuroID {
         UINavigationController.swizzleNavigation()
         UITableView.tableviewSwizzle()
 //        UIButton.startSwizzling()
-    }
-
-    private static func initTimer() {
-        // Send up the first payload, and then setup a repeating timer
-//        self.send()
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
-            self.send()
-            self.initTimer()
-        }
     }
 
     public static func saveEventToLocalDataStore(_ event: NIDEvent) {
