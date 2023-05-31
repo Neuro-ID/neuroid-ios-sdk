@@ -24,7 +24,7 @@ public enum NeuroID {
     public static var clientId: String?
     public static var userId: String?
     public static var registeredTargets = [String]()
-    private static let SEND_INTERVAL: Double = 5
+    internal static let SEND_INTERVAL: Double = 5
     internal static var trackers = [String: NeuroIDTracker]()
     internal static var secretViews = [UIView]()
     internal static let showDebugLog = false

@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 
 public extension NeuroID {
-    private static func initTimer() {
+    internal static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
 //        self.send()
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
