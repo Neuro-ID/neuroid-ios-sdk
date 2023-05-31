@@ -16,7 +16,7 @@ class SessionTests: XCTestCase {
         NeuroID.clearSession()
         NeuroID.start()
         DataStore.removeSentEvents()
-        UserDefaults.standard.removeObject(forKey: "nid_sid")
+        UserDefaults.standard.removeObject(forKey: Constants.storageSiteIdKey.rawValue)
     }
 
     func testConfigureEndpoint() throws {

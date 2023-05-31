@@ -62,7 +62,7 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
 
     do {
         try? writeDeviceInfoToJSON(
-            "\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationDeviceInfoFile.rawValue)",
+            "\(Constants.integrationFilePath.rawValue)/\(Constants.integrationDeviceInfoFile.rawValue)",
             items: deviceInfo
         )
     }
@@ -73,12 +73,12 @@ func generateIntegrationHealthReport(saveCopy: Bool = false) {
 
     // save to directory where Health Report is HTML is stored
     do {
-        try? writeNIDEventsToJSON("\(Contstants.integrationFilePath.rawValue)/\(Contstants.integrationHealthFile.rawValue)", items: events)
+        try? writeNIDEventsToJSON("\(Constants.integrationFilePath.rawValue)/\(Constants.integrationHealthFile.rawValue)", items: events)
     }
 
     // Save a backup copy that won't be overwritten on next health check
     if saveCopy {
-        let fileName = "\(formatDate(date: Date(), dashSeparator: true))-\(Contstants.integrationHealthFile.rawValue)"
+        let fileName = "\(formatDate(date: Date(), dashSeparator: true))-\(Constants.integrationHealthFile.rawValue)"
         do {
             try? writeNIDEventsToJSON("\(fileName)", items: events)
         }
@@ -86,10 +86,10 @@ func generateIntegrationHealthReport(saveCopy: Bool = false) {
 }
 
 func saveIntegrationHealthResources() {
-    if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Contstants.integrationHealthResourceBundle.rawValue, withExtension: "bundle")
+    if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle")
 
     {
-        let NIDDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(Contstants.integrationFilePath.rawValue)
+        let NIDDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(Constants.integrationFilePath.rawValue)
 
         do {
             // Copy Static Folder (Css/Js)
@@ -106,7 +106,7 @@ func saveIntegrationHealthResources() {
 
 internal extension NeuroID {
     static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
-        if verifyIntegrationHealth, getEnvironment() == Contstants.environmentTest.rawValue {
+        if verifyIntegrationHealth, getEnvironment() == Constants.environmentTest.rawValue {
             ifTrueCB()
         }
     }
@@ -122,7 +122,7 @@ internal extension NeuroID {
     static func captureIntegrationHealthEvent(_ event: NIDEvent) {
         shouldDebugIntegrationHealth {
             NIDPrintLog("Adding NID Health Event \(event.type)")
-            NeuroID.debugIntegrationHealthEvents.append(event)
+            debugIntegrationHealthEvents.append(event)
         }
     }
 
@@ -147,7 +147,7 @@ public extension NeuroID {
     static func printIntegrationHealthInstruction() {
         shouldDebugIntegrationHealth {
             do {
-                let serverFile = try getFileURL("\(Contstants.integrationFilePath.rawValue)")
+                let serverFile = try getFileURL("\(Constants.integrationFilePath.rawValue)")
 
                 print("""
                                 \nℹ️ NeuroID Integration Health Instructions:

@@ -52,7 +52,7 @@ class NIDParamsCreatorTests: XCTestCase {
     let kcEntry = ["kc": TargetValue.int(0)]
     let tgsEntry = ["tgs": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")]
     let attrEntry = ["attr": TargetValue.attr([
-        Attr(n: "v", v: "S~C~~"),
+        Attr(n: "v", v: "\(Constants.eventValuePrefix.rawValue)"),
         Attr(n: "hash", v: "6003dfb4")
     ])]
 
@@ -263,7 +263,7 @@ class NIDParamsCreatorTests: XCTestCase {
 
     func test_getUiControlTgParams_UIDatePicker() {
         let uiView = UIDatePicker()
-        let expectedValue = createUIViewDict(view: uiView, extraValues: ["value": TargetValue.string("S~C~~19")])
+        let expectedValue = createUIViewDict(view: uiView, extraValues: ["value": TargetValue.string("\(Constants.eventValuePrefix.rawValue)19")])
 
         let value = ParamsCreator.getUiControlTgParams(sender: uiView)
 
@@ -281,7 +281,7 @@ class NIDParamsCreatorTests: XCTestCase {
 //    }
 
     func test_getOrientationChangeTgParams() {
-        let expectedValue = ["orientation": "Portrait"]
+        let expectedValue = ["orientation": Constants.orientationPortrait.rawValue]
 
         let value = ParamsCreator.getOrientationChangeTgParams()
 
@@ -304,7 +304,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assertStringDictValue(v: value, ev: expectedValue)
     }
 
-    let sidKeyName = "nid_sid"
+    let sidKeyName = Constants.storageSiteIdKey.rawValue
     func test_getSessionID_existing() {
         let expectedValue = "test_sid"
 
@@ -325,7 +325,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value == expectedValue)
     }
 
-    let sidExpiresKey = "nid_sid_expires"
+    let sidExpiresKey = Constants.storageSessionExpiredKey.rawValue
     func test_isSessionExpired_true() {
         let expectedValue = true
 
@@ -357,7 +357,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(expired == expectedValue)
     }
 
-    let cidKey = "nid_cid"
+    let cidKey = Constants.storageClientKeyAlt.rawValue
     func test_getClientId_existing() {
         let expectedValue = "test-cid"
 
@@ -379,7 +379,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value != expectedValue)
     }
 
-    let tidKey = "nid_tid"
+    let tidKey = Constants.storageTabIdKey.rawValue
     func test_getTabId_existing() {
         let expectedValue = "test_tid"
 
@@ -400,7 +400,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value != expectedValue)
     }
 
-    let uidKey = "nid_user_id"
+    let uidKey = Constants.storageUserIdKey.rawValue
     func test_getUserID_existing() {
         let expectedValue = "test_uid"
 
@@ -414,7 +414,7 @@ class NIDParamsCreatorTests: XCTestCase {
     func test_getUserID_random() {
         let expectedValue = "test_uid"
 
-        NeuroID.setUserID("random")
+        try? NeuroID.setUserID("random")
 //        UserDefaults.standard.set(expectedValue, forKey: uidKey)
 
         let value = ParamsCreator.getUserID()
@@ -422,7 +422,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value != expectedValue)
     }
 
-    let didKey = "nid_did"
+    let didKey = Constants.storageDeviceIdKey.rawValue
     func test_getDeviceId_existing() {
         let expectedValue = "test_did"
 
@@ -452,7 +452,7 @@ class NIDParamsCreatorTests: XCTestCase {
 //        assert(value.count() == expectedValue)
 //    }
 
-    let dntKey = "nid_dnt"
+    let dntKey = Constants.storageDntKey.rawValue
     func test_getDnt_existing() {
         let expectedValue = true
 

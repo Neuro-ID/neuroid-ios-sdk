@@ -27,7 +27,6 @@ public enum DataStore {
         }
         
         mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
-        
         // Grab the current set screen and set event URL to this
         
         if mutableEvent.tg?["tgs"] != nil {
@@ -46,6 +45,9 @@ public enum DataStore {
                 return
             }
         }
+        
+        NeuroID.captureIntegrationHealthEvent(mutableEvent)
+
         DispatchQueue.global(qos: .utility).sync {
             DataStore.events.append(mutableEvent)
         }

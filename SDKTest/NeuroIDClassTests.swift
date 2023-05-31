@@ -13,12 +13,12 @@ class NeuroIDClassTests: XCTestCase {
     let userId = "form_mobilesandbox"
 
     // Keys for storage:
-    let localStorageNIDStopAll = "nid_stop_all"
-    let clientKeyKey = "nid_key"
-    let clientIdKey = "nid_cid"
-    let sessionIdKey = "nid_sid"
-    let tabIdKey = "nid_tid"
-    let userIdKey = "nid_user_id"
+    let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
+    let clientKeyKey = Constants.storageClientKey.rawValue
+    let clientIdKey = Constants.storageClientKeyAlt.rawValue
+    let sessionIdKey = Constants.storageSiteIdKey.rawValue
+    let tabIdKey = Constants.storageTabIdKey.rawValue
+    let userIdKey = Constants.storageUserIdKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -103,7 +103,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_getClientID() {
-        UserDefaults.standard.setValue("test-cid", forKey: "nid_cid")
+        UserDefaults.standard.setValue("test-cid", forKey: Constants.storageClientKeyAlt.rawValue)
         NeuroID.clientId = nil
         let value = NeuroID.getClientID()
 
@@ -158,7 +158,7 @@ class NeuroIDClassTests: XCTestCase {
 
     func test_setScreenName_getScreenName() {
         let expectedValue = "testScreen"
-        NeuroID.setScreenName(screen: expectedValue)
+        try? NeuroID.setScreenName(screen: expectedValue)
 
         let value = NeuroID.getScreenName()
 
@@ -320,7 +320,7 @@ class NeuroIDClassTests: XCTestCase {
 
         let expectedValue = "test_uid"
 
-        NeuroID.setUserID(expectedValue)
+        try? NeuroID.setUserID(expectedValue)
 
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
