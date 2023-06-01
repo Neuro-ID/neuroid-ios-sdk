@@ -145,20 +145,21 @@ internal extension NeuroID {
 
 public extension NeuroID {
     static func printIntegrationHealthInstruction() -> String {
-        var instructions:String = "";
-        
+        var instructions = ""
+
         shouldDebugIntegrationHealth {
             do {
-                let serverFile = try getFileURL("\(Contstants.integrationFilePath.rawValue)")
+                let serverFile = try getFileURL("\(Constants.integrationFilePath.rawValue)")
                 instructions = """
-                                        \nℹ️ NeuroID Integration Health Instructions:
-                                        1. Open a terminal command prompt
-                                        2. Cd to \(serverFile.absoluteString.replacingOccurrences(of: "%20", with: "\\ ").replacingOccurrences(of: "file://", with: ""))
-                                        3. Run `node server.js`
-                                        4. Open a web browser to the URL shown in the terminal
-
-
-                        """
+                    \n\n   **************************************************************
+                    \n      ℹ️ NeuroID Integration Health Instructions:
+                        1. Open a terminal command prompt
+                        2. Cd to \(serverFile.absoluteString.replacingOccurrences(of: "%20", with: "\\ ").replacingOccurrences(of: "file://", with: ""))
+                        3. Run `node server.js`
+                        4. Open a web browser to the URL shown in the terminal
+                   \n   **************************************************************
+                    \n\n
+                """
                 print(instructions)
             } catch {}
             saveIntegrationHealthResources()
@@ -169,9 +170,9 @@ public extension NeuroID {
 
     static func setVerifyIntegrationHealth(_ verify: Bool) -> String {
         verifyIntegrationHealth = verify
-        var instructions = "";
+        var instructions = ""
         if verify {
-             instructions = printIntegrationHealthInstruction()
+            instructions = printIntegrationHealthInstruction()
         }
         return instructions
     }
