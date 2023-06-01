@@ -107,6 +107,11 @@ class IntegrationHealthTests: XCTestCase {
         }
     }
 
+    func test_shouldReturnIntegrationHealthInstructions() {
+        NeuroID.setEnvironmentProduction(false)
+        var instructions =  NeuroID.setVerifyIntegrationHealth(true)
+        assert(instructions.contains("Integration Health Instructions"))
+    }
     func test_startIntegrationHealthCheck() {
         allowIH()
         NeuroID.debugIntegrationHealthEvents = [generateTestEvent()]
