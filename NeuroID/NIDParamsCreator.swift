@@ -45,7 +45,7 @@ enum ParamsCreator {
              NIDEventName.checkboxChange, NIDEventName.input, NIDEventName.copy, NIDEventName.paste, NIDEventName.click:
 
 //            var attrParams:Attr;
-            let inputValue = attrParams?["v"] as? String ?? "S~C~~"
+            let inputValue = attrParams?["v"] as? String ?? "\(Constants.eventValuePrefix.rawValue)"
             let attrVal = Attr(n: "v", v: inputValue)
             let textValue = attrParams?["hash"] as? String ?? ""
             let hashValue = Attr(n: "hash", v: textValue.sha256().prefix(8).string)
@@ -89,7 +89,7 @@ enum ParamsCreator {
             df.dateFormat = "yyyy-MM-dd hh:mm:ss"
             let dpValue = df.string(from: control.date)
 
-            tg["value"] = TargetValue.string("S~C~~\(dpValue.count)")
+            tg["value"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(dpValue.count)")
         }
         return tg
     }
@@ -102,9 +102,9 @@ enum ParamsCreator {
     static func getOrientationChangeTgParams() -> [String: Any?] {
         let orientation: String
         if UIDevice.current.orientation.isLandscape {
-            orientation = "Landscape"
+            orientation = Constants.orientationLandscape.rawValue
         } else {
-            orientation = "Portrait"
+            orientation = Constants.orientationPortrait.rawValue
         }
 
         return ["orientation": orientation]
@@ -144,8 +144,8 @@ enum ParamsCreator {
     // Launch of application
     // If user idles for > 30 min
     static func getSessionID() -> String {
-        let sidName = "nid_sid"
-        let sidExpires = "nid_sid_expires"
+        let sidName = Constants.storageSiteIdKey.rawValue
+        let sidExpires = Constants.storageSessionExpiredKey.rawValue
         let defaults = UserDefaults.standard
         let sid = defaults.string(forKey: sidName)
 
@@ -164,7 +164,7 @@ enum ParamsCreator {
      Sessions expire after 30 minutes
      */
     static func isSessionExpired() -> Bool {
-        var expireTime = Int64(UserDefaults.standard.integer(forKey: "nid_sid_expires"))
+        var expireTime = Int64(UserDefaults.standard.integer(forKey: Constants.storageSessionExpiredKey.rawValue))
 
         // If 0, that means we need to set expire time
         if expireTime == 0 {
@@ -179,12 +179,12 @@ enum ParamsCreator {
     static func setSessionExpireTime() -> Int64 {
         let thirtyMinutes: Int64 = 1800000
         let expiresTime = ParamsCreator.getTimeStamp() + thirtyMinutes
-        UserDefaults.standard.set(expiresTime, forKey: "nid_sid_expires")
+        UserDefaults.standard.set(expiresTime, forKey: Constants.storageSessionExpiredKey.rawValue)
         return expiresTime
     }
 
     static func getClientId() -> String {
-        let clientIdName = "nid_cid"
+        let clientIdName = Constants.storageClientKeyAlt.rawValue
         var cid = UserDefaults.standard.string(forKey: clientIdName)
         if NeuroID.clientId != nil {
             cid = NeuroID.clientId
@@ -201,7 +201,7 @@ enum ParamsCreator {
     }
 
     static func getTabId() -> String {
-        let tabIdName = "nid_tid"
+        let tabIdName = Constants.storageTabIdKey.rawValue
         let tid = UserDefaults.standard.string(forKey: tabIdName)
 
         if tid != nil && !tid!.contains("-") {
@@ -215,12 +215,12 @@ enum ParamsCreator {
     }
 
     static func getUserID() -> String? {
-        let nidUserID = "nid_user_id"
+        let nidUserID = Constants.storageUserIdKey.rawValue
         return UserDefaults.standard.string(forKey: nidUserID)
     }
 
     static func getDeviceId() -> String {
-        let deviceIdCacheKey = "nid_did"
+        let deviceIdCacheKey = Constants.storageDeviceIdKey.rawValue
         var did = UserDefaults.standard.string(forKey: deviceIdCacheKey)
 
         if did != nil && did!.contains("_") {
@@ -237,7 +237,7 @@ enum ParamsCreator {
     }
 
     static func getDnt() -> Bool {
-        let dntName = "nid_dnt"
+        let dntName = Constants.storageDntKey.rawValue
         let defaults = UserDefaults.standard
         let dnt = defaults.string(forKey: dntName)
         // If there is ANYTHING set in nid_dnt, we return true (meaning don't track)

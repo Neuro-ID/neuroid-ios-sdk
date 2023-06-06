@@ -18,9 +18,9 @@ internal extension NeuroIDTracker {
     @objc func deviceRotated(notification: Notification) {
         let orientation: String
         if UIDevice.current.orientation.isLandscape {
-            orientation = "Landscape"
+            orientation = Constants.orientationLandscape.rawValue
         } else {
-            orientation = "Portrait"
+            orientation = Constants.orientationPortrait.rawValue
         }
 
 //        captureEvent(event: NIDEvent(type: NIDEventName.windowOrientationChange, tg: ["orientation": TargetValue.string(orientation)], view: nil))

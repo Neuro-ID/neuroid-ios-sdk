@@ -501,6 +501,55 @@ public class NIDEvent: Codable {
             self.rts = "targetInteractionEvent"
         }
     }
+
+    func copy(with zone: NSZone? = nil) -> NIDEvent {
+        let copy = NIDEvent(
+            type: NIDEventName(rawValue: self.type) ?? NIDEventName.error
+        )
+
+        copy.tg = self.tg
+        copy.tgs = self.tgs
+        copy.key = self.key
+        copy.ct = self.ct
+        copy.v = self.v
+        copy.hv = self.hv
+        copy.en = self.en
+        copy.etn = self.etn
+        copy.et = self.et
+        copy.ec = self.ec
+        copy.eid = self.eid
+        copy.ts = self.ts
+        copy.x = self.x
+        copy.y = self.y
+        copy.f = self.f
+        copy.lsid = self.lsid
+        copy.sid = self.sid
+        copy.cid = self.cid
+        copy.did = self.did
+        copy.loc = self.loc
+        copy.ua = self.ua
+        copy.tzo = self.tzo
+        copy.lng = self.lng
+        copy.p = self.p
+        copy.dnt = self.dnt
+        copy.tch = self.tch
+        copy.url = self.url
+        copy.ns = self.ns
+        copy.jsl = self.jsl
+        copy.jsv = self.jsv
+        copy.uid = self.uid
+        copy.sm = self.sm
+        copy.pd = self.pd
+        copy.attrs = self.attrs
+        copy.gyro = self.gyro
+        copy.accel = self.accel
+        copy.touches = self.touches
+        copy.metadata = self.metadata
+        copy.sh = self.sh
+        copy.sw = self.sw
+        copy.rts = self.rts
+        return copy
+    }
 }
 
 extension Collection where Iterator.Element == [String: Any?] {

@@ -40,20 +40,6 @@ internal extension NeuroIDTracker {
                                                selector: #selector(textEndEditing),
                                                name: UITextView.textDidEndEditingNotification,
                                                object: nil)
-
-        // UIDatePicker
-//        NotificationCenter.default.addObserver(self,
-//                                               selector: #selector(textBeginEditing),
-//                                               name: UIDatePicker.,
-//                                               object: nil)
-//        NotificationCenter.default.addObserver(self,
-//                                               selector: #selector(textChange),
-//                                               name: UITextView.textDidChangeNotification,
-//                                               object: nil)
-//        NotificationCenter.default.addObserver(self,
-//                                               selector: #selector(textEndEditing),
-//                                               name: UITextView.textDidEndEditingNotification,
-//                                               object: nil)
     }
 
     @objc func textBeginEditing(notification: Notification) {
@@ -96,7 +82,7 @@ internal extension NeuroIDTracker {
 
             let inputType = "text"
             let textValue = textControl.text ?? ""
-            let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
+            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textControl.text?.count ?? 0)"
             let hashValue = textControl.text?.sha256().prefix(8).string
             let tgs = TargetValue.string(textControl.id)
             let attrParams = ["v": lengthValue, "hash": textValue]
@@ -130,7 +116,6 @@ internal extension NeuroIDTracker {
                     textChangeEvent.v = lengthValue
                     textChangeEvent.hv = hashValue
                     textChangeEvent.tgs = tgs.toString()
-
 //                    textChangeEvent.hv = hashValue
                     captureEvent(event: textChangeEvent)
                     NeuroID.send()
@@ -150,7 +135,7 @@ internal extension NeuroIDTracker {
             }
 
             let hashValue = textControl.text?.sha256().prefix(8).string
-            let lengthValue = "S~C~~\(textControl.text?.count ?? 0)"
+            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textControl.text?.count ?? 0)"
             if eventType == NIDEventName.input {
                 NIDPrintLog("NID keydown field = <\(textControl.id)>")
 

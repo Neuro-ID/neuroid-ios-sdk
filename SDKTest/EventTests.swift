@@ -22,12 +22,12 @@ class EventTests: XCTestCase {
     }
     
     func testSetScreeName() {
-        NeuroID.setScreenName(screen: "WOW")
+        try? NeuroID.setScreenName(screen: "WOW")
         assert(NeuroID.getScreenName() == "WOW")
     }
     
     func testInvalidScreenName() {
-        NeuroID.setScreenName(screen: "WOW A SPACE")
+        try? NeuroID.setScreenName(screen: "WOW A SPACE")
         assert(NeuroID.getScreenName() == "WOW%20A%20SPACE")
     }
 
@@ -124,7 +124,7 @@ class EventTests: XCTestCase {
     }
     
     func testSetIUserID() {
-        NeuroID.setUserID("atestUserID")
+        try? NeuroID.setUserID("atestUserID")
         let params = ParamsCreator.getDefaultSessionParams()
         let uid = params["userId"] as! String
         XCTAssert(uid == "atestUserID")
@@ -138,7 +138,7 @@ class EventTests: XCTestCase {
         let userID = "atestUserID"
         let _ = NeuroIDTracker(screen: urlName, controller: testView)
 //        let params = ParamsCreator.getDefaultSessionParams();
-        NeuroID.setUserID(userID)
+        try? NeuroID.setUserID(userID)
 //        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
         let params = ParamsCreator.getDefaultSessionParams()
         //        let params = tracker.getEventParams(event: copyEvent, userUrl: urlName)
@@ -306,7 +306,7 @@ class EventTests: XCTestCase {
         /// Input event
         // Create Input
         textfield.text = "text"
-        let lengthValue = "S~C~~\(textfield.text?.count ?? 0)"
+        let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textfield.text?.count ?? 0)"
         let hashValue = textfield.text?.sha256().prefix(8).string
         let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text ?? "emptyHash"])
         var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)

@@ -96,7 +96,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_getCurrentSession_nil() {
         let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
 
-        UserDefaults.standard.setValue(nil, forKey: "nid_sid")
+        UserDefaults.standard.setValue(nil, forKey: Constants.storageSiteIdKey.rawValue)
         
         let sid = tracker.getCurrentSession()
         

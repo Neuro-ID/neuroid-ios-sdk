@@ -13,7 +13,7 @@ internal func neuroIDPasteUtil(caller: UIResponder, view: UIView, text: String?,
     if NeuroID.isStopped() {
         return
     }
-    let lengthValue = "S~C~~\(text?.count ?? 0)"
+    let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(text?.count ?? 0)"
     let pasteTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.paste, view: view, type: NIDEventName.paste.rawValue, attrParams: ["v": lengthValue, "hash": text ?? ""])
     let inputEvent = NIDEvent(type: NIDEventName.paste, tg: pasteTG)
 
