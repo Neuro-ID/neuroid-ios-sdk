@@ -504,7 +504,7 @@ public class NIDEvent: Codable {
 
     func copy(with zone: NSZone? = nil) -> NIDEvent {
         let copy = NIDEvent(
-            type: NIDEventName(rawValue: self.type) ?? NIDEventName.error
+            customEvent: self.type, tg: self.tg, x: self.x, y: self.y
         )
 
         copy.tg = self.tg
