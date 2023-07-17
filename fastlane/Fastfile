@@ -16,10 +16,11 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Description of what the lane does"
+  desc "Run Schema Tests"
   lane :test do
     run_tests(scheme: "NeuroID")
   end
+
   desc "Update project version"
   lane :update_version do
     version = version_bump_podspec(path: "Neuro-ID.podspec", version_number: ENV["newVersion"])
@@ -35,5 +36,17 @@ platform :ios do
     else
       UI.error "The project version is the same as the new version" 
     end
+  end
+
+  desc "Update Podfile and Plist Version"
+  lane :update_project_version do
+    version_bump_podspec(path: "Neuro-ID.podspec", bump_type: ENV["releaseType"])
+    increment_version_number(bump_type: ENV["releaseType"])
+  end
+
+  desc "Prints the version number"
+  lane :get_project_version do
+    version_number = get_version_number(xcodeproj: "NeuroID.xcodeproj", target:"NeuroID")
+    UI.message "SDK Version: #{version_number}"
   end
 end

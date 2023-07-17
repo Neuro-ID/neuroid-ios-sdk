@@ -1,0 +1,127 @@
+name: Update SDK Version PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_update:
+        description: >
+          Choose the type of version update:            
+          ** major: Cross platform breaking changes                                   
+          ** minor: Cross platform minor changes                    
+          ** patch: Changes affecting only this platform
+          required: true
+          default: 'patch'
+          type: choice
+          options: ['major','minor','patch']
+jobs:
+  updateProjectVersion:
+    runs-on: macos-latest
+    name: Update version for podspec and project
+    steps:
+      - name: Update version
+        run: echo "Updating version with release type ${{ inputs.version_update }}"
+
+      - name: Branch Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+
+      - name: Bundle Install
+        run: bundle install
+
+      - name: Create cache for pods
+        uses: actions/cache@v2
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: CocoaPod Install
+        run: pod install
+
+      - name: Run iOS Unit testing for SDK
+        run: bundle exec fastlane test
+
+      - name: Update Current Version
+        run: bundle exec fastlane update_project_version
+        env:
+          releaseType: ${{ inputs.version_update }}
+
+      - name: Get Updated Version
+        run: |
+          PACKAGE_VERSION=$(bundle exec fastlane get_project_version | grep -o "SDK Version:.*" | sed "s/SDK Version: //" )
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
+        env:
+          releaseType: ${{ inputs.version_update }}
+
+      - name: Commit version changes
+        run: |
+          git config --global user.email developer@neuro-id.com
+          git config --global user.name neuroid-developer
+          git branch -b ${{ env.BRANCH_NAME }}
+          git status
+          set +e
+          git add Neuro-ID.podspec
+          git add NeuroID/Info.plist
+          git commit -m "Update SDK to $newVersion"
+          git tag "$newVersion"
+          git push
+          set -e
+
+      - name: Open Pull Request
+        uses: actions/github-script@v5
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = 'Update To Version: ${{ env.PACKAGE_VERSION }}';
+            const body = 'Update To Version: ${{ env.PACKAGE_VERSION }}';
+            const headBranch = '${{ env.BRANCH_NAME }}';
+            const baseBranch = 'main';
+
+            const createPullRequest = async () => {
+              const response = await github.pulls.create({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                title: title,
+                body: body,
+                head: headBranch,
+                base: baseBranch
+              });
+              console.log(`Pull request ${response.data.number} created`);
+            };
+
+            createPullRequest();
+
+  notifications:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [updateProjectVersion]
+    steps:
+      - name: Send Slack Notification on Success
+        if: ${{ needs.updateProjectVersion.result == 'success' }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: mobile-sdk-tech-team
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: "Success execution on version check"
+          SLACK_TITLE: Success release iOS SDK
+          SLACK_USERNAME: rtBot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Send Slack Notification on Failure
+        if: ${{ needs.updateProjectVersion.result != 'success' }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: mobile-sdk-tech-team
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: "Failed execution on version check"
+          SLACK_TITLE: Failed release iOS SDK
+          SLACK_USERNAME: rtBot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
