@@ -40,7 +40,7 @@ jobs:
         with:
           script: |
             const name = 'Release Version: ${{ env.PACKAGE_VERSION }}';
-            const body = 'SDk Version ${{ env.PACKAGE_VERSION }}';
+            const body = 'SDK Version ${{ env.PACKAGE_VERSION }}';
 
             const createRelease = async () => {
                 await github.rest.repos.createRelease({
