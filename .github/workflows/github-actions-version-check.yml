@@ -1,9 +1,9 @@
-name: Pull request version check
+name: Merged Pull request version check
 
 on:
   pull_request:
     branches:
-      - main
+      - "releases/"
     types:
       - closed
 jobs:
@@ -12,7 +12,7 @@ jobs:
     name: Pull request version number validation
     runs-on: ubuntu-latest
     outputs:
-        version: ${{ steps.version.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - id: version
         name: Get the version number
@@ -27,46 +27,46 @@ jobs:
         env:
           version: ${{ github.event.pull_request.title }}
   updateProjectVersion:
-   runs-on: macos-latest
-   needs: versionCheck
-   if: needs.versionCheck.outputs.version != '-1' 
-   name: Update version for podspec and project
-   steps:
-    - name: Update version
-      run: echo "update version to ${{ needs.versionCheck.outputs.version }}"
-    
-    - name: Branch Checkout
-      uses: actions/checkout@v3  
-    
-    - name: Set up ruby env
-      uses: ruby/setup-ruby@v1
-      with:
-       ruby-version: 2.7.2
-        
-    - name: Bundle Install
-      run: bundle install
-      
-    - name: Create cache for pods 
-      uses: actions/cache@v2
-      with:
-       path: Pods
-       key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-       restore-keys: |
-          ${{ runner.os }}-pods-
-      
-    - name: CocoaPod Install
-      run: pod install
-        
-    - name: Run iOS Unit testing for SDK
-      run: bundle exec fastlane test
-      
-    - name: Update Current Version
-      run: bundle exec fastlane update_version
-      env:
-       newVersion:  ${{ needs.versionCheck.outputs.version }}
-       
-    - name: Commit version changes
-      run: |
+    runs-on: macos-latest
+    needs: versionCheck
+    if: needs.versionCheck.outputs.version != '-1'
+    name: Update version for podspec and project
+    steps:
+      - name: Update version
+        run: echo "update version to ${{ needs.versionCheck.outputs.version }}"
+
+      - name: Branch Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+
+      - name: Bundle Install
+        run: bundle install
+
+      - name: Create cache for pods
+        uses: actions/cache@v2
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: CocoaPod Install
+        run: pod install
+
+      - name: Run iOS Unit testing for SDK
+        run: bundle exec fastlane test
+
+      - name: Update Current Version
+        run: bundle exec fastlane update_version
+        env:
+          newVersion: ${{ needs.versionCheck.outputs.version }}
+
+      - name: Commit version changes
+        run: |
           git config --global user.email jose.perez@neuro-id.com
           git config --global user.name joseperezNID
           git status
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs: [versionCheck]
-    steps: 
+    steps:
       - name: Send Slack Notification on Success
         if: ${{ needs.versionCheck.result == 'success' }}
         uses: rtCamp/action-slack-notify@v2
@@ -105,6 +105,4 @@ jobs:
           SLACK_MESSAGE: "Failed execution on version check"
           SLACK_TITLE: Failed release iOS SDK
           SLACK_USERNAME: rtBot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}    
-       
-  
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
