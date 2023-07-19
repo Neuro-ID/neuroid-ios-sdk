@@ -81,3 +81,88 @@ public extension NeuroID {
         }
     }
 }
+
+func printEventData(_ mutableEvent: NIDEvent) {
+    var contextString = ""
+
+    var tgString = (mutableEvent.tg?.map { key, value in
+        let arrayString = value.toArrayString()
+        return "\(key): \(arrayString != "" ? arrayString : value.toString())"
+    } ?? [""]).joined(separator: ", ")
+
+    var touchesString = (mutableEvent.touches?.map { item in
+        "x=\(String("\(item.x ?? 0)")), y=\(String("\(item.y ?? 0)")), tid=\(String("\(item.tid ?? 0)"))"
+    } ?? [""]).joined(separator: ", ")
+
+    switch mutableEvent.type {
+        case NIDSessionEventName.setUserId.rawValue:
+            contextString = "uid=\(mutableEvent.uid ?? "")"
+
+        case NIDSessionEventName.createSession.rawValue:
+            contextString = "cid=\(mutableEvent.cid ?? ""), sh=\(String(describing: mutableEvent.sh ?? nil)), sw=\(String(describing: mutableEvent.sw ?? nil))"
+
+        case NIDEventName.applicationSubmit.rawValue:
+            contextString = ""
+        case NIDEventName.textChange.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), tg=\(tgString)"
+//            case NIDEventName.setCheckpoint.rawValue:
+//                contextString = ""
+//            case NIDEventName.stateChange.rawValue:
+//                contextString = "url=\(mutableEvent.url ?? "")"
+        case NIDEventName.keyUp.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.keyDown.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.input.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), tg=\(tgString)"
+        case NIDEventName.focus.rawValue:
+            contextString = ""
+        case NIDEventName.blur.rawValue:
+            contextString = ""
+
+        case NIDEventName.click.rawValue:
+            contextString = ""
+        case NIDEventName.registerTarget.rawValue:
+
+            contextString = "et=\(mutableEvent.et ?? ""), rts=\(mutableEvent.rts ?? ""), ec=\(mutableEvent.ec ?? ""), v=\(mutableEvent.v ?? ""), tg=[\(tgString)]"
+//                 meta=\(String(describing: mutableEvent.metadata ?? nil))
+//            case NIDEventName.deregisterTarget.rawValue:
+//                contextString = ""
+        case NIDEventName.touchStart.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString)"
+        case NIDEventName.touchEnd.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString)"
+        case NIDEventName.touchMove.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString)"
+        case NIDEventName.closeSession.rawValue:
+            contextString = ""
+//            case NIDEventName.setVariable.rawValue:
+//                contextString = mutableEvent.v ?? ""
+
+        case NIDEventName.cut.rawValue:
+            contextString = ""
+        case NIDEventName.copy.rawValue:
+            contextString = ""
+        case NIDEventName.paste.rawValue:
+            contextString = ""
+//            case NIDEventName.windowResize.rawValue:
+//                contextString = "h=\(mutableEvent.h), w=\(mutableEvent.w)"
+        case NIDEventName.selectChange.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.windowLoad.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.windowUnload.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.windowBlur.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.windowFocus.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+//            case NIDEventName.contextMenu.rawValue:
+//                contextString = ""
+
+        default:
+            contextString = ""
+    }
+
+    NIDPrintLog("DEBUG EVENT: \(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+}

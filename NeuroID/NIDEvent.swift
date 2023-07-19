@@ -165,6 +165,21 @@ public enum TargetValue: Codable, Equatable {
         }
     }
 
+    public func toArrayString() -> String {
+        switch self {
+        case .attr(let array):
+            return array.map { value in
+                "attr(guid=\(value.guid ?? ""), screenHierarchy=\(value.screenHierarchy ?? ""), n=\(value.n ?? ""), v=\(value.v ?? ""), hash=\(value.hash ?? ""))"
+            }.joined(separator: ",  ")
+        case .attrs(let array):
+            return array.map { value in
+                "n=\(value.n ?? ""), v=\(value.v ?? "")"
+            }.joined(separator: ", ")
+        default:
+            return ""
+        }
+    }
+
     public init(from decoder: Decoder) throws {
         if let int = try? decoder.singleValueContainer().decode(Int.self) {
             self = .int(int)
