@@ -118,7 +118,7 @@ func printEventData(_ mutableEvent: NIDEvent) {
         case NIDEventName.keyDown.rawValue:
             contextString = "tg=\(tgString)"
         case NIDEventName.input.rawValue:
-            contextString = "v=\(mutableEvent.v ?? ""), tg=\(tgString)"
+            contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
         case NIDEventName.focus.rawValue:
             contextString = ""
         case NIDEventName.blur.rawValue:

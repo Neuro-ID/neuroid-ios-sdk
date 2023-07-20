@@ -34,7 +34,15 @@ extension String {
 
 public extension String {
     func sha256() -> String {
-        var saltedString = self + UUID().uuidString
+        var existingSalt = UserDefaults.standard.string(forKey: Constants.storageSaltKey.rawValue) ?? ""
+
+        // do we need to remove salt on start/stop? or leave for device?
+        if existingSalt == "" {
+            existingSalt = UUID().uuidString
+            UserDefaults.standard.set(existingSalt, forKey: Constants.storageSaltKey.rawValue)
+        }
+
+        var saltedString = self + existingSalt
         if let stringData = saltedString.data(using: String.Encoding.utf8) {
             return stringData.sha256()
         }
