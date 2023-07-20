@@ -193,12 +193,13 @@ public class NeuroIDTracker: NSObject {
 
 // MARK: - Private functions
 
-private extension NeuroIDTracker {
+internal extension NeuroIDTracker {
     func subscribe(inScreen controller: UIViewController?) {
         // Early exit if we are stopped
         if NeuroID.isStopped() {
             return
         }
+
         if let views = controller?.view.subviews {
             observeViews(views)
         }

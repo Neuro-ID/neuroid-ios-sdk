@@ -33,4 +33,7 @@ internal enum Constants: String {
     case orientationPortrait = "Portrait"
 
     case eventValuePrefix = "S~C~~"
+    
+    
+    case debugTest = "TEST: "
 }

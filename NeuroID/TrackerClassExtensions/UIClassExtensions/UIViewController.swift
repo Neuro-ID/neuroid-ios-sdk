@@ -69,9 +69,14 @@ public extension UIViewController {
     var tracker: NeuroIDTracker? {
         if ignoreLists.contains(className) { return nil }
         if self is UINavigationController, className == "UINavigationController" { return nil }
-        let tracker = NeuroID.trackers[className] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
-        NeuroID.trackers[className] = tracker
-        return tracker
+        if let tracker = NeuroID.trackers[className] {
+            tracker.subscribe(inScreen: self)
+            return tracker
+        } else {
+            let tracker = NeuroID.trackers[className] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
+            NeuroID.trackers[className] = tracker
+            return tracker
+        }
     }
 
     func captureEvent(event: NIDEvent) {

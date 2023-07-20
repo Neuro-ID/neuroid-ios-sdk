@@ -43,14 +43,15 @@ internal extension NeuroIDTracker {
     }
 
     @objc func textBeginEditing(notification: Notification) {
-        if let textControl = notification.object as? UITextField {
-            // Touch event start
-            // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
-            touchEvent(sender: textControl, eventName: .touchStart)
-        } else if let textControl = notification.object as? UITextView {
-            // Touch event start
-            touchEvent(sender: textControl, eventName: .touchStart)
-        }
+//        if let textControl = notification.object as? UITextField {
+//            // Touch event start
+//            // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
+//            touchEvent(sender: textControl, eventName: .touchStart)
+        ////            print("\(Constants.debugTest.rawValue) - begin editing - \(notification)")
+//        } else if let textControl = notification.object as? UITextView {
+//            // Touch event start
+//            touchEvent(sender: textControl, eventName: .touchStart)
+//        }
         logTextEvent(from: notification, eventType: .focus)
     }
 

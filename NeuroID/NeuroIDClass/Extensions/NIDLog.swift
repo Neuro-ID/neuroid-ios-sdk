@@ -85,13 +85,17 @@ public extension NeuroID {
 func printEventData(_ mutableEvent: NIDEvent) {
     var contextString = ""
 
-    var tgString = (mutableEvent.tg?.map { key, value in
+    let tgString = (mutableEvent.tg?.map { key, value in
         let arrayString = value.toArrayString()
         return "\(key): \(arrayString != "" ? arrayString : value.toString())"
     } ?? [""]).joined(separator: ", ")
 
-    var touchesString = (mutableEvent.touches?.map { item in
+    let touchesString = (mutableEvent.touches?.map { item in
         "x=\(String("\(item.x ?? 0)")), y=\(String("\(item.y ?? 0)")), tid=\(String("\(item.tid ?? 0)"))"
+    } ?? [""]).joined(separator: ", ")
+
+    let attrsString = (mutableEvent.attrs?.map { item in
+        "\(item.n ?? "")=\(item.v ?? "")"
     } ?? [""]).joined(separator: ", ")
 
     switch mutableEvent.type {
@@ -120,8 +124,6 @@ func printEventData(_ mutableEvent: NIDEvent) {
         case NIDEventName.blur.rawValue:
             contextString = ""
 
-        case NIDEventName.click.rawValue:
-            contextString = ""
         case NIDEventName.registerTarget.rawValue:
 
             contextString = "et=\(mutableEvent.et ?? ""), rts=\(mutableEvent.rts ?? ""), ec=\(mutableEvent.ec ?? ""), v=\(mutableEvent.v ?? ""), tg=[\(tgString)]"
@@ -138,6 +140,18 @@ func printEventData(_ mutableEvent: NIDEvent) {
             contextString = ""
 //            case NIDEventName.setVariable.rawValue:
 //                contextString = mutableEvent.v ?? ""
+
+        case NIDEventName.click.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+        case NIDEventName.doubleClick.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+        case NIDEventName.longPress.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+
+        case NIDEventName.customTouchStart.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+        case NIDEventName.customTouchEnd.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
 
         case NIDEventName.cut.rawValue:
             contextString = ""

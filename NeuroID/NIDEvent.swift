@@ -69,6 +69,11 @@ public enum NIDEventName: String {
     case windowResize = "WINDOW_RESIZE"
     case deviceMotion = "DEVICE_MOTION"
     case deviceOrientation = "DEVICE_ORIENTATION"
+    
+    case customTouchStart = "CUSTOM_TOUCH_START"
+    case customTouchEnd = "CUSTOM_TOUCH_END"
+    case doubleClick = "DB_CLICK"
+    case longPress = "LONG_PRESS"
 
     var etn: String? {
         switch self {
