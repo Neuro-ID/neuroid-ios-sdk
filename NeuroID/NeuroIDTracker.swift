@@ -77,6 +77,7 @@ public class NeuroIDTracker: NSObject {
         case is UITextField:
             let tfView = v as! UITextField
             NeuroID.registeredTargets.append(tfView.id)
+            tfView.addTapGesture()
 
 //           @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
 //            // Add view on top of textfield to get taps

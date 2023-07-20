@@ -98,7 +98,7 @@ func captureTouchEvent(type: NIDEventName, view: UIView?, location: CGPoint, ext
         return
     }
 
-    var tg: [String: TargetValue] = [
+    let tg: [String: TargetValue] = [
         "tgs": TargetValue.string(viewName),
         "etn": TargetValue.string(viewClass),
     ]
@@ -112,7 +112,7 @@ func captureTouchEvent(type: NIDEventName, view: UIView?, location: CGPoint, ext
         attrs.append(Attrs(n: key, v: value))
     }
 
-    var newEvent = NIDEvent(type: type, tg: tg)
+    let newEvent = NIDEvent(type: type, tg: tg)
     newEvent.tgs = viewName
     newEvent.attrs = attrs
     newEvent.touches = [
