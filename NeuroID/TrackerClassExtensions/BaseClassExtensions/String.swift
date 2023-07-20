@@ -48,6 +48,10 @@ public extension String {
         }
         return ""
     }
+
+    func hashValue() -> String {
+        return sha256().prefix(8).string
+    }
 }
 
 /** Base 64 Encode/Decoding

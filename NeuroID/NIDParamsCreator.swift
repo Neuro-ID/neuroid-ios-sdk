@@ -48,7 +48,7 @@ enum ParamsCreator {
             let inputValue = attrParams?["v"] as? String ?? "\(Constants.eventValuePrefix.rawValue)"
             let attrVal = Attr(n: "v", v: inputValue)
             let textValue = attrParams?["hash"] as? String ?? ""
-            let hashValue = Attr(n: "hash", v: textValue.sha256().prefix(8).string)
+            let hashValue = Attr(n: "hash", v: textValue.hashValue())
             let attrArraryVal: [Attr] = [attrVal, hashValue]
 
             params = [

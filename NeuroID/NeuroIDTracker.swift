@@ -108,6 +108,7 @@ public class NeuroIDTracker: NSObject {
         case is UITextView:
             let tv = v as! UITextView
             NeuroID.registeredTargets.append(tv.id)
+            tv.addTapGesture()
 
             let temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 

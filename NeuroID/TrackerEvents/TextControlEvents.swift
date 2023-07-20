@@ -83,8 +83,8 @@ internal extension NeuroIDTracker {
 
             let inputType = "text"
             let textValue = textControl.text ?? ""
-            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textControl.text?.count ?? 0)"
-            let hashValue = textControl.text?.sha256().prefix(8).string
+            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textValue.count)"
+            let hashValue = textValue.hashValue()
             let tgs = TargetValue.string(textControl.id)
             let attrParams = ["v": lengthValue, "hash": textValue]
 

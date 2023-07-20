@@ -45,20 +45,23 @@ internal extension UITextField {
     }
 
     @objc func handleSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        self.captureTouchInfo(gestureRecognizer: gestureRecognizer, type: NIDEventName.click)
+        let location = gestureRecognizer.location(in: self)
+        captureTouchEvent(type: NIDEventName.click, view: gestureRecognizer.view, location: location)
         self.becomeFirstResponder()
     }
 
     @objc func handleDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        self.captureTouchInfo(gestureRecognizer: gestureRecognizer, type: NIDEventName.doubleClick)
+        let location = gestureRecognizer.location(in: self)
+        captureTouchEvent(type: NIDEventName.doubleClick, view: gestureRecognizer.view, location: location)
         self.becomeFirstResponder()
     }
 
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        let location = gestureRecognizer.location(in: self)
         if gestureRecognizer.state == .began {
-            self.captureLongTouchInfo(gestureRecognizer: gestureRecognizer, type: NIDEventName.longPress, beginEndType: "start")
+            captureTouchEvent(type: NIDEventName.longPress, view: gestureRecognizer.view, location: location, extraAttr: ["type": "start"])
         } else if gestureRecognizer.state == .ended {
-            self.captureLongTouchInfo(gestureRecognizer: gestureRecognizer, type: NIDEventName.longPress, beginEndType: "end")
+            captureTouchEvent(type: NIDEventName.longPress, view: gestureRecognizer.view, location: location, extraAttr: ["type": "end"])
         }
         self.becomeFirstResponder()
     }
@@ -67,22 +70,30 @@ internal extension UITextField {
         let textField = UITextField.self
 
         textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.cut(_:)),
+                           swizzledSelector: #selector(textField.neuroIDCut))
+
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.copy(_:)),
+                           swizzledSelector: #selector(textField.neuroIDCopy))
+
+        textFieldSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
                            swizzledSelector: #selector(textField.neuroIDPaste))
     }
 
+    @objc func neuroIDCut(caller: UIResponder) {
+        self.neuroIDCut(caller: caller)
+        captureContextMenuAction(type: NIDEventName.cut, view: self, text: text, className: className)
+    }
+
+    @objc func neuroIDCopy(caller: UIResponder) {
+        self.neuroIDCopy(caller: caller)
+        captureContextMenuAction(type: NIDEventName.copy, view: self, text: text, className: className)
+    }
+
     @objc func neuroIDPaste(caller: UIResponder) {
         self.neuroIDPaste(caller: caller)
-        neuroIDPasteUtil(caller: caller, view: self, text: text, className: className)
-    }
-
-    func captureTouchInfo(gestureRecognizer: UITapGestureRecognizer, type: NIDEventName) {
-        let location = gestureRecognizer.location(in: self)
-        captureTouchEvent(type: type, view: gestureRecognizer.view, location: location)
-    }
-
-    func captureLongTouchInfo(gestureRecognizer: UILongPressGestureRecognizer, type: NIDEventName, beginEndType: String) {
-        let location = gestureRecognizer.location(in: self)
-        captureTouchEvent(type: type, view: gestureRecognizer.view, location: location, extraAttr: ["type": beginEndType])
+        captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
     }
 }
