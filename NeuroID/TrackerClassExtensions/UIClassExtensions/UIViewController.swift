@@ -193,10 +193,13 @@ internal extension UIViewController {
         allViewControllers.append(self)
         registerSubViewsTargets(subViewControllers: allViewControllers)
         registerViews = view.subviewsDescriptions
+
+        NeuroID.registerKeyboardListener(className: className, view: self)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
+        NeuroID.removeKeyboardListener(className: className, view: self)
     }
 
     @objc func neuroIDViewDidLayoutSubviews() {
@@ -226,5 +229,59 @@ internal extension UIViewController {
             }
             self.registerViews = view.subviewsDescriptions
         }
+    }
+
+    @objc func keyboardWillShow(notification: Notification) {
+        // Handle keyboard will show event - potentially fires twice (might be a simulator bug)
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            // Determine the safe area insets of the device
+            var safeAreaInsets: UIEdgeInsets = .zero
+            if #available(iOS 11.0, *) {
+                safeAreaInsets = view.safeAreaInsets
+            }
+
+            // Compare the bottom of the keyboard frame with the bottom of the screen
+            let keyboardBottomY = keyboardFrame.origin.y + keyboardFrame.size.height
+            let screenBottomY = UIScreen.main.bounds.size.height - safeAreaInsets.bottom
+            var inSafeArea = false
+            if keyboardBottomY <= screenBottomY {
+                inSafeArea = true
+            }
+
+            if NeuroID.isStopped() {
+                return
+            }
+
+            let event = NIDEvent(type: NIDEventName.windowResize)
+
+            event.w = keyboardFrame.size.width
+            event.h = keyboardFrame.size.height
+            event.x = keyboardFrame.origin.x
+            event.y = keyboardFrame.origin.y
+            event.tgs = view.id
+            event.attrs = [
+                Attrs(n: "inSafeArea", v: "\(inSafeArea)"),
+                Attrs(n: "appear", v: "\(true)"),
+            ]
+
+            // Make sure we have a valid url set
+            event.url = className
+            DataStore.insertEvent(screen: className, event: event)
+        }
+    }
+
+    @objc func keyboardWillHide(notification: Notification) {
+        // Handle keyboard will hide event - Does not recieve any X, Y, W, H information
+
+        let event = NIDEvent(type: NIDEventName.windowResize)
+
+        event.tgs = view.id
+        event.attrs = [
+            Attrs(n: "appear", v: "\(false)"),
+        ]
+
+        // Make sure we have a valid url set
+        event.url = className
+        DataStore.insertEvent(screen: className, event: event)
     }
 }

@@ -64,4 +64,22 @@ public extension NeuroID {
         saveEventToLocalDataStore(setCustomVariable)
         return setCustomVariable
     }
+
+    internal static func registerKeyboardListener(className: String, view: UIViewController) {
+        if !self.observingKeyboard, className == "UIHostingController<RootView>" {
+            self.observingKeyboard.toggle()
+
+            NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        }
+    }
+
+    internal static func removeKeyboardListener(className: String, view: UIViewController) {
+        if self.observingKeyboard, className == "UIHostingController<RootView>" {
+            self.observingKeyboard.toggle()
+
+            NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillShowNotification, object: nil)
+            NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillHideNotification, object: nil)
+        }
+    }
 }

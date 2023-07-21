@@ -47,6 +47,7 @@ public enum NeuroID {
     public static var collectorURLFromConfig: String?
     public static var isSDKStarted = false
     public static var observingInputs = false
+    internal static var observingKeyboard = false
 
     internal static var verifyIntegrationHealth: Bool = false
     internal static var debugIntegrationHealthEvents: [NIDEvent] = []

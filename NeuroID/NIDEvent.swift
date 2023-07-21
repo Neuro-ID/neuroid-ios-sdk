@@ -69,7 +69,7 @@ public enum NIDEventName: String {
     case windowResize = "WINDOW_RESIZE"
     case deviceMotion = "DEVICE_MOTION"
     case deviceOrientation = "DEVICE_ORIENTATION"
-    
+
     case customTouchStart = "CUSTOM_TOUCH_START"
     case customTouchEnd = "CUSTOM_TOUCH_END"
     case doubleClick = "DB_CLICK"
@@ -243,6 +243,8 @@ public class NIDEvent: Codable {
     var ts: Int64 = ParamsCreator.getTimeStamp()
     var x: CGFloat?
     var y: CGFloat?
+    var h: CGFloat?
+    var w: CGFloat?
     var f: String?
     var lsid: String?
     var sid: String? // Done
@@ -541,6 +543,8 @@ public class NIDEvent: Codable {
         copy.ts = self.ts
         copy.x = self.x
         copy.y = self.y
+        copy.h = self.h
+        copy.w = self.w
         copy.f = self.f
         copy.lsid = self.lsid
         copy.sid = self.sid

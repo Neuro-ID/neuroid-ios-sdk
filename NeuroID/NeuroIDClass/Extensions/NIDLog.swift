@@ -159,8 +159,8 @@ func printEventData(_ mutableEvent: NIDEvent) {
             contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
         case NIDEventName.paste.rawValue:
             contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
-//            case NIDEventName.windowResize.rawValue:
-//                contextString = "h=\(mutableEvent.h), w=\(mutableEvent.w)"
+        case NIDEventName.windowResize.rawValue:
+            contextString = "h=\(mutableEvent.h ?? 0), w=\(mutableEvent.w ?? 0)"
         case NIDEventName.selectChange.rawValue:
             contextString = "tg=\(tgString)"
         case NIDEventName.windowLoad.rawValue:
