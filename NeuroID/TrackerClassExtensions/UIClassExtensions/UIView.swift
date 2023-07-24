@@ -59,11 +59,13 @@ public extension UIView {
                 // Fallback on earlier versions
             }
             title = "\(className)_\(title)"
-            let backupName = "\(description.hashValue)"
+            var backupName = "\(description.hashValue)"
 
             var placeholder = ""
             if let textControl = self as? UITextField {
                 placeholder = textControl.placeholder ?? ""
+            } else if let textControl = self as? UIDatePicker {
+                backupName = "\(textControl.hash)"
             }
 
             //            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")

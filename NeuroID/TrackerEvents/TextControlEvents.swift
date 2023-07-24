@@ -135,7 +135,7 @@ internal extension NeuroIDTracker {
                 if textControl.textContentType == .newPassword { return }
             }
 
-            let hashValue = textControl.text?.sha256().prefix(8).string
+            let hashValue = textControl.text?.hashValue()
             let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textControl.text?.count ?? 0)"
             if eventType == NIDEventName.input {
                 NIDPrintLog("NID keydown field = <\(textControl.id)>")

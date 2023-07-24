@@ -307,7 +307,7 @@ class EventTests: XCTestCase {
         // Create Input
         textfield.text = "text"
         let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textfield.text?.count ?? 0)"
-        let hashValue = textfield.text?.sha256().prefix(8).string
+        let hashValue = textfield.text?.hashValue()
         let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text ?? "emptyHash"])
         var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
         inputEvent.v = lengthValue
@@ -324,7 +324,7 @@ class EventTests: XCTestCase {
         textChangeEvent.v = lengthValue
         var shaText = textfield.text ?? ""
         if shaText != "" {
-            shaText = shaText.sha256().prefix(8).string
+            shaText = shaText.hashValue()
         }
         textChangeEvent.hv = shaText
         textChangeEvent.tgs = TargetValue.string(textfield.id).toString()

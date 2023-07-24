@@ -32,7 +32,7 @@ public extension NeuroID {
         let guid = UUID().uuidString
         let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: nil, screenName: screenName)
         var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: id, en: id, etn: "INPUT", et: "\(className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(placeHolder.count)", url: screenName)
-        nidEvent.hv = placeHolder.sha256().prefix(8).string
+        nidEvent.hv = placeHolder.hashValue()
         let attrVal = Attrs(n: "guid", v: guid)
         // Screen hierarchy
         let shVal = Attrs(n: "screenHierarchy", v: fullViewString)
