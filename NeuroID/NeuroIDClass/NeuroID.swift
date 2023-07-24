@@ -72,8 +72,6 @@ public enum NeuroID {
 
         // Reset tab id on configure
         UserDefaults.standard.set(nil, forKey: Constants.storageTabIdKey.rawValue)
-
-        NeuroID.createSession()
     }
 
     // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
