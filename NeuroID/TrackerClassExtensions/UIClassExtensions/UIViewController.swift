@@ -254,14 +254,19 @@ internal extension UIViewController {
 
             let event = NIDEvent(type: NIDEventName.windowResize)
 
-            event.w = keyboardFrame.size.width
-            event.h = keyboardFrame.size.height
+            event.w = UIScreen.main.bounds.size.width - keyboardFrame.size.width
+            event.h = UIScreen.main.bounds.size.height - keyboardFrame.size.height
             event.x = keyboardFrame.origin.x
             event.y = keyboardFrame.origin.y
             event.tgs = view.id
             event.attrs = [
                 Attrs(n: "inSafeArea", v: "\(inSafeArea)"),
                 Attrs(n: "appear", v: "\(true)"),
+
+                Attrs(n: "keyboardW", v: "\(keyboardFrame.size.width)"),
+                Attrs(n: "keyboardH", v: "\(keyboardFrame.size.height)"),
+                Attrs(n: "keyboardX", v: "\(keyboardFrame.origin.x)"),
+                Attrs(n: "keyboardY", v: "\(keyboardFrame.origin.y)"),
             ]
 
             // Make sure we have a valid url set
@@ -275,6 +280,8 @@ internal extension UIViewController {
 
         let event = NIDEvent(type: NIDEventName.windowResize)
 
+        event.w = UIScreen.main.bounds.size.width
+        event.h = UIScreen.main.bounds.size.height
         event.tgs = view.id
         event.attrs = [
             Attrs(n: "appear", v: "\(false)"),

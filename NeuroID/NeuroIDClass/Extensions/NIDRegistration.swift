@@ -66,7 +66,7 @@ public extension NeuroID {
     }
 
     internal static func registerKeyboardListener(className: String, view: UIViewController) {
-        if !self.observingKeyboard, className == "UIHostingController<RootView>" {
+        if !self.observingKeyboard {
             self.observingKeyboard.toggle()
 
             NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -75,7 +75,7 @@ public extension NeuroID {
     }
 
     internal static func removeKeyboardListener(className: String, view: UIViewController) {
-        if self.observingKeyboard, className == "UIHostingController<RootView>" {
+        if self.observingKeyboard {
             self.observingKeyboard.toggle()
 
             NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillShowNotification, object: nil)

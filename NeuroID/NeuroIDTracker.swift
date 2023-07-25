@@ -174,7 +174,7 @@ public class NeuroIDTracker: NSObject {
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)
 
-                NIDPrintLog("\(Constants.debugTest.rawValue) *****************   Actually Registered View: \(element.className) - \(element.id)-")
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UISlider:
                 let element = v as! UISlider
                 NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")

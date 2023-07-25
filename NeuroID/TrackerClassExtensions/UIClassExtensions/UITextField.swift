@@ -40,8 +40,8 @@ internal extension UITextField {
         // Ensure that single-tap gesture is recognized before double-tap gesture
         singleTapGesture.require(toFail: doubleTapGesture)
 
-//        // Ensure that the single-tap gesture is recognized before the long-press gesture
-//        singleTapGesture.require(toFail: longPressGesture)
+        // Ensure that the single-tap gesture is recognized before the long-press gesture
+        singleTapGesture.require(toFail: longPressGesture)
     }
 
     @objc func handleSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
