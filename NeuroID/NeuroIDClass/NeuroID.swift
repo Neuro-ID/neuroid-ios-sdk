@@ -136,6 +136,7 @@ public enum NeuroID {
         UITextView.startSwizzling()
         UINavigationController.swizzleNavigation()
         UITableView.tableviewSwizzle()
+//        UIScrollView.startSwizzlingUIScroll()
 //        UIButton.startSwizzling()
     }
 
