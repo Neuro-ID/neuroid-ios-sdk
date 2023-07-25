@@ -71,7 +71,7 @@ public class NeuroIDTracker: NSObject {
         if #available(iOS 13.0, *) {
             switch v {
                 case is Button<Text>:
-                    let tfView = v as! Button<Text>
+                    let element = v as! Button<Text>
 
                     NIDPrintLog("\(Constants.debugTest.rawValue) ******************** SWIFTUI BUTTTON Text")
                 default:
@@ -82,12 +82,12 @@ public class NeuroIDTracker: NSObject {
 //        if #available(iOS 14.0, *) {
 //            switch v {
 //                case is Button<Label>:
-//                    let tfView = v as! Button<Label>
+//                    let element = v as! Button<Label>
 //
 //                    NIDPrintLog("\(Constants.debugTest.rawValue) ******************** SWIFTUI BUTTTON LABEL")
 //
 //                case is Button<Text>:
-//                    let tfView = v as! Button<Text>
+//                    let element = v as! Button<Text>
 //
 //                    NIDPrintLog("\(Constants.debugTest.rawValue) ******************** SWIFTUI BUTTTON Text")
 //                default:
@@ -97,41 +97,39 @@ public class NeuroIDTracker: NSObject {
 
         switch v {
 //        case is UIView:
-//            let tfView = v as! UIView
-//            let touchListener = UITapGestureRecognizer(target: tfView, action: #selector(self.neuroTextTouchListener(_:)))
-//            tfView.addGestureRecognizer(touchListener)
+//            let element = v as! UIView
+//            let touchListener = UITapGestureRecognizer(target: element, action: #selector(self.neuroTextTouchListener(_:)))
+//            element.addGestureRecognizer(touchListener)
 
 //            case is UILabel:
-//                let tfView = v as! UILabel
+//                let element = v as! UILabel
 //
-//                NIDPrintLog("\(Constants.debugTest.rawValue) ******************** Label \(tfView.text) \(tfView.id)")
+//                NIDPrintLog("\(Constants.debugTest.rawValue) ******************** Label \(element.text) \(element.id)")
 
             case is UITextField:
-                let tfView = v as! UITextField
-                NeuroID.registeredTargets.append(tfView.id)
-                tfView.addTapGesture()
+                //           @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
+                //            // Add view on top of textfield to get taps
+                //            var invisView = UIView.init(frame: element.frame)
+                //            invisView.backgroundColor = UIColor(red: 100.0, green: 0.0, blue: 0.0, alpha: 0.0)
+                //
+                //            invisView.backgroundColor = UIColor(red: 0.8, green: 0.1, blue: 0.5, alpha: 1)
+                //            element.addSubview(invisView)
+                //            let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
+                //            invisView.addGestureRecognizer(tap)
+                //            invisView.superview?.bringSubviewToFront(invisView)
+                //            invisView.superview?.layer.zPosition = 10000000
 
-//           @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
-//            // Add view on top of textfield to get taps
-//            var invisView = UIView.init(frame: tfView.frame)
-//            invisView.backgroundColor = UIColor(red: 100.0, green: 0.0, blue: 0.0, alpha: 0.0)
-//
-//            invisView.backgroundColor = UIColor(red: 0.8, green: 0.1, blue: 0.5, alpha: 1)
-//            tfView.addSubview(invisView)
-//            let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
-//            invisView.addGestureRecognizer(tap)
-//            invisView.superview?.bringSubviewToFront(invisView)
-//            invisView.superview?.layer.zPosition = 10000000
+                let element = v as! UITextField
+                NeuroID.registeredTargets.append(element.id)
+                element.addTapGesture()
 
                 // use existing value if exists, otherwise use the placeholder
-                var textValue = tfView.text
-                if textValue?.count == 0 {
-                    textValue = tfView.placeholder
-                }
+                // check if value is placeholder else send 0
+                var textValue = element.text
 
                 let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tfView.id, en: tfView.id, etn: "INPUT", et: "UITextField::\(tfView.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(textValue?.count ?? 0)", url: screenName)
+                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "INPUT", et: "UITextField::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(textValue?.count ?? 0)", url: screenName)
 
                 // If RTS is set, set rts on focus events
                 nidEvent.setRTS(rts)
@@ -142,72 +140,68 @@ public class NeuroIDTracker: NSObject {
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)
 
-                NIDPrintLog("*****************   Actually Registered View: \(tfView.className) - \(tfView.id)")
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)")
             case is UITextView:
-                let tv = v as! UITextView
-                NeuroID.registeredTargets.append(tv.id)
-                tv.addTapGesture()
+                let element = v as! UITextView
+                NeuroID.registeredTargets.append(element.id)
+                element.addTapGesture()
 
                 let temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tv.id, en: tv.id, etn: "INPUT", et: "UITextView::\(tv.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(tv.text?.count ?? 0)", url: screenName)
+                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "INPUT", et: "UITextView::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(element.text?.count ?? 0)", url: screenName)
 
                 // If RTS is set, set rts on focus events
                 nidEvent.setRTS(rts)
 
-                nidEvent.hv = tv.text?.hashValue()
+                nidEvent.hv = element.text?.hashValue()
                 nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
                 nidEvent.attrs = [attrVal, shVal]
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)
 
-                NIDPrintLog("*****************   Actually Registered View: \(tv.className) - \(tv.id)")
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)")
             case is UIButton:
-                let tb = v as! UIButton
-                NeuroID.registeredTargets.append(tb.id)
+                let element = v as! UIButton
+                NeuroID.registeredTargets.append(element.id)
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: tb.id, en: tb.id, etn: "BUTTON", et: "UIButton::\(tb.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(tb.titleLabel?.text?.count ?? 0)", url: screenName)
+                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "BUTTON", et: "UIButton::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(element.titleLabel?.text?.count ?? 0)", url: screenName)
                 // If RTS is set, set rts on focus events
                 nidEvent.setRTS(rts)
 
-                nidEvent.hv = tb.titleLabel?.text?.hashValue()
+                nidEvent.hv = element.titleLabel?.text?.hashValue()
                 nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
                 nidEvent.attrs = [attrVal, shVal]
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)
 
-                NIDPrintLog("\(Constants.debugTest.rawValue) *****************   Actually Registered View: \(tb.className) - \(tb.id)-")
+                NIDPrintLog("\(Constants.debugTest.rawValue) *****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UISlider:
-                let slider = v as! UISlider
-                NIDPrintLog("Slider")
-
-                NIDPrintLog("*****************   Actually Registered View: \(slider.className) - \(slider.id)-")
+                let element = v as! UISlider
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UISwitch:
-                let uiSwitch = v as! UISwitch
-                NIDPrintLog("Switch")
-
-                NIDPrintLog("*****************   Actually Registered View: \(uiSwitch.className) - \(uiSwitch.id)-")
+                let element = v as! UISwitch
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UITableViewCell:
-                let tableView = v as! UITableViewCell
-                NIDPrintLog("Table view cell")
-
-                NIDPrintLog("*****************   Actually Registered View: \(tableView.className) - \(tableView.id)-")
+                let element = v as! UITableViewCell
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UIPickerView:
-                let pv = v as! UIPickerView
-                NIDPrintLog("Picker")
+                let element = v as! UIPickerView
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
 
-                NIDPrintLog("*****************   Actually Registered View: \(pv.className) - \(pv.id)-")
+            case is UIScrollView:
+                let element = v as! UIScrollView
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UIDatePicker:
-                let dp = v as! UIDatePicker
-                NeuroID.registeredTargets.append(dp.id)
+                let element = v as! UIDatePicker
+                NeuroID.registeredTargets.append(element.id)
 
                 let df = DateFormatter()
                 df.dateFormat = "yyyy-MM-dd hh:mm:ss"
-                let dpValue = df.string(from: dp.date)
+                let dpValue = df.string(from: element.date)
 
                 let temp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: dp.id, en: dp.id, etn: "INPUT", et: "UIDatePicker::\(dp.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(dpValue.count)", url: screenName)
+                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "INPUT", et: "UIDatePicker::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(dpValue.count)", url: screenName)
                 // If RTS is set, set rts on focus events
                 nidEvent.setRTS(rts)
                 nidEvent.hv = dpValue.hashValue()
@@ -216,9 +210,9 @@ public class NeuroIDTracker: NSObject {
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)
 
-                NIDPrintLog("*****************   Actually Registered View: \(dp.className) - \(dp.id)")
+                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)")
             default:
-                let view = v as! UIView
+                let element = v as! UIView
 //                NIDPrintLog("NOT registering: \(view.className)")
                 return
                     //        print("Unknown type", v)
