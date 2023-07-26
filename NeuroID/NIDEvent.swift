@@ -72,8 +72,10 @@ public enum NIDEventName: String {
 
     case customTouchStart = "CUSTOM_TOUCH_START"
     case customTouchEnd = "CUSTOM_TOUCH_END"
+    case customDoubleTap = "CUSTOM_DOUBLE_TAP"
+    case customTap = "CUSTOM_TAP"
+    case customLongPress = "CUSTOM_LONG_PRESS"
     case doubleClick = "DB_CLICK"
-    case longPress = "LONG_PRESS"
 
     var etn: String? {
         switch self {
