@@ -85,17 +85,12 @@ enum ParamsCreator {
         } else if let control = sender as? UISlider {
             tg["value"] = TargetValue.double(Double(control.value))
         } else if let control = sender as? UIDatePicker {
-            let df = DateFormatter()
-            df.dateFormat = "yyyy-MM-dd hh:mm:ss"
-            let dpValue = df.string(from: control.date)
-
-            tg["value"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(dpValue.count)")
+            tg["value"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(control.date.toString().count)")
         }
         return tg
     }
 
     static func getCopyTgParams() -> [String: TargetValue] {
-        let val = UIPasteboard.general.string ?? ""
         return ["content": TargetValue.string(UIPasteboard.general.string ?? "")]
     }
 
@@ -115,7 +110,7 @@ enum ParamsCreator {
             "clientId": ParamsCreator.getClientId(),
             "environment": NeuroID.getEnvironment,
             "sdkVersion": ParamsCreator.getSDKVersion(),
-            "pageTag": NeuroID.getScreenName,
+            "pageTag": NeuroID.getScreenName(),
             "responseId": ParamsCreator.generateUniqueHexId(),
             "siteId": NeuroID.siteId,
             "userId": ParamsCreator.getUserID() ?? nil,

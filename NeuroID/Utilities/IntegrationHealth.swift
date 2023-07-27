@@ -121,7 +121,7 @@ internal extension NeuroID {
 
     static func captureIntegrationHealthEvent(_ event: NIDEvent) {
         shouldDebugIntegrationHealth {
-            NIDPrintLog("Adding NID Health Event \(event.type)")
+            NIDDebugPrint(tag: "\(Constants.integrationHealthTag.rawValue)", "Adding NID Health Event \(event.type)")
             debugIntegrationHealthEvents.append(event)
         }
     }

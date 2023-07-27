@@ -82,7 +82,7 @@ public extension NeuroID {
     }
 }
 
-func printEventData(_ mutableEvent: NIDEvent) {
+func NIDPrintEvent(_ mutableEvent: NIDEvent) {
     var contextString = ""
 
     let tgString = (mutableEvent.tg?.map { key, value in
@@ -141,11 +141,11 @@ func printEventData(_ mutableEvent: NIDEvent) {
 //            case NIDEventName.setVariable.rawValue:
 //                contextString = mutableEvent.v ?? ""
 
-        case NIDEventName.click.rawValue:
+        case NIDEventName.customTap.rawValue:
             contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
-        case NIDEventName.doubleClick.rawValue:
+        case NIDEventName.customDoubleTap.rawValue:
             contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
-        case NIDEventName.longPress.rawValue:
+        case NIDEventName.customLongPress.rawValue:
             contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
 
         case NIDEventName.customTouchStart.rawValue:
@@ -171,12 +171,32 @@ func printEventData(_ mutableEvent: NIDEvent) {
             contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
         case NIDEventName.windowFocus.rawValue:
             contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
-//            case NIDEventName.contextMenu.rawValue:
-//                contextString = ""
+        case NIDEventName.deviceOrientation.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.windowOrientationChange.rawValue:
+            contextString = "tg=\(tgString)"
 
         default:
             contextString = ""
     }
 
-    NIDPrintLog("DEBUG EVENT: \(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDDebugPrint(tag: "NID Event:", "\(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+}
+
+func NIDPrintLog(_ strings: Any...) {
+    if NeuroID.isStopped() {
+        return
+    }
+    if NeuroID.logVisible {
+        Swift.print(strings)
+    }
+}
+
+func NIDDebugPrint(tag: String = "\(Constants.debugTag.rawValue)", _ strings: Any...) {
+    if NeuroID.isStopped() || NeuroID.getEnvironment() != "TEST" {
+        return
+    }
+    if NeuroID.logVisible {
+        Swift.print("\(tag) \(strings)")
+    }
 }

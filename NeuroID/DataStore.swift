@@ -48,7 +48,7 @@ public enum DataStore {
         
         NeuroID.captureIntegrationHealthEvent(mutableEvent.copy())
         
-        printEventData(mutableEvent)
+        NIDPrintEvent(mutableEvent)
  
         DispatchQueue.global(qos: .utility).sync {
             DataStore.events.append(mutableEvent)

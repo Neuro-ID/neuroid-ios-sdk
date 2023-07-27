@@ -35,6 +35,8 @@ internal enum Constants: String {
 
     case eventValuePrefix = "S~C~~"
     
-    
+    case debugTag = "NID Debug:"
+    case integrationHealthTag = "NID IH:"
+    case extraInfoTag = "NID Extra:"
     case debugTest = "TEST: "
 }
