@@ -50,6 +50,12 @@ public extension UIView {
                 backupName = "\(textControl.hash)"
             } else if let textControl = self as? UIButton {
                 backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UISlider {
+                backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UISegmentedControl {
+                backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UISwitch {
+                backupName = "\(textControl.hash)"
             }
 
             //            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")
