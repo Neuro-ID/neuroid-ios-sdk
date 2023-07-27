@@ -497,6 +497,7 @@ public class NIDEvent: Codable {
         self.tg = newTg
         self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
         self.ts = ParamsCreator.getTimeStamp()
+
         switch type {
         case .touchStart, .touchMove, .touchEnd, .touchCancel:
             let touch = NIDTouches(x: view?.frame.origin.x, y: view?.frame.origin.y, tid: Int.random(in: 0 ... 10000))

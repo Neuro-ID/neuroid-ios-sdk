@@ -252,7 +252,7 @@ internal extension UIViewController {
 
             let event = NIDEvent(type: NIDEventName.windowResize)
 
-            event.w = UIScreen.main.bounds.size.width - keyboardFrame.size.width
+            event.w = UIScreen.main.bounds.size.width
             event.h = UIScreen.main.bounds.size.height - keyboardFrame.size.height
             event.x = keyboardFrame.origin.x
             event.y = keyboardFrame.origin.y

@@ -125,6 +125,10 @@ public class NeuroIDTracker: NSObject {
 
                 value = "\(element.value)"
                 type = "UISlider"
+                extraAttrs = [
+                    Attrs(n: "minValue", v: "\(element.minimumValue)"),
+                    Attrs(n: "maxValue", v: "\(element.maximumValue)"),
+                ]
 
                 found = true
 
