@@ -414,12 +414,15 @@ class NIDParamsCreatorTests: XCTestCase {
     func test_getUserID_random() {
         let expectedValue = "test_uid"
 
+        NeuroID.start()
+
         try? NeuroID.setUserID("random")
-//        UserDefaults.standard.set(expectedValue, forKey: uidKey)
 
         let value = ParamsCreator.getUserID()
 
         assert(value != expectedValue)
+
+        NeuroID.stop()
     }
 
     let didKey = Constants.storageDeviceIdKey.rawValue

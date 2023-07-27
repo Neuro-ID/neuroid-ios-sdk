@@ -8,24 +8,6 @@
 import Foundation
 import UIKit
 
-// MARK: - Swizzling
-
-private extension UIView {
-    // Add tap recognizer to all views?
-
-//    func test(view: UIView){
-
-//    }
-//    @objc static func startSwizzling() {
-//        test(self.viewWithTag(self))
-    ////        UIView.self.addGestureRecognizer(touchListener)
-//    }
-//
-//    convenience private override init() {
-//        print("hi")
-//    }
-}
-
 /***
  Anytime a view loads
  Check child subviews for eligible form events
@@ -54,7 +36,7 @@ public extension UIView {
 
             if #available(iOS 13.0, *) {
                 title = "UNKNOWN_NO_ID_SET"
-                title.replacingOccurrences(of: " ", with: "_")
+                title = title.replacingOccurrences(of: " ", with: "_")
             } else {
                 // Fallback on earlier versions
             }

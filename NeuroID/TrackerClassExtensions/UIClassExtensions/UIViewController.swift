@@ -12,7 +12,7 @@ private func registerSubViewsTargets(subViewControllers: [UIViewController]) {
     let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
     for ctrls in filtered {
         let screenName = ctrls.className
-        NIDPrintLog("Registering view controllers \(screenName)")
+        NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering view controllers \(screenName)")
         guard let view = ctrls.view else {
             return
         }
@@ -21,7 +21,7 @@ private func registerSubViewsTargets(subViewControllers: [UIViewController]) {
         NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
         let childViews = ctrls.view.subviewsRecursive()
         for _view in childViews {
-            NIDPrintLog("Registering single view.")
+            NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering single view.")
             NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
         }
     }
@@ -187,7 +187,6 @@ internal extension UIViewController {
         }
         // We need to init the tracker on the views.
         tracker
-//        captureEvent(eventName: .windowFocus)
         var subViews = view.subviews
         var allViewControllers = children
         allViewControllers.append(self)
@@ -208,22 +207,16 @@ internal extension UIViewController {
             return
         }
         if description.contains(className), let registerViews = registerViews {
-//            print("Old Views saved it")
-//            registerViews.forEach({ print( "Old : \($0)\n" )})
-//            print("Current Views saved it")
-//            self.view.subviews.forEach({ print( "Current : \($0.description)\n" )})
-//            print("New views to register")
             let newViews = view.subviews.filter { !$0.description.compareDescriptions(registerViews) && !ignoreLists.contains($0.className) }
-//            newViews.forEach({ print( "New : \($0.description)\n" )})
-//            print("**************************")
+
             for newView in newViews {
                 let screenName = className
-                NIDPrintLog("Registering view after load viewController")
+                NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering view after load viewController")
                 let guid = UUID().uuidString
                 NeuroIDTracker.registerSingleView(v: newView, screenName: screenName, guid: guid)
                 let childViews = newView.subviewsRecursive()
                 for _view in childViews {
-                    NIDPrintLog("Registering single subview.")
+                    NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering single subview.")
                     NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
                 }
             }

@@ -84,16 +84,28 @@ internal extension UITextView {
 
     @objc func neuroIDCut(caller: UIResponder) {
         self.neuroIDCut(caller: caller)
-        captureContextMenuAction(type: NIDEventName.cut, view: self, text: text, className: className)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.cut, view: self, text: text, className: className)
     }
 
     @objc func neuroIDCopy(caller: UIResponder) {
         self.neuroIDCopy(caller: caller)
-        captureContextMenuAction(type: NIDEventName.copy, view: self, text: text, className: className)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.copy, view: self, text: text, className: className)
     }
 
     @objc func neuroIDPaste(caller: UIResponder) {
         self.neuroIDPaste(caller: caller)
-        captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
+    }
+
+    func isSensitiveEntry() -> Bool {
+        // isSecureText
+        if #available(iOS 11.0, *) {
+            if self.textContentType == .password || self.isSecureTextEntry { return true }
+        }
+        if #available(iOS 12.0, *) {
+            if self.textContentType == .newPassword { return true }
+        }
+
+        return false
     }
 }
