@@ -77,13 +77,17 @@ enum ParamsCreator {
         if let control = sender as? UISwitch {
             tg["oldValue"] = TargetValue.bool(!control.isOn)
             tg["newValue"] = TargetValue.bool(control.isOn)
+
         } else if let control = sender as? UISegmentedControl {
-            tg["value"] = TargetValue.string(control.titleForSegment(at: control.selectedSegmentIndex) ?? "")
+            tg["value"] = TargetValue.string((control.titleForSegment(at: control.selectedSegmentIndex) ?? "").hashValue())
             tg["selectedIndex"] = TargetValue.int(control.selectedSegmentIndex)
+
         } else if let control = sender as? UIStepper {
             tg["value"] = TargetValue.double(control.value)
+
         } else if let control = sender as? UISlider {
             tg["value"] = TargetValue.double(Double(control.value))
+
         } else if let control = sender as? UIDatePicker {
             tg["value"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(control.date.toString().count)")
         }
