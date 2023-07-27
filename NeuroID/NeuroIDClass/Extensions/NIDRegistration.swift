@@ -30,7 +30,7 @@ public extension NeuroID {
     /** React Native API for manual registration */
     static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
         let guid = UUID().uuidString
-        let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: nil, screenName: screenName)
+        let fullViewString = UtilFunctions.getFullViewlURLPath(currView: nil, screenName: screenName)
         var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: id, en: id, etn: "INPUT", et: "\(className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(placeHolder.count)", url: screenName)
         nidEvent.hv = placeHolder.hashValue()
         let attrVal = Attrs(n: "guid", v: guid)
