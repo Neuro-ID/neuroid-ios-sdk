@@ -162,13 +162,18 @@ internal extension UIViewController {
     @objc func neuroIDViewWillAppear(animated: Bool) {
         neuroIDViewWillAppear(animated: animated)
         registerViews = nil
+
+        NIDDebugPrint(tag: "TEST", "WINDOW LOAD v=\(className) -\(hash)")
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: className)
     }
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         neuroIDViewWillDisappear(animated: animated)
 //        NotificationCenter.default.removeObserver(self)
         registerViews = nil
-//        captureEvent(eventName: .windowBlur)
+
+        NIDDebugPrint(tag: "TEST", "WINDOW UNLOAD v=\(className) -\(hash)")
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowUnload, id: hash.string, className: className)
     }
 
     /**

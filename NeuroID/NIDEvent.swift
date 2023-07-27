@@ -49,6 +49,8 @@ public enum NIDEventName: String {
     case keyDown = "KEY_DOWN"
     case keyUp = "KEY_UP"
     case change = "CHANGE"
+    case stepperChange = "STEPPER_CHANGE"
+    case colorWellChange = "COLOR_WELL_CHANGE"
     case selectChange = "SELECT_CHANGE"
     case textChange = "TEXT_CHANGE"
     case radioChange = "RADIO_CHANGE"
@@ -476,7 +478,7 @@ public class NIDEvent: Codable {
      */
 
     public init(type: NIDEventName, view: UIView) {
-        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
+        self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className)
         self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
     }
@@ -493,7 +495,7 @@ public class NIDEvent: Codable {
         newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
-        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
+        self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
         self.ts = ParamsCreator.getTimeStamp()
         switch type {
         case .touchStart, .touchMove, .touchEnd, .touchCancel:

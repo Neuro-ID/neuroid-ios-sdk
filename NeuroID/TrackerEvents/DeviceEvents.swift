@@ -23,7 +23,19 @@ internal extension NeuroIDTracker {
             orientation = Constants.orientationPortrait.rawValue
         }
 
-//        captureEvent(event: NIDEvent(type: NIDEventName.windowOrientationChange, tg: ["orientation": TargetValue.string(orientation)], view: nil))
-//        captureEvent(event: NIDEvent(type: NIDEventName.deviceOrientation, tg: ["orientation": TargetValue.string(orientation)], view: nil))
+        captureEvent(
+            event: NIDEvent(
+                type: NIDEventName.windowOrientationChange,
+                tg: ["orientation": TargetValue.string(orientation)],
+                view: nil
+            )
+        )
+        captureEvent(
+            event: NIDEvent(
+                type: NIDEventName.deviceOrientation,
+                tg: ["orientation": TargetValue.string(orientation)],
+                view: nil
+            )
+        )
     }
 }

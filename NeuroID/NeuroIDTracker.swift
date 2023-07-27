@@ -25,11 +25,8 @@ public class NeuroIDTracker: NSObject {
     }
 
     public func captureEvent(event: NIDEvent) {
-        if NeuroID.isStopped() {
-            return
-        }
         let screenName = screen ?? UUID().uuidString
-        var newEvent = event
+        let newEvent = event
         // Make sure we have a valid url set
         newEvent.url = NeuroID.getScreenName()
         DataStore.insertEvent(screen: screenName, event: newEvent)
@@ -39,73 +36,51 @@ public class NeuroIDTracker: NSObject {
         return UserDefaults.standard.string(forKey: Constants.storageSiteIdKey.rawValue)
     }
 
-    public static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String {
-        if currView == nil {
-            return screenName
-        }
-        let parentView = currView!.superview?.className
-        let grandParentView = currView!.superview?.superview?.className
-        var fullViewString = ""
-        if grandParentView != nil {
-            fullViewString += "\(grandParentView ?? "")/"
-            fullViewString += "\(parentView ?? "")/"
-        } else if parentView != nil {
-            fullViewString = "\(parentView ?? "")/"
-        }
-        fullViewString += screenName
-        return fullViewString
-    }
-
     public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
-        let screenName = NeuroID.getScreenName() ?? screenName
         let currView = v as? UIView
 
-        NIDPrintLog("Registering view: - id=\(currView?.id ?? "") cl=\(currView?.className ?? "")")
-        let fullViewString = NeuroIDTracker.getFullViewlURLPath(currView: currView, screenName: screenName)
+        // constants
+        let screenName = NeuroID.getScreenName() ?? screenName
+        let fullViewString = UtilFunctions.getFullViewlURLPath(currView: currView, screenName: screenName)
+        let baseAttrs = [
+            Attrs(n: "guid", v: guid),
+            Attrs(n: "screenHierarchy", v: fullViewString),
+        ]
+        let tg = ["attr": TargetValue.attr(
+            [
+                Attr(n: "screenHierarchy", v: fullViewString),
+                Attr(n: "guid", v: guid),
+            ]
+        )]
 
-        let attrVal = Attrs(n: "guid", v: guid)
-        let shVal = Attrs(n: "screenHierarchy", v: fullViewString)
-        let guidValue = Attr(n: "guid", v: guid)
-        let attrValue = Attr(n: "screenHierarchy", v: fullViewString)
+        // variables per view type
+        var value = ""
+        var etn = "INPUT"
+        let id = currView?.id ?? ""
+        let classname = currView?.className ?? ""
+        var type = ""
+        var extraAttrs: [Attrs] = []
+        var rawText = false
 
-        if #available(iOS 13.0, *) {
+        // indicate if a supported element was found
+        var found = false
+
+        if #available(iOS 14.0, *) {
             switch v {
-                case is Button<Text>:
-                    let element = v as! Button<Text>
+                case is UIColorWell:
+                    let element = v as! UIColorWell
 
-                    NIDPrintLog("\(Constants.debugTest.rawValue) ******************** SWIFTUI BUTTTON Text")
+                    value = ""
+                    type = "UIColorWell"
+
+                    found = true
+
                 default:
-                    let view = v as! UIView
+                    let e = ""
             }
         }
 
-//        if #available(iOS 14.0, *) {
-//            switch v {
-//                case is Button<Label>:
-//                    let element = v as! Button<Label>
-//
-//                    NIDPrintLog("\(Constants.debugTest.rawValue) ******************** SWIFTUI BUTTTON LABEL")
-//
-//                case is Button<Text>:
-//                    let element = v as! Button<Text>
-//
-//                    NIDPrintLog("\(Constants.debugTest.rawValue) ******************** SWIFTUI BUTTTON Text")
-//                default:
-//                    let view = v as! UIView
-//            }
-//        }
-
         switch v {
-//        case is UIView:
-//            let element = v as! UIView
-//            let touchListener = UITapGestureRecognizer(target: element, action: #selector(self.neuroTextTouchListener(_:)))
-//            element.addGestureRecognizer(touchListener)
-
-//            case is UILabel:
-//                let element = v as! UILabel
-//
-//                NIDPrintLog("\(Constants.debugTest.rawValue) ******************** Label \(element.text) \(element.id)")
-
             case is UITextField:
                 //           @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
                 //            // Add view on top of textfield to get taps
@@ -120,102 +95,110 @@ public class NeuroIDTracker: NSObject {
                 //            invisView.superview?.layer.zPosition = 10000000
 
                 let element = v as! UITextField
-                NeuroID.registeredTargets.append(element.id)
                 element.addTapGesture()
 
-                // use existing value if exists, otherwise use the placeholder
-                // check if value is placeholder else send 0
-                var textValue = element.text
+                value = element.text ?? ""
+                type = "UITextField"
 
-                let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
+                found = true
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "INPUT", et: "UITextField::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(textValue?.count ?? 0)", url: screenName)
-
-                // If RTS is set, set rts on focus events
-                nidEvent.setRTS(rts)
-
-                nidEvent.hv = textValue?.hashValue()
-                nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-                nidEvent.attrs = [attrVal, shVal]
-
-                NeuroID.saveEventToLocalDataStore(nidEvent)
-
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)")
             case is UITextView:
                 let element = v as! UITextView
-                NeuroID.registeredTargets.append(element.id)
                 element.addTapGesture()
 
-                let temp = getParentClasses(currView: currView, hierarchyString: "UITextView")
+                value = element.text ?? ""
+                type = "UITextView"
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "INPUT", et: "UITextView::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(element.text?.count ?? 0)", url: screenName)
+                found = true
 
-                // If RTS is set, set rts on focus events
-                nidEvent.setRTS(rts)
-
-                nidEvent.hv = element.text?.hashValue()
-                nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-                nidEvent.attrs = [attrVal, shVal]
-
-                NeuroID.saveEventToLocalDataStore(nidEvent)
-
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)")
             case is UIButton:
                 let element = v as! UIButton
-                NeuroID.registeredTargets.append(element.id)
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "BUTTON", et: "UIButton::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(element.titleLabel?.text?.count ?? 0)", url: screenName)
-                // If RTS is set, set rts on focus events
-                nidEvent.setRTS(rts)
+                value = element.titleLabel?.text ?? ""
+                etn = "BUTTON"
+                type = "UIButton"
 
-                nidEvent.hv = element.titleLabel?.text?.hashValue()
-                nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-                nidEvent.attrs = [attrVal, shVal]
+                found = true
 
-                NeuroID.saveEventToLocalDataStore(nidEvent)
-
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
             case is UISlider:
                 let element = v as! UISlider
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
+
+                value = "\(element.value)"
+                type = "UISlider"
+
+                found = true
+
             case is UISwitch:
                 let element = v as! UISwitch
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
-            case is UITableViewCell:
-                let element = v as! UITableViewCell
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
-            case is UIPickerView:
-                let element = v as! UIPickerView
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
 
-            case is UIScrollView:
-                let element = v as! UIScrollView
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)-")
+                value = "\(element.isOn)"
+                type = "UISwitch"
+                rawText = true
+
+                found = true
+
             case is UIDatePicker:
                 let element = v as! UIDatePicker
-                NeuroID.registeredTargets.append(element.id)
 
-                let df = DateFormatter()
-                df.dateFormat = "yyyy-MM-dd hh:mm:ss"
-                let dpValue = df.string(from: element.date)
+                value = "\(element.date.toString())"
+                type = "UIDatePicker"
 
-                let temp = getParentClasses(currView: currView, hierarchyString: "UIDatePicker")
+                found = true
 
-                var nidEvent = NIDEvent(eventName: NIDEventName.registerTarget, tgs: element.id, en: element.id, etn: "INPUT", et: "UIDatePicker::\(element.className)", ec: screenName, v: "\(Constants.eventValuePrefix.rawValue)\(dpValue.count)", url: screenName)
-                // If RTS is set, set rts on focus events
-                nidEvent.setRTS(rts)
-                nidEvent.hv = dpValue.hashValue()
-                nidEvent.tg = ["attr": TargetValue.attr([attrValue, guidValue])]
-                nidEvent.attrs = [attrVal, shVal]
+            case is UIStepper:
+                let element = v as! UIStepper
 
-                NeuroID.saveEventToLocalDataStore(nidEvent)
+                value = "\(element.value)"
+                type = "UIStepper"
+                extraAttrs = [
+                    Attrs(n: "minValue", v: "\(element.minimumValue)"),
+                    Attrs(n: "maxValue", v: "\(element.maximumValue)"),
+                ]
 
-                NIDPrintLog("*****************   Actually Registered View: \(element.className) - \(element.id)")
+                found = true
+
+            case is UISegmentedControl:
+                let element = v as! UISegmentedControl
+
+                value = "\(element.selectedSegmentIndex)"
+                type = "UISegmentedControl"
+                extraAttrs = [
+                    Attrs(n: "totalOptions", v: "\(element.numberOfSegments)"),
+                    Attrs(n: "selectedIndex", v: "\(element.selectedSegmentIndex)"),
+                ]
+                rawText = true
+
+                found = true
+
+            // UNSUPPORTED AS OF RIGHT NOW
+            case is UIPickerView:
+                let element = v as! UIPickerView
+                NIDDebugPrint(tag: "NID FE:", "Picker View Found NOT Registered: \(element.className) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
+            case is UITableViewCell:
+                // swiftUI list
+                let element = v as! UITableViewCell
+                NIDDebugPrint(tag: "NID FE:", "TABLE View Found NOT Registered: \(element.className) - \(element.id)-")
+            case is UIScrollView:
+                let element = v as! UIScrollView
+                NIDDebugPrint(tag: "NID FE:", "SCROLL View Found NOT Registered: \(element.className) - \(element.id)-")
+
             default:
-                let element = v as! UIView
-//                NIDPrintLog("NOT registering: \(view.className)")
-                return
-                    //        print("Unknown type", v)
+                if !found {
+                    return
+                }
+        }
+
+        if found {
+            UtilFunctions.registerField(textValue: value,
+                                        etn: etn,
+                                        id: id,
+                                        className: classname,
+                                        type: type,
+                                        screenName: screenName,
+                                        tg: tg,
+                                        attrs: baseAttrs + extraAttrs,
+                                        rts: rts,
+                                        rawText: rawText)
         }
         // Text
         // Inputs

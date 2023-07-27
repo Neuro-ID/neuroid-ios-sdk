@@ -103,23 +103,6 @@ class NeuroIDTrackerTests: XCTestCase {
         assert(sid == nil)
     }
     
-    func test_getFullViewlURLPath_no_view() {
-        let expectedValue = screenNameValue
-        
-        let value = NeuroIDTracker.getFullViewlURLPath(currView: nil, screenName: expectedValue)
-        
-        assert(value == expectedValue)
-    }
-    
-    func test_getFullViewlURLPath_no_parent() {
-        let expectedValue = screenNameValue
-        let uiView = UIView()
-        
-        let value = NeuroIDTracker.getFullViewlURLPath(currView: uiView, screenName: expectedValue)
-        
-        assert(value == expectedValue)
-    }
-    
     func test_registerSingleView_UITextField() {
         let uiView = UITextField()
         
@@ -144,6 +127,22 @@ class NeuroIDTrackerTests: XCTestCase {
         assertViewRegistered(v: uiView)
     }
     
+    func test_registerSingleView_UISlider() {
+        let uiView = UISlider()
+        
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        
+        assertViewRegistered(v: uiView)
+    }
+    
+    func test_registerSingleView_UISwitch() {
+        let uiView = UISwitch()
+        
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        
+        assertViewRegistered(v: uiView)
+    }
+    
     func test_registerSingleView_UIDatePicker() {
         let uiView = UIDatePicker()
         
@@ -152,16 +151,26 @@ class NeuroIDTrackerTests: XCTestCase {
         assertViewRegistered(v: uiView)
     }
     
-    func test_registerSingleView_NOT_UISlider() {
-        let uiView = UISlider()
+    func test_registerSingleView_UIStepper() {
+        let uiView = UIStepper()
         
         NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
         
-        assertViewNOTRegistered(v: uiView)
+        assertViewRegistered(v: uiView)
+        
+        // TO-DO - see why UIButtons are registering in tests
     }
     
-    func test_registerSingleView_NOT_UISwitch() {
-        let uiView = UISwitch()
+    func test_registerSingleView_UISegmentedControl() {
+        let uiView = UISegmentedControl()
+        
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        
+        assertViewRegistered(v: uiView)
+    }
+    
+    func test_registerSingleView_NOT_UIPickerView() {
+        let uiView = UIPickerView()
         
         NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
         
@@ -176,8 +185,8 @@ class NeuroIDTrackerTests: XCTestCase {
         assertViewNOTRegistered(v: uiView)
     }
     
-    func test_registerSingleView_NOT_UIPickerView() {
-        let uiView = UIPickerView()
+    func test_registerSingleView_NOT_UIScrollView() {
+        let uiView = UIScrollView()
         
         NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
         

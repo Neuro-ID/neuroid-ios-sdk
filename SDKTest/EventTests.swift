@@ -408,24 +408,24 @@ class EventTests: XCTestCase {
     }
     
     // UI Class Registrations that are NOT implemented
-    func testUISliderNotRegistered() {
+    func testUISliderRegistration() {
         NeuroID.start()
         let testView = UISlider()
         testView.id = "UISlider"
         NeuroID.manuallyRegisterTarget(view: testView)
         let events = DataStore.getAllEvents()
         let filteredRegisteredTargets = events.filter { $0.type == "REGISTER_TARGET" }
-        assert(filteredRegisteredTargets.count == 0)
+        assert(filteredRegisteredTargets.count == 1)
     }
     
-    func testUISwitchNotRegistered() {
+    func testUISwitchRegistration() {
         NeuroID.start()
         let testView = UISwitch()
         testView.id = "UISwitch"
         NeuroID.manuallyRegisterTarget(view: testView)
         let events = DataStore.getAllEvents()
         let filteredRegisteredTargets = events.filter { $0.type == "REGISTER_TARGET" }
-        assert(filteredRegisteredTargets.count == 0)
+        assert(filteredRegisteredTargets.count == 1)
     }
     
     func testUITableViewCellNotRegistered() {
