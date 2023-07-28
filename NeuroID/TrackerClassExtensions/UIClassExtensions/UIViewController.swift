@@ -270,6 +270,8 @@ internal extension UIViewController {
                 Attrs(n: "keyboardH", v: "\(keyboardFrame.size.height)"),
                 Attrs(n: "keyboardX", v: "\(keyboardFrame.origin.x)"),
                 Attrs(n: "keyboardY", v: "\(keyboardFrame.origin.y)"),
+                Attrs(n: "screenHeightTotal", v: "\(UIScreen.main.bounds.size.height)"),
+                Attrs(n: "screenWidthTotal", v: "\(UIScreen.main.bounds.size.width)"),
             ]
 
             // Make sure we have a valid url set

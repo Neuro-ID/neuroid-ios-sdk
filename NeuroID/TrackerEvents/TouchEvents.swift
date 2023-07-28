@@ -19,7 +19,6 @@ internal extension NeuroIDTracker {
 
     @objc func controlTouchStart(sender: UIView) {
         NeuroID.activeView = sender
-//        print("**** TOUCH SENDER \(sender.id)")
         touchEvent(sender: sender, eventName: .touchStart)
     }
 
