@@ -11,19 +11,19 @@ import UIKit
 internal extension UINavigationController {
     static func swizzleNavigation() {
         let screen = UINavigationController.self
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.popViewController),
-                  swizzledSelector: #selector(screen.neuroIDPopViewController(animated:)))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.popToViewController(_:animated:)),
-                  swizzledSelector: #selector(screen.neuroIDPopToViewController(_:animated:)))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.popToRootViewController),
-                  swizzledSelector: #selector(screen.neuroIDPopToRootViewController))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.popViewController),
+                        swizzledSelector: #selector(screen.neuroIDPopViewController(animated:)))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.popToViewController(_:animated:)),
+                        swizzledSelector: #selector(screen.neuroIDPopToViewController(_:animated:)))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.popToRootViewController),
+                        swizzledSelector: #selector(screen.neuroIDPopToRootViewController))
 
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.pushViewController(_:animated:)),
-                  swizzledSelector: #selector(screen.neuroIDPushViewController(_:animated:)))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.pushViewController(_:animated:)),
+                        swizzledSelector: #selector(screen.neuroIDPushViewController(_:animated:)))
     }
 
     @objc func neuroIDPopViewController(animated: Bool) -> UIViewController? {

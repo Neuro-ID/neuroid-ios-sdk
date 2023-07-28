@@ -13,7 +13,11 @@ import UIKit
 enum ParamsCreator {
     static func getTgParams(view: UIView, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
         // TODO, figure out if we need to find super class of ETN
-        var params: [String: TargetValue] = ["tgs": TargetValue.string(view.id), "etn": TargetValue.string(view.className)]
+        var params: [String: TargetValue] = [
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
+            "\(Constants.etnKey.rawValue)": TargetValue.string(view.className),
+        ]
+
         for (key, value) in extraParams {
             params[key] = value
         }
@@ -27,8 +31,8 @@ enum ParamsCreator {
 
     static func getTextTgParams(view: UIView, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
         var params: [String: TargetValue] = [
-            "tgs": TargetValue.string(view.id),
-            "etn": TargetValue.string(NIDEventName.textChange.rawValue),
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
+            "\(Constants.etnKey.rawValue)": TargetValue.string(NIDEventName.textChange.rawValue),
             "kc": TargetValue.int(0),
         ]
         for (key, value) in extraParams {
@@ -37,30 +41,37 @@ enum ParamsCreator {
         return params
     }
 
-    static func getTGParamsForInput(eventName: NIDEventName, view: UIView, type: String, extraParams: [String: TargetValue] = [:], attrParams: [String: Any]?) -> [String: TargetValue] {
+    static func getTGParamsForInput(
+        eventName: NIDEventName,
+        view: UIView,
+        type: String,
+        extraParams: [String: TargetValue] = [:],
+        attrParams: [String: Any]?
+    ) -> [String: TargetValue] {
         var params: [String: TargetValue] = [:]
 
         switch eventName {
-        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange,
-             NIDEventName.checkboxChange, NIDEventName.input, NIDEventName.copy, NIDEventName.paste, NIDEventName.click:
+        case .focus, .blur, .textChange, .radioChange,
+             .checkboxChange, .input, .copy, .paste, .click:
 
-//            var attrParams:Attr;
-            let inputValue = attrParams?["v"] as? String ?? "\(Constants.eventValuePrefix.rawValue)"
-            let attrVal = Attr(n: "v", v: inputValue)
-            let textValue = attrParams?["hash"] as? String ?? ""
-            let hashValue = Attr(n: "hash", v: textValue.hashValue())
-            let attrArraryVal: [Attr] = [attrVal, hashValue]
+            let inputValue = attrParams?["\(Constants.vKey.rawValue)"] as? String ?? "\(Constants.eventValuePrefix.rawValue)"
+            let textValue = attrParams?["\(Constants.hashKey.rawValue)"] as? String ?? ""
 
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(view.id),
-                "et": TargetValue.string(type),
-                "attr": TargetValue.attr(attrArraryVal),
+            let attrArraryVal: [Attr] = [
+                Attr(n: "\(Constants.vKey.rawValue)", v: inputValue),
+                Attr(n: "\(Constants.hashKey.rawValue)", v: textValue.hashValue()),
             ]
 
-        case NIDEventName.keyDown:
             params = [
-                "tgs": TargetValue.string(view.id),
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
+                "\(Constants.etnKey.rawValue)": TargetValue.string(view.id),
+                "\(Constants.etKey.rawValue)": TargetValue.string(type),
+                "\(Constants.attrKey.rawValue)": TargetValue.attr(attrArraryVal),
+            ]
+
+        case .keyDown:
+            params = [
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
             ]
         default:
             print("Invalid type")
@@ -72,24 +83,27 @@ enum ParamsCreator {
     }
 
     static func getUiControlTgParams(sender: UIView) -> [String: TargetValue] {
-        var tg: [String: TargetValue] = ["sender": TargetValue.string(sender.className), "tgs": TargetValue.string(sender.id)]
+        var tg: [String: TargetValue] = [
+            "sender": TargetValue.string(sender.className),
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(sender.id),
+        ]
 
         if let control = sender as? UISwitch {
             tg["oldValue"] = TargetValue.bool(!control.isOn)
             tg["newValue"] = TargetValue.bool(control.isOn)
 
         } else if let control = sender as? UISegmentedControl {
-            tg["value"] = TargetValue.string((control.titleForSegment(at: control.selectedSegmentIndex) ?? "").hashValue())
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.string((control.titleForSegment(at: control.selectedSegmentIndex) ?? "").hashValue())
             tg["selectedIndex"] = TargetValue.int(control.selectedSegmentIndex)
 
         } else if let control = sender as? UIStepper {
-            tg["value"] = TargetValue.double(control.value)
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.double(control.value)
 
         } else if let control = sender as? UISlider {
-            tg["value"] = TargetValue.double(Double(control.value))
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.double(Double(control.value))
 
         } else if let control = sender as? UIDatePicker {
-            tg["value"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(control.date.toString().count)")
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(control.date.toString().count)")
         }
         return tg
     }
@@ -106,7 +120,7 @@ enum ParamsCreator {
             orientation = Constants.orientationPortrait.rawValue
         }
 
-        return ["orientation": orientation]
+        return ["\(Constants.orientationKey.rawValue)": orientation]
     }
 
     static func getDefaultSessionParams() -> [String: Any?] {
@@ -154,7 +168,7 @@ enum ParamsCreator {
         }
 
         let id = UUID().uuidString
-        print("Session ID:", id)
+        NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
         defaults.setValue(id, forKey: sidName)
         return id
     }

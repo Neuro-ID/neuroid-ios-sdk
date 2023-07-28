@@ -54,20 +54,6 @@ class CustomTapGestureRecognizer: UITapGestureRecognizer {
     }
 }
 
-// class CustomLongPressGestureRecognizer: UILongPressGestureRecognizer {
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
-//        super.touchesBegan(touches, with: event)
-//
-//        print("\(Constants.debugTest.rawValue) - Custom Touch start - \(touches.count)")
-//    }
-//
-//    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
-//        super.touchesEnded(touches, with: event)
-//
-//        print("\(Constants.debugTest.rawValue) - Custom Touch end - \(touches.count)")
-//    }
-// }
-
 func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, type: NIDEventName) {
     let location = gesture.location(in: gesture.view)
 
@@ -80,8 +66,6 @@ func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, ty
 
         size = touch.majorRadius
     }
-
-    // send value and hash?
 
     captureTouchEvent(type: type, view: gesture.view, location: location, extraAttr: ["size": "\(size)", "force": "\(force)"])
 }
@@ -98,8 +82,8 @@ func captureTouchEvent(type: NIDEventName, view: UIView?, location: CGPoint, ext
     }
 
     let tg: [String: TargetValue] = [
-        "tgs": TargetValue.string(viewName),
-        "etn": TargetValue.string(viewClass),
+        "\(Constants.tgsKey.rawValue)": TargetValue.string(viewName),
+        "\(Constants.etnKey.rawValue)": TargetValue.string(viewClass),
     ]
 
     var attrs: [Attrs] = [

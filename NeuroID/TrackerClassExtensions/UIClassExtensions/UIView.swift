@@ -37,9 +37,8 @@ public extension UIView {
             if #available(iOS 13.0, *) {
                 title = "UNKNOWN_NO_ID_SET"
                 title = title.replacingOccurrences(of: " ", with: "_")
-            } else {
-                // Fallback on earlier versions
             }
+
             title = "\(className)_\(title)"
             var backupName = "\(description.hashValue)"
 

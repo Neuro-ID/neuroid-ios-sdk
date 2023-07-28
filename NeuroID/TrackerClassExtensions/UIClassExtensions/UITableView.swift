@@ -42,7 +42,7 @@ internal extension UITableView {
             let cellName = cell.className
             let childViews = cell.contentView.subviewsRecursive()
             for _view in childViews {
-                NIDPrintLog("Registering single view for cell.")
+                NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering single view for cell.")
                 NeuroIDTracker.registerSingleView(v: _view, screenName: cellName, guid: guid)
             }
         }

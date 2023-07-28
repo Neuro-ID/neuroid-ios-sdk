@@ -13,7 +13,7 @@ final class UtilFunctionsTests: XCTestCase {
     let userId = "form_mobilesandbox"
 
     let screenNameValue = "testScreen"
-    let guidValue = "guid"
+    let guidValue = "\(Constants.attrGuidKey.rawValue)"
 
     let id = "id"
     let textValue = "text"

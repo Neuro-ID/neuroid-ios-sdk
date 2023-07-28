@@ -16,9 +16,7 @@ public extension NeuroID {
     }
 
     internal static func getClientKeyFromLocalStorage() -> String {
-        let keyName = Constants.storageClientKey.rawValue
-        let defaults = UserDefaults.standard
-        let key = defaults.string(forKey: keyName)
+        let key = UserDefaults.standard.string(forKey: Constants.storageClientKey.rawValue)
         return key ?? ""
     }
 

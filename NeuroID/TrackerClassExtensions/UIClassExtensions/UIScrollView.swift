@@ -23,11 +23,6 @@ private func UIScrollViewSwizzling(element: UIScrollView.Type,
 }
 
 internal extension UIScrollView {
-    func testMethod() {
-        print("test")
-    }
-
-//
     static func startSwizzlingUIScroll() {
         let scrollView = UIScrollView.self
 
@@ -38,45 +33,13 @@ internal extension UIScrollView {
         UIScrollViewSwizzling(element: scrollView,
                               originalSelector: #selector(scrollView.scrollRectToVisible(_:animated:)),
                               swizzledSelector: #selector(scrollView.swizzledScrollRectToVisible))
-
-        //
-        //        textFieldSwizzling(element: textField,
-        //                           originalSelector: #selector(textField.copy(_:)),
-        //                           swizzledSelector: #selector(textField.neuroIDCopy))
-        //
-        //        textFieldSwizzling(element: textField,
-        //                           originalSelector: #selector(textField.paste(_:)),
-        //                           swizzledSelector: #selector(textField.neuroIDPaste))
     }
 
-//
-//    // Swizzled implementation of setContentOffset(_:animated:)
-//    @objc func swizzledSetContentOffset(_ contentOffset: CGPoint, animated: Bool) {
-//        // Your custom logic here, before calling the original method if needed
-//        // For example, you can log the content offset, perform additional actions, etc.
-//
-//        print("\(Constants.debugTest.rawValue) - UIVIEW - x=\(contentOffset.x) y=\(contentOffset.y)")
-//
-//        // Call the original method
-//        swizzledSetContentOffset(contentOffset, animated: animated)
-//    }
-
     @objc private func swizzledSetContentOffset(_ contentOffset: CGPoint, animated: Bool) {
-        // Your custom logic here, before calling the original method if needed
-        // For example, you can log the content offset, perform additional actions, etc.
-
-//        print("\(Constants.debugTest.rawValue) - content off - x=\(contentOffset.x) y=\(contentOffset.y) ")
-        // Call the original method
         swizzledSetContentOffset(contentOffset, animated: animated)
     }
 
     @objc private func swizzledScrollRectToVisible(_ rect: CGRect, animated: Bool) {
-        // Your custom logic here, before calling the original method if needed
-        // For example, you can log the scrollRectToVisible parameters, perform additional actions, etc.
-
-//        print("\(Constants.debugTest.rawValue) - rect - x=\(rect.height) y=\(rect.width)")
-
-        // Call the original method
         swizzledScrollRectToVisible(rect, animated: animated)
     }
 }

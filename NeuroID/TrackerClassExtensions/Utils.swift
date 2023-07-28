@@ -46,6 +46,25 @@ internal enum UtilFunctions {
         return fullViewString
     }
 
+    static func registerSubViewsTargets(subViewControllers: [UIViewController]) {
+        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
+        for ctrls in filtered {
+            let screenName = ctrls.className
+            NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
+            guard let view = ctrls.view else {
+                return
+            }
+            let guid = UUID().uuidString
+
+            NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
+            let childViews = ctrls.view.subviewsRecursive()
+            for _view in childViews {
+                NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
+                NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
+            }
+        }
+    }
+
     static func registerField(
         textValue: String,
         etn: String = "INPUT",
@@ -101,7 +120,7 @@ internal enum UtilFunctions {
             eventName: type,
             view: view,
             type: type.rawValue,
-            attrParams: ["v": lengthValue, "hash": text ?? ""]
+            attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": text ?? ""]
         )
 
         let event = NIDEvent(type: type, tg: eventTg)
@@ -122,7 +141,7 @@ internal enum UtilFunctions {
         let textValue = textValue
         let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textValue.count)"
         let hashValue = textValue.hashValue()
-        let attrParams = ["v": lengthValue, "hash": textValue]
+        let attrParams = ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textValue]
 
         switch eventType {
             case .input:
@@ -183,7 +202,6 @@ internal enum UtilFunctions {
         NeuroID.saveEventToLocalDataStore(event)
 
         // URL capture?
-//        captureEvent(event: inputEvent)
     }
 
     static func captureFocusBlurEvent(
@@ -193,7 +211,7 @@ internal enum UtilFunctions {
         let event = NIDEvent(
             type: eventType,
             tg: [
-                "tgs": TargetValue.string(id),
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(id),
             ]
         )
 
@@ -202,7 +220,6 @@ internal enum UtilFunctions {
         NeuroID.saveEventToLocalDataStore(event)
 
         // URL capture?
-//        captureEvent(event: inputEvent)
     }
 
     static func captureWindowLoadUnloadEvent(
@@ -213,7 +230,7 @@ internal enum UtilFunctions {
         let event = NIDEvent(
             type: eventType,
             tg: [
-                "tgs": TargetValue.string(id),
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(id),
             ]
         )
 
@@ -225,6 +242,5 @@ internal enum UtilFunctions {
         NeuroID.saveEventToLocalDataStore(event)
 
         // URL capture?
-//        captureEvent(event: inputEvent)
     }
 }

@@ -46,22 +46,37 @@ internal extension UITextView {
 
     @objc func handleSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         let location = gestureRecognizer.location(in: self)
-        captureTouchEvent(type: NIDEventName.customTap, view: gestureRecognizer.view, location: location)
+        captureTouchEvent(
+            type: NIDEventName.customTap,
+            view: gestureRecognizer.view,
+            location: location)
         self.becomeFirstResponder()
     }
 
     @objc func handleDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         let location = gestureRecognizer.location(in: self)
-        captureTouchEvent(type: NIDEventName.customDoubleTap, view: gestureRecognizer.view, location: location)
+        captureTouchEvent(
+            type: NIDEventName.customDoubleTap,
+            view: gestureRecognizer.view,
+            location: location)
         self.becomeFirstResponder()
     }
 
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         let location = gestureRecognizer.location(in: self)
         if gestureRecognizer.state == .began {
-            captureTouchEvent(type: NIDEventName.customLongPress, view: gestureRecognizer.view, location: location, extraAttr: ["type": "start"])
+            captureTouchEvent(
+                type: NIDEventName.customLongPress,
+                view: gestureRecognizer.view,
+                location: location,
+                extraAttr: ["type": "start"])
+
         } else if gestureRecognizer.state == .ended {
-            captureTouchEvent(type: NIDEventName.customLongPress, view: gestureRecognizer.view, location: location, extraAttr: ["type": "end"])
+            captureTouchEvent(
+                type: NIDEventName.customLongPress,
+                view: gestureRecognizer.view,
+                location: location,
+                extraAttr: ["type": "end"])
         }
         self.becomeFirstResponder()
     }

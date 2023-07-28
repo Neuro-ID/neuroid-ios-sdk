@@ -67,9 +67,9 @@ public extension NeuroID {
 
         /** Just send all the evnets */
         let cleanEvents = dataStoreEvents.map { nidevent -> NIDEvent in
-            var newEvent = nidevent
+            let newEvent = nidevent
             // Only send url on register target and create session.
-            if nidevent.type != NIDEventName.registerTarget.rawValue, nidevent.type != "CREATE_SESSION" {
+            if nidevent.type != NIDEventName.registerTarget.rawValue, nidevent.type != "\(NIDEventName.createSession.rawValue)" {
                 newEvent.url = nil
             }
             return newEvent

@@ -43,8 +43,6 @@ internal extension NeuroIDTracker {
             }
         }
 
-        // NEED TO FIND HOW TO TRACK UIPICKER CHANGE
-
         captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
     }
 }

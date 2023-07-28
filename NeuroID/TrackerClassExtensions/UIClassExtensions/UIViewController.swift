@@ -8,29 +8,11 @@
 import Foundation
 import UIKit
 
-private func registerSubViewsTargets(subViewControllers: [UIViewController]) {
-    let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
-    for ctrls in filtered {
-        let screenName = ctrls.className
-        NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering view controllers \(screenName)")
-        guard let view = ctrls.view else {
-            return
-        }
-        let guid = UUID().uuidString
-
-        NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
-        let childViews = ctrls.view.subviewsRecursive()
-        for _view in childViews {
-            NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering single view.")
-            NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
-        }
-    }
-}
-
-internal func swizzling(viewController: UIViewController.Type,
-                        originalSelector: Selector,
-                        swizzledSelector: Selector)
-{
+internal func uiViewSwizzling(
+    viewController: UIViewController.Type,
+    originalSelector: Selector,
+    swizzledSelector: Selector
+) {
     let originalMethod = class_getInstanceMethod(viewController, originalSelector)
     let swizzledMethod = class_getInstanceMethod(viewController, swizzledSelector)
 
@@ -109,18 +91,6 @@ public extension UIViewController {
         }
         captureEvent(event: event)
     }
-
-//    public func captureEventLogViewWillAppear(params: [String: TargetValue]) {
-//        captureEvent(eventName: .windowFocus, params: params)
-//    }
-//
-//    public func captureEventLogViewDidLoad(params: [String: TargetValue]) {
-//        captureEvent(eventName: .windowLoad, params: params)
-//    }
-//
-//    public func captureEventLogViewWillDisappear(params: [String: TargetValue]) {
-//        captureEvent(eventName: .windowBlur, params: params)
-//    }
 }
 
 extension UIViewController {
@@ -142,24 +112,24 @@ internal extension UIViewController {
     @objc static func startSwizzling() {
         let screen = UIViewController.self
 
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewWillAppear),
-                  swizzledSelector: #selector(screen.neuroIDViewWillAppear))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewWillDisappear),
-                  swizzledSelector: #selector(screen.neuroIDViewWillDisappear))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewDidAppear),
-                  swizzledSelector: #selector(screen.neuroIDViewDidAppear))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.dismiss),
-                  swizzledSelector: #selector(screen.neuroIDDismiss))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewDidLayoutSubviews),
-                  swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewDidDisappear),
-                  swizzledSelector: #selector(screen.neuroIDViewDidDisappear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewWillAppear),
+                        swizzledSelector: #selector(screen.neuroIDViewWillAppear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewWillDisappear),
+                        swizzledSelector: #selector(screen.neuroIDViewWillDisappear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewDidAppear),
+                        swizzledSelector: #selector(screen.neuroIDViewDidAppear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.dismiss),
+                        swizzledSelector: #selector(screen.neuroIDDismiss))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewDidLayoutSubviews),
+                        swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewDidDisappear),
+                        swizzledSelector: #selector(screen.neuroIDViewDidDisappear))
     }
 
     @objc func neuroIDViewWillAppear(animated: Bool) {
@@ -169,7 +139,6 @@ internal extension UIViewController {
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         neuroIDViewWillDisappear(animated: animated)
-//        NotificationCenter.default.removeObserver(self)
         registerViews = nil
     }
 
@@ -189,10 +158,10 @@ internal extension UIViewController {
         }
         // We need to init the tracker on the views.
         tracker
-        var subViews = view.subviews
+//        let subViews = view.subviews
         var allViewControllers = children
         allViewControllers.append(self)
-        registerSubViewsTargets(subViewControllers: allViewControllers)
+        UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
         registerViews = view.subviewsDescriptions
 
         NeuroID.registerKeyboardListener(className: className, view: self)

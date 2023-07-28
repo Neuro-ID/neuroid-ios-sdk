@@ -43,15 +43,17 @@ public class NeuroIDTracker: NSObject {
         let screenName = NeuroID.getScreenName() ?? screenName
         let fullViewString = UtilFunctions.getFullViewlURLPath(currView: currView, screenName: screenName)
         let baseAttrs = [
-            Attrs(n: "guid", v: guid),
-            Attrs(n: "screenHierarchy", v: fullViewString),
+            Attrs(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
+            Attrs(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString),
         ]
-        let tg = ["attr": TargetValue.attr(
-            [
-                Attr(n: "screenHierarchy", v: fullViewString),
-                Attr(n: "guid", v: guid),
-            ]
-        )]
+        let tg = [
+            "\(Constants.attrKey.rawValue)": TargetValue.attr(
+                [
+                    Attr(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString),
+                    Attr(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
+                ]
+            ),
+        ]
 
         // variables per view type
         var value = ""
@@ -68,7 +70,7 @@ public class NeuroIDTracker: NSObject {
         if #available(iOS 14.0, *) {
             switch v {
                 case is UIColorWell:
-                    let element = v as! UIColorWell
+                    let _ = v as! UIColorWell
 
                     value = ""
                     type = "UIColorWell"
@@ -76,7 +78,7 @@ public class NeuroIDTracker: NSObject {
                     found = true
 
                 default:
-                    let e = ""
+                    let _ = ""
             }
         }
 

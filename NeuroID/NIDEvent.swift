@@ -409,7 +409,7 @@ public class NIDEvent: Codable {
     public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
         self.type = type.rawValue
         var newTg = tg ?? [String: TargetValue]()
-        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        newTg["\(Constants.tgsKey.rawValue)"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
         self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
         self.url = primaryViewController?.className
@@ -494,7 +494,7 @@ public class NIDEvent: Codable {
         self.type = type.rawValue
         self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
         var newTg = tg ?? [String: TargetValue]()
-        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        newTg["\(Constants.tgsKey.rawValue)"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
         self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")

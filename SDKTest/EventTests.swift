@@ -298,7 +298,7 @@ class EventTests: XCTestCase {
         tracker?.captureEvent(event: touch)
         /// Create Focus event
         var focusBlurEvent = NIDEvent(type: .focus, tg: [
-            "tgs": TargetValue.string(textfield.id),
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(textfield.id),
         ])
         focusBlurEvent.tgs = TargetValue.string(textfield.id).toString()
         tracker?.captureEvent(event: focusBlurEvent)
@@ -308,7 +308,7 @@ class EventTests: XCTestCase {
         textfield.text = "text"
         let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textfield.text?.count ?? 0)"
         let hashValue = textfield.text?.hashValue()
-        let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text ?? "emptyHash"])
+        let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
         var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
         inputEvent.v = lengthValue
         inputEvent.hv = hashValue
@@ -319,7 +319,7 @@ class EventTests: XCTestCase {
         textfield.text = "text_match"
         let sm = tracker?.calcSimilarity(previousValue: "text", currentValue: "text_match") ?? 0
         let pd = tracker?.percentageDifference(newNumOrig: "text", originalNumOrig: "text_match") ?? 0
-        let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text ?? "emptyHash"])
+        let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
         var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
         textChangeEvent.v = lengthValue
         var shaText = textfield.text ?? ""

@@ -93,7 +93,7 @@ public enum NeuroID {
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(Constants.debugJsonFileName.rawValue)
-            NIDPrintLog("DEBUG PATH \(path.absoluteString)")
+            NIDPrintLog("DEBUG PATH: \(path.absoluteString)")
         }
 
         #if DEBUG

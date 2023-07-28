@@ -13,7 +13,7 @@ class NeuroIDTrackerTests: XCTestCase {
     let userId = "form_mobilesandbox"
     
     let screenNameValue = "testScreen"
-    let guidValue = "guid"
+    let guidValue = "\(Constants.attrGuidKey.rawValue)"
     
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey)

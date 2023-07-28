@@ -53,7 +53,6 @@
 		F21702C929D5D5D000133A1C /* TouchEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C629D5D5D000133A1C /* TouchEvents.swift */; };
 		F21702CA29D5D5D000133A1C /* CustomEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C729D5D5D000133A1C /* CustomEvents.swift */; };
 		F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CB29D5D5E800133A1C /* Bundle.swift */; };
-		F21702CE29D5DB3F00133A1C /* UIDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */; };
 		F21702D029D5E9D800133A1C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CF29D5E9D800133A1C /* Utils.swift */; };
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
 		F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */; };
@@ -143,7 +142,6 @@
 		F21702C629D5D5D000133A1C /* TouchEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchEvents.swift; sourceTree = "<group>"; };
 		F21702C729D5D5D000133A1C /* CustomEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEvents.swift; sourceTree = "<group>"; };
 		F21702CB29D5D5E800133A1C /* Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
-		F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDatePicker.swift; sourceTree = "<group>"; };
 		F21702CF29D5E9D800133A1C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
 		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
@@ -320,7 +318,6 @@
 				F21702A729D4CAD300133A1C /* UIButton.swift */,
 				F21702A529D4CA8E00133A1C /* UITextView.swift */,
 				F217029829D4C4DF00133A1C /* UITextField.swift */,
-				F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */,
 				F21702A929D4CB4900133A1C /* UIViewController.swift */,
 				F25165482A6EF74700D41B89 /* UIScrollView.swift */,
 			);
@@ -617,7 +614,6 @@
 				F2AEE7472A27A84B009690CB /* NIDSend.swift in Sources */,
 				F216C4082A71BE19001DDABB /* Date.swift in Sources */,
 				F21702C829D5D5D000133A1C /* TextControlEvents.swift in Sources */,
-				F21702CE29D5DB3F00133A1C /* UIDatePicker.swift in Sources */,
 				F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */,
 				F21702A829D4CAD300133A1C /* UIButton.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,

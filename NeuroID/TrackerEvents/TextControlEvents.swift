@@ -61,14 +61,6 @@ internal extension NeuroIDTracker {
      */
 
     func logTextEvent(from notification: Notification, eventType: NIDEventName) {
-        //                // Keydown - DO WE WANT THIS?
-        //                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text ?? ""])
-        //                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
-        //                keyDownEvent.v = lengthValue
-        //                keyDownEvent.tgs = TargetValue.string(id).toString()
-        ////                keyDownEvent.hv = hashValue
-        //                captureEvent(event: keyDownEvent)
-
         switch notification.object {
             case is UITextField:
 
@@ -104,6 +96,7 @@ internal extension NeuroIDTracker {
         }
     }
 
+    // Never used except in tests?
     func calcSimilarity(previousValue: String, currentValue: String) -> Double {
         var longer = previousValue
         var shorter = currentValue

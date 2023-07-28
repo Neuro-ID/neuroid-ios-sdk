@@ -23,6 +23,7 @@ public extension NeuroID {
         if let urlEncode = screen.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             currentScreenName = urlEncode
         } else {
+            NIDPrintLog("Invalid Screenname for NeuroID. \(screen) can't be encode")
             logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
         }
     }
