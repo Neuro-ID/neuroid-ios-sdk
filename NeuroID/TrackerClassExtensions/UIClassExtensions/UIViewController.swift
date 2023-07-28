@@ -157,23 +157,20 @@ internal extension UIViewController {
         swizzling(viewController: screen,
                   originalSelector: #selector(screen.viewDidLayoutSubviews),
                   swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
+        swizzling(viewController: screen,
+                  originalSelector: #selector(screen.viewDidDisappear),
+                  swizzledSelector: #selector(screen.neuroIDViewDidDisappear))
     }
 
     @objc func neuroIDViewWillAppear(animated: Bool) {
         neuroIDViewWillAppear(animated: animated)
         registerViews = nil
-
-        NIDDebugPrint(tag: "TEST", "WINDOW LOAD v=\(className) -\(hash)")
-        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: className)
     }
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         neuroIDViewWillDisappear(animated: animated)
 //        NotificationCenter.default.removeObserver(self)
         registerViews = nil
-
-        NIDDebugPrint(tag: "TEST", "WINDOW UNLOAD v=\(className) -\(hash)")
-        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowUnload, id: hash.string, className: className)
     }
 
     /**
@@ -199,6 +196,14 @@ internal extension UIViewController {
         registerViews = view.subviewsDescriptions
 
         NeuroID.registerKeyboardListener(className: className, view: self)
+
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: className)
+    }
+
+    @objc func neuroIDViewDidDisappear() {
+        neuroIDViewDidDisappear()
+
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowUnload, id: hash.string, className: className)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {

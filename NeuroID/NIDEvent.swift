@@ -78,6 +78,8 @@ public enum NIDEventName: String {
     case customTap = "CUSTOM_TAP"
     case customLongPress = "CUSTOM_LONG_PRESS"
     case doubleClick = "DB_CLICK"
+    case navControllerPush = "NAV_CONTROLLER_PUSH"
+    case navControllerPop = "NAV_CONTROLLER_POP"
 
     var etn: String? {
         switch self {

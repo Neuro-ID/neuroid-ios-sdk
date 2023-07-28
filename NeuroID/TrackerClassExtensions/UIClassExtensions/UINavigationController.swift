@@ -27,37 +27,41 @@ internal extension UINavigationController {
     }
 
     @objc func neuroIDPopViewController(animated: Bool) -> UIViewController? {
-        captureWindowEvent(type: .windowUnload, attrs: [
+        captureWindowEvent(type: .navControllerPop, attrs: [
             Attrs(n: "poppedFrom", v: "\(NeuroID.getScreenName() ?? "")"),
             Attrs(n: "popType", v: "singlePop"),
+            Attrs(n: "captureMethod", v: "swizzle"),
         ])
 
         return neuroIDPopViewController(animated: animated)
     }
 
     @objc func neuroIDPopToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
-        captureWindowEvent(type: .windowUnload, attrs: [
+        captureWindowEvent(type: .navControllerPop, attrs: [
             Attrs(n: "poppedFrom", v: "\(NeuroID.getScreenName() ?? "")"),
             Attrs(n: "popType", v: "specificPop"),
             Attrs(n: "navTitle", v: "\(viewController.navigationItem.title ?? "")"),
+            Attrs(n: "captureMethod", v: "swizzle"),
         ])
 
         return neuroIDPopToViewController(viewController, animated: animated)
     }
 
     @objc func neuroIDPopToRootViewController(animated: Bool) -> [UIViewController]? {
-        captureWindowEvent(type: .windowUnload, attrs: [
+        captureWindowEvent(type: .navControllerPop, attrs: [
             Attrs(n: "poppedFrom", v: "\(NeuroID.getScreenName() ?? "")"),
             Attrs(n: "popType", v: "rootPop"),
+            Attrs(n: "captureMethod", v: "swizzle"),
         ])
 
         return neuroIDPopToRootViewController(animated: animated)
     }
 
     @objc func neuroIDPushViewController(_ viewController: UIViewController, animated: Bool) {
-        captureWindowEvent(type: .windowLoad, attrs: [
+        captureWindowEvent(type: .navControllerPush, attrs: [
             Attrs(n: "pushedFrom", v: "\(NeuroID.getScreenName() ?? "")"),
             Attrs(n: "navTitle", v: "\(viewController.navigationItem.title ?? "")"),
+            Attrs(n: "captureMethod", v: "swizzle"),
         ])
 
         return neuroIDPushViewController(viewController, animated: animated)
