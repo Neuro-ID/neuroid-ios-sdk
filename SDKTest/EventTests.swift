@@ -298,7 +298,7 @@ class EventTests: XCTestCase {
         tracker?.captureEvent(event: touch)
         /// Create Focus event
         var focusBlurEvent = NIDEvent(type: .focus, tg: [
-            "tgs": TargetValue.string(textfield.id),
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(textfield.id),
         ])
         focusBlurEvent.tgs = TargetValue.string(textfield.id).toString()
         tracker?.captureEvent(event: focusBlurEvent)
@@ -307,8 +307,8 @@ class EventTests: XCTestCase {
         // Create Input
         textfield.text = "text"
         let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textfield.text?.count ?? 0)"
-        let hashValue = textfield.text?.sha256().prefix(8).string
-        let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text ?? "emptyHash"])
+        let hashValue = textfield.text?.hashValue()
+        let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
         var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
         inputEvent.v = lengthValue
         inputEvent.hv = hashValue
@@ -319,12 +319,12 @@ class EventTests: XCTestCase {
         textfield.text = "text_match"
         let sm = tracker?.calcSimilarity(previousValue: "text", currentValue: "text_match") ?? 0
         let pd = tracker?.percentageDifference(newNumOrig: "text", originalNumOrig: "text_match") ?? 0
-        let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["v": lengthValue, "hash": textfield.text ?? "emptyHash"])
+        let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
         var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: sm, pd: pd)
         textChangeEvent.v = lengthValue
         var shaText = textfield.text ?? ""
         if shaText != "" {
-            shaText = shaText.sha256().prefix(8).string
+            shaText = shaText.hashValue()
         }
         textChangeEvent.hv = shaText
         textChangeEvent.tgs = TargetValue.string(textfield.id).toString()
@@ -408,24 +408,24 @@ class EventTests: XCTestCase {
     }
     
     // UI Class Registrations that are NOT implemented
-    func testUISliderNotRegistered() {
+    func testUISliderRegistration() {
         NeuroID.start()
         let testView = UISlider()
         testView.id = "UISlider"
         NeuroID.manuallyRegisterTarget(view: testView)
         let events = DataStore.getAllEvents()
         let filteredRegisteredTargets = events.filter { $0.type == "REGISTER_TARGET" }
-        assert(filteredRegisteredTargets.count == 0)
+        assert(filteredRegisteredTargets.count == 1)
     }
     
-    func testUISwitchNotRegistered() {
+    func testUISwitchRegistration() {
         NeuroID.start()
         let testView = UISwitch()
         testView.id = "UISwitch"
         NeuroID.manuallyRegisterTarget(view: testView)
         let events = DataStore.getAllEvents()
         let filteredRegisteredTargets = events.filter { $0.type == "REGISTER_TARGET" }
-        assert(filteredRegisteredTargets.count == 0)
+        assert(filteredRegisteredTargets.count == 1)
     }
     
     func testUITableViewCellNotRegistered() {

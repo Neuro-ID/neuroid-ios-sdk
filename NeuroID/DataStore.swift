@@ -11,16 +11,15 @@ public enum DataStore {
     }
 
     static func insertEvent(screen: String, event: NIDEvent) {
-        var newEvent = event
         let sensorManager = NIDSensorManager.shared
         NeuroID.logDebug(category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer))
         NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
-        newEvent.gyro = sensorManager.getSensorData(sensor: .gyro)
-        newEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
+        event.gyro = sensorManager.getSensorData(sensor: .gyro)
+        event.accel = sensorManager.getSensorData(sensor: .accelerometer)
         
-        NeuroID.logDebug(category: "saveEvent", content: newEvent.toDict())
+        NeuroID.logDebug(category: "saveEvent", content: event.toDict())
 
-        var mutableEvent = newEvent
+        let mutableEvent = event
         
         if NeuroID.isStopped() {
             return
@@ -29,8 +28,8 @@ public enum DataStore {
         mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
         // Grab the current set screen and set event URL to this
         
-        if mutableEvent.tg?["tgs"] != nil {
-            if NeuroID.excludedViewsTestIDs.contains(where: { $0 == mutableEvent.tg!["tgs"]!.toString() }) {
+        if mutableEvent.tg?["\(Constants.tgsKey.rawValue)"] != nil {
+            if NeuroID.excludedViewsTestIDs.contains(where: { $0 == mutableEvent.tg!["\(Constants.tgsKey.rawValue)"]!.toString() }) {
                 return
             }
         }
@@ -47,7 +46,9 @@ public enum DataStore {
         }
         
         NeuroID.captureIntegrationHealthEvent(mutableEvent.copy())
-
+        
+        NIDPrintEvent(mutableEvent)
+ 
         DispatchQueue.global(qos: .utility).sync {
             DataStore.events.append(mutableEvent)
         }

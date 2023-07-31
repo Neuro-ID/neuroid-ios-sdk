@@ -41,7 +41,7 @@ class IntegrationHealthTests: XCTestCase {
 
     func generateTestEvent(_ target: UIView = UITextField(), _ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
         // Text Change
-        let textChangeTG = ["tgs": TargetValue.string(target.id)]
+        let textChangeTG = ["\(Constants.tgsKey.rawValue)": TargetValue.string(target.id)]
         let textChangeEvent = NIDEvent(type: eventType, tg: textChangeTG)
 
         return textChangeEvent
@@ -109,9 +109,10 @@ class IntegrationHealthTests: XCTestCase {
 
     func test_shouldReturnIntegrationHealthInstructions() {
         NeuroID.setEnvironmentProduction(false)
-        var instructions =  NeuroID.setVerifyIntegrationHealth(true)
+        var instructions = NeuroID.setVerifyIntegrationHealth(true)
         assert(instructions.contains("Integration Health Instructions"))
     }
+
     func test_startIntegrationHealthCheck() {
         allowIH()
         NeuroID.debugIntegrationHealthEvents = [generateTestEvent()]

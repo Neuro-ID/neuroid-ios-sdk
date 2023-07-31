@@ -44,6 +44,13 @@ class NeuroIDClassTests: XCTestCase {
         assert(allEvents.count == count)
     }
 
+    func assertStoredEventCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+    }
+
     func assertStoredEventTypeAndCount(type: String, count: Int) {
         let allEvents = DataStore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
@@ -67,7 +74,7 @@ class NeuroIDClassTests: XCTestCase {
         let tabIdValue = UserDefaults.standard.string(forKey: tabIdKey)
         assert(tabIdValue == nil)
 
-        assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
+        assertStoredEventCount(type: "CREATE_SESSION", count: 0)
     }
 
     func test_configure_endpoint() {
@@ -87,7 +94,7 @@ class NeuroIDClassTests: XCTestCase {
 
         assert(NeuroID.collectorURLFromConfig == "testEndpoint")
 
-        assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
+        assertStoredEventCount(type: "CREATE_SESSION", count: 0)
     }
 
     func test_enableLogging_true() {

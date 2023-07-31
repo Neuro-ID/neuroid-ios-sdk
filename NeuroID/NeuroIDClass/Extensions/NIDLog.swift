@@ -81,3 +81,122 @@ public extension NeuroID {
         }
     }
 }
+
+func NIDPrintEvent(_ mutableEvent: NIDEvent) {
+    var contextString = ""
+
+    let tgString = (mutableEvent.tg?.map { key, value in
+        let arrayString = value.toArrayString()
+        return "\(key): \(arrayString != "" ? arrayString : value.toString())"
+    } ?? [""]).joined(separator: ", ")
+
+    let touchesString = (mutableEvent.touches?.map { item in
+        "x=\(String("\(item.x ?? 0)")), y=\(String("\(item.y ?? 0)")), tid=\(String("\(item.tid ?? 0)"))"
+    } ?? [""]).joined(separator: ", ")
+
+    let attrsString = (mutableEvent.attrs?.map { item in
+        "\(item.n ?? "")=\(item.v ?? "")"
+    } ?? [""]).joined(separator: ", ")
+
+    switch mutableEvent.type {
+        case NIDSessionEventName.setUserId.rawValue:
+            contextString = "uid=\(mutableEvent.uid ?? "")"
+
+        case NIDSessionEventName.createSession.rawValue:
+            contextString = "cid=\(mutableEvent.cid ?? ""), sh=\(String(describing: mutableEvent.sh ?? nil)), sw=\(String(describing: mutableEvent.sw ?? nil))"
+
+        case NIDEventName.applicationSubmit.rawValue:
+            contextString = ""
+        case NIDEventName.textChange.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), tg=\(tgString)"
+//            case NIDEventName.setCheckpoint.rawValue:
+//                contextString = ""
+//            case NIDEventName.stateChange.rawValue:
+//                contextString = "url=\(mutableEvent.url ?? "")"
+        case NIDEventName.keyUp.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.keyDown.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.input.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
+        case NIDEventName.focus.rawValue:
+            contextString = ""
+        case NIDEventName.blur.rawValue:
+            contextString = ""
+
+        case NIDEventName.registerTarget.rawValue:
+
+            contextString = "et=\(mutableEvent.et ?? ""), rts=\(mutableEvent.rts ?? ""), ec=\(mutableEvent.ec ?? ""), v=\(mutableEvent.v ?? ""), tg=[\(tgString)]"
+//                 meta=\(String(describing: mutableEvent.metadata ?? nil))
+//            case NIDEventName.deregisterTarget.rawValue:
+//                contextString = ""
+        case NIDEventName.touchStart.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString)"
+        case NIDEventName.touchEnd.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString)"
+        case NIDEventName.touchMove.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString)"
+        case NIDEventName.closeSession.rawValue:
+            contextString = ""
+//            case NIDEventName.setVariable.rawValue:
+//                contextString = mutableEvent.v ?? ""
+
+        case NIDEventName.customTap.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+        case NIDEventName.customDoubleTap.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+        case NIDEventName.customLongPress.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+
+        case NIDEventName.customTouchStart.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+        case NIDEventName.customTouchEnd.rawValue:
+            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+
+        case NIDEventName.cut.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
+        case NIDEventName.copy.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
+        case NIDEventName.paste.rawValue:
+            contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
+        case NIDEventName.windowResize.rawValue:
+            contextString = "h=\(mutableEvent.h ?? 0), w=\(mutableEvent.w ?? 0)"
+        case NIDEventName.selectChange.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.windowLoad.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.windowUnload.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.windowBlur.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.windowFocus.rawValue:
+            contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
+        case NIDEventName.deviceOrientation.rawValue:
+            contextString = "tg=\(tgString)"
+        case NIDEventName.windowOrientationChange.rawValue:
+            contextString = "tg=\(tgString)"
+
+        default:
+            contextString = ""
+    }
+
+    NIDDebugPrint(tag: "NID Event:", "\(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+}
+
+func NIDPrintLog(_ strings: Any...) {
+    if NeuroID.isStopped() {
+        return
+    }
+    if NeuroID.logVisible {
+        Swift.print(strings)
+    }
+}
+
+func NIDDebugPrint(tag: String = "\(Constants.debugTag.rawValue)", _ strings: Any...) {
+    if NeuroID.isStopped() || NeuroID.getEnvironment() != "TEST" {
+        return
+    }
+    if NeuroID.logVisible {
+        Swift.print("\(tag) \(strings)")
+    }
+}

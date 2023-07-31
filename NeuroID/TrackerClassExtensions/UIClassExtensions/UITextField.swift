@@ -23,25 +23,104 @@ private func textFieldSwizzling(element: UITextField.Type,
 }
 
 internal extension UITextField {
-//    func  addTapGesture(){
-//        let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
-//        self.addGestureRecognizer(tap)
-//
-//    }
-//    @objc func handleTap(_ sender: UITapGestureRecognizer) {
-//        print("Gesture recognized")
-//    }
+    func addTapGesture() {
+        // Add a single-tap gesture recognizer
+        let singleTapGesture = CustomTapGestureRecognizer(target: self, action: #selector(self.handleSingleTap))
+        self.addGestureRecognizer(singleTapGesture)
+
+        // Add a double-tap gesture recognizer
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap))
+        doubleTapGesture.numberOfTapsRequired = 2
+        self.addGestureRecognizer(doubleTapGesture)
+
+        // Add a long-press gesture recognizer
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress))
+        self.addGestureRecognizer(longPressGesture)
+
+        // Ensure that single-tap gesture is recognized before double-tap gesture
+        singleTapGesture.require(toFail: doubleTapGesture)
+
+        // Ensure that the single-tap gesture is recognized before the long-press gesture
+        singleTapGesture.require(toFail: longPressGesture)
+    }
+
+    @objc func handleSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        let location = gestureRecognizer.location(in: self)
+        captureTouchEvent(
+            type: NIDEventName.customTap,
+            view: gestureRecognizer.view,
+            location: location)
+        self.becomeFirstResponder()
+    }
+
+    @objc func handleDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        let location = gestureRecognizer.location(in: self)
+        captureTouchEvent(
+            type: NIDEventName.customDoubleTap,
+            view: gestureRecognizer.view,
+            location: location)
+        self.becomeFirstResponder()
+    }
+
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        let location = gestureRecognizer.location(in: self)
+        if gestureRecognizer.state == .began {
+            captureTouchEvent(
+                type: NIDEventName.customLongPress,
+                view: gestureRecognizer.view,
+                location: location,
+                extraAttr: ["type": "start"])
+
+        } else if gestureRecognizer.state == .ended {
+            captureTouchEvent(
+                type: NIDEventName.customLongPress,
+                view: gestureRecognizer.view,
+                location: location,
+                extraAttr: ["type": "end"])
+        }
+        self.becomeFirstResponder()
+    }
 
     @objc static func startSwizzling() {
         let textField = UITextField.self
+
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.cut(_:)),
+                           swizzledSelector: #selector(textField.neuroIDCut))
+
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.copy(_:)),
+                           swizzledSelector: #selector(textField.neuroIDCopy))
 
         textFieldSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
                            swizzledSelector: #selector(textField.neuroIDPaste))
     }
 
+    @objc func neuroIDCut(caller: UIResponder) {
+        self.neuroIDCut(caller: caller)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.cut, view: self, text: text, className: className)
+    }
+
+    @objc func neuroIDCopy(caller: UIResponder) {
+        self.neuroIDCopy(caller: caller)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.copy, view: self, text: text, className: className)
+    }
+
     @objc func neuroIDPaste(caller: UIResponder) {
-        neuroIDPaste(caller: caller)
-        neuroIDPasteUtil(caller: caller, view: self, text: text, className: className)
+        self.neuroIDPaste(caller: caller)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
+    }
+
+    func isSensitiveEntry() -> Bool {
+        // isSecureText
+        if #available(iOS 11.0, *) {
+            if self.textContentType == .password || self.isSecureTextEntry { return true }
+        }
+        if #available(iOS 12.0, *) {
+            if self.textContentType == .newPassword { return true }
+        }
+
+        return false
     }
 }

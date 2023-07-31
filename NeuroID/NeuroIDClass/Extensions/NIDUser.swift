@@ -16,7 +16,7 @@ public extension NeuroID {
         UserDefaults.standard.set(userId, forKey: Constants.storageUserIdKey.rawValue)
         let setUserEvent = NIDEvent(session: NIDSessionEventName.setUserId, userId: userId)
         NeuroID.userId = userId
-        NIDPrintLog("NID userID = <\(userId)>")
+        NIDDebugPrint(tag: "\(Constants.userTag.rawValue)", "NID userID = <\(userId)>")
         saveEventToLocalDataStore(setUserEvent)
     }
 

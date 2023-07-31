@@ -22,7 +22,7 @@ public extension NeuroID {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
-        var event = NIDEvent(
+        let event = NIDEvent(
             session: .createSession,
             f: ParamsCreator.getClientKey(),
             sid: ParamsCreator.getSessionID(),
@@ -50,7 +50,7 @@ public extension NeuroID {
         if !NeuroID.isSDKStarted {
             throw NIDError.sdkNotStarted
         }
-        var closeEvent = NIDEvent(type: NIDEventName.closeSession)
+        let closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
         if skipStop {

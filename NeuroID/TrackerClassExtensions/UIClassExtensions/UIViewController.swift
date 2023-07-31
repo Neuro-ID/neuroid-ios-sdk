@@ -8,29 +8,11 @@
 import Foundation
 import UIKit
 
-private func registerSubViewsTargets(subViewControllers: [UIViewController]) {
-    let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
-    for ctrls in filtered {
-        let screenName = ctrls.className
-        NIDPrintLog("Registering view controllers \(screenName)")
-        guard let view = ctrls.view else {
-            return
-        }
-        let guid = UUID().uuidString
-
-        NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
-        let childViews = ctrls.view.subviewsRecursive()
-        for _view in childViews {
-            NIDPrintLog("Registering single view.")
-            NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
-        }
-    }
-}
-
-internal func swizzling(viewController: UIViewController.Type,
-                        originalSelector: Selector,
-                        swizzledSelector: Selector)
-{
+internal func uiViewSwizzling(
+    viewController: UIViewController.Type,
+    originalSelector: Selector,
+    swizzledSelector: Selector
+) {
     let originalMethod = class_getInstanceMethod(viewController, originalSelector)
     let swizzledMethod = class_getInstanceMethod(viewController, swizzledSelector)
 
@@ -69,9 +51,14 @@ public extension UIViewController {
     var tracker: NeuroIDTracker? {
         if ignoreLists.contains(className) { return nil }
         if self is UINavigationController, className == "UINavigationController" { return nil }
-        let tracker = NeuroID.trackers[className] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
-        NeuroID.trackers[className] = tracker
-        return tracker
+        if let tracker = NeuroID.trackers[className] {
+            tracker.subscribe(inScreen: self)
+            return tracker
+        } else {
+            let tracker = NeuroID.trackers[className] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
+            NeuroID.trackers[className] = tracker
+            return tracker
+        }
     }
 
     func captureEvent(event: NIDEvent) {
@@ -104,18 +91,6 @@ public extension UIViewController {
         }
         captureEvent(event: event)
     }
-
-//    public func captureEventLogViewWillAppear(params: [String: TargetValue]) {
-//        captureEvent(eventName: .windowFocus, params: params)
-//    }
-//
-//    public func captureEventLogViewDidLoad(params: [String: TargetValue]) {
-//        captureEvent(eventName: .windowLoad, params: params)
-//    }
-//
-//    public func captureEventLogViewWillDisappear(params: [String: TargetValue]) {
-//        captureEvent(eventName: .windowBlur, params: params)
-//    }
 }
 
 extension UIViewController {
@@ -137,21 +112,24 @@ internal extension UIViewController {
     @objc static func startSwizzling() {
         let screen = UIViewController.self
 
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewWillAppear),
-                  swizzledSelector: #selector(screen.neuroIDViewWillAppear))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewWillDisappear),
-                  swizzledSelector: #selector(screen.neuroIDViewWillDisappear))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewDidAppear),
-                  swizzledSelector: #selector(screen.neuroIDViewDidAppear))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.dismiss),
-                  swizzledSelector: #selector(screen.neuroIDDismiss))
-        swizzling(viewController: screen,
-                  originalSelector: #selector(screen.viewDidLayoutSubviews),
-                  swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewWillAppear),
+                        swizzledSelector: #selector(screen.neuroIDViewWillAppear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewWillDisappear),
+                        swizzledSelector: #selector(screen.neuroIDViewWillDisappear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewDidAppear),
+                        swizzledSelector: #selector(screen.neuroIDViewDidAppear))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.dismiss),
+                        swizzledSelector: #selector(screen.neuroIDDismiss))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewDidLayoutSubviews),
+                        swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
+        uiViewSwizzling(viewController: screen,
+                        originalSelector: #selector(screen.viewDidDisappear),
+                        swizzledSelector: #selector(screen.neuroIDViewDidDisappear))
     }
 
     @objc func neuroIDViewWillAppear(animated: Bool) {
@@ -161,9 +139,7 @@ internal extension UIViewController {
 
     @objc func neuroIDViewWillDisappear(animated: Bool) {
         neuroIDViewWillDisappear(animated: animated)
-//        NotificationCenter.default.removeObserver(self)
         registerViews = nil
-//        captureEvent(eventName: .windowBlur)
     }
 
     /**
@@ -182,16 +158,26 @@ internal extension UIViewController {
         }
         // We need to init the tracker on the views.
         tracker
-//        captureEvent(eventName: .windowFocus)
-        var subViews = view.subviews
+//        let subViews = view.subviews
         var allViewControllers = children
         allViewControllers.append(self)
-        registerSubViewsTargets(subViewControllers: allViewControllers)
+        UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
         registerViews = view.subviewsDescriptions
+
+        NeuroID.registerKeyboardListener(className: className, view: self)
+
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: className)
+    }
+
+    @objc func neuroIDViewDidDisappear() {
+        neuroIDViewDidDisappear()
+
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowUnload, id: hash.string, className: className)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
+        NeuroID.removeKeyboardListener(className: className, view: self)
     }
 
     @objc func neuroIDViewDidLayoutSubviews() {
@@ -200,26 +186,83 @@ internal extension UIViewController {
             return
         }
         if description.contains(className), let registerViews = registerViews {
-//            print("Old Views saved it")
-//            registerViews.forEach({ print( "Old : \($0)\n" )})
-//            print("Current Views saved it")
-//            self.view.subviews.forEach({ print( "Current : \($0.description)\n" )})
-//            print("New views to register")
             let newViews = view.subviews.filter { !$0.description.compareDescriptions(registerViews) && !ignoreLists.contains($0.className) }
-//            newViews.forEach({ print( "New : \($0.description)\n" )})
-//            print("**************************")
+
             for newView in newViews {
                 let screenName = className
-                NIDPrintLog("Registering view after load viewController")
+                NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering view after load viewController")
                 let guid = UUID().uuidString
                 NeuroIDTracker.registerSingleView(v: newView, screenName: screenName, guid: guid)
                 let childViews = newView.subviewsRecursive()
                 for _view in childViews {
-                    NIDPrintLog("Registering single subview.")
+                    NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering single subview.")
                     NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
                 }
             }
             self.registerViews = view.subviewsDescriptions
         }
+    }
+
+    @objc func keyboardWillShow(notification: Notification) {
+        // Handle keyboard will show event - potentially fires twice (might be a simulator bug)
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            // Determine the safe area insets of the device
+            var safeAreaInsets: UIEdgeInsets = .zero
+            if #available(iOS 11.0, *) {
+                safeAreaInsets = view.safeAreaInsets
+            }
+
+            // Compare the bottom of the keyboard frame with the bottom of the screen
+            let keyboardBottomY = keyboardFrame.origin.y + keyboardFrame.size.height
+            let screenBottomY = UIScreen.main.bounds.size.height - safeAreaInsets.bottom
+            var inSafeArea = false
+            if keyboardBottomY <= screenBottomY {
+                inSafeArea = true
+            }
+
+            if NeuroID.isStopped() {
+                return
+            }
+
+            let event = NIDEvent(type: NIDEventName.windowResize)
+
+            event.w = UIScreen.main.bounds.size.width
+            event.h = UIScreen.main.bounds.size.height - keyboardFrame.size.height
+            event.x = keyboardFrame.origin.x
+            event.y = keyboardFrame.origin.y
+            event.tgs = view.id
+            event.attrs = [
+                Attrs(n: "inSafeArea", v: "\(inSafeArea)"),
+                Attrs(n: "appear", v: "\(true)"),
+
+                Attrs(n: "keyboardW", v: "\(keyboardFrame.size.width)"),
+                Attrs(n: "keyboardH", v: "\(keyboardFrame.size.height)"),
+                Attrs(n: "keyboardX", v: "\(keyboardFrame.origin.x)"),
+                Attrs(n: "keyboardY", v: "\(keyboardFrame.origin.y)"),
+                Attrs(n: "screenHeightTotal", v: "\(UIScreen.main.bounds.size.height)"),
+                Attrs(n: "screenWidthTotal", v: "\(UIScreen.main.bounds.size.width)"),
+            ]
+
+            // Make sure we have a valid url set
+            event.url = className
+            DataStore.insertEvent(screen: className, event: event)
+        }
+    }
+
+    @objc func keyboardWillHide(notification: Notification) {
+        // Handle keyboard will hide event - Does not recieve any X, Y, W, H information
+
+        let event = NIDEvent(type: NIDEventName.windowResize)
+
+        event.w = UIScreen.main.bounds.size.width
+        event.h = UIScreen.main.bounds.size.height
+        event.tgs = view.id
+        event.attrs = [
+            Attrs(n: "appear", v: "\(false)"),
+        ]
+
+        // Make sure we have a valid url set
+        event.url = className
+        DataStore.insertEvent(screen: className, event: event)
     }
 }

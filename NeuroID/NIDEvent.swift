@@ -49,6 +49,8 @@ public enum NIDEventName: String {
     case keyDown = "KEY_DOWN"
     case keyUp = "KEY_UP"
     case change = "CHANGE"
+    case stepperChange = "STEPPER_CHANGE"
+    case colorWellChange = "COLOR_WELL_CHANGE"
     case selectChange = "SELECT_CHANGE"
     case textChange = "TEXT_CHANGE"
     case radioChange = "RADIO_CHANGE"
@@ -69,6 +71,15 @@ public enum NIDEventName: String {
     case windowResize = "WINDOW_RESIZE"
     case deviceMotion = "DEVICE_MOTION"
     case deviceOrientation = "DEVICE_ORIENTATION"
+
+    case customTouchStart = "CUSTOM_TOUCH_START"
+    case customTouchEnd = "CUSTOM_TOUCH_END"
+    case customDoubleTap = "CUSTOM_DOUBLE_TAP"
+    case customTap = "CUSTOM_TAP"
+    case customLongPress = "CUSTOM_LONG_PRESS"
+    case doubleClick = "DB_CLICK"
+    case navControllerPush = "NAV_CONTROLLER_PUSH"
+    case navControllerPop = "NAV_CONTROLLER_POP"
 
     var etn: String? {
         switch self {
@@ -165,6 +176,21 @@ public enum TargetValue: Codable, Equatable {
         }
     }
 
+    public func toArrayString() -> String {
+        switch self {
+        case .attr(let array):
+            return array.map { value in
+                "attr(guid=\(value.guid ?? ""), screenHierarchy=\(value.screenHierarchy ?? ""), n=\(value.n ?? ""), v=\(value.v ?? ""), hash=\(value.hash ?? ""))"
+            }.joined(separator: ",  ")
+        case .attrs(let array):
+            return array.map { value in
+                "n=\(value.n ?? ""), v=\(value.v ?? "")"
+            }.joined(separator: ", ")
+        default:
+            return ""
+        }
+    }
+
     public init(from decoder: Decoder) throws {
         if let int = try? decoder.singleValueContainer().decode(Int.self) {
             self = .int(int)
@@ -223,6 +249,8 @@ public class NIDEvent: Codable {
     var ts: Int64 = ParamsCreator.getTimeStamp()
     var x: CGFloat?
     var y: CGFloat?
+    var h: CGFloat?
+    var w: CGFloat?
     var f: String?
     var lsid: String?
     var sid: String? // Done
@@ -381,7 +409,7 @@ public class NIDEvent: Codable {
     public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
         self.type = type.rawValue
         var newTg = tg ?? [String: TargetValue]()
-        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        newTg["\(Constants.tgsKey.rawValue)"] = TargetValue.string(view != nil ? view!.id : "")
         self.tg = newTg
         self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
         self.url = primaryViewController?.className
@@ -452,7 +480,7 @@ public class NIDEvent: Codable {
      */
 
     public init(type: NIDEventName, view: UIView) {
-        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className ?? "")
+        self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className)
         self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
     }
@@ -466,11 +494,12 @@ public class NIDEvent: Codable {
         self.type = type.rawValue
         self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
         var newTg = tg ?? [String: TargetValue]()
-        newTg["tgs"] = TargetValue.string(view != nil ? view!.id : "")
+        newTg["\(Constants.tgsKey.rawValue)"] = TargetValue.string(view != nil ? view!.id : "")
         self.ts = ParamsCreator.getTimeStamp()
         self.tg = newTg
-        self.url = NeuroIDTracker.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
+        self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
         self.ts = ParamsCreator.getTimeStamp()
+
         switch type {
         case .touchStart, .touchMove, .touchEnd, .touchCancel:
             let touch = NIDTouches(x: view?.frame.origin.x, y: view?.frame.origin.y, tid: Int.random(in: 0 ... 10000))
@@ -521,6 +550,8 @@ public class NIDEvent: Codable {
         copy.ts = self.ts
         copy.x = self.x
         copy.y = self.y
+        copy.h = self.h
+        copy.w = self.w
         copy.f = self.f
         copy.lsid = self.lsid
         copy.sid = self.sid
