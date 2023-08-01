@@ -11,21 +11,34 @@ import XCTest
 class NIDParamsCreatorTests: XCTestCase {
     // consts
     let tgsKey = Constants.tgsKey.rawValue
-    let etnKey = Constants.etnKey.rawValue
     let etKey = Constants.etKey.rawValue
+    let etnKey = Constants.etnKey.rawValue
     let attrKey = Constants.attrKey.rawValue
 
     let uiView = UIView()
     let defaultTargetValue = TargetValue.string("")
     let tgParamsBaseExpectation: [String: TargetValue] = [
-        "\(etnKey)": TargetValue.string("UIView"),
-        "\(tgsKey)": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")
+        "\(Constants.etnKey.rawValue)": TargetValue.string("UIView"),
+        "\(Constants.tgsKey.rawValue)": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")
     ]
 
     let tgParamType = "text"
     let attrParams: [String: Any] = ["\(Constants.vKey.rawValue)": 4, "\(Constants.hashKey.rawValue)": "test"]
 
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    let extraEntry = ["extra": TargetValue.string("test")]
+    let etEntry = ["\(Constants.etKey.rawValue)": TargetValue.string("text")]
+    let etnEntry = ["\(Constants.etnKey.rawValue)": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")]
+    let etnEntryAlt = ["\(Constants.etnKey.rawValue)": TargetValue.string("TEXT_CHANGE")]
+    let kcEntry = ["kc": TargetValue.int(0)]
+    let tgsEntry = ["\(Constants.tgsKey.rawValue)": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")]
+    let attrEntry = ["\(Constants.attrKey.rawValue)": TargetValue.attr([
+        Attr(n: "\(Constants.vKey.rawValue)", v: "\(Constants.eventValuePrefix.rawValue)"),
+        Attr(n: "\(Constants.hashKey.rawValue)", v: "6003dfb4")
+    ])]
+
+    let valueDoubleEntry = ["value": TargetValue.double(0)]
 
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey)
@@ -50,19 +63,6 @@ class NIDParamsCreatorTests: XCTestCase {
 
         return combinedDict
     }
-
-    let extraEntry = ["extra": TargetValue.string("test")]
-    let etEntry = ["\(etKey)": TargetValue.string("text")]
-    let etnEntry = ["\(etnKey)": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")]
-    let etnEntryAlt = ["\(etnKey)": TargetValue.string("TEXT_CHANGE")]
-    let kcEntry = ["kc": TargetValue.int(0)]
-    let tgsEntry = ["\(tgsKey)": TargetValue.string("UIView_UNKNOWN_NO_ID_SET")]
-    let attrEntry = ["\(attrKey)": TargetValue.attr([
-        Attr(n: "\(Constants.vKey.rawValue)", v: "\(Constants.eventValuePrefix.rawValue)"),
-        Attr(n: "\(Constants.hashKey.rawValue)", v: "6003dfb4")
-    ])]
-
-    let valueDoubleEntry = ["value": TargetValue.double(0)]
 
     func addEntriesToDict(entryList: [String], dictToAddTo: [String: TargetValue]) -> [String: TargetValue] {
         let keyToValueDict: [String: [String: TargetValue]] = [
