@@ -4,14 +4,14 @@ Neuro-ID's Mobile SDK makes it simple to embed behavioral analytics inside your 
 
 ## Installation
 
-Visit https://neuro-id.readme.io/docs/overview for full installation documentation.
+Visit https://neuro-id.readme.io/docs/ios-installation for full installation documentation.
 
 ## V2 SDK Patch notes
 
-* Enhanced scoring with additional signal capture
-* Dozens of additional signal capturing allowing for more in-depth micro/macro level session analysis
-* Inclusion of hardware sensor signals for data capture
-* Additional device metadata.
-* New signal capture allowing for synthetic device detection.
-* Device automation via simulator/emulator/bot/script
-* Performance improvements and additional bug fixes.
+- Enhanced scoring with additional signal capture
+- Dozens of additional signal capturing allowing for more in-depth micro/macro level session analysis
+- Inclusion of hardware sensor signals for data capture
+- Additional device metadata.
+- New signal capture allowing for synthetic device detection.
+- Device automation via simulator/emulator/bot/script
+- Performance improvements and additional bug fixes.
