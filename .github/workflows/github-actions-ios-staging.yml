@@ -1,9 +1,11 @@
 name: Staging Actions for iOS NeuroID SDK
 
 on:
-  push:
+  pull_request_target:
+    types:
+      - closed
     branches:
-      - release/*/*
+      - develop
 
   repository_dispatch:
     types: [on-demand-testflight-staging]
@@ -12,6 +14,7 @@ env:
 jobs:
   test:
     runs-on: macos-latest
+    if: github.event.pull_request.merged
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v3
