@@ -1,3 +1,8 @@
+# ******************************************************************
+# This workflow will trigger once the `version-update.yaml` workflow PR is complete
+# or a PR goes into main from a branch that has a prefix of `releases/`
+# ******************************************************************
+
 name: Release SDK Version
 
 on:
@@ -57,6 +62,8 @@ jobs:
                 console.log(`Release created`);
             }
             createRelease();
+
+            TO-DO: add a latest release tag
 
   notifications:
     runs-on: ubuntu-latest
