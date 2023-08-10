@@ -83,6 +83,23 @@ public extension NeuroID {
             logError(category: "APICall", content: String(describing: error))
         })
     }
+    
+    static func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
+        AF.request(
+            url,
+            method: .post,
+            parameters: neuroHTTPRequest,
+            encoder: JSONParameterEncoder.default,
+            headers: headers
+        ).responseData { response in
+            completion(response)
+            
+            if response.error != nil && retryCount > 0 {
+                print("NeruoID network Retrying...")
+                retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
+            }
+        }
+    }
 
     /// Direct send to API to create session
     /// Regularly send in loop
@@ -129,19 +146,14 @@ public extension NeuroID {
             "authority": "receiver.neuroid.cloud",
         ]
 
-        AF.request(
-            url,
-            method: .post,
-            parameters: neuroHTTPRequest,
-            encoder: JSONParameterEncoder.default,
-            headers: headers
-        ).responseData { response in
-            // 204 invalid, 200 valid
+        let maxRetries = 3
+        
+        retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: maxRetries) { response in
             NIDPrintLog("NID Response \(response.response?.statusCode ?? 000)")
             NIDPrintLog("NID Payload: \(neuroHTTPRequest)")
             switch response.result {
             case .success:
-                NIDPrintLog("Neuro-ID post to API Successfull")
+                NIDPrintLog("Neuro-ID post to API Successful")
             case let .failure(error):
                 NIDPrintLog("Neuro-ID FAIL to post API")
                 logError(content: "Neuro-ID post Error: \(error)")
