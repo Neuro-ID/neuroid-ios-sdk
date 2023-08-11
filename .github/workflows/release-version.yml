@@ -21,25 +21,19 @@ jobs:
       contents: write
       issues: write
     steps:
-      - name: Update version
-        run: echo "Updating version with release type ${{ inputs.version_update }}"
-
       - name: Branch Checkout
         uses: actions/checkout@v3
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
-
-      - name: Bundle Install
-        run: bundle install
+          ruby-version: 2.7.6
+          bundler-cache: true
 
       - name: Get Updated Version
         run: |
           PACKAGE_VERSION=$(bundle exec fastlane get_project_version | grep -o "SDK Version:.*" | sed "s/SDK Version: //" )
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-          echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
 
       - name: Create Release
         uses: actions/github-script@v5
@@ -64,7 +58,16 @@ jobs:
             }
             createRelease();
 
-            TO-DO: add a latest release tag
+      - name: Update Release to also have "Latest" Tag
+        run: |
+          git config --global user.email developer@neuro-id.com
+          git config --global user.name neuroid-developer
+          set +e
+          git push origin :latest
+          git tag -d latest
+          git tag latest
+          git push origin latest
+          set -e
 
   notifications:
     runs-on: ubuntu-latest

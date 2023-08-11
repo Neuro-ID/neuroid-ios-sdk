@@ -46,13 +46,11 @@ jobs:
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 2.7.6
+          bundler-cache: true
 
-      - name: Bundle Install
-        run: bundle install
-
-      - name: Create cache for pods
-        uses: actions/cache@v2
+      - name: Restore cached Pods
+        uses: actions/cache/restore@v3
         with:
           path: Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
@@ -62,7 +60,14 @@ jobs:
       - name: CocoaPod Install
         run: pod install
 
-      - name: Run iOS Unit testing for SDK
+      - name: Save Updated Pods
+        id: cache-pods-save
+        uses: actions/cache/save@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+
+      - name: Run iOS Unit Testing for SDK
         run: bundle exec fastlane test
 
       - name: Update Current Version

@@ -44,7 +44,7 @@ jobs:
         run: pod install
 
       - name: Save Updated Pods
-        id: cache-primes-save
+        id: cache-pods-save
         uses: actions/cache/save@v3
         with:
           path: Pods
@@ -54,6 +54,17 @@ jobs:
         run: |
           git fetch --prune --unshallow
           echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+
+      - name: Update new commit to have "Development" Tag
+        run: |
+          git config --global user.email developer@neuro-id.com
+          git config --global user.name neuroid-developer
+          set +e
+          git push origin :development
+          git tag -d development
+          git tag development
+          git push origin development
+          set -e
 
       - name: Run iOS Unit Testing for Dev SDK
         run: bundle exec fastlane test
