@@ -17,6 +17,7 @@ on:
     types: [on-demand-testflight-dev]
 env:
   VERSION: "2.0.0"
+
 jobs:
   test:
     runs-on: macos-latest
@@ -91,7 +92,7 @@ jobs:
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
               https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-              -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+              -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
 
   notifications:
     runs-on: ubuntu-latest

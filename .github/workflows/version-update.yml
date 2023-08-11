@@ -27,6 +27,7 @@ on:
         default: "patch"
         type: choice
         options: ["major", "minor", "patch"]
+
 jobs:
   updateProjectVersion:
     runs-on: macos-latest

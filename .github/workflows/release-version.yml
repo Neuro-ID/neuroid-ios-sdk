@@ -11,6 +11,7 @@ on:
       - closed
     branches:
       - main
+
 jobs:
   releaseProjectVersion:
     runs-on: macos-latest
