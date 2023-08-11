@@ -18,7 +18,7 @@ internal func getFileURL(_ fileName: String?) throws -> URL {
         return fileURL
     }
     catch {
-        NIDPrintLog("Error Retrieving the FileURL: \(fileName) - \(error.localizedDescription)")
+        NIDPrintLog("Error Retrieving the FileURL: \(fileName ?? "") - \(error.localizedDescription)")
         throw error
     }
 }
@@ -52,6 +52,8 @@ internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealth
 internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundleURL: URL) throws {
     let fileManager = FileManager.default
 
+//    checkAndDeleteItems(fileDirectory: fileDirectory)
+
     let serverURL = bundleURL.appendingPathComponent(fileName)
     do {
         try fileManager.copyItem(at: serverURL, to: fileDirectory)
@@ -71,6 +73,8 @@ internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundl
 internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, bundleURL: URL) throws {
     let fileManager = FileManager.default
 
+    checkAndDeleteItems(fileDirectory: fileDirectory)
+
     // CREATE NID FOLDER
     do {
         try fileManager.createDirectory(at: fileDirectory, withIntermediateDirectories: false, attributes: nil)
@@ -88,5 +92,21 @@ internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, b
     catch let error as NSError {
         NIDPrintLog("Error Copying Resource Directory: \(resourcesURL) - \(error.localizedDescription)")
         throw error
+    }
+}
+
+internal func checkAndDeleteItems(fileDirectory: URL) {
+    let fileManager = FileManager.default
+
+    // Check if the folder exists
+    if fileManager.fileExists(atPath: fileDirectory.path) {
+        do {
+            // Delete the folder and all its contents
+            try fileManager.removeItem(at: fileDirectory)
+        }
+        catch {
+            // Handle the error if something goes wrong during the deletion
+            NIDPrintLog("Error Removing Folder: \(error)")
+        }
     }
 }

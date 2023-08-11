@@ -38,6 +38,7 @@ playground.xcworkspace
 
 # CocoaPods
 Pods/
+Gemfile.lock
 
 Carthage/Build/
 

@@ -8,24 +8,6 @@
 import Foundation
 import UIKit
 
-// MARK: - Swizzling
-
-private extension UIView {
-    // Add tap recognizer to all views?
-
-//    func test(view: UIView){
-
-//    }
-//    @objc static func startSwizzling() {
-//        test(self.viewWithTag(self))
-    ////        UIView.self.addGestureRecognizer(touchListener)
-//    }
-//
-//    convenience private override init() {
-//        print("hi")
-//    }
-}
-
 /***
  Anytime a view loads
  Check child subviews for eligible form events
@@ -54,16 +36,25 @@ public extension UIView {
 
             if #available(iOS 13.0, *) {
                 title = "UNKNOWN_NO_ID_SET"
-                title.replacingOccurrences(of: " ", with: "_")
-            } else {
-                // Fallback on earlier versions
+                title = title.replacingOccurrences(of: " ", with: "_")
             }
+
             title = "\(className)_\(title)"
-            let backupName = "\(description.hashValue)"
+            var backupName = "\(description.hashValue)"
 
             var placeholder = ""
             if let textControl = self as? UITextField {
                 placeholder = textControl.placeholder ?? ""
+            } else if let textControl = self as? UIDatePicker {
+                backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UIButton {
+                backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UISlider {
+                backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UISegmentedControl {
+                backupName = "\(textControl.hash)"
+            } else if let textControl = self as? UISwitch {
+                backupName = "\(textControl.hash)"
             }
 
             //            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")

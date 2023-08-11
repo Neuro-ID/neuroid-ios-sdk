@@ -47,6 +47,7 @@ public enum NeuroID {
     public static var collectorURLFromConfig: String?
     public static var isSDKStarted = false
     public static var observingInputs = false
+    internal static var observingKeyboard = false
 
     internal static var verifyIntegrationHealth: Bool = false
     internal static var debugIntegrationHealthEvents: [NIDEvent] = []
@@ -71,8 +72,6 @@ public enum NeuroID {
 
         // Reset tab id on configure
         UserDefaults.standard.set(nil, forKey: Constants.storageTabIdKey.rawValue)
-
-        NeuroID.createSession()
     }
 
     // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
@@ -94,7 +93,7 @@ public enum NeuroID {
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
             let filemgr = FileManager.default
             let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(Constants.debugJsonFileName.rawValue)
-            NIDPrintLog("DEBUG PATH \(path.absoluteString)")
+            NIDPrintLog("DEBUG PATH: \(path.absoluteString)")
         }
 
         #if DEBUG
@@ -137,6 +136,7 @@ public enum NeuroID {
         UITextView.startSwizzling()
         UINavigationController.swizzleNavigation()
         UITableView.tableviewSwizzle()
+//        UIScrollView.startSwizzlingUIScroll()
 //        UIButton.startSwizzling()
     }
 

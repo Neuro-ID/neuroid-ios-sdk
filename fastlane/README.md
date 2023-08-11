@@ -21,7 +21,31 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios test
 ```
 
-Description of what the lane does
+Run Schema Tests
+
+### ios update_version
+
+```sh
+[bundle exec] fastlane ios update_version
+```
+
+Update project version
+
+### ios update_project_version
+
+```sh
+[bundle exec] fastlane ios update_project_version
+```
+
+Update Podfile and Plist Version
+
+### ios get_numbers
+
+```sh
+[bundle exec] fastlane ios get_numbers
+```
+
+Prints the version number
 
 ----
 

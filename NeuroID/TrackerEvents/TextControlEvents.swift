@@ -43,14 +43,6 @@ internal extension NeuroIDTracker {
     }
 
     @objc func textBeginEditing(notification: Notification) {
-        if let textControl = notification.object as? UITextField {
-            // Touch event start
-            // TODO, this begin editing could eventually be an invisible view over the input item to be a true tap...
-            touchEvent(sender: textControl, eventName: .touchStart)
-        } else if let textControl = notification.object as? UITextView {
-            // Touch event start
-            touchEvent(sender: textControl, eventName: .touchStart)
-        }
         logTextEvent(from: notification, eventType: .focus)
     }
 
@@ -69,145 +61,42 @@ internal extension NeuroIDTracker {
      */
 
     func logTextEvent(from notification: Notification, eventType: NIDEventName) {
-        if let textControl = notification.object as? UITextField {
-            NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
+        switch notification.object {
+            case is UITextField:
 
-            // isSecureText
-            if #available(iOS 11.0, *) {
-                if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
-            }
-            if #available(iOS 12.0, *) {
-                if textControl.textContentType == .newPassword { return }
-            }
+                let textControl = notification.object as! UITextField
+                NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
-            let inputType = "text"
-            let textValue = textControl.text ?? ""
-            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textControl.text?.count ?? 0)"
-            let hashValue = textControl.text?.sha256().prefix(8).string
-            let tgs = TargetValue.string(textControl.id)
-            let attrParams = ["v": lengthValue, "hash": textValue]
-
-            if eventType == NIDEventName.input {
-                NIDPrintLog("NID keydown field = <\(textControl.id)>")
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: attrParams)
-                var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
-
-                inputEvent.v = lengthValue
-                inputEvent.hv = hashValue
-                inputEvent.tgs = tgs.toString()
-
-                captureEvent(event: inputEvent)
-            } else if eventType == NIDEventName.focus || eventType == NIDEventName.blur {
-                // Focus / Blur
-                var focusBlurEvent = NIDEvent(type: eventType, tg: [
-                    "tgs": tgs,
-                ])
-
-                focusBlurEvent.tgs = tgs.toString()
-
-                captureEvent(event: focusBlurEvent)
-
-                // If this is a blur event, that means we have a text change event
-                if eventType == NIDEventName.blur {
-                    // Text Change
-                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: attrParams)
-                    var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: 0, pd: 0)
-
-                    textChangeEvent.v = lengthValue
-                    textChangeEvent.hv = hashValue
-                    textChangeEvent.tgs = tgs.toString()
-//                    textChangeEvent.hv = hashValue
-                    captureEvent(event: textChangeEvent)
-                    NeuroID.send()
+                if textControl.isSensitiveEntry() {
+                    return
                 }
-            }
 
-//            detectPasting(view: textControl, text: textControl.text ?? "")
-        } else if let textControl = notification.object as? UITextView {
-            NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
-            let inputType = "text"
-            // isSecureText
-            if #available(iOS 11.0, *) {
-                if textControl.textContentType == .password || textControl.isSecureTextEntry { return }
-            }
-            if #available(iOS 12.0, *) {
-                if textControl.textContentType == .newPassword { return }
-            }
+                UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
+            case is UITextView:
+                let textControl = notification.object as! UITextView
+                NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
-            let hashValue = textControl.text?.sha256().prefix(8).string
-            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textControl.text?.count ?? 0)"
-            if eventType == NIDEventName.input {
-                NIDPrintLog("NID keydown field = <\(textControl.id)>")
-
-                // Keydown
-                let keydownTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.keyDown, view: textControl, type: inputType, attrParams: ["v": lengthValue, "hash": textControl.text ?? ""])
-                var keyDownEvent = NIDEvent(type: NIDEventName.keyDown, tg: keydownTG)
-                keyDownEvent.v = lengthValue
-                keyDownEvent.tgs = TargetValue.string(textControl.id).toString()
-//                keyDownEvent.hv = hashValue
-                captureEvent(event: keyDownEvent)
-
-                // Text Change
-                let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
-                var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: 0, pd: 0)
-                textChangeEvent.v = lengthValue
-                textChangeEvent.hv = hashValue
-                textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
-                captureEvent(event: textChangeEvent)
-
-                // Input
-                let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textControl, type: inputType, attrParams: nil)
-                var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
-                inputEvent.v = lengthValue
-                inputEvent.hv = hashValue
-                inputEvent.tgs = TargetValue.string(textControl.id).toString()
-                captureEvent(event: inputEvent)
-            } else if eventType == NIDEventName.focus || eventType == NIDEventName.blur {
-                // Focus / Blur
-                var focusBlurEvent = NIDEvent(type: eventType, tg: [
-                    "tgs": TargetValue.string(textControl.id),
-                ])
-                focusBlurEvent.tgs = TargetValue.string(textControl.id).toString()
-                captureEvent(event: focusBlurEvent)
-
-                // If this is a blur event, that means we have a text change event
-                if eventType == NIDEventName.blur {
-                    // Text Change
-                    let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textControl, type: inputType, attrParams: nil)
-                    var textChangeEvent = NIDEvent(type: NIDEventName.textChange, tg: textChangeTG, sm: 0, pd: 0)
-                    textChangeEvent.v = lengthValue
-                    textChangeEvent.tgs = TargetValue.string(textControl.id).toString()
-//                    textChangeEvent.hv = hashValue
-                    captureEvent(event: textChangeEvent)
+                if textControl.isSensitiveEntry() {
+                    return
                 }
-            }
 
-//            detectPasting(view: textControl, text: textControl.text ?? "")
-        } else if let textControl = notification.object as? UISearchBar {
+                UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
+
+            default:
+                NIDDebugPrint(tag: Constants.extraInfoTag.rawValue, "No known text object")
+        }
+
+        // DO WE WANT THIS?
+        if let textControl = notification.object as? UISearchBar {
+            let id = textControl.id
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar", attrParams: nil)
             var searchEvent = NIDEvent(type: eventType, tg: tg)
-            searchEvent.tgs = TargetValue.string(textControl.id).toString()
+            searchEvent.tgs = TargetValue.string(id).toString()
             captureEvent(event: searchEvent)
-//            detectPasting(view: textControl, text: textControl.text ?? "")
         }
     }
 
-//    func detectPasting(view: UIView, text: String) {
-//        var id = "\(Unmanaged.passUnretained(view).toOpaque())"
-//        guard var savedText = textCapturing[id] else {
-//           return
-//        }
-//        let savedCount = savedText.count
-//        let newCount = text.count
-//        if newCount > 0 && newCount - savedCount > 2 {
-//            let tg = ParamsCreator.getTextTgParams(
-//                view: view,
-//                extraParams: ["etn": TargetValue.string(NIDEventName.input.rawValue)])
-//            captureEvent(event: NIDEvent(type: .paste, tg: tg, view: view))
-//        }
-//        textCapturing[id] = text
-//    }
-
+    // Never used except in tests?
     func calcSimilarity(previousValue: String, currentValue: String) -> Double {
         var longer = previousValue
         var shorter = currentValue
