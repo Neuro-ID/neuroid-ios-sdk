@@ -2,12 +2,24 @@ Pod::Spec.new do |s|
 
 s.platform = :ios
 s.ios.deployment_target = '11.0'
-s.name = "Neuro-ID"
-s.summary = "A Swift implementation of a custom UIControl for selecting a range of values on a slider bar."
-s.requires_arc = true
 s.swift_version = '5.0'
+
+s.name = "NeuroID"
+s.module_name = "NeuroID"
+s.summary = "NeuroID's official SDK for the iOS platform"
+s.requires_arc = true
+s.version = "2.6.1"
+s.author = { "NeuroID" => "NeuroID" }
+s.homepage = "https://neuro-id.com/"
+
+s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
+s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+s.resource_bundles = {
+    'Resources' => ['NeuroID/Resources/**/*']
+}
+
 s.dependency 'Alamofire'
-s.version = "2.4.5"
+
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>
 
@@ -31,9 +43,4 @@ THE SOFTWARE.
 
 LICENSE
  }
-s.author = { "Neuro-ID" => "Neuro-ID" }
-s.homepage = "https://neuro-id.com/"
-s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
-
-s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 end

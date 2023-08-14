@@ -21,16 +21,28 @@ internal extension NeuroIDTracker {
 
         if let _ = sender as? UISwitch {
             eventName = .selectChange
+
         } else if let _ = sender as? UISegmentedControl {
             eventName = .selectChange
+
         } else if let _ = sender as? UIStepper {
-            eventName = .change
+            eventName = .stepperChange
+
         } else if let _ = sender as? UISlider {
             eventName = .sliderChange
+
         } else if let _ = sender as? UIDatePicker {
             eventName = .inputChange
+
+            // This is the only listener the UIDatePicker element will trigger, so we register here if not found
+            NeuroIDTracker.registerViewIfNotRegistered(view: sender)
+
+        } else if #available(iOS 14.0, *) {
+            if let _ = sender as? UIColorWell {
+                eventName = .colorWellChange
+            }
         }
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: nil))
+        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
     }
 }

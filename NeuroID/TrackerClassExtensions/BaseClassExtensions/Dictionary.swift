@@ -10,9 +10,7 @@ import Foundation
 extension Dictionary {
     func toKeyValueString() -> String {
         return map { key, value in
-            let escapedKey = "\(key)" ?? ""
-            let escapedValue = "\(value)" ?? ""
-            return escapedKey + "=" + escapedValue
+            "\(key)" + "=" + "\(value)"
         }
         .joined(separator: "&")
     }

@@ -8,19 +8,21 @@
 import Foundation
 import UIKit
 
-private func uiButtonSwizzling(element: UIButton.Type,
-                               originalSelector: Selector,
-                               swizzledSelector: Selector)
-{
-    let originalMethod = class_getInstanceMethod(element, originalSelector)
-    let swizzledMethod = class_getInstanceMethod(element, swizzledSelector)
+// TO-DO - Decide if necessary to capture more than touches already captured
 
-    if let originalMethod = originalMethod,
-       let swizzledMethod = swizzledMethod
-    {
-        method_exchangeImplementations(originalMethod, swizzledMethod)
-    }
-}
+// private func uiButtonSwizzling(element: UIButton.Type,
+//                               originalSelector: Selector,
+//                               swizzledSelector: Selector)
+// {
+//    let originalMethod = class_getInstanceMethod(element, originalSelector)
+//    let swizzledMethod = class_getInstanceMethod(element, swizzledSelector)
+//
+//    if let originalMethod = originalMethod,
+//       let swizzledMethod = swizzledMethod
+//    {
+//        method_exchangeImplementations(originalMethod, swizzledMethod)
+//    }
+// }
 
 // private extension UIButton {
 //    @objc static func startSwizzling() {
@@ -43,8 +45,8 @@ private func uiButtonSwizzling(element: UIButton.Type,
 //            return
 //        }
 //        if (self.responds(to: #selector(getter: titleLabel))) {
-//            let lengthValue = "S~C~~\(self.titleLabel?.text?.count ?? 0)"
-//            let clickTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.click, view: self, type: NIDEventName.click.rawValue, attrParams: ["v": lengthValue, "hash": self.titleLabel?.text])
+//            let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(self.titleLabel?.text?.count ?? 0)"
+//            let clickTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.click, view: self, type: NIDEventName.click.rawValue, attrParams: ["v": lengthValue, "\(Constants.hashKey.rawValue)": self.titleLabel?.text])
 //            var clickEvent = NIDEvent(type: NIDEventName.click, tg: clickTG)
 //
 //            let screenName = self.className ?? UUID().uuidString

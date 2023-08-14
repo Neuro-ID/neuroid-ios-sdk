@@ -38,6 +38,7 @@ playground.xcworkspace
 
 # CocoaPods
 Pods/
+Gemfile.lock
 
 Carthage/Build/
 
@@ -65,3 +66,5 @@ fastlane/test_output
 iOSInjectionProject/
 node_modules/
 .github/.DS_Store
+.DS_STORE
+**/.DS_STORE

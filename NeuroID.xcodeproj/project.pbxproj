@@ -28,6 +28,10 @@
 		6FE77FE82937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF06B26271FCA8300F6704C /* DataStoreTests.swift */; };
 		E494C0748D7A30D17CC3E764 /* Pods_SDKTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */; };
+		F216C4022A718AEA001DDABB /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4012A718AEA001DDABB /* Optional.swift */; };
+		F216C4042A718B0A001DDABB /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */; };
+		F216C4082A71BE19001DDABB /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4072A71BE19001DDABB /* Date.swift */; };
+		F216C40A2A72C649001DDABB /* UtilFunctionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */; };
 		F217029929D4C4DF00133A1C /* UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217029829D4C4DF00133A1C /* UITextField.swift */; };
 		F217029C29D4C79F00133A1C /* AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217029B29D4C79F00133A1C /* AppEvents.swift */; };
 		F217029E29D4C7CE00133A1C /* DeviceEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217029D29D4C7CE00133A1C /* DeviceEvents.swift */; };
@@ -49,10 +53,27 @@
 		F21702C929D5D5D000133A1C /* TouchEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C629D5D5D000133A1C /* TouchEvents.swift */; };
 		F21702CA29D5D5D000133A1C /* CustomEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C729D5D5D000133A1C /* CustomEvents.swift */; };
 		F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CB29D5D5E800133A1C /* Bundle.swift */; };
-		F21702CE29D5DB3F00133A1C /* UIDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */; };
 		F21702D029D5E9D800133A1C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CF29D5E9D800133A1C /* Utils.swift */; };
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
 		F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */; };
+		F228AA8F2A0180F80004892F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = F228AA8E2A0180F80004892F /* Resources */; };
+		F228AA902A0180F80004892F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = F228AA8E2A0180F80004892F /* Resources */; };
+		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
+		F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */; };
+		F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */; };
+		F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */; };
+		F2AEE7372A27A5D6009690CB /* NIDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7362A27A5D6009690CB /* NIDLog.swift */; };
+		F2AEE7392A27A64E009690CB /* NIDSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7382A27A64E009690CB /* NIDSession.swift */; };
+		F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE73A2A27A684009690CB /* NIDForm.swift */; };
+		F2AEE73D2A27A6AE009690CB /* NIDScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE73C2A27A6AE009690CB /* NIDScreen.swift */; };
+		F2AEE73F2A27A6E9009690CB /* NIDUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE73E2A27A6E9009690CB /* NIDUser.swift */; };
+		F2AEE7412A27A719009690CB /* NIDEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7402A27A719009690CB /* NIDEnv.swift */; };
+		F2AEE7432A27A7B5009690CB /* NIDClientSiteId.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */; };
+		F2AEE7452A27A814009690CB /* NIDRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7442A27A814009690CB /* NIDRegistration.swift */; };
+		F2AEE7472A27A84B009690CB /* NIDSend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7462A27A84B009690CB /* NIDSend.swift */; };
+		F2F0A3F029F6C8390083D43C /* IntegrationHealthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */; };
+		F2F0A3F329FB051D0083D43C /* FileCreationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */; };
+		F2F0A3F529FB05A90083D43C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F429FB05A90083D43C /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +117,10 @@
 		83932C67921B213F9F8EC020 /* Pods-NeuroID.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.staging.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.staging.xcconfig"; sourceTree = "<group>"; };
 		90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SDKTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0850300E729C2BA5AC67B5 /* Pods-SDKTest.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDKTest.staging.xcconfig"; path = "Target Support Files/Pods-SDKTest/Pods-SDKTest.staging.xcconfig"; sourceTree = "<group>"; };
+		F216C4012A718AEA001DDABB /* Optional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
+		F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
+		F216C4072A71BE19001DDABB /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilFunctionsTests.swift; sourceTree = "<group>"; };
 		F217029829D4C4DF00133A1C /* UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextField.swift; sourceTree = "<group>"; };
 		F217029B29D4C79F00133A1C /* AppEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvents.swift; sourceTree = "<group>"; };
 		F217029D29D4C7CE00133A1C /* DeviceEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEvents.swift; sourceTree = "<group>"; };
@@ -117,10 +142,26 @@
 		F21702C629D5D5D000133A1C /* TouchEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchEvents.swift; sourceTree = "<group>"; };
 		F21702C729D5D5D000133A1C /* CustomEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomEvents.swift; sourceTree = "<group>"; };
 		F21702CB29D5D5E800133A1C /* Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
-		F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDatePicker.swift; sourceTree = "<group>"; };
 		F21702CF29D5E9D800133A1C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
 		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
+		F228AA8E2A0180F80004892F /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
+		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
+		F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
+		F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
+		F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealth.swift; sourceTree = "<group>"; };
+		F2AEE7362A27A5D6009690CB /* NIDLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDLog.swift; sourceTree = "<group>"; };
+		F2AEE7382A27A64E009690CB /* NIDSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSession.swift; sourceTree = "<group>"; };
+		F2AEE73A2A27A684009690CB /* NIDForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDForm.swift; sourceTree = "<group>"; };
+		F2AEE73C2A27A6AE009690CB /* NIDScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDScreen.swift; sourceTree = "<group>"; };
+		F2AEE73E2A27A6E9009690CB /* NIDUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDUser.swift; sourceTree = "<group>"; };
+		F2AEE7402A27A719009690CB /* NIDEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEnv.swift; sourceTree = "<group>"; };
+		F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDClientSiteId.swift; sourceTree = "<group>"; };
+		F2AEE7442A27A814009690CB /* NIDRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRegistration.swift; sourceTree = "<group>"; };
+		F2AEE7462A27A84B009690CB /* NIDSend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSend.swift; sourceTree = "<group>"; };
+		F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealthTests.swift; sourceTree = "<group>"; };
+		F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCreationUtils.swift; sourceTree = "<group>"; };
+		F2F0A3F429FB05A90083D43C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +220,7 @@
 		26BCF33E268DA3C40002C289 /* NeuroID */ = {
 			isa = PBXGroup;
 			children = (
+				F228AA8E2A0180F80004892F /* Resources */,
 				26BCF349268DA7CF0002C289 /* DataStore.swift */,
 				26BCF34B268DA7CF0002C289 /* NIDEvent.swift */,
 				26BCF340268DA3C40002C289 /* Info.plist */,
@@ -187,11 +229,13 @@
 				F217029729D4C4BE00133A1C /* TrackerClassExtensions */,
 				26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */,
 				F21702D329D6077600133A1C /* NIDParamsCreator.swift */,
-				F21702C129D4CECD00133A1C /* NeuroID.swift */,
+				F2AEE7342A27A5BE009690CB /* NeuroIDClass */,
+				F2F0A3F129FB05040083D43C /* Utilities */,
 				6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */,
 				076252EE2876294400FBA209 /* NeuroIDSensors.swift */,
 				07A05C2028B91B4D00509509 /* NIDMetadata.swift */,
 				6FE77FE52937B3F700357284 /* NIDErrors.swift */,
+				F2F0A3F429FB05A90083D43C /* Constants.swift */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";
@@ -217,6 +261,10 @@
 				07BB4F61287FE8A200910665 /* SensorsTest.swift */,
 				07A2668B28A6A5BC00E973E2 /* PayloadTest.swift */,
 				F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */,
+				F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */,
+				F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */,
+				F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */,
+				F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */,
 			);
 			path = SDKTest;
 			sourceTree = "<group>";
@@ -270,8 +318,8 @@
 				F21702A729D4CAD300133A1C /* UIButton.swift */,
 				F21702A529D4CA8E00133A1C /* UITextView.swift */,
 				F217029829D4C4DF00133A1C /* UITextField.swift */,
-				F21702CD29D5DB3F00133A1C /* UIDatePicker.swift */,
 				F21702A929D4CB4900133A1C /* UIViewController.swift */,
+				F25165482A6EF74700D41B89 /* UIScrollView.swift */,
 			);
 			path = UIClassExtensions;
 			sourceTree = "<group>";
@@ -285,8 +333,45 @@
 				F21702BD29D4CE0700133A1C /* Double.swift */,
 				F21702BB29D4CDF900133A1C /* Dictionary.swift */,
 				F21702B929D4CDEA00133A1C /* CharacterSet.swift */,
+				F216C4012A718AEA001DDABB /* Optional.swift */,
+				F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */,
+				F216C4072A71BE19001DDABB /* Date.swift */,
 			);
 			path = BaseClassExtensions;
+			sourceTree = "<group>";
+		};
+		F2AEE7342A27A5BE009690CB /* NeuroIDClass */ = {
+			isa = PBXGroup;
+			children = (
+				F2AEE7352A27A5C8009690CB /* Extensions */,
+				F21702C129D4CECD00133A1C /* NeuroID.swift */,
+			);
+			path = NeuroIDClass;
+			sourceTree = "<group>";
+		};
+		F2AEE7352A27A5C8009690CB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F2AEE7362A27A5D6009690CB /* NIDLog.swift */,
+				F2AEE7442A27A814009690CB /* NIDRegistration.swift */,
+				F2AEE7382A27A64E009690CB /* NIDSession.swift */,
+				F2AEE73A2A27A684009690CB /* NIDForm.swift */,
+				F2AEE73C2A27A6AE009690CB /* NIDScreen.swift */,
+				F2AEE73E2A27A6E9009690CB /* NIDUser.swift */,
+				F2AEE7402A27A719009690CB /* NIDEnv.swift */,
+				F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */,
+				F2AEE7462A27A84B009690CB /* NIDSend.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		F2F0A3F129FB05040083D43C /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */,
+				F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		F7BF8FA1259620EB8C24D34B /* Pods */ = {
@@ -378,6 +463,9 @@
 		26BCF333268DA3C40002C289 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					static,
+				);
 				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
@@ -418,6 +506,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F228AA8F2A0180F80004892F /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +514,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F228AA902A0180F80004892F /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,17 +597,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				F21702B229D4CCF300133A1C /* UIView.swift in Sources */,
+				F2F0A3F529FB05A90083D43C /* Constants.swift in Sources */,
 				26BCF34E268DA7CF0002C289 /* NIDEvent.swift in Sources */,
 				F217029C29D4C79F00133A1C /* AppEvents.swift in Sources */,
+				F2AEE7452A27A814009690CB /* NIDRegistration.swift in Sources */,
 				26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */,
 				076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */,
 				F21702D029D5E9D800133A1C /* Utils.swift in Sources */,
 				F21702C229D4CECD00133A1C /* NeuroID.swift in Sources */,
+				F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */,
 				F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */,
+				F216C4022A718AEA001DDABB /* Optional.swift in Sources */,
+				F2F0A3F329FB051D0083D43C /* FileCreationUtils.swift in Sources */,
 				F217029929D4C4DF00133A1C /* UITextField.swift in Sources */,
 				F21702C029D4CE7E00133A1C /* Sequence.swift in Sources */,
+				F2AEE7472A27A84B009690CB /* NIDSend.swift in Sources */,
+				F216C4082A71BE19001DDABB /* Date.swift in Sources */,
 				F21702C829D5D5D000133A1C /* TextControlEvents.swift in Sources */,
-				F21702CE29D5DB3F00133A1C /* UIDatePicker.swift in Sources */,
+				F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */,
 				F21702A829D4CAD300133A1C /* UIButton.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
@@ -529,13 +626,21 @@
 				F21702B829D4CDD300133A1C /* Data.swift in Sources */,
 				6FE77FE62937B3F700357284 /* NIDErrors.swift in Sources */,
 				F21702BC29D4CDF900133A1C /* Dictionary.swift in Sources */,
+				F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */,
 				07A05C2128B91B4D00509509 /* NIDMetadata.swift in Sources */,
 				F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */,
+				F2AEE73D2A27A6AE009690CB /* NIDScreen.swift in Sources */,
 				F21702BA29D4CDEA00133A1C /* CharacterSet.swift in Sources */,
+				F2AEE73F2A27A6E9009690CB /* NIDUser.swift in Sources */,
 				F21702AE29D4CC5500133A1C /* UINavigationController.swift in Sources */,
+				F2AEE7392A27A64E009690CB /* NIDSession.swift in Sources */,
 				F21702CA29D5D5D000133A1C /* CustomEvents.swift in Sources */,
+				F2AEE7412A27A719009690CB /* NIDEnv.swift in Sources */,
 				F21702B629D4CDB300133A1C /* String.swift in Sources */,
+				F2AEE7432A27A7B5009690CB /* NIDClientSiteId.swift in Sources */,
+				F216C4042A718B0A001DDABB /* LosslessStringConvertible.swift in Sources */,
 				F21702AA29D4CB4900133A1C /* UIViewController.swift in Sources */,
+				F2AEE7372A27A5D6009690CB /* NIDLog.swift in Sources */,
 				26BCF34C268DA7CF0002C289 /* DataStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -545,10 +650,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */,
+				F216C40A2A72C649001DDABB /* UtilFunctionsTests.swift in Sources */,
+				F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */,
 				6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */,
 				6F39E8E126CEAA7900BE9834 /* EventTests.swift in Sources */,
 				07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */,
+				F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */,
 				07A2668C28A6A5BC00E973E2 /* PayloadTest.swift in Sources */,
+				F2F0A3F029F6C8390083D43C /* IntegrationHealthTests.swift in Sources */,
 				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
 				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
 			);

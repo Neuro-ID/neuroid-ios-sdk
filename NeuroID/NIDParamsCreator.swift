@@ -13,7 +13,11 @@ import UIKit
 enum ParamsCreator {
     static func getTgParams(view: UIView, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
         // TODO, figure out if we need to find super class of ETN
-        var params: [String: TargetValue] = ["tgs": TargetValue.string(view.id), "etn": TargetValue.string(view.className)]
+        var params: [String: TargetValue] = [
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
+            "\(Constants.etnKey.rawValue)": TargetValue.string(view.className),
+        ]
+
         for (key, value) in extraParams {
             params[key] = value
         }
@@ -27,8 +31,8 @@ enum ParamsCreator {
 
     static func getTextTgParams(view: UIView, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
         var params: [String: TargetValue] = [
-            "tgs": TargetValue.string(view.id),
-            "etn": TargetValue.string(NIDEventName.textChange.rawValue),
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
+            "\(Constants.etnKey.rawValue)": TargetValue.string(NIDEventName.textChange.rawValue),
             "kc": TargetValue.int(0),
         ]
         for (key, value) in extraParams {
@@ -37,30 +41,37 @@ enum ParamsCreator {
         return params
     }
 
-    static func getTGParamsForInput(eventName: NIDEventName, view: UIView, type: String, extraParams: [String: TargetValue] = [:], attrParams: [String: Any]?) -> [String: TargetValue] {
+    static func getTGParamsForInput(
+        eventName: NIDEventName,
+        view: UIView,
+        type: String,
+        extraParams: [String: TargetValue] = [:],
+        attrParams: [String: Any]?
+    ) -> [String: TargetValue] {
         var params: [String: TargetValue] = [:]
 
         switch eventName {
-        case NIDEventName.focus, NIDEventName.blur, NIDEventName.textChange, NIDEventName.radioChange,
-             NIDEventName.checkboxChange, NIDEventName.input, NIDEventName.copy, NIDEventName.paste, NIDEventName.click:
+        case .focus, .blur, .textChange, .radioChange,
+             .checkboxChange, .input, .copy, .paste, .click:
 
-//            var attrParams:Attr;
-            let inputValue = attrParams?["v"] as? String ?? "S~C~~"
-            let attrVal = Attr(n: "v", v: inputValue)
-            let textValue = attrParams?["hash"] as? String ?? ""
-            let hashValue = Attr(n: "hash", v: textValue.sha256().prefix(8).string)
-            let attrArraryVal: [Attr] = [attrVal, hashValue]
+            let inputValue = attrParams?["\(Constants.vKey.rawValue)"] as? String ?? "\(Constants.eventValuePrefix.rawValue)"
+            let textValue = attrParams?["\(Constants.hashKey.rawValue)"] as? String ?? ""
 
-            params = [
-                "tgs": TargetValue.string(view.id),
-                "etn": TargetValue.string(view.id),
-                "et": TargetValue.string(type),
-                "attr": TargetValue.attr(attrArraryVal),
+            let attrArraryVal: [Attr] = [
+                Attr(n: "\(Constants.vKey.rawValue)", v: inputValue),
+                Attr(n: "\(Constants.hashKey.rawValue)", v: textValue.hashValue()),
             ]
 
-        case NIDEventName.keyDown:
             params = [
-                "tgs": TargetValue.string(view.id),
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
+                "\(Constants.etnKey.rawValue)": TargetValue.string(view.id),
+                "\(Constants.etKey.rawValue)": TargetValue.string(type),
+                "\(Constants.attrKey.rawValue)": TargetValue.attr(attrArraryVal),
+            ]
+
+        case .keyDown:
+            params = [
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
             ]
         default:
             print("Invalid type")
@@ -72,38 +83,44 @@ enum ParamsCreator {
     }
 
     static func getUiControlTgParams(sender: UIView) -> [String: TargetValue] {
-        var tg: [String: TargetValue] = ["sender": TargetValue.string(sender.className), "tgs": TargetValue.string(sender.id)]
+        var tg: [String: TargetValue] = [
+            "sender": TargetValue.string(sender.className),
+            "\(Constants.tgsKey.rawValue)": TargetValue.string(sender.id),
+        ]
 
         if let control = sender as? UISwitch {
             tg["oldValue"] = TargetValue.bool(!control.isOn)
             tg["newValue"] = TargetValue.bool(control.isOn)
+
         } else if let control = sender as? UISegmentedControl {
-            tg["value"] = TargetValue.string(control.titleForSegment(at: control.selectedSegmentIndex) ?? "")
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.string((control.titleForSegment(at: control.selectedSegmentIndex) ?? "").hashValue())
             tg["selectedIndex"] = TargetValue.int(control.selectedSegmentIndex)
+
         } else if let control = sender as? UIStepper {
-            tg["value"] = TargetValue.double(control.value)
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.double(control.value)
+
         } else if let control = sender as? UISlider {
-            tg["value"] = TargetValue.double(Double(control.value))
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.double(Double(control.value))
+
         } else if let control = sender as? UIDatePicker {
-            tg["value"] = TargetValue.string("\(control.date)")
+            tg["\(Constants.valueKey.rawValue)"] = TargetValue.string("\(Constants.eventValuePrefix.rawValue)\(control.date.toString().count)")
         }
         return tg
     }
 
     static func getCopyTgParams() -> [String: TargetValue] {
-        let val = UIPasteboard.general.string ?? ""
         return ["content": TargetValue.string(UIPasteboard.general.string ?? "")]
     }
 
     static func getOrientationChangeTgParams() -> [String: Any?] {
         let orientation: String
         if UIDevice.current.orientation.isLandscape {
-            orientation = "Landscape"
+            orientation = Constants.orientationLandscape.rawValue
         } else {
-            orientation = "Portrait"
+            orientation = Constants.orientationPortrait.rawValue
         }
 
-        return ["orientation": orientation]
+        return ["\(Constants.orientationKey.rawValue)": orientation]
     }
 
     static func getDefaultSessionParams() -> [String: Any?] {
@@ -111,7 +128,7 @@ enum ParamsCreator {
             "clientId": ParamsCreator.getClientId(),
             "environment": NeuroID.getEnvironment,
             "sdkVersion": ParamsCreator.getSDKVersion(),
-            "pageTag": NeuroID.getScreenName,
+            "pageTag": NeuroID.getScreenName(),
             "responseId": ParamsCreator.generateUniqueHexId(),
             "siteId": NeuroID.siteId,
             "userId": ParamsCreator.getUserID() ?? nil,
@@ -140,8 +157,8 @@ enum ParamsCreator {
     // Launch of application
     // If user idles for > 30 min
     static func getSessionID() -> String {
-        let sidName = "nid_sid"
-        let sidExpires = "nid_sid_expires"
+        let sidName = Constants.storageSiteIdKey.rawValue
+        let sidExpires = Constants.storageSessionExpiredKey.rawValue
         let defaults = UserDefaults.standard
         let sid = defaults.string(forKey: sidName)
 
@@ -151,7 +168,7 @@ enum ParamsCreator {
         }
 
         let id = UUID().uuidString
-        print("Session ID:", id)
+        NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
         defaults.setValue(id, forKey: sidName)
         return id
     }
@@ -160,7 +177,7 @@ enum ParamsCreator {
      Sessions expire after 30 minutes
      */
     static func isSessionExpired() -> Bool {
-        var expireTime = Int64(UserDefaults.standard.integer(forKey: "nid_sid_expires"))
+        var expireTime = Int64(UserDefaults.standard.integer(forKey: Constants.storageSessionExpiredKey.rawValue))
 
         // If 0, that means we need to set expire time
         if expireTime == 0 {
@@ -175,12 +192,12 @@ enum ParamsCreator {
     static func setSessionExpireTime() -> Int64 {
         let thirtyMinutes: Int64 = 1800000
         let expiresTime = ParamsCreator.getTimeStamp() + thirtyMinutes
-        UserDefaults.standard.set(expiresTime, forKey: "nid_sid_expires")
+        UserDefaults.standard.set(expiresTime, forKey: Constants.storageSessionExpiredKey.rawValue)
         return expiresTime
     }
 
     static func getClientId() -> String {
-        let clientIdName = "nid_cid"
+        let clientIdName = Constants.storageClientKeyAlt.rawValue
         var cid = UserDefaults.standard.string(forKey: clientIdName)
         if NeuroID.clientId != nil {
             cid = NeuroID.clientId
@@ -197,7 +214,7 @@ enum ParamsCreator {
     }
 
     static func getTabId() -> String {
-        let tabIdName = "nid_tid"
+        let tabIdName = Constants.storageTabIdKey.rawValue
         let tid = UserDefaults.standard.string(forKey: tabIdName)
 
         if tid != nil && !tid!.contains("-") {
@@ -211,12 +228,12 @@ enum ParamsCreator {
     }
 
     static func getUserID() -> String? {
-        let nidUserID = "nid_user_id"
+        let nidUserID = Constants.storageUserIdKey.rawValue
         return UserDefaults.standard.string(forKey: nidUserID)
     }
 
     static func getDeviceId() -> String {
-        let deviceIdCacheKey = "nid_did"
+        let deviceIdCacheKey = Constants.storageDeviceIdKey.rawValue
         var did = UserDefaults.standard.string(forKey: deviceIdCacheKey)
 
         if did != nil && did!.contains("_") {
@@ -233,7 +250,7 @@ enum ParamsCreator {
     }
 
     static func getDnt() -> Bool {
-        let dntName = "nid_dnt"
+        let dntName = Constants.storageDntKey.rawValue
         let defaults = UserDefaults.standard
         let dnt = defaults.string(forKey: dntName)
         // If there is ANYTHING set in nid_dnt, we return true (meaning don't track)
