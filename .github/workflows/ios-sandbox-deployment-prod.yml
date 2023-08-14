@@ -1,14 +1,23 @@
-name: Main Testing for iOS NeuroID SDK
+# ******************************************************************
+# This workflow will trigger once a PR goes into main from a branch
+# that does has a prefix of `releases/`
+# ******************************************************************
+
+name: Deploy Prod Sandbox Apps
 
 on:
-  push:
+  pull_request_target:
+    types:
+      - closed
     branches:
       - main
-      - master
+  workflow_dispatch:
   repository_dispatch:
     types: [on-demand-testflight]
+
 env:
   VERSION: "1.3.0"
+
 jobs:
   updateSchema:
     if: github.event.pull_request == null
@@ -33,8 +42,8 @@ jobs:
           ls schema/
           cp schema/src/schema.json neuroid-ios-sdk/NeuroID/
 
-  test:
-    if: github.event.pull_request == null
+  deploySandboxApps:
+    if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/')
     runs-on: macos-latest
     needs: updateSchema
     steps:
@@ -44,17 +53,11 @@ jobs:
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 2.7.6
+          bundler-cache: true
 
-      - name: Bundle Install
-        run: bundle install
-
-      - name: Get last version from tags
-        run: |
-          git fetch --prune --unshallow
-          echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
-
-      - uses: actions/cache@v2
+      - name: Restore cached Pods
+        uses: actions/cache/restore@v3
         with:
           path: Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
@@ -64,10 +67,22 @@ jobs:
       - name: CocoaPod Install
         run: pod install
 
-      - name: Run iOS Unit testing for SDK
+      - name: Save Updated Pods
+        id: cache-pods-save
+        uses: actions/cache/save@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+
+      - name: Get last version from tags
+        run: |
+          git fetch --prune --unshallow
+          echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+
+      - name: Run iOS Unit Testing for SDK
         run: bundle exec fastlane test
 
-      - name: Running iOS native Sandbox actions
+      - name: Run iOS Sandbox Deployment
         run: |
           curl \
              -X POST \
@@ -76,7 +91,25 @@ jobs:
              https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
              -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
 
-      - name: Running ReactNative Sandbox actions
+      - name: Run iOS SwiftUI Sandbox Deployment
+        run: |
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
+            https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+
+      - name: Run iOS Storyboard Sandbox Deployment
+        run: |
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
+            https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-storyboard/dispatches \
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+
+      - name: Run ReactNative Sandbox Deployment
         run: |
           curl \
              -X POST \
@@ -87,28 +120,28 @@ jobs:
 
   notifications:
     runs-on: ubuntu-latest
-    needs: test
+    needs: deploySandboxApps
     steps:
       - name: Send Slack Notification on Success
-        if: ${{ needs.test.result == 'success' }}
+        if: ${{ needs.deploySandboxApps.result == 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Success execution on main iOS sdk build"
-          SLACK_TITLE: Success main iOS SDK
+          SLACK_MESSAGE: "Successful Prod Sandbox Deployment for iOS"
+          SLACK_TITLE: Successful Prod Sandbox Deployment for iOS
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Send Slack Notification on Failure
-        if: ${{ needs.test.result != 'success' }}
+        if: ${{ needs.deploySandboxApps.result != 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Failed execution on main iOS sdk build"
-          SLACK_TITLE: Failed main iOS SDK
+          SLACK_MESSAGE: "Failed Prod Sandbox Deployment for iOS"
+          SLACK_TITLE: Failed Prod Sandbox Deployment for iOS
           SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
