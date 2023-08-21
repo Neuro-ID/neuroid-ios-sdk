@@ -125,9 +125,6 @@ internal extension UIViewController {
                         originalSelector: #selector(screen.dismiss),
                         swizzledSelector: #selector(screen.neuroIDDismiss))
         uiViewSwizzling(viewController: screen,
-                        originalSelector: #selector(screen.viewDidLayoutSubviews),
-                        swizzledSelector: #selector(screen.neuroIDViewDidLayoutSubviews))
-        uiViewSwizzling(viewController: screen,
                         originalSelector: #selector(screen.viewDidDisappear),
                         swizzledSelector: #selector(screen.neuroIDViewDidDisappear))
     }
@@ -178,29 +175,6 @@ internal extension UIViewController {
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
         NeuroID.removeKeyboardListener(className: className, view: self)
-    }
-
-    @objc func neuroIDViewDidLayoutSubviews() {
-        neuroIDViewDidLayoutSubviews()
-        if NeuroID.isStopped() {
-            return
-        }
-        if description.contains(className), let registerViews = registerViews {
-            let newViews = view.subviews.filter { !$0.description.compareDescriptions(registerViews) && !ignoreLists.contains($0.className) }
-
-            for newView in newViews {
-                let screenName = className
-                NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering view after load viewController")
-                let guid = UUID().uuidString
-                NeuroIDTracker.registerSingleView(v: newView, screenName: screenName, guid: guid)
-                let childViews = newView.subviewsRecursive()
-                for _view in childViews {
-                    NIDDebugPrint(tag: "\(Constants.extraInfoTag.rawValue)", "Registering single subview.")
-                    NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
-                }
-            }
-            self.registerViews = view.subviewsDescriptions
-        }
     }
 
     @objc func keyboardWillShow(notification: Notification) {
