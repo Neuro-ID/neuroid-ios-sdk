@@ -156,6 +156,7 @@ internal extension UIViewController {
         if NeuroID.isStopped() {
             return
         }
+
         // We need to init the tracker on the views.
         tracker
 //        let subViews = view.subviews
