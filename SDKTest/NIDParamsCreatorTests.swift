@@ -363,7 +363,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(expired == expectedValue)
     }
 
-    let cidKey = Constants.storageClientKeyAlt.rawValue
+    let cidKey = Constants.storageClientIdKey.rawValue
     func test_getClientId_existing() {
         let expectedValue = "test-cid"
 

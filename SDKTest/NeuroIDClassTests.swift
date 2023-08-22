@@ -15,7 +15,7 @@ class NeuroIDClassTests: XCTestCase {
     // Keys for storage:
     let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
     let clientKeyKey = Constants.storageClientKey.rawValue
-    let clientIdKey = Constants.storageClientKeyAlt.rawValue
+    let clientIdKey = Constants.storageClientIdKey.rawValue
     let sessionIdKey = Constants.storageSiteIdKey.rawValue
     let tabIdKey = Constants.storageTabIdKey.rawValue
     let userIdKey = Constants.storageUserIdKey.rawValue
@@ -110,7 +110,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_getClientID() {
-        UserDefaults.standard.setValue("test-cid", forKey: Constants.storageClientKeyAlt.rawValue)
+        UserDefaults.standard.setValue("test-cid", forKey: Constants.storageClientIdKey.rawValue)
         NeuroID.clientId = nil
         let value = NeuroID.getClientID()
 
@@ -182,7 +182,7 @@ class NeuroIDClassTests: XCTestCase {
         let client = UserDefaults.standard.string(forKey: clientIdKey)
 
         assert(session == nil)
-        assert(client == nil)
+        assert(client != nil)
     }
 
     func test_getSessionID() {

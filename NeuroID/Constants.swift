@@ -21,7 +21,7 @@ internal enum Constants: String {
 
     case storageLocalNIDStopAllKey = "nid_stop_all"
     case storageClientKey = "nid_key"
-    case storageClientKeyAlt = "nid_cid"
+    case storageClientIdKey = "nid_cid"
     case storageTabIdKey = "nid_tid"
     case storageSiteIdKey = "nid_sid"
     case storageUserIdKey = "nid_user_id"
