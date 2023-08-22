@@ -138,6 +138,8 @@ class EventTests: XCTestCase {
         let userID = "atestUserID"
         let _ = NeuroIDTracker(screen: urlName, controller: testView)
 //        let params = ParamsCreator.getDefaultSessionParams();
+        
+        NeuroID.start()
         try? NeuroID.setUserID(userID)
 //        let copyEvent = NIDEvent(type: .copy, tg: ["et": "fieldset"], x: 10, y: 10)
         let params = ParamsCreator.getDefaultSessionParams()
@@ -150,6 +152,8 @@ class EventTests: XCTestCase {
 
         XCTAssertTrue(params["responseId"] != nil)
         XCTAssertTrue(params["userId"] as! String == userID)
+        
+        NeuroID.stop()
 
 //        XCTAssertTrue(params["events"] != nil)
 //        XCTAssertTrue(params["events"] is [String: Any])

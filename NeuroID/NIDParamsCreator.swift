@@ -197,7 +197,7 @@ enum ParamsCreator {
     }
 
     static func getClientId() -> String {
-        let clientIdName = Constants.storageClientKeyAlt.rawValue
+        let clientIdName = Constants.storageClientIdKey.rawValue
         var cid = UserDefaults.standard.string(forKey: clientIdName)
         if NeuroID.clientId != nil {
             cid = NeuroID.clientId

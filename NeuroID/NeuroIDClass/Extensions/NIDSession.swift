@@ -11,7 +11,6 @@ import UIKit
 public extension NeuroID {
     static func clearSession() {
         UserDefaults.standard.set(nil, forKey: Constants.storageSiteIdKey.rawValue)
-        UserDefaults.standard.set(nil, forKey: Constants.storageClientKeyAlt.rawValue)
     }
 
     static func getSessionID() -> String? {
