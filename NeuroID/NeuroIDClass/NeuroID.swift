@@ -52,6 +52,8 @@ public enum NeuroID {
     internal static var verifyIntegrationHealth: Bool = false
     internal static var debugIntegrationHealthEvents: [NIDEvent] = []
 
+    internal static var didSwizzle: Bool = false
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -118,6 +120,8 @@ public enum NeuroID {
             NIDPrintLog("Failed to Stop because: \(error)")
         }
 
+        NeuroID.isSDKStarted = false
+
         // save captured health events to file
         saveIntegrationHealthEvents()
     }
@@ -131,6 +135,10 @@ public enum NeuroID {
     }
 
     private static func swizzle() {
+        if didSwizzle {
+            return
+        }
+
         UIViewController.startSwizzling()
         UITextField.startSwizzling()
         UITextView.startSwizzling()
@@ -138,6 +146,8 @@ public enum NeuroID {
         UITableView.tableviewSwizzle()
 //        UIScrollView.startSwizzlingUIScroll()
 //        UIButton.startSwizzling()
+
+        didSwizzle.toggle()
     }
 
     public static func saveEventToLocalDataStore(_ event: NIDEvent) {
