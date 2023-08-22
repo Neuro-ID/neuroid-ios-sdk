@@ -26,16 +26,28 @@ internal extension UITextField {
     func addTapGesture() {
         // Add a single-tap gesture recognizer
         let singleTapGesture = CustomTapGestureRecognizer(target: self, action: #selector(self.handleSingleTap))
-        self.addGestureRecognizer(singleTapGesture)
-
+        singleTapGesture.accessibilityLabel = self.id
+        if (!containsGestureRecognizer(recognizers: self.gestureRecognizers, find: singleTapGesture)){
+            self.addGestureRecognizer(singleTapGesture)
+        }
+        
+    
         // Add a double-tap gesture recognizer
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
-        self.addGestureRecognizer(doubleTapGesture)
+        doubleTapGesture.accessibilityLabel = self.id
+        if (!containsGestureRecognizer(recognizers: self.gestureRecognizers, find: doubleTapGesture)){
+            self.addGestureRecognizer(doubleTapGesture)
+        }
+        
 
         // Add a long-press gesture recognizer
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress))
-        self.addGestureRecognizer(longPressGesture)
+        longPressGesture.accessibilityLabel = self.id
+        
+        if (!containsGestureRecognizer(recognizers: self.gestureRecognizers, find: longPressGesture)){
+            self.addGestureRecognizer(longPressGesture)
+        }
 
         // Ensure that single-tap gesture is recognized before double-tap gesture
         singleTapGesture.require(toFail: doubleTapGesture)
@@ -123,4 +135,15 @@ internal extension UITextField {
 
         return false
     }
+}
+
+func containsGestureRecognizer(recognizers: [UIGestureRecognizer]?, find: UIGestureRecognizer) -> Bool {
+   if let recognizers = recognizers {
+       for gr in recognizers {
+           if gr.accessibilityLabel == find.accessibilityLabel {
+               return true
+           }
+       }
+   }
+   return false
 }
