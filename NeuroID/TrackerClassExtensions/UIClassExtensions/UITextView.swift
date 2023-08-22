@@ -111,7 +111,7 @@ internal extension UITextView {
         self.neuroIDPaste(caller: caller)
         UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
     }
-
+    
     func isSensitiveEntry() -> Bool {
         // isSecureText
         if #available(iOS 11.0, *) {
@@ -123,4 +123,5 @@ internal extension UITextView {
 
         return false
     }
+
 }
