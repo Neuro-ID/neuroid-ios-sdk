@@ -53,17 +53,19 @@ public extension NeuroID {
         if NeuroID.isStopped() {
             return
         }
-        let dataStoreEvents = DataStore.getAllEvents()
 
-        let backupCopy = dataStoreEvents
-        // Clean event queue immediately after fetching
-        DataStore.removeSentEvents()
+        // get and clear event queue
+        let dataStoreEvents = DataStore.getAndRemoveAllEvents()
+
         if dataStoreEvents.isEmpty {
             return
         }
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+
+        // capture first event url as backup screen name
+        let altScreenName = dataStoreEvents.first?.url ?? "unnamed_screen"
 
         /** Just send all the evnets */
         let cleanEvents = dataStoreEvents.map { nidevent -> NIDEvent in
@@ -75,7 +77,7 @@ public extension NeuroID {
             return newEvent
         }
 
-        post(events: cleanEvents, screen: (getScreenName() ?? backupCopy[0].url) ?? "unnamed_screen", onSuccess: { _ in
+        post(events: cleanEvents, screen: getScreenName() ?? altScreenName, onSuccess: { _ in
             logInfo(category: "APICall", content: "Sending successfully")
             // send success -> delete
 

@@ -37,7 +37,7 @@ public enum DataStore {
         if NeuroID.excludedViewsTestIDs.contains(where: { $0 == mutableEvent.tgs || $0 == mutableEvent.en }) {
             return
         }
-                
+
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
         if let eventURL = mutableEvent.url {
             if eventURL.contains("RNScreensNavigationController") {
@@ -48,7 +48,7 @@ public enum DataStore {
         NeuroID.captureIntegrationHealthEvent(mutableEvent.copy())
         
         NIDPrintEvent(mutableEvent)
- 
+
         DispatchQueue.global(qos: .utility).sync {
             DataStore.events.append(mutableEvent)
         }
@@ -61,6 +61,15 @@ public enum DataStore {
     static func removeSentEvents() {
         self.events = []
     }
+
+    static func getAndRemoveAllEvents() -> [NIDEvent] {
+        return lock.withCriticalSection {
+            let result = _events
+            _events = []
+            return result
+        }
+    }
+
 }
 
 extension NSLocking {
