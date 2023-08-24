@@ -112,13 +112,19 @@ enum ParamsCreator {
         return ["content": TargetValue.string(UIPasteboard.general.string ?? "")]
     }
 
-    static func getOrientationChangeTgParams() -> [String: Any?] {
+    static func getOrientation() -> String {
         let orientation: String
         if UIDevice.current.orientation.isLandscape {
             orientation = Constants.orientationLandscape.rawValue
         } else {
             orientation = Constants.orientationPortrait.rawValue
         }
+
+        return orientation
+    }
+
+    static func getOrientationChangeTgParams() -> [String: Any?] {
+        let orientation: String = getOrientation()
 
         return ["\(Constants.orientationKey.rawValue)": orientation]
     }
