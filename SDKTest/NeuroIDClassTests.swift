@@ -164,12 +164,15 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_setScreenName_getScreenName() {
+        clearOutDataStore()
         let expectedValue = "testScreen"
         try? NeuroID.setScreenName(screen: expectedValue)
 
         let value = NeuroID.getScreenName()
 
         assert(value == expectedValue)
+
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
     func test_clearSession() {
@@ -201,6 +204,7 @@ class NeuroIDClassTests: XCTestCase {
         NeuroID.createSession()
 
         assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
     func test_closeSession() {
@@ -213,6 +217,14 @@ class NeuroIDClassTests: XCTestCase {
         }
 
         assertStoredEventTypeAndCount(type: "CLOSE_SESSION", count: 1)
+    }
+
+    func test_captureMobileMetadata() {
+        clearOutDataStore()
+
+        NeuroID.captureMobileMetadata()
+
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
     func test_start() {
@@ -343,7 +355,7 @@ class NeuroIDClassTests: XCTestCase {
             "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
             "a-A_1.0",
         ]
-        
+
         for userId in validUserIds {
             XCTAssertNoThrow(try NeuroID.setUserID(userId))
         }
@@ -366,7 +378,6 @@ class NeuroIDClassTests: XCTestCase {
                 assert(String(describing: error) == String(describing: NIDError.invalidUserID))
             }
         }
-
     }
 
     func test_getUserID_objectLevel() {

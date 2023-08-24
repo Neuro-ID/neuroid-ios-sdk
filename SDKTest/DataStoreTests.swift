@@ -67,7 +67,7 @@ class DataStoreTests: XCTestCase {
             let radioChangeEvents = parsedEvents.filter { $0.type == "RADIO_CHANGE" }
 
             XCTAssert(radioChangeEvents.count == 2)
-            assert(parsedEvents.count == 3) // include CREATE_SESSION event
+            assert(parsedEvents.count == 4) // include CREATE_SESSION && MOBILE_METADATA event
         } catch {
             print(String(describing: error))
         }
