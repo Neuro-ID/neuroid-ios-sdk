@@ -39,10 +39,10 @@ Update project version
 
 Update Podfile and Plist Version
 
-### ios get_numbers
+### ios get_project_version
 
 ```sh
-[bundle exec] fastlane ios get_numbers
+[bundle exec] fastlane ios get_project_version
 ```
 
 Prints the version number

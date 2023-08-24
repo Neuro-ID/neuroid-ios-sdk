@@ -88,7 +88,7 @@ jobs:
           git checkout -b ${{ env.BRANCH_NAME }}
           git status
           set +e
-          git add Neuro-ID.podspec
+          git add NeuroID.podspec
           git add NeuroID/Info.plist
           git commit -m "Update SDK to $PACKAGE_VERSION"
           git tag "v$PACKAGE_VERSION"
