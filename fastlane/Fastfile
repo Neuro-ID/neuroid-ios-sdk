@@ -23,7 +23,7 @@ platform :ios do
 
   desc "Update project version"
   lane :update_version do
-    version = version_bump_podspec(path: "Neuro-ID.podspec", version_number: ENV["newVersion"])
+    version = version_bump_podspec(path: "NeuroID.podspec", version_number: ENV["newVersion"])
     currentversion = get_version_number(
     xcodeproj: "NeuroID.xcodeproj",
     target: "NeuroID"
@@ -40,7 +40,7 @@ platform :ios do
 
   desc "Update Podfile and Plist Version"
   lane :update_project_version do
-    version_bump_podspec(path: "Neuro-ID.podspec", bump_type: ENV["releaseType"])
+    version_bump_podspec(path: "NeuroID.podspec", bump_type: ENV["releaseType"])
     increment_version_number(bump_type: ENV["releaseType"])
   end
 
