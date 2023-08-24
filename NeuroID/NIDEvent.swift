@@ -11,6 +11,8 @@ internal enum NIDSessionEventName: String {
     case setCustomEvent = "SET_CUSTOM_EVENT"
     case heartBeat = "HEARTBEAT"
 
+    case mobileMetadataIOS = "MOBILE_METADATA_IOS"
+
     func log() {
         let event = NIDEvent(session: self, tg: nil, x: nil, y: nil)
         NeuroID.saveEventToLocalDataStore(event)
@@ -80,6 +82,8 @@ public enum NIDEventName: String {
     case doubleClick = "DB_CLICK"
     case navControllerPush = "NAV_CONTROLLER_PUSH"
     case navControllerPop = "NAV_CONTROLLER_POP"
+
+    case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 
     var etn: String? {
         switch self {

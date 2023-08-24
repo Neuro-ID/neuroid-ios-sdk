@@ -26,6 +26,8 @@ public extension NeuroID {
             NIDPrintLog("Invalid Screenname for NeuroID. \(screen) can't be encode")
             logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
         }
+        
+        captureMobileMetadata()
     }
 
     static func getScreenName() -> String? {
