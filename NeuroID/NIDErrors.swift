@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NIDError: Error {
+public enum NIDError: Error {
     case sdkNotStarted
     case urlError
     case invalidUserID
