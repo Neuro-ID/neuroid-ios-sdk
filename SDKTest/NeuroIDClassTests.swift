@@ -337,6 +337,38 @@ class NeuroIDClassTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
     }
 
+    func test_setUserID_valid_id() {
+        let validUserIds = [
+            "123",
+            "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+            "a-A_1.0",
+        ]
+        
+        for userId in validUserIds {
+            XCTAssertNoThrow(try NeuroID.setUserID(userId))
+        }
+    }
+
+    func test_setUserID_invalid_id() {
+        let invalidUserIds = [
+            "",
+            "1",
+            "12",
+            "to_long_789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+            "this_is_way_to_long_0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
+            "invalid characters",
+            "invalid*ch@racters",
+        ]
+
+        for userId in invalidUserIds {
+            XCTAssertThrowsError(try NeuroID.setUserID(userId)) { error in
+                // could not get checks against error of type NIDError and instance of invalidUserID to work hence the following hack
+                assert(String(describing: error) == String(describing: NIDError.invalidUserID))
+            }
+        }
+
+    }
+
     func test_getUserID_objectLevel() {
         UserDefaults.standard.removeObject(forKey: userIdKey)
 

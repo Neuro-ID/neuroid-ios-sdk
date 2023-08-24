@@ -10,4 +10,5 @@ import Foundation
 enum NIDError: Error {
     case sdkNotStarted
     case urlError
+    case invalidUserID
 }
