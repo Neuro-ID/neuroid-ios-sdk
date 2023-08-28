@@ -5,14 +5,13 @@
 name: SDK Testing
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
 
 jobs:
   test:
     runs-on: macos-latest
-    if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/') != true
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v3
