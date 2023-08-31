@@ -30,10 +30,32 @@ class NeuroIDTrackerTests: XCTestCase {
         DataStore.removeSentEvents()
     }
     
-    func assertViewRegistered(v: UIView) {
+    func sleep(timeout: Double) {
+        let sleep = expectation(description: "Wait \(timeout) seconds.")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeout) {
+            sleep.fulfill()
+        }
+        wait(for: [sleep], timeout: timeout + 1)
+    }
+    
+    func assertEventTypeCountFromArray(type: String, expectedCount: Int, events: [NIDEvent]) {
+        let dataStoreEvents = events
+        let filteredEvents = dataStoreEvents.filter { $0.type == type }
+        
+        assert(filteredEvents.count == expectedCount)
+    }
+    
+    func assertEventTypeCount(type: String, expectedCount: Int) -> [NIDEvent] {
         let dataStoreEvents = DataStore.getAllEvents()
-        let filteredEvent = dataStoreEvents.filter { $0.type == "REGISTER_TARGET" }
-        assert(filteredEvent.count == 1)
+        let filteredEvents = dataStoreEvents.filter { $0.type == type }
+        
+        assert(filteredEvents.count == expectedCount)
+        
+        return filteredEvents
+    }
+    
+    func assertViewRegistered(v: UIView) {
+        let filteredEvent = assertEventTypeCount(type: "REGISTER_TARGET", expectedCount: 1)
         
         let firstEvent = filteredEvent[0]
         assert(firstEvent.type == "REGISTER_TARGET")
@@ -44,6 +66,15 @@ class NeuroIDTrackerTests: XCTestCase {
         let dataStoreEvents = DataStore.getAllEvents()
         let filteredEvent = dataStoreEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(filteredEvent.count == 0)
+        
+        let _ = assertEventTypeCount(type: "REGISTER_TARGET", expectedCount: 0)
+    }
+    
+    func assertActionExists(target: UIControl, actionParent: NeuroIDTracker, actionType: UIControl.Event, actionName: String) {
+        let actionQuery = target.actions(forTarget: actionParent, forControlEvent: actionType)
+        XCTAssertNotNil(actionQuery, "No actions found for \(actionType) event")
+        XCTAssertEqual(actionQuery?.first, actionName, "Action \(actionName) not found")
+        assert(actionQuery?.count == 1)
     }
     
     func test_captureEvent() {
@@ -52,10 +83,8 @@ class NeuroIDTrackerTests: XCTestCase {
         
         tracker.captureEvent(event: event)
         
-        let dataStoreEvents = DataStore.getAllEvents()
-        let filteredEvent = dataStoreEvents.filter { $0.type == "KEY_UP" }
+        let _ = assertEventTypeCount(type: "KEY_UP", expectedCount: 1)
         
-        assert(filteredEvent.count == 1)
 //         NOT WORKING?
 //        assert(filteredEvent[0].url ?? "" == "testScreen")
     }
@@ -66,11 +95,9 @@ class NeuroIDTrackerTests: XCTestCase {
         
         NeuroID.stop()
         tracker.captureEvent(event: event)
+
+        let _ = assertEventTypeCount(type: "KEY_UP", expectedCount: 0)
         
-        let dataStoreEvents = DataStore.getAllEvents()
-        let filteredEvent = dataStoreEvents.filter { $0.type == "KEY_UP" }
-        
-        assert(filteredEvent.count == 0)
 //         NOT WORKING?
 //        assert(filteredEvent[0].url ?? "" == "testScreen")
     }
@@ -193,7 +220,101 @@ class NeuroIDTrackerTests: XCTestCase {
         assertViewNOTRegistered(v: uiView)
     }
     
-//    Unsure how to test the following
-//    subscribe
-//    observeViews
+    func test_subscribe() {
+        NeuroID.observingInputs = false
+        
+        let uiControllerBasic = UIViewController()
+        let input = UITextField()
+
+        uiControllerBasic.view.addSubview(input)
+        
+        // subscribe happens in the INIT method
+        let tracker = NeuroIDTracker(
+            screen: "test",
+            controller: uiControllerBasic
+        )
+        
+        // Text Field Notification Tests - observeTextInputEvents()
+        // Field Focus
+        let _ = DataStore.getAndRemoveAllEvents()
+        NotificationCenter.default.post(name: UITextField.textDidBeginEditingNotification, object: input)
+        var e = DataStore.getAndRemoveAllEvents()
+        assertEventTypeCountFromArray(type: "REGISTER_TARGET", expectedCount: 1, events: e) // because not registered from view
+        assertEventTypeCountFromArray(type: "FOCUS", expectedCount: 1, events: e)
+        
+        // Field Input
+        NotificationCenter.default.post(name: UITextField.textDidChangeNotification, object: input)
+        e = DataStore.getAndRemoveAllEvents()
+        assertEventTypeCountFromArray(type: "INPUT", expectedCount: 1, events: e)
+
+        // Field Blur
+        NotificationCenter.default.post(name: UITextField.textDidEndEditingNotification, object: input)
+        e = DataStore.getAndRemoveAllEvents()
+        assertEventTypeCountFromArray(type: "BLUR", expectedCount: 1, events: e)
+        assertEventTypeCountFromArray(type: "TEXT_CHANGE", expectedCount: 1, events: e)
+        
+        // App Notification Tests - observeAppEvents()
+        NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: UIDevice.self)
+        e = DataStore.getAndRemoveAllEvents()
+        assertEventTypeCountFromArray(type: "DEVICE_ORIENTATION", expectedCount: 1, events: e)
+        assertEventTypeCountFromArray(type: "WINDOW_ORIENTATION_CHANGE", expectedCount: 1, events: e)
+        
+        // Device Notification Tests - observeRotation()
+        if #available(iOS 13.0, *) {
+            NotificationCenter.default.post(name: UIScene.didActivateNotification, object: UIScene.self)
+            e = DataStore.getAndRemoveAllEvents()
+            assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
+            
+            NotificationCenter.default.post(name: UIScene.willDeactivateNotification, object: UIScene.self)
+            e = DataStore.getAndRemoveAllEvents()
+            assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
+        } else {
+            NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: UIApplication.self)
+            e = DataStore.getAndRemoveAllEvents()
+            assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
+            
+            NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: UIApplication.self)
+            e = DataStore.getAndRemoveAllEvents()
+            assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
+        }
+    }
+    
+    func test_observeViews() {
+        let tracker = NeuroIDTracker(
+            screen: "test",
+            controller: nil
+        )
+
+        let button = UIButton(type: .system)
+        
+        tracker.observeViews([button])
+        
+        assertActionExists(
+            target: button,
+            actionParent: tracker,
+            actionType: .touchDown,
+            actionName: "controlTouchStartWithSender:"
+        )
+        
+        assertActionExists(
+            target: button,
+            actionParent: tracker,
+            actionType: .touchUpInside,
+            actionName: "controlTouchEndWithSender:"
+        )
+        
+        assertActionExists(
+            target: button,
+            actionParent: tracker,
+            actionType: .touchUpOutside,
+            actionName: "controlTouchMoveWithSender:"
+        )
+        
+        assertActionExists(
+            target: button,
+            actionParent: tracker,
+            actionType: .valueChanged,
+            actionName: "valueChangedWithSender:"
+        )
+    }
 }
