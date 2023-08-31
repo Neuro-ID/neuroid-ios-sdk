@@ -68,12 +68,10 @@ public enum NeuroID {
         clearSession()
 
         NeuroID.clientKey = clientKey
-        let key = Constants.storageClientKey.rawValue
-        let defaults = UserDefaults.standard
-        defaults.set(clientKey, forKey: key)
+        setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id on configure
-        UserDefaults.standard.set(nil, forKey: Constants.storageTabIdKey.rawValue)
+        setUserDefaultKey(Constants.storageTabIdKey.rawValue, value: nil)
     }
 
     // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
@@ -85,7 +83,7 @@ public enum NeuroID {
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start() {
         NeuroID.isSDKStarted = true
-        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+        setUserDefaultKey(localStorageNIDStopAll, value: false)
 
         NeuroID.startIntegrationHealthCheck()
 
@@ -112,10 +110,9 @@ public enum NeuroID {
 
     public static func stop() {
         NIDPrintLog("NeuroID Stopped")
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
-
+        setUserDefaultKey(localStorageNIDStopAll, value: true)
         do {
-            try closeSession(skipStop: true)
+            _ = try closeSession(skipStop: true)
         } catch {
             NIDPrintLog("Failed to Stop because: \(error)")
         }
@@ -127,11 +124,7 @@ public enum NeuroID {
     }
 
     public static func isStopped() -> Bool {
-        let key = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        if key {
-            return true
-        }
-        return false
+        return getUserDefaultKeyBool(localStorageNIDStopAll)
     }
 
     private static func swizzle() {

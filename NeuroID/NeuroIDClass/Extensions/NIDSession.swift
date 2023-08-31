@@ -10,7 +10,7 @@ import UIKit
 
 public extension NeuroID {
     static func clearSession() {
-        UserDefaults.standard.set(nil, forKey: Constants.storageSiteIdKey.rawValue)
+        setUserDefaultKey(Constants.storageSiteIdKey.rawValue, value: nil)
     }
 
     // Sessions are created under conditions:
@@ -22,7 +22,7 @@ public extension NeuroID {
 
         let sidKeyName = Constants.storageSiteIdKey.rawValue
 
-        let sid = UserDefaults.standard.string(forKey: sidKeyName)
+        let sid = getUserDefaultKeyString(sidKeyName)
 
         // TODO: Expire sesions
         if let sidValue = sid {
@@ -30,7 +30,7 @@ public extension NeuroID {
         }
 
         let id = UUID().uuidString
-        UserDefaults.standard.setValue(id, forKey: sidKeyName)
+        setUserDefaultKey(sidKeyName, value: id)
 
         NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
         return id

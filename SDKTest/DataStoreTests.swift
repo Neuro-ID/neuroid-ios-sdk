@@ -152,4 +152,80 @@ class DataStoreTests: XCTestCase {
         assert(retrievedEvents.count == 1)
         assert(DataStore.events.count == 0)
     }
+
+    func test_getUserDefaultKeyBool() {
+        let key = "MyBoolKey"
+        UserDefaults.standard.set(false, forKey: key)
+
+        let value = getUserDefaultKeyBool(key)
+        assert(value == false)
+    }
+
+    func test_getUserDefaultKeyBool_true() {
+        let key = "MyBoolKey"
+        UserDefaults.standard.set(true, forKey: key)
+
+        let value = getUserDefaultKeyBool(key)
+        assert(value == true)
+    }
+
+    func test_getUserDefaultKeyBool_nil() {
+        let key = "MyBoolKey"
+        UserDefaults.standard.set(nil, forKey: key)
+
+        let value = getUserDefaultKeyBool(key)
+        assert(value == false)
+    }
+
+    func test_getUserDefaultKeyString() {
+        let key = "MyStringKey"
+        UserDefaults.standard.set("", forKey: key)
+
+        let value = getUserDefaultKeyString(key)
+        assert(value == "")
+    }
+
+    func test_getUserDefaultKeyString_value() {
+        let key = "MyStringKey"
+        UserDefaults.standard.set("test", forKey: key)
+
+        let value = getUserDefaultKeyString(key)
+        assert(value == "test")
+    }
+
+    func test_getUserDefaultKeyString_nil() {
+        let key = "MyStringKey"
+        UserDefaults.standard.set(nil, forKey: key)
+
+        let value = getUserDefaultKeyString(key)
+        assert(value == nil)
+    }
+
+    func test_setUserDefaultKey_string() {
+        let key = "MyStringKey"
+
+        setUserDefaultKey(key, value: "test")
+
+        let value = UserDefaults.standard.string(forKey: key)
+        assert(value == "test")
+    }
+
+    func test_setUserDefaultKey_string_nil() {
+        let key = "MyStringKey"
+
+        setUserDefaultKey(key, value: nil)
+
+        let value = UserDefaults.standard.string(forKey: key)
+        assert(value == nil)
+    }
+
+    func test_setUserDefaultKey_bool() {
+        let key = "MyStringKey"
+
+        setUserDefaultKey(key, value: true)
+
+        let value = UserDefaults.standard.bool(forKey: key)
+        assert(value == true)
+    }
+
 }

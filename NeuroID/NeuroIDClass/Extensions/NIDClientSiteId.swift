@@ -13,7 +13,7 @@ public extension NeuroID {
      */
     static func getClientID() -> String {
         let clientIdName = Constants.storageClientIdKey.rawValue
-        var cid = UserDefaults.standard.string(forKey: clientIdName)
+        var cid = getUserDefaultKeyString(clientIdName)
         if NeuroID.clientId != nil {
             cid = NeuroID.clientId
         }
@@ -23,13 +23,13 @@ public extension NeuroID {
         } else {
             cid = ParamsCreator.genId()
             NeuroID.clientId = cid
-            UserDefaults.standard.set(cid, forKey: clientIdName)
+            setUserDefaultKey(clientIdName, value: cid)
             return cid!
         }
     }
 
     internal static func getClientKeyFromLocalStorage() -> String {
-        let key = UserDefaults.standard.string(forKey: Constants.storageClientKey.rawValue)
+        let key = getUserDefaultKeyString(Constants.storageClientKey.rawValue)
         return key ?? ""
     }
 

@@ -20,7 +20,7 @@ public extension NeuroID {
             throw NIDError.invalidUserID
         }
 
-        UserDefaults.standard.set(userId, forKey: Constants.storageUserIdKey.rawValue)
+        setUserDefaultKey(Constants.storageUserIdKey.rawValue, value: userId)
         NeuroID.userId = userId
 
         NIDDebugPrint(tag: "\(Constants.userTag.rawValue)", "NID userID = <\(userId)>")
@@ -31,7 +31,7 @@ public extension NeuroID {
     }
 
     static func getUserID() -> String {
-        let userId = UserDefaults.standard.string(forKey: Constants.storageUserIdKey.rawValue)
+        let userId = getUserDefaultKeyString(Constants.storageUserIdKey.rawValue)
         return NeuroID.userId ?? userId ?? ""
     }
 }

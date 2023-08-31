@@ -109,27 +109,27 @@ enum ParamsCreator {
 
     static func getTabId() -> String {
         let tabIdName = Constants.storageTabIdKey.rawValue
-        let tid = UserDefaults.standard.string(forKey: tabIdName)
+        let tid = getUserDefaultKeyString(tabIdName)
 
         if tid != nil && !tid!.contains("-") {
             return tid!
         } else {
             let randString = UUID().uuidString
             let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
-            UserDefaults.standard.set(tid, forKey: tabIdName)
+            setUserDefaultKey(tabIdName, value: tid)
             return "\(tid)"
         }
     }
 
     static func getDeviceId() -> String {
         let deviceIdCacheKey = Constants.storageDeviceIdKey.rawValue
-        var did = UserDefaults.standard.string(forKey: deviceIdCacheKey)
+        var did = getUserDefaultKeyString(deviceIdCacheKey)
 
         if did != nil && did!.contains("_") {
             return did!
         } else {
             did = genId()
-            UserDefaults.standard.set(did, forKey: deviceIdCacheKey)
+            setUserDefaultKey(deviceIdCacheKey, value: did)
             return did!
         }
     }
@@ -139,9 +139,7 @@ enum ParamsCreator {
     }
 
     static func getDnt() -> Bool {
-        let dntName = Constants.storageDntKey.rawValue
-        let defaults = UserDefaults.standard
-        let dnt = defaults.string(forKey: dntName)
+        let dnt = getUserDefaultKeyString(Constants.storageDntKey.rawValue)
         // If there is ANYTHING set in nid_dnt, we return true (meaning don't track)
         if dnt != nil {
             return true
