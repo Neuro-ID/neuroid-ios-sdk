@@ -132,12 +132,12 @@ enum ParamsCreator {
     static func getDefaultSessionParams() -> [String: Any?] {
         let params = [
             "clientId": ParamsCreator.getClientId(),
-            "environment": NeuroID.getEnvironment,
+            "environment": NeuroID.getEnvironment(),
             "sdkVersion": ParamsCreator.getSDKVersion(),
             "pageTag": NeuroID.getScreenName(),
             "responseId": ParamsCreator.generateUniqueHexId(),
             "siteId": NeuroID.siteId,
-            "userId": ParamsCreator.getUserID() ?? nil,
+            "userId": NeuroID.getUserID(),
         ] as [String: Any?]
 
         return params
@@ -233,6 +233,7 @@ enum ParamsCreator {
         }
     }
 
+    // might not be needed anymore?
     static func getUserID() -> String? {
         let nidUserID = Constants.storageUserIdKey.rawValue
         return UserDefaults.standard.string(forKey: nidUserID)

@@ -50,6 +50,14 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     // Util Helper Functions
+    func sleep(timeout: Double) {
+        let sleep = expectation(description: "Wait \(timeout) seconds.")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeout) {
+            sleep.fulfill()
+        }
+        wait(for: [sleep], timeout: timeout + 1)
+    }
+
     func createStringTargetValue(v: String) -> TargetValue {
         return TargetValue.string(v)
     }
@@ -296,10 +304,27 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     func test_getDefaultSessionParams() {
+        let clientIdValue = "testCID"
+        let envValue = "TESTING"
+        let screenNameValue = "myTestScreen"
+        let siteIdValue = "myTestSite"
+        let userIdValue = "myUserId"
+
+        NeuroID.clientId = clientIdValue
+        NeuroID.environment = envValue
+        NeuroID.currentScreenName = screenNameValue
+        NeuroID.siteId = siteIdValue
+        NeuroID.userId = userIdValue
+
         let value = ParamsCreator.getDefaultSessionParams()
 
         assertDictCount(value: value as [String: Any], count: 7)
-        // Unsure how to verify the default params
+
+        assert(value["clientId"] as! String == clientIdValue)
+        assert(value["environment"] as! String == envValue)
+        assert(value["pageTag"] as! String == screenNameValue)
+        assert(value["siteId"] as! String == siteIdValue)
+        assert(value["userId"] as! String == userIdValue)
     }
 
     func test_getClientKey() {
@@ -549,7 +574,12 @@ class NIDParamsCreatorTests: XCTestCase {
 
     func test_generateUniqueHexId() {
         let value = ParamsCreator.generateUniqueHexId()
+        assert(value.count == 8)
 
-        assert(value != nil)
+        sleep(timeout: 0.2)
+        let secondValue = ParamsCreator.generateUniqueHexId()
+        assert(secondValue.count == 8)
+
+        assert(value != secondValue)
     }
 }
