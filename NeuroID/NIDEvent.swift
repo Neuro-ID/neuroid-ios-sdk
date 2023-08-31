@@ -12,11 +12,6 @@ internal enum NIDSessionEventName: String {
     case heartBeat = "HEARTBEAT"
 
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
-
-    func log() {
-        let event = NIDEvent(session: self, tg: nil, x: nil, y: nil)
-        NeuroID.saveEventToLocalDataStore(event)
-    }
 }
 
 public enum NIDEventName: String {
@@ -283,6 +278,23 @@ public class NIDEvent: Codable {
     var sw: CGFloat?
     var rts: String?
 
+    /** Register Target
+       {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
+         ET - Submit, Blank, Hidden
+     */
+
+    init(type: NIDEventName) {
+        self.type = type.rawValue
+    }
+
+    init(sessionEvent: NIDSessionEventName) {
+        self.type = sessionEvent.rawValue
+    }
+
+    init(rawType: String) {
+        self.type = rawType
+    }
+
     /**
         Use to initiate a new session
          Element mapping:
@@ -329,9 +341,6 @@ public class NIDEvent: Codable {
        ts: Date.now(),
      */
 
-//    public init(from decoder: Decoder) throws {
-//        //
-//    }
     init(session: NIDSessionEventName,
          f: String? = nil,
          sid: String? = nil,
@@ -350,7 +359,10 @@ public class NIDEvent: Codable {
          jsv: String? = nil,
          gyro: NIDSensorData? = nil,
          accel: NIDSensorData? = nil,
-         rts: String? = nil)
+         rts: String? = nil,
+         sh: CGFloat? = nil,
+         sw: CGFloat? = nil,
+         metadata: NIDMetadata? = nil)
     {
         self.type = session.rawValue
         self.f = f
@@ -372,109 +384,9 @@ public class NIDEvent: Codable {
         self.gyro = gyro
         self.accel = accel
         self.rts = rts
-    }
-
-    /** Register Target
-       {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
-         ET - Submit, Blank, Hidden
-
-     */
-
-    init(type: NIDEventName) {
-        self.type = type.rawValue
-    }
-
-    init(eventName: NIDEventName, tgs: String, en: String, etn: String, et: String, ec: String, v: String, url: String) {
-        self.type = eventName.rawValue
-        self.tgs = tgs
-        self.en = en
-        self.eid = tgs
-        self.ec = ec
-        self.etn = etn
-        self.et = et
-        var ef: Any = String?.none
-        self.v = v
-        self.url = url
-    }
-
-    /**
-        Text Change
-     */
-    init(type: NIDEventName, tg: [String: TargetValue]?, sm: Double, pd: Double) {
-        self.type = type.rawValue
-        self.tg = tg
-        self.sm = sm
-        self.pd = pd
-    }
-
-    /**
-     Primary View Controller will be the URL that we are tracking.
-     */
-    public init(type: NIDEventName, tg: [String: TargetValue]?, primaryViewController: UIViewController?, view: UIView?) {
-        self.type = type.rawValue
-        var newTg = tg ?? [String: TargetValue]()
-        newTg["\(Constants.tgsKey.rawValue)"] = TargetValue.string(view != nil ? view!.id : "")
-        self.tg = newTg
-        self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
-        self.url = primaryViewController?.className
-        self.x = view?.frame.origin.x
-        self.y = view?.frame.origin.y
-    }
-
-    init(session: NIDSessionEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
-        self.type = session.rawValue
-        self.tg = tg
-        self.x = x
-        self.y = y
-    }
-
-    /**
-     * Form submit, Sucess Submit, Failure Submit
-     */
-    init(typeName: NIDEventName) {
-        self.type = typeName.rawValue
-    }
-
-    init(type: NIDEventName, tg: [String: TargetValue]?, v: String) {
-        self.type = type.rawValue
-        self.tg = tg
-        self.v = v
-    }
-
-    /**
-     Set custom variable
-        - Parameters:
-            - type: NIDEventName
-            - key: String value of key
-            - v: String value of the value
-        - Returns: An NIDEvent instance
-     */
-    init(type: NIDSessionEventName, key: String, v: String) {
-        self.type = type.rawValue
-        self.key = key
-        self.v = v
-    }
-
-    /**
-     Set UserID Event
-     */
-    init(session: NIDSessionEventName, userId: String) {
-        self.uid = userId
-        self.type = session.rawValue
-    }
-
-    init(type: NIDEventName, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
-        self.type = type.rawValue
-        self.tg = tg
-        self.x = x
-        self.y = y
-    }
-
-    init(customEvent: String, tg: [String: TargetValue]?, x: CGFloat?, y: CGFloat?) {
-        self.type = customEvent
-        self.tg = tg
-        self.x = x
-        self.y = y
+        self.sh = sh
+        self.sw = sw
+        self.metadata = metadata
     }
 
     /**
@@ -483,32 +395,35 @@ public class NIDEvent: Codable {
      LOAD
      */
 
-    public init(type: NIDEventName, view: UIView) {
-        self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view.className)
-        self.type = type.rawValue
-        self.ts = ParamsCreator.getTimeStamp()
-    }
-
     public init(type: NIDEventName, tg: [String: TargetValue]?) {
         self.type = type.rawValue
         self.tg = tg
     }
 
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
-        self.type = type.rawValue
-        self.tgs = TargetValue.string(view != nil ? view!.id : "").toString()
+        let viewId = TargetValue.string(view != nil ? view!.id : "")
+
         var newTg = tg ?? [String: TargetValue]()
-        newTg["\(Constants.tgsKey.rawValue)"] = TargetValue.string(view != nil ? view!.id : "")
+        newTg["\(Constants.tgsKey.rawValue)"] = viewId
+
+        self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
+        self.url = UtilFunctions.getFullViewlURLPath(
+            currView: view,
+            screenName: NeuroID.getScreenName() ?? view?.className ?? ""
+        )
+
+        self.tgs = viewId.toString()
         self.tg = newTg
-        self.url = UtilFunctions.getFullViewlURLPath(currView: view, screenName: NeuroID.getScreenName() ?? view?.className ?? "")
-        self.ts = ParamsCreator.getTimeStamp()
 
         switch type {
         case .touchStart, .touchMove, .touchEnd, .touchCancel:
-            let touch = NIDTouches(x: view?.frame.origin.x, y: view?.frame.origin.y, tid: Int.random(in: 0 ... 10000))
-            self.touches = []
-            self.touches?.append(touch)
+            let touch = NIDTouches(
+                x: view?.frame.origin.x,
+                y: view?.frame.origin.y,
+                tid: Int.random(in: 0 ... 10000)
+            )
+            self.touches = [touch]
         default:
             self.x = view?.frame.origin.x
             self.y = view?.frame.origin.y
@@ -537,7 +452,7 @@ public class NIDEvent: Codable {
 
     func copy(with zone: NSZone? = nil) -> NIDEvent {
         let copy = NIDEvent(
-            customEvent: self.type, tg: self.tg, x: self.x, y: self.y
+            rawType: self.type
         )
 
         copy.tg = self.tg
@@ -584,27 +499,5 @@ public class NIDEvent: Codable {
         copy.sw = self.sw
         copy.rts = self.rts
         return copy
-    }
-}
-
-extension Collection where Iterator.Element == [String: Any?] {
-    func toJSONString() -> String {
-        if let arr = self as? [[String: Any?]],
-           let dat = try? JSONSerialization.data(withJSONObject: arr),
-           let str = String(data: dat, encoding: String.Encoding.utf8)
-        {
-            return str
-        }
-        return "[]"
-    }
-}
-
-extension Collection where Iterator.Element == NIDEvent {
-    func toArrayOfDicts() -> [[String: Any?]] {
-        let dat = self.map { $0.asDictionary.mapValues { value in
-            value
-        } }
-
-        return dat
     }
 }

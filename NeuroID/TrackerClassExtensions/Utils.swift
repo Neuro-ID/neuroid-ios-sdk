@@ -81,23 +81,22 @@ internal enum UtilFunctions {
 
         //    let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
 
-        let nidEvent = NIDEvent(
-            eventName: NIDEventName.registerTarget,
-            tgs: id,
-            en: id,
-            etn: etn,
-            et: "\(type)::\(className)",
-            ec: screenName,
-            v: rawText ?? false ? textValue : "\(Constants.eventValuePrefix.rawValue)\(textValue.count)",
-            url: screenName
-        )
-
-        // If RTS is set, set rts on focus events
-        nidEvent.setRTS(rts)
+        let nidEvent = NIDEvent(type: .registerTarget)
+        nidEvent.tgs = id
+        nidEvent.eid = id
+        nidEvent.en = id
+        nidEvent.etn = etn
+        nidEvent.et = "\(type)::\(className)"
+        nidEvent.ec = screenName
+        nidEvent.v = rawText ?? false ? textValue : "\(Constants.eventValuePrefix.rawValue)\(textValue.count)"
+        nidEvent.url = screenName
 
         nidEvent.hv = textValue.hashValue()
         nidEvent.tg = tg
         nidEvent.attrs = attrs
+
+        // If RTS is set, set rts on focus events
+        nidEvent.setRTS(rts)
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
 

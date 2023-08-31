@@ -17,13 +17,16 @@ public extension NeuroID {
         let expression = try NSRegularExpression(pattern: "^[a-zA-Z0-9-_.]{3,100}$", options: NSRegularExpression.Options(rawValue: 0))
         let result = expression.matches(in: userId, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, userId.count))
         if result.count != 1 {
-              throw NIDError.invalidUserID
+            throw NIDError.invalidUserID
         }
 
         UserDefaults.standard.set(userId, forKey: Constants.storageUserIdKey.rawValue)
-        let setUserEvent = NIDEvent(session: NIDSessionEventName.setUserId, userId: userId)
         NeuroID.userId = userId
+
         NIDDebugPrint(tag: "\(Constants.userTag.rawValue)", "NID userID = <\(userId)>")
+
+        let setUserEvent = NIDEvent(sessionEvent: NIDSessionEventName.setUserId)
+        setUserEvent.uid = userId
         saveEventToLocalDataStore(setUserEvent)
     }
 

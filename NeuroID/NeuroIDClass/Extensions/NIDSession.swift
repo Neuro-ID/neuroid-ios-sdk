@@ -37,11 +37,11 @@ public extension NeuroID {
             tch: ParamsCreator.getTouch(),
             pageTag: NeuroID.getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
-            jsv: ParamsCreator.getSDKVersion()
+            jsv: ParamsCreator.getSDKVersion(),
+            sh: UIScreen.main.bounds.height,
+            sw: UIScreen.main.bounds.width,
+            metadata: NIDMetadata()
         )
-        event.sh = UIScreen.main.bounds.height
-        event.sw = UIScreen.main.bounds.width
-        event.metadata = NIDMetadata()
         saveEventToLocalDataStore(event)
 
         captureMobileMetadata()
@@ -79,11 +79,12 @@ public extension NeuroID {
             tch: ParamsCreator.getTouch(),
             pageTag: NeuroID.getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
-            jsv: ParamsCreator.getSDKVersion()
+            jsv: ParamsCreator.getSDKVersion(),
+            sh: UIScreen.main.bounds.height,
+            sw: UIScreen.main.bounds.width,
+            metadata: NIDMetadata()
         )
-        event.sh = UIScreen.main.bounds.height
-        event.sw = UIScreen.main.bounds.width
-        event.metadata = NIDMetadata()
+
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
         ]
