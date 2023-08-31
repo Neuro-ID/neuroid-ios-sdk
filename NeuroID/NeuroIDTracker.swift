@@ -36,6 +36,12 @@ public class NeuroIDTracker: NSObject {
         return UserDefaults.standard.string(forKey: Constants.storageSiteIdKey.rawValue)
     }
     
+    func excludeViews(views: UIView...) {
+        for v in views {
+            NeuroID.secretViews.append(v)
+        }
+    }
+    
     public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
         let currView = v as? UIView
         
@@ -220,15 +226,7 @@ public class NeuroIDTracker: NSObject {
         }
         return false
     }
-    
-    func excludeViews(views: UIView...) {
-        for v in views {
-            NeuroID.secretViews.append(v)
-        }
-    }
 }
-
-// MARK: - Private functions
 
 internal extension NeuroIDTracker {
     func subscribe(inScreen controller: UIViewController?) {
