@@ -114,7 +114,7 @@ enum ParamsCreator {
         if tid != nil && !tid!.contains("-") {
             return tid!
         } else {
-            let randString = UUID().uuidString
+            let randString = genId()
             let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
             setUserDefaultKey(tabIdName, value: tid)
             return "\(tid)"

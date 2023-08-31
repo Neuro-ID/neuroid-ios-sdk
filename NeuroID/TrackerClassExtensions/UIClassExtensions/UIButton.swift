@@ -49,7 +49,7 @@ import UIKit
 //            let clickTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.click, view: self, type: NIDEventName.click.rawValue, attrParams: ["v": lengthValue, "\(Constants.hashKey.rawValue)": self.titleLabel?.text])
 //            var clickEvent = NIDEvent(type: NIDEventName.click, tg: clickTG)
 //
-//            let screenName = self.className ?? UUID().uuidString
+//            let screenName = self.className ?? ParamsCreator.genId()
 //            var newEvent = clickEvent
 //            // Make sure we have a valid url set
 //            newEvent.url = screenName
