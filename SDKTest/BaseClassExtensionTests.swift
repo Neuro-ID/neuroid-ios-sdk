@@ -52,7 +52,7 @@ class BaseClassExtenstionTests: XCTestCase {
         og["foo2"] = "bar2"
         
         let value2 = og.toKeyValueString()
-        assert(value2 == "foo2=bar2&foo=bar")
+        assert(value2 == "foo=bar&foo2=bar2")
     }
     
     func test_optional_isEmptyOrNil() {

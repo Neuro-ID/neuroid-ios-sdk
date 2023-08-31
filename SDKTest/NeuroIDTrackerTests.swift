@@ -110,32 +110,22 @@ class NeuroIDTrackerTests: XCTestCase {
 //        assert(filteredEvent[0].url ?? "" == "testScreen")
     }
     
-    func test_getCurrentSession() {
-        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+    func test_excludeViews() {
+        NeuroID.secretViews = []
         
-        let sid = tracker.getCurrentSession()
+        assert(NeuroID.secretViews.count == 0)
         
-        assert(sid != nil)
-    }
-    
-    func test_getCurrentSession_clear_nil() {
-        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+        let view = UITextView()
+        view.id = "myTextView"
         
-        NeuroID.clearSession()
+        let tracker = NeuroIDTracker(
+            screen: "test",
+            controller: nil
+        )
         
-        let sid = tracker.getCurrentSession()
+        tracker.excludeViews(views: view)
         
-        assert(sid == nil)
-    }
-    
-    func test_getCurrentSession_nil() {
-        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
-
-        UserDefaults.standard.setValue(nil, forKey: Constants.storageSiteIdKey.rawValue)
-        
-        let sid = tracker.getCurrentSession()
-        
-        assert(sid == nil)
+        assert(NeuroID.secretViews.count == 1)
     }
     
     func test_registerSingleView_UITextField() {
@@ -340,23 +330,5 @@ class NeuroIDTrackerTests: XCTestCase {
         
         // Assert still only 1 registration
         assertViewWithIdRegistered(v: view, id: "myTextView")
-    }
-    
-    func test_excludeViews() {
-        NeuroID.secretViews = []
-        
-        assert(NeuroID.secretViews.count == 0)
-        
-        let view = UITextView()
-        view.id = "myTextView"
-        
-        let tracker = NeuroIDTracker(
-            screen: "test",
-            controller: nil
-        )
-        
-        tracker.excludeViews(views: view)
-        
-        assert(NeuroID.secretViews.count == 1)
     }
 }

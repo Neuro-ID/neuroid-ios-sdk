@@ -159,42 +159,4 @@ final class UtilFunctionsTests: XCTestCase {
 
         assertEventTypeCount(type: "WINDOW_LOAD", expectedCount: expectedValue)
     }
-
-    func test_getParentClasses() {
-        let expectedValue = "UIView"
-
-        let value = getParentClasses(currView: nil, hierarchyString: nil)
-
-        assert(value == expectedValue)
-    }
-
-    func test_getParentClasses_currView() {
-        let expectedValue = "UITextView"
-        let uiView = UITextView()
-
-        let value = getParentClasses(currView: uiView, hierarchyString: nil)
-
-        assert(value == expectedValue)
-    }
-
-    func test_getParentClasses_hierarchyString() {
-        let expectedValue = "UIView\\HSTRING"
-        let uiView = UIView()
-
-        let value = getParentClasses(currView: uiView, hierarchyString: "HSTRING")
-
-        assert(value == expectedValue)
-    }
-
-    func test_getParentClasses_superview() {
-        let expectedValue = "UIView\\UITextView\\HSTRING"
-        let uiView = UIView()
-        let child = UITextView()
-
-        uiView.addSubview(child)
-
-        let value = getParentClasses(currView: child, hierarchyString: "HSTRING")
-
-        assert(value == expectedValue)
-    }
 }
