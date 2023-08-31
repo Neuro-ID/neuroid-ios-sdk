@@ -8,7 +8,7 @@
 @testable import NeuroID
 import XCTest
 
-class BaseClassExtenstionTests: XCTestCase {
+class BaseClassExtensionTests: XCTestCase {
     func test_string_sha256_withSalt() {
         UserDefaults.standard.set("mySalt", forKey: Constants.storageSaltKey.rawValue)
         let og = "myString"
