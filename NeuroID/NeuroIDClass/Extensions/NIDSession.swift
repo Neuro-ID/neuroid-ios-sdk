@@ -13,8 +13,27 @@ public extension NeuroID {
         UserDefaults.standard.set(nil, forKey: Constants.storageSiteIdKey.rawValue)
     }
 
-    static func getSessionID() -> String? {
-        return UserDefaults.standard.string(forKey: Constants.storageSiteIdKey.rawValue)
+    // Sessions are created under conditions:
+    // Launch of application
+    // If user idles for > 30 min
+    static func getSessionID() -> String {
+        // We don't do anything with this?
+        let sidExpires = Constants.storageSessionExpiredKey.rawValue
+
+        let sidKeyName = Constants.storageSiteIdKey.rawValue
+
+        let sid = UserDefaults.standard.string(forKey: sidKeyName)
+
+        // TODO: Expire sesions
+        if let sidValue = sid {
+            return sidValue
+        }
+
+        let id = UUID().uuidString
+        UserDefaults.standard.setValue(id, forKey: sidKeyName)
+
+        NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
+        return id
     }
 
     static func createSession() {
@@ -23,10 +42,10 @@ public extension NeuroID {
         // TODO, return session if already exists
         let event = NIDEvent(
             session: .createSession,
-            f: ParamsCreator.getClientKey(),
-            sid: ParamsCreator.getSessionID(),
+            f: NeuroID.getClientKey(),
+            sid: NeuroID.getSessionID(),
             lsid: nil,
-            cid: ParamsCreator.getClientId(),
+            cid: NeuroID.getClientID(),
             did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
             ua: ParamsCreator.getUserAgent(),
@@ -65,10 +84,10 @@ public extension NeuroID {
     static func captureMobileMetadata() {
         let event = NIDEvent(
             session: .mobileMetadataIOS,
-            f: ParamsCreator.getClientKey(),
-            sid: ParamsCreator.getSessionID(),
+            f: NeuroID.getClientKey(),
+            sid: NeuroID.getSessionID(),
             lsid: nil,
-            cid: ParamsCreator.getClientId(),
+            cid: NeuroID.getClientID(),
             did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
             ua: ParamsCreator.getUserAgent(),

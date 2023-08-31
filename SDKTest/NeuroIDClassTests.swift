@@ -109,12 +109,34 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.logVisible)
     }
 
+    let cidKey = Constants.storageClientIdKey.rawValue
     func test_getClientID() {
-        UserDefaults.standard.setValue("test-cid", forKey: Constants.storageClientIdKey.rawValue)
+        UserDefaults.standard.setValue("test-cid", forKey: cidKey)
         NeuroID.clientId = nil
         let value = NeuroID.getClientID()
 
         assert(value == "test-cid")
+    }
+
+    func test_getClientId_existing() {
+        let expectedValue = "test-cid"
+
+        NeuroID.clientId = expectedValue
+        UserDefaults.standard.set(expectedValue, forKey: cidKey)
+
+        let value = NeuroID.getClientID()
+
+        assert(value == expectedValue)
+    }
+
+    func test_getClientId_random() {
+        let expectedValue = "test_cid"
+
+        UserDefaults.standard.set(expectedValue, forKey: cidKey)
+
+        let value = NeuroID.getClientID()
+
+        assert(value != expectedValue)
     }
 
     func test_getEnvironment() {
@@ -208,6 +230,24 @@ class NeuroIDClassTests: XCTestCase {
         let value = NeuroID.getSessionID()
 
         assert(value == expectedValue)
+    }
+
+    func test_getSessionID_existing() {
+        let expectedValue = "test_sid"
+        UserDefaults.standard.set(expectedValue, forKey: sessionIdKey)
+
+        let value = NeuroID.getSessionID()
+
+        assert(value == expectedValue)
+    }
+
+    func test_getSessionID_random() {
+        UserDefaults.standard.set(nil, forKey: sessionIdKey)
+
+        let value = NeuroID.getSessionID()
+
+        assert(value != "")
+        assert(value.count == 36)
     }
 
     func test_createSession() {
@@ -319,6 +359,14 @@ class NeuroIDClassTests: XCTestCase {
         let expectedValue = "https://receiver.neuroid.cloud/c"
 
         let value = NeuroID.getCollectionEndpointURL()
+        assert(value == expectedValue)
+    }
+
+    func test_getClientKey() {
+        let expectedValue = clientKey
+
+        let value = NeuroID.getClientKey()
+
         assert(value == expectedValue)
     }
 

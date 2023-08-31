@@ -108,7 +108,7 @@ public extension NeuroID {
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
 
         let neuroHTTPRequest = NeuroHTTPRequest(
-            clientId: ParamsCreator.getClientId(),
+            clientId: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
             sdkVersion: ParamsCreator.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
@@ -130,7 +130,7 @@ public extension NeuroID {
 
         let headers: HTTPHeaders = [
             "Content-Type": "application/json",
-            "site_key": ParamsCreator.getClientKey(),
+            "site_key": NeuroID.getClientKey(),
             "authority": "receiver.neuroid.cloud",
         ]
 

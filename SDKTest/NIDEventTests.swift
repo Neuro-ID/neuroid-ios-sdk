@@ -108,8 +108,20 @@ class NIDEventTests: XCTestCase {
         let randomString = UUID().uuidString
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
         
-        let neuroHTTPRequest = NeuroHTTPRequest(clientId: ParamsCreator.getClientId(), environment: NeuroID.getEnvironment(), sdkVersion: ParamsCreator.getSDKVersion(), pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: ParamsCreator.generateUniqueHexId(), siteId: "_", userId: ParamsCreator.getUserID() ?? "", jsonEvents: events, tabId: "\(tabId)", pageId: "\(pageid)", url: "ios://\(NeuroID.getScreenName() ?? "")")
+        let neuroHTTPRequest = NeuroHTTPRequest(
+            clientId: NeuroID.getClientID(),
+            environment: NeuroID.getEnvironment(),
+            sdkVersion: ParamsCreator.getSDKVersion(),
+            pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
+            responseId: ParamsCreator.generateUniqueHexId(),
+            siteId: "_",
+            userId: NeuroID.getUserID(),
+            jsonEvents: events,
+            tabId: "\(tabId)",
+            pageId: "\(pageid)",
+            url: "ios://\(NeuroID.getScreenName() ?? "")")
         /// Transform event into json
+        ///
         do {
             let encoder = JSONEncoder()
             let values = try encoder.encode(neuroHTTPRequest)
