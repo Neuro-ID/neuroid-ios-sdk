@@ -20,9 +20,9 @@ public enum NeuroID {
     fileprivate static var sequenceId = 1
     internal static var clientKey: String?
     internal static var siteId: String?
-    fileprivate static let sessionId: String = ParamsCreator.getSessionID()
-    public static var clientId: String?
-    public static var userId: String?
+    internal static var clientId: String?
+    internal static var userId: String?
+
     public static var registeredTargets = [String]()
     internal static let SEND_INTERVAL: Double = 5
     internal static var trackers = [String: NeuroIDTracker]()

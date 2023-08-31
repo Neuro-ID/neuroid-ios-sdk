@@ -52,7 +52,10 @@ class BaseClassExtenstionTests: XCTestCase {
         og["foo2"] = "bar2"
         
         let value2 = og.toKeyValueString()
-        assert(value2 == "foo=bar&foo2=bar2")
+        
+        if value2 != "foo=bar&foo2=bar2" && value2 != "foo2=bar2&foo=bar" {
+            assertionFailure("Dictionary toKeyValueString is missing values")
+        }
     }
     
     func test_optional_isEmptyOrNil() {

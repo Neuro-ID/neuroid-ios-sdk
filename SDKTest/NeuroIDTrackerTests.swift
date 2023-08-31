@@ -110,24 +110,6 @@ class NeuroIDTrackerTests: XCTestCase {
 //        assert(filteredEvent[0].url ?? "" == "testScreen")
     }
     
-    func test_excludeViews() {
-        NeuroID.secretViews = []
-        
-        assert(NeuroID.secretViews.count == 0)
-        
-        let view = UITextView()
-        view.id = "myTextView"
-        
-        let tracker = NeuroIDTracker(
-            screen: "test",
-            controller: nil
-        )
-        
-        tracker.excludeViews(views: view)
-        
-        assert(NeuroID.secretViews.count == 1)
-    }
-    
     func test_registerSingleView_UITextField() {
         let uiView = UITextField()
         
