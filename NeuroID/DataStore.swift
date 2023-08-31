@@ -1,10 +1,9 @@
 import Foundation
 
 public enum DataStore {
-    static let eventsKey = "events_pending"
     static var _events = [NIDEvent]()
     private static let lock = NSLock()
-    
+
     static var events: [NIDEvent] {
         get { lock.withCriticalSection { _events } }
         set { lock.withCriticalSection { _events = newValue } }
@@ -16,18 +15,25 @@ public enum DataStore {
         NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
         event.gyro = sensorManager.getSensorData(sensor: .gyro)
         event.accel = sensorManager.getSensorData(sensor: .accelerometer)
-        
+
         NeuroID.logDebug(category: "saveEvent", content: event.toDict())
 
         let mutableEvent = event
-        
+
         if NeuroID.isStopped() {
             return
         }
-        
-        mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
+
+        // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
+        if let eventURL = event.url {
+            if eventURL.contains("RNScreensNavigationController") {
+                return
+            }
+        }
+
         // Grab the current set screen and set event URL to this
-        
+        mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
+
         if mutableEvent.tg?["\(Constants.tgsKey.rawValue)"] != nil {
             if NeuroID.excludedViewsTestIDs.contains(where: { $0 == mutableEvent.tg!["\(Constants.tgsKey.rawValue)"]!.toString() }) {
                 return
@@ -38,38 +44,30 @@ public enum DataStore {
             return
         }
 
-        // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
-        if let eventURL = mutableEvent.url {
-            if eventURL.contains("RNScreensNavigationController") {
-                return
-            }
-        }
-        
         NeuroID.captureIntegrationHealthEvent(mutableEvent.copy())
-        
+
         NIDPrintEvent(mutableEvent)
 
         DispatchQueue.global(qos: .utility).sync {
             DataStore.events.append(mutableEvent)
         }
     }
-    
+
     static func getAllEvents() -> [NIDEvent] {
         return self.events
     }
-    
+
     static func removeSentEvents() {
         self.events = []
     }
 
     static func getAndRemoveAllEvents() -> [NIDEvent] {
-        return lock.withCriticalSection {
-            let result = _events
-            _events = []
+        return self.lock.withCriticalSection {
+            let result = self._events
+            self._events = []
             return result
         }
     }
-
 }
 
 extension NSLocking {
