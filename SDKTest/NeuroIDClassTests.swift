@@ -118,6 +118,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_getEnvironment() {
+        NeuroID.setEnvironmentProduction(false)
         assert(NeuroID.getEnvironment() == "TEST")
     }
 
@@ -175,6 +176,18 @@ class NeuroIDClassTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
+    func test_setScreenName_getScreenName_withSpace() {
+        clearOutDataStore()
+        let expectedValue = "test Screen"
+        try? NeuroID.setScreenName(screen: expectedValue)
+
+        let value = NeuroID.getScreenName()
+
+        assert(value == "test%20Screen")
+
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+    }
+
     func test_clearSession() {
         UserDefaults.standard.set("session", forKey: sessionIdKey)
         UserDefaults.standard.set("client", forKey: clientIdKey)
@@ -210,13 +223,25 @@ class NeuroIDClassTests: XCTestCase {
     func test_closeSession() {
         clearOutDataStore()
         do {
-            try NeuroID.closeSession()
+            let closeSession = try NeuroID.closeSession()
+            assert(closeSession.ct == "SDK_EVENT")
         }
         catch {
-            print("Threw on Close Session")
+            print("Threw on Close Session that shouldn't")
+            XCTFail()
         }
 
         assertStoredEventTypeAndCount(type: "CLOSE_SESSION", count: 1)
+    }
+
+    func test_closeSession_whenStopped() {
+        NeuroID.stop()
+        clearOutDataStore()
+
+        XCTAssertThrowsError(
+            try NeuroID.closeSession(),
+            "Close Session throws an error when SDK is already stopped"
+        )
     }
 
     func test_captureMobileMetadata() {
@@ -263,21 +288,21 @@ class NeuroIDClassTests: XCTestCase {
 
     func test_formSubmit() {
         clearOutDataStore()
-        let event = NeuroID.formSubmit()
+        let _ = NeuroID.formSubmit()
 
         assertStoredEventTypeAndCount(type: "APPLICATION_SUBMIT", count: 1)
     }
 
     func test_formSubmitFailure() {
         clearOutDataStore()
-        let event = NeuroID.formSubmitFailure()
+        let _ = NeuroID.formSubmitFailure()
 
         assertStoredEventTypeAndCount(type: "APPLICATION_SUBMIT_FAILURE", count: 1)
     }
 
     func test_formSubmitSuccess() {
         clearOutDataStore()
-        let event = NeuroID.formSubmitSuccess()
+        let _ = NeuroID.formSubmitSuccess()
 
         assertStoredEventTypeAndCount(type: "APPLICATION_SUBMIT_SUCCESS", count: 1)
     }
@@ -286,6 +311,7 @@ class NeuroIDClassTests: XCTestCase {
         clearOutDataStore()
         let event = NeuroID.setCustomVariable(key: "t", v: "v")
 
+        XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
     }
 
@@ -308,10 +334,16 @@ class NeuroIDClassTests: XCTestCase {
     func test_manuallyRegisterTarget_valid_type() {
         clearOutDataStore()
         let uiView = UITextField()
+        uiView.id = "wow"
 
         NeuroID.manuallyRegisterTarget(view: uiView)
 
         assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
+
+        let allEvents = DataStore.getAllEvents()
+        let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
+        assert(validEvents[0].tgs == "wow")
+        assert(validEvents[0].et == "UITextField::UITextField")
     }
 
     func test_manuallyRegisterTarget_invalid_type() {
@@ -326,10 +358,16 @@ class NeuroIDClassTests: XCTestCase {
     func test_manuallyRegisterRNTarget() {
         clearOutDataStore()
 
-        let event = NeuroID.manuallyRegisterRNTarget(id: "test", className: "testClassName", screenName: "testScreenName", placeHolder: "testPlaceholder")
+        let event = NeuroID.manuallyRegisterRNTarget(
+            id: "test",
+            className: "testClassName",
+            screenName: "testScreenName",
+            placeHolder: "testPlaceholder"
+        )
 
         assert(event.tgs == "test")
         assert(event.et == "testClassName")
+        assert(event.etn == "INPUT")
 
         assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
     }

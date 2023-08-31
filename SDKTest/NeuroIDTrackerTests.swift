@@ -318,3 +318,59 @@ class NeuroIDTrackerTests: XCTestCase {
         )
     }
 }
+
+class NeuroIDTrackerCustomEventsTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+    let userId = "form_mobilesandbox"
+    
+    let screenNameValue = "testScreen"
+    let guidValue = "\(Constants.attrGuidKey.rawValue)"
+    
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+    
+    override func setUp() {
+        NeuroID.start()
+    }
+    
+    override func tearDown() {
+        NeuroID.stop()
+        
+        // Clear out the DataStore Events after each test
+        DataStore.removeSentEvents()
+    }
+    
+    func assertEventTypeCount(type: String, expectedCount: Int) -> [NIDEvent] {
+        let dataStoreEvents = DataStore.getAllEvents()
+        let filteredEvents = dataStoreEvents.filter { $0.type == type }
+        
+        assert(filteredEvents.count == expectedCount)
+        
+        return filteredEvents
+    }
+    
+    func assertViewRegistered(v: UIView, id: String) {
+        let filteredEvent = assertEventTypeCount(type: "REGISTER_TARGET", expectedCount: 1)
+        
+        let firstEvent = filteredEvent[0]
+        assert(firstEvent.type == "REGISTER_TARGET")
+        assert((firstEvent.tgs?.contains("\(id)")) != nil)
+    }
+    
+    func test_registerViewIfNotRegistered() {
+        let view = UITextView()
+        view.id = "myTextView"
+        
+        let registerView = NeuroIDTracker.registerViewIfNotRegistered(view: view)
+        XCTAssertTrue(registerView)
+        assertViewRegistered(v: view, id: "myTextView")
+        
+        // Ensure we dont re-add it
+        let duplicateRegister = NeuroIDTracker.registerViewIfNotRegistered(view: view)
+        XCTAssertFalse(duplicateRegister)
+        
+        // Assert still only 1 registration
+        assertViewRegistered(v: view, id: "myTextView")
+    }
+}

@@ -24,7 +24,7 @@ class IntegrationHealthTests: XCTestCase {
         NeuroID.start()
         NeuroID.debugIntegrationHealthEvents = []
         NeuroID.setEnvironmentProduction(true)
-        NeuroID.setVerifyIntegrationHealth(false)
+        let _ = NeuroID.setVerifyIntegrationHealth(false)
     }
 
     override func tearDown() {
@@ -35,7 +35,7 @@ class IntegrationHealthTests: XCTestCase {
     }
 
     func allowIH() {
-        NeuroID.setVerifyIntegrationHealth(true)
+        let _ = NeuroID.setVerifyIntegrationHealth(true)
         NeuroID.setEnvironmentProduction(false)
     }
 
@@ -79,28 +79,28 @@ class IntegrationHealthTests: XCTestCase {
 
     func test_shouldDebugIntegrationHealth() {
         // set NID to prod so should not run
-        NeuroID.setVerifyIntegrationHealth(true)
+        let _ = NeuroID.setVerifyIntegrationHealth(true)
         NeuroID.setEnvironmentProduction(true)
         NeuroID.shouldDebugIntegrationHealth {
             XCTFail("Ran when ENV was PROD")
         }
 
         // set NID verify Health to false
-        NeuroID.setVerifyIntegrationHealth(false)
+        let _ = NeuroID.setVerifyIntegrationHealth(false)
         NeuroID.setEnvironmentProduction(false)
         NeuroID.shouldDebugIntegrationHealth {
             XCTFail("Ran when VIH was FALSE")
         }
 
         // set NID verify Health to false & env to PROD
-        NeuroID.setVerifyIntegrationHealth(false)
+        let _ = NeuroID.setVerifyIntegrationHealth(false)
         NeuroID.setEnvironmentProduction(true)
         NeuroID.shouldDebugIntegrationHealth {
             XCTFail("Ran when VIH was FALSE && ENV was PROD")
         }
 
         // set NID verify Health to true & env to TEST
-        NeuroID.setVerifyIntegrationHealth(true)
+        let _ = NeuroID.setVerifyIntegrationHealth(true)
         NeuroID.setEnvironmentProduction(false)
         NeuroID.shouldDebugIntegrationHealth {
             assert(true)
@@ -109,7 +109,7 @@ class IntegrationHealthTests: XCTestCase {
 
     func test_shouldReturnIntegrationHealthInstructions() {
         NeuroID.setEnvironmentProduction(false)
-        var instructions = NeuroID.setVerifyIntegrationHealth(true)
+        let instructions = NeuroID.setVerifyIntegrationHealth(true)
         assert(instructions.contains("Integration Health Instructions"))
     }
 
@@ -155,7 +155,7 @@ class IntegrationHealthTests: XCTestCase {
     func test_setVerifyIntegrationHealth() {
         assert(NeuroID.verifyIntegrationHealth == false)
 
-        NeuroID.setVerifyIntegrationHealth(true)
+        let _ = NeuroID.setVerifyIntegrationHealth(true)
         assert(NeuroID.verifyIntegrationHealth == true)
     }
 }

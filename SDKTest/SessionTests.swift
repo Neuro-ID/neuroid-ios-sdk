@@ -62,7 +62,7 @@ class SessionTests: XCTestCase {
         testView.beginAppearanceTransition(true, animated: false)
 
 //        testView.endAppearanceTransition()
-        NeuroIDTracker(screen: urlName, controller: testView)
+        let _ = NeuroIDTracker(screen: urlName, controller: testView)
         let charsToInput = ["C", "l", "a", "y"]
         for c in charsToInput {
             sampleTextField.insertText(c)
