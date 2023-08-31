@@ -67,18 +67,10 @@ internal extension NeuroIDTracker {
                 let textControl = notification.object as! UITextField
                 NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
-                if textControl.isSensitiveEntry() {
-                    return
-                }
-
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
             case is UITextView:
                 let textControl = notification.object as! UITextView
                 NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
-
-                if textControl.isSensitiveEntry() {
-                    return
-                }
 
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
 
