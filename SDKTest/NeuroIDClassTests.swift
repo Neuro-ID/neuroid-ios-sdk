@@ -277,6 +277,18 @@ class NIDSessionTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
+    func test_setScreenName_getScreenName_withSpace() {
+        clearOutDataStore()
+        let expectedValue = "test Screen"
+        try? NeuroID.setScreenName(screen: expectedValue)
+
+        let value = NeuroID.getScreenName()
+
+        assert(value == "test%20Screen")
+
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+    }
+
     func test_clearSession() {
         UserDefaults.standard.set("session", forKey: sessionIdKey)
         UserDefaults.standard.set("client", forKey: clientIdKey)
