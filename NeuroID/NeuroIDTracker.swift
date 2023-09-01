@@ -32,12 +32,6 @@ public class NeuroIDTracker: NSObject {
         DataStore.insertEvent(screen: screenName, event: newEvent)
     }
     
-    func excludeViews(views: UIView...) {
-        for v in views {
-            NeuroID.secretViews.append(v)
-        }
-    }
-    
     public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
         let currView = v as? UIView
         

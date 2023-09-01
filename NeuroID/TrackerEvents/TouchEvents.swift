@@ -31,7 +31,6 @@ internal extension NeuroIDTracker {
     }
 
     func touchEvent(sender: UIView, eventName: NIDEventName) {
-        if NeuroID.secretViews.contains(sender) { return }
         let tg = ParamsCreator.getTgParams(
             view: sender,
             extraParams: ["sender": TargetValue.string(sender.className)])

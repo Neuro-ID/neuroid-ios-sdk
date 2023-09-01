@@ -42,7 +42,7 @@ public extension NeuroID {
     // If user idles for > 30 min
     static func getSessionID() -> String {
         // We don't do anything with this?
-        let sidExpires = Constants.storageSessionExpiredKey.rawValue
+        let _ = Constants.storageSessionExpiredKey.rawValue
 
         let sidKeyName = Constants.storageSiteIdKey.rawValue
 
