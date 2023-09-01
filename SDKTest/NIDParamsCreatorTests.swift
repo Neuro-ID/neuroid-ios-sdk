@@ -50,6 +50,14 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     // Util Helper Functions
+    func sleep(timeout: Double) {
+        let sleep = expectation(description: "Wait \(timeout) seconds.")
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeout) {
+            sleep.fulfill()
+        }
+        wait(for: [sleep], timeout: timeout + 1)
+    }
+
     func createStringTargetValue(v: String) -> TargetValue {
         return TargetValue.string(v)
     }
@@ -171,24 +179,6 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value != 0)
     }
 
-    func test_getTextTgParams_og() {
-        var expectedValue = tgParamsBaseExpectation
-        expectedValue = addEntriesToDict(entryList: ["etnAlt", "kc"], dictToAddTo: expectedValue)
-
-        let value = ParamsCreator.getTextTgParams(view: uiView)
-
-        assertExpectedTVDictValues(expected: expectedValue, value: value)
-    }
-
-    func test_getTextTgParams_ex() {
-        var expectedValue = tgParamsBaseExpectation
-        expectedValue = addEntriesToDict(entryList: ["etnAlt", "kc", "extra"], dictToAddTo: expectedValue)
-
-        let value = ParamsCreator.getTextTgParams(view: uiView, extraParams: extraEntry)
-
-        assertExpectedTVDictValues(expected: expectedValue, value: value)
-    }
-
     func test_getTGParamsForInput_textInput() {
         var expectedValue = tgParamsBaseExpectation
         expectedValue = addEntriesToDict(entryList: ["\(etKey)", "\(etnKey)", "\(tgsKey)", "\(attrKey)"], dictToAddTo: expectedValue)
@@ -276,115 +266,6 @@ class NIDParamsCreatorTests: XCTestCase {
         assertExpectedTVDictValues(expected: expectedValue, value: value)
     }
 
-    // Test Runs forever because of UIPasteBoard?
-//    func test_getCopyTgParams() {
-//        let expectedValue = ["content": TargetValue.string("")]
-//
-//        let value = ParamsCreator.getCopyTgParams()
-//
-//        assertDictCount(value: value, count: expectedValue.count)
-//        assertExpectedTVDictValues(expected: expectedValue, value: value)
-//    }
-
-    func test_getOrientationChangeTgParams() {
-        let expectedValue = ["\(Constants.orientationKey.rawValue)": Constants.orientationPortrait.rawValue]
-
-        let value = ParamsCreator.getOrientationChangeTgParams()
-
-        assertDictCount(value: value as [String: Any], count: expectedValue.count)
-        assertStringDictValue(v: value["\(Constants.orientationKey.rawValue)"] as! String, ev: expectedValue["\(Constants.orientationKey.rawValue)"] ?? "")
-    }
-
-    func test_getDefaultSessionParams() {
-        let value = ParamsCreator.getDefaultSessionParams()
-
-        assertDictCount(value: value as [String: Any], count: 7)
-        // Unsure how to verify the default params
-    }
-
-    func test_getClientKey() {
-        let expectedValue = clientKey
-
-        let value = ParamsCreator.getClientKey()
-
-        assertStringDictValue(v: value, ev: expectedValue)
-    }
-
-    let sidKeyName = Constants.storageSiteIdKey.rawValue
-    func test_getSessionID_existing() {
-        let expectedValue = "test_sid"
-
-        UserDefaults.standard.set(expectedValue, forKey: sidKeyName)
-
-        let value = ParamsCreator.getSessionID()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getSessionID_random() {
-        let expectedValue = ""
-
-        UserDefaults.standard.set(expectedValue, forKey: sidKeyName)
-
-        let value = ParamsCreator.getSessionID()
-
-        assert(value == expectedValue)
-    }
-
-    let sidExpiresKey = Constants.storageSessionExpiredKey.rawValue
-    func test_isSessionExpired_true() {
-        let expectedValue = true
-
-        UserDefaults.standard.set(1, forKey: sidExpiresKey)
-
-        let value = ParamsCreator.isSessionExpired()
-
-        assert(value == expectedValue)
-    }
-
-    func test_isSessionExpired_false() {
-        let expectedValue = false
-
-        UserDefaults.standard.set(Date(), forKey: sidExpiresKey)
-
-        let value = ParamsCreator.isSessionExpired()
-
-        assert(value == expectedValue)
-    }
-
-    func test_setSessionExpireTime() {
-        let expectedValue = false
-
-        let value = ParamsCreator.setSessionExpireTime()
-
-        assert(value != 0)
-
-        let expired = ParamsCreator.isSessionExpired()
-        assert(expired == expectedValue)
-    }
-
-    let cidKey = Constants.storageClientIdKey.rawValue
-    func test_getClientId_existing() {
-        let expectedValue = "test-cid"
-
-        NeuroID.clientId = expectedValue
-        UserDefaults.standard.set(expectedValue, forKey: cidKey)
-
-        let value = ParamsCreator.getClientId()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getClientId_random() {
-        let expectedValue = "test_cid"
-
-        UserDefaults.standard.set(expectedValue, forKey: cidKey)
-
-        let value = ParamsCreator.getClientId()
-
-        assert(value != expectedValue)
-    }
-
     let tidKey = Constants.storageTabIdKey.rawValue
     func test_getTabId_existing() {
         let expectedValue = "test_tid"
@@ -404,31 +285,6 @@ class NIDParamsCreatorTests: XCTestCase {
         let value = ParamsCreator.getTabId()
 
         assert(value != expectedValue)
-    }
-
-    let uidKey = Constants.storageUserIdKey.rawValue
-    func test_getUserID_existing() {
-        let expectedValue = "test_uid"
-
-        UserDefaults.standard.set(expectedValue, forKey: uidKey)
-
-        let value = ParamsCreator.getUserID()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getUserID_random() {
-        let expectedValue = "test_uid"
-
-        NeuroID.start()
-
-        try? NeuroID.setUserID("random")
-
-        let value = ParamsCreator.getUserID()
-
-        assert(value != expectedValue)
-
-        NeuroID.stop()
     }
 
     let didKey = Constants.storageDeviceIdKey.rawValue
@@ -453,13 +309,13 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     // Private Access Level
-//    func test_genId() {
-//        let expectedValue = 12
-//
-//        let value = ParamsCreator.genId()
-//
-//        assert(value.count() == expectedValue)
-//    }
+    func test_genId() {
+        let expectedValue = 36
+
+        let value = ParamsCreator.genId()
+
+        assert(value.count == expectedValue)
+    }
 
     let dntKey = Constants.storageDntKey.rawValue
     func test_getDnt_existing() {
@@ -549,7 +405,12 @@ class NIDParamsCreatorTests: XCTestCase {
 
     func test_generateUniqueHexId() {
         let value = ParamsCreator.generateUniqueHexId()
+        assert(value.count == 8)
 
-        assert(value != nil)
+        sleep(timeout: 0.2)
+        let secondValue = ParamsCreator.generateUniqueHexId()
+        assert(secondValue.count == 8)
+
+        assert(value != secondValue)
     }
 }

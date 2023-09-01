@@ -29,18 +29,6 @@ enum ParamsCreator {
         return now
     }
 
-    static func getTextTgParams(view: UIView, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
-        var params: [String: TargetValue] = [
-            "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
-            "\(Constants.etnKey.rawValue)": TargetValue.string(NIDEventName.textChange.rawValue),
-            "kc": TargetValue.int(0),
-        ]
-        for (key, value) in extraParams {
-            params[key] = value
-        }
-        return params
-    }
-
     static func getTGParamsForInput(
         eventName: NIDEventName,
         view: UIView,
@@ -108,10 +96,6 @@ enum ParamsCreator {
         return tg
     }
 
-    static func getCopyTgParams() -> [String: TargetValue] {
-        return ["content": TargetValue.string(UIPasteboard.general.string ?? "")]
-    }
-
     static func getOrientation() -> String {
         let orientation: String
         if UIDevice.current.orientation.isLandscape {
@@ -123,142 +107,39 @@ enum ParamsCreator {
         return orientation
     }
 
-    static func getOrientationChangeTgParams() -> [String: Any?] {
-        let orientation: String = getOrientation()
-
-        return ["\(Constants.orientationKey.rawValue)": orientation]
-    }
-
-    static func getDefaultSessionParams() -> [String: Any?] {
-        let params = [
-            "clientId": ParamsCreator.getClientId(),
-            "environment": NeuroID.getEnvironment,
-            "sdkVersion": ParamsCreator.getSDKVersion(),
-            "pageTag": NeuroID.getScreenName(),
-            "responseId": ParamsCreator.generateUniqueHexId(),
-            "siteId": NeuroID.siteId,
-            "userId": ParamsCreator.getUserID() ?? nil,
-        ] as [String: Any?]
-
-        return params
-    }
-
-    static func getClientKey() -> String {
-        guard let key = NeuroID.clientKey else {
-            print("Error: clientKey is not set")
-            return ""
-        }
-        return key
-    }
-
-//    static func createRequestId() -> String {
-//        let epoch = 1488084578518
-//        let now = Date().timeIntervalSince1970 * 1000
-//        let rawId = (Int(now) - epoch) * 1024  + NeuroID.sequenceId
-//        NeuroID.sequenceId += 1
-//        return String(format: "%02X", rawId)
-//    }
-
-    // Sessions are created under conditions:
-    // Launch of application
-    // If user idles for > 30 min
-    static func getSessionID() -> String {
-        let sidName = Constants.storageSiteIdKey.rawValue
-        let sidExpires = Constants.storageSessionExpiredKey.rawValue
-        let defaults = UserDefaults.standard
-        let sid = defaults.string(forKey: sidName)
-
-        // TODO: Expire sesions
-        if sid != nil {
-            return sid ?? ""
-        }
-
-        let id = UUID().uuidString
-        NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
-        defaults.setValue(id, forKey: sidName)
-        return id
-    }
-
-    /**
-     Sessions expire after 30 minutes
-     */
-    static func isSessionExpired() -> Bool {
-        var expireTime = Int64(UserDefaults.standard.integer(forKey: Constants.storageSessionExpiredKey.rawValue))
-
-        // If 0, that means we need to set expire time
-        if expireTime == 0 {
-            expireTime = setSessionExpireTime()
-        }
-        if ParamsCreator.getTimeStamp() >= expireTime {
-            return true
-        }
-        return false
-    }
-
-    static func setSessionExpireTime() -> Int64 {
-        let thirtyMinutes: Int64 = 1800000
-        let expiresTime = ParamsCreator.getTimeStamp() + thirtyMinutes
-        UserDefaults.standard.set(expiresTime, forKey: Constants.storageSessionExpiredKey.rawValue)
-        return expiresTime
-    }
-
-    static func getClientId() -> String {
-        let clientIdName = Constants.storageClientIdKey.rawValue
-        var cid = UserDefaults.standard.string(forKey: clientIdName)
-        if NeuroID.clientId != nil {
-            cid = NeuroID.clientId
-        }
-        // Ensure we aren't on old client id
-        if cid != nil && !cid!.contains("_") {
-            return cid!
-        } else {
-            cid = genId()
-            NeuroID.clientId = cid
-            UserDefaults.standard.set(cid, forKey: clientIdName)
-            return cid!
-        }
-    }
-
     static func getTabId() -> String {
         let tabIdName = Constants.storageTabIdKey.rawValue
-        let tid = UserDefaults.standard.string(forKey: tabIdName)
+        let tid = getUserDefaultKeyString(tabIdName)
 
         if tid != nil && !tid!.contains("-") {
             return tid!
         } else {
             let randString = UUID().uuidString
             let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
-            UserDefaults.standard.set(tid, forKey: tabIdName)
+            setUserDefaultKey(tabIdName, value: tid)
             return "\(tid)"
         }
     }
 
-    static func getUserID() -> String? {
-        let nidUserID = Constants.storageUserIdKey.rawValue
-        return UserDefaults.standard.string(forKey: nidUserID)
-    }
-
     static func getDeviceId() -> String {
         let deviceIdCacheKey = Constants.storageDeviceIdKey.rawValue
-        var did = UserDefaults.standard.string(forKey: deviceIdCacheKey)
+        var did = getUserDefaultKeyString(deviceIdCacheKey)
 
         if did != nil && did!.contains("_") {
             return did!
         } else {
             did = genId()
-            UserDefaults.standard.set(did, forKey: deviceIdCacheKey)
+            setUserDefaultKey(deviceIdCacheKey, value: did)
             return did!
         }
     }
 
-    private static func genId() -> String {
+    internal static func genId() -> String {
         return UUID().uuidString
     }
 
     static func getDnt() -> Bool {
-        let dntName = Constants.storageDntKey.rawValue
-        let defaults = UserDefaults.standard
-        let dnt = defaults.string(forKey: dntName)
+        let dnt = getUserDefaultKeyString(Constants.storageDntKey.rawValue)
         // If there is ANYTHING set in nid_dnt, we return true (meaning don't track)
         if dnt != nil {
             return true

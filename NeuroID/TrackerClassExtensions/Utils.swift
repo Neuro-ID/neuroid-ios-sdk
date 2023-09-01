@@ -8,26 +8,6 @@
 import Foundation
 import UIKit
 
-/***
- Anytime a view loads
- Check child subviews for eligible form events
- Form all eligible form events, check to see if they have a valid identifier and set one
- Register form events
- */
-// STILL NEEDED?
-internal func getParentClasses(currView: UIView?, hierarchyString: String?) -> String? {
-    var newHieraString = "\(currView?.className ?? "UIView")"
-
-    if hierarchyString != nil {
-        newHieraString = "\(newHieraString)\\\(hierarchyString!)"
-    }
-
-    if currView?.superview != nil {
-        return getParentClasses(currView: currView?.superview, hierarchyString: newHieraString)
-    }
-    return newHieraString
-}
-
 internal enum UtilFunctions {
     static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String {
         if currView == nil {
@@ -79,25 +59,22 @@ internal enum UtilFunctions {
     ) {
         NeuroID.registeredTargets.append(id)
 
-        //    let temp = getParentClasses(currView: currView, hierarchyString: "UITextField")
-
-        let nidEvent = NIDEvent(
-            eventName: NIDEventName.registerTarget,
-            tgs: id,
-            en: id,
-            etn: etn,
-            et: "\(type)::\(className)",
-            ec: screenName,
-            v: rawText ?? false ? textValue : "\(Constants.eventValuePrefix.rawValue)\(textValue.count)",
-            url: screenName
-        )
-
-        // If RTS is set, set rts on focus events
-        nidEvent.setRTS(rts)
+        let nidEvent = NIDEvent(type: .registerTarget)
+        nidEvent.tgs = id
+        nidEvent.eid = id
+        nidEvent.en = id
+        nidEvent.etn = etn
+        nidEvent.et = "\(type)::\(className)"
+        nidEvent.ec = screenName
+        nidEvent.v = rawText ?? false ? textValue : "\(Constants.eventValuePrefix.rawValue)\(textValue.count)"
+        nidEvent.url = screenName
 
         nidEvent.hv = textValue.hashValue()
         nidEvent.tg = tg
         nidEvent.attrs = attrs
+
+        // If RTS is set, set rts on focus events
+        nidEvent.setRTS(rts)
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
 

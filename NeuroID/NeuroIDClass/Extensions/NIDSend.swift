@@ -11,7 +11,6 @@ import Foundation
 public extension NeuroID {
     internal static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
-//        self.send()
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
             self.send()
             self.initTimer()
@@ -19,19 +18,6 @@ public extension NeuroID {
     }
 
     static func getCollectionEndpointURL() -> String {
-        //  Prod URL
-        //    return collectorURLFromConfig ?? "https://api.neuro-id.com/v3/c"
-        //    return "https://rc.api.usw2-prod1.nidops.net"
-        //    return "http://localhost:8080"
-        //    return "https://api.usw2-dev1.nidops.net";
-        //
-        //    #if DEBUG
-        //    return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-        //    #elseif STAGING
-        //    return collectorURLFromConfig ?? "https://receiver.neuro-dev.com/c"
-        //    #elseif RELEASE
-        //    return  "https://api.neuro-id.com/v3/c"
-        //    #endif
         return "https://receiver.neuroid.cloud/c"
     }
 
@@ -85,7 +71,7 @@ public extension NeuroID {
             logError(category: "APICall", content: String(describing: error))
         })
     }
-    
+
     static func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
         AF.request(
             url,
@@ -95,8 +81,8 @@ public extension NeuroID {
             headers: headers
         ).responseData { response in
             completion(response)
-            
-            if response.error != nil && retryCount > 0 {
+
+            if response.error != nil, retryCount > 0 {
                 print("NeruoID network Retrying...")
                 retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
             }
@@ -122,13 +108,13 @@ public extension NeuroID {
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
 
         let neuroHTTPRequest = NeuroHTTPRequest(
-            clientId: ParamsCreator.getClientId(),
+            clientId: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
             sdkVersion: ParamsCreator.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseId: ParamsCreator.generateUniqueHexId(),
             siteId: NeuroID.siteId ?? "",
-            userId: ParamsCreator.getUserID() ?? "",
+            userId: NeuroID.getUserID(),
             jsonEvents: events,
             tabId: "\(tabId)",
             pageId: "\(pageid)",
@@ -144,12 +130,12 @@ public extension NeuroID {
 
         let headers: HTTPHeaders = [
             "Content-Type": "application/json",
-            "site_key": ParamsCreator.getClientKey(),
+            "site_key": NeuroID.getClientKey(),
             "authority": "receiver.neuroid.cloud",
         ]
 
         let maxRetries = 3
-        
+
         retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: maxRetries) { response in
             NIDPrintLog("NID Response \(response.response?.statusCode ?? 000)")
             NIDPrintLog("NID Payload: \(neuroHTTPRequest)")

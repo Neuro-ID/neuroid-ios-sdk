@@ -70,6 +70,18 @@ public enum DataStore {
     }
 }
 
+internal func getUserDefaultKeyBool(_ key: String) -> Bool {
+    return UserDefaults.standard.bool(forKey: key)
+}
+
+internal func getUserDefaultKeyString(_ key: String) -> String? {
+    return UserDefaults.standard.string(forKey: key)
+}
+
+internal func setUserDefaultKey(_ key: String, value: Any?) {
+    UserDefaults.standard.set(value, forKey: key)
+}
+
 extension NSLocking {
     func withCriticalSection<T>(block: () throws -> T) rethrows -> T {
         lock()

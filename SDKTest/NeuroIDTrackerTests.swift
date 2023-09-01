@@ -70,6 +70,14 @@ class NeuroIDTrackerTests: XCTestCase {
         let _ = assertEventTypeCount(type: "REGISTER_TARGET", expectedCount: 0)
     }
     
+    func assertViewWithIdRegistered(v: UIView, id: String) {
+        let filteredEvent = assertEventTypeCount(type: "REGISTER_TARGET", expectedCount: 1)
+        
+        let firstEvent = filteredEvent[0]
+        assert(firstEvent.type == "REGISTER_TARGET")
+        assert((firstEvent.tgs?.contains("\(id)")) != nil)
+    }
+    
     func assertActionExists(target: UIControl, actionParent: NeuroIDTracker, actionType: UIControl.Event, actionName: String) {
         let actionQuery = target.actions(forTarget: actionParent, forControlEvent: actionType)
         XCTAssertNotNil(actionQuery, "No actions found for \(actionType) event")
@@ -100,34 +108,6 @@ class NeuroIDTrackerTests: XCTestCase {
         
 //         NOT WORKING?
 //        assert(filteredEvent[0].url ?? "" == "testScreen")
-    }
-    
-    func test_getCurrentSession() {
-        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
-        
-        let sid = tracker.getCurrentSession()
-        
-        assert(sid != nil)
-    }
-    
-    func test_getCurrentSession_clear_nil() {
-        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
-        
-        NeuroID.clearSession()
-        
-        let sid = tracker.getCurrentSession()
-        
-        assert(sid == nil)
-    }
-    
-    func test_getCurrentSession_nil() {
-        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
-
-        UserDefaults.standard.setValue(nil, forKey: Constants.storageSiteIdKey.rawValue)
-        
-        let sid = tracker.getCurrentSession()
-        
-        assert(sid == nil)
     }
     
     func test_registerSingleView_UITextField() {
@@ -316,5 +296,21 @@ class NeuroIDTrackerTests: XCTestCase {
             actionType: .valueChanged,
             actionName: "valueChangedWithSender:"
         )
+    }
+    
+    func test_registerViewIfNotRegistered() {
+        let view = UITextView()
+        view.id = "myTextView"
+        
+        let registerView = NeuroIDTracker.registerViewIfNotRegistered(view: view)
+        XCTAssertTrue(registerView)
+        assertViewWithIdRegistered(v: view, id: "myTextView")
+        
+        // Ensure we dont re-add it
+        let duplicateRegister = NeuroIDTracker.registerViewIfNotRegistered(view: view)
+        XCTAssertFalse(duplicateRegister)
+        
+        // Assert still only 1 registration
+        assertViewWithIdRegistered(v: view, id: "myTextView")
     }
 }

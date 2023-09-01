@@ -32,15 +32,15 @@ public extension NeuroID {
         let guid = UUID().uuidString
         let fullViewString = UtilFunctions.getFullViewlURLPath(currView: nil, screenName: screenName)
 
-        let nidEvent = NIDEvent(
-            eventName: NIDEventName.registerTarget,
-            tgs: id,
-            en: id,
-            etn: "INPUT",
-            et: "\(className)",
-            ec: screenName,
-            v: "\(Constants.eventValuePrefix.rawValue)\(placeHolder.count)",
-            url: screenName)
+        let nidEvent = NIDEvent(type: .registerTarget)
+        nidEvent.tgs = id
+        nidEvent.eid = id
+        nidEvent.en = id
+        nidEvent.etn = NIDEventName.input.rawValue
+        nidEvent.et = "\(className)"
+        nidEvent.ec = screenName
+        nidEvent.v = "\(Constants.eventValuePrefix.rawValue)\(placeHolder.count)"
+        nidEvent.url = screenName
 
         nidEvent.hv = placeHolder.hashValue()
 
@@ -68,7 +68,10 @@ public extension NeuroID {
 
      */
     static func setCustomVariable(key: String, v: String) -> NIDEvent {
-        let setCustomVariable = NIDEvent(type: NIDSessionEventName.setVariable, key: key, v: v)
+        let setCustomVariable = NIDEvent(sessionEvent: NIDSessionEventName.setVariable)
+        setCustomVariable.key = key
+        setCustomVariable.v = v
+
         let myKeys: [String] = trackers.map { String($0.key) }
 
         // Set the screen to the last active view

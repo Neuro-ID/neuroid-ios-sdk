@@ -23,7 +23,7 @@ public class NeuroIDTracker: NSObject {
         }
         className = controller?.className
     }
-
+    
     public func captureEvent(event: NIDEvent) {
         let screenName = screen ?? UUID().uuidString
         let newEvent = event
@@ -31,14 +31,16 @@ public class NeuroIDTracker: NSObject {
         newEvent.url = NeuroID.getScreenName()
         DataStore.insertEvent(screen: screenName, event: newEvent)
     }
-
-    func getCurrentSession() -> String? {
-        return UserDefaults.standard.string(forKey: Constants.storageSiteIdKey.rawValue)
+    
+    func excludeViews(views: UIView...) {
+        for v in views {
+            NeuroID.secretViews.append(v)
+        }
     }
-
+    
     public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
         let currView = v as? UIView
-
+        
         // constants
         let screenName = NeuroID.getScreenName() ?? screenName
         let fullViewString = UtilFunctions.getFullViewlURLPath(currView: currView, screenName: screenName)
@@ -54,7 +56,7 @@ public class NeuroIDTracker: NSObject {
                 ]
             ),
         ]
-
+        
         // variables per view type
         var value = ""
         var etn = "INPUT"
@@ -63,25 +65,25 @@ public class NeuroIDTracker: NSObject {
         var type = ""
         var extraAttrs: [Attrs] = []
         var rawText = false
-
+        
         // indicate if a supported element was found
         var found = false
-
+        
         if #available(iOS 14.0, *) {
             switch v {
                 case is UIColorWell:
                     let _ = v as! UIColorWell
-
+                    
                     value = ""
                     type = "UIColorWell"
-
+                    
                     found = true
-
+                    
                 default:
                     let _ = ""
             }
         }
-
+        
         switch v {
             case is UITextField:
                 //           @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
@@ -95,77 +97,77 @@ public class NeuroIDTracker: NSObject {
                 //            invisView.addGestureRecognizer(tap)
                 //            invisView.superview?.bringSubviewToFront(invisView)
                 //            invisView.superview?.layer.zPosition = 10000000
-
+                
                 let element = v as! UITextField
                 element.addTapGesture()
-
+                
                 value = element.text ?? ""
                 type = "UITextField"
-
+                
                 found = true
-
+                
             case is UITextView:
                 let element = v as! UITextView
                 element.addTapGesture()
-
+                
                 value = element.text ?? ""
                 type = "UITextView"
-
+                
                 found = true
-
+                
             case is UIButton:
                 let element = v as! UIButton
-
+                
                 value = element.titleLabel?.text ?? ""
                 etn = "BUTTON"
                 type = "UIButton"
-
+                
                 found = true
-
+                
             case is UISlider:
                 let element = v as! UISlider
-
+                
                 value = "\(element.value)"
                 type = "UISlider"
                 extraAttrs = [
                     Attrs(n: "minValue", v: "\(element.minimumValue)"),
                     Attrs(n: "maxValue", v: "\(element.maximumValue)"),
                 ]
-
+                
                 found = true
-
+                
             case is UISwitch:
                 let element = v as! UISwitch
-
+                
                 value = "\(element.isOn)"
                 type = "UISwitch"
                 rawText = true
-
+                
                 found = true
-
+                
             case is UIDatePicker:
                 let element = v as! UIDatePicker
-
+                
                 value = "\(element.date.toString())"
                 type = "UIDatePicker"
-
+                
                 found = true
-
+                
             case is UIStepper:
                 let element = v as! UIStepper
-
+                
                 value = "\(element.value)"
                 type = "UIStepper"
                 extraAttrs = [
                     Attrs(n: "minValue", v: "\(element.minimumValue)"),
                     Attrs(n: "maxValue", v: "\(element.maximumValue)"),
                 ]
-
+                
                 found = true
-
+                
             case is UISegmentedControl:
                 let element = v as! UISegmentedControl
-
+                
                 value = "\(element.selectedSegmentIndex)"
                 type = "UISegmentedControl"
                 extraAttrs = [
@@ -173,9 +175,9 @@ public class NeuroIDTracker: NSObject {
                     Attrs(n: "selectedIndex", v: "\(element.selectedSegmentIndex)"),
                 ]
                 rawText = true
-
+                
                 found = true
-
+                
             // UNSUPPORTED AS OF RIGHT NOW
             case is UIPickerView:
                 let element = v as! UIPickerView
@@ -187,13 +189,13 @@ public class NeuroIDTracker: NSObject {
             case is UIScrollView:
                 let element = v as! UIScrollView
                 NIDDebugPrint(tag: "NID FE:", "SCROLL View Found NOT Registered: \(element.className) - \(element.id)-")
-
+                
             default:
                 if !found {
                     return
                 }
         }
-
+        
         if found {
             UtilFunctions.registerField(textValue: value,
                                         etn: etn,
@@ -210,9 +212,17 @@ public class NeuroIDTracker: NSObject {
         // Inputs
         // Checkbox/Radios inputs
     }
+    
+    static func registerViewIfNotRegistered(view: UIView) -> Bool {
+        if !NeuroID.registeredTargets.contains(view.id) {
+            NeuroID.registeredTargets.append(view.id)
+            let guid = UUID().uuidString
+            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid, rts: true)
+            return true
+        }
+        return false
+    }
 }
-
-// MARK: - Private functions
 
 internal extension NeuroIDTracker {
     func subscribe(inScreen controller: UIViewController?) {

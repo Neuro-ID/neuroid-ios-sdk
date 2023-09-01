@@ -63,9 +63,6 @@ public extension UIViewController {
 
     func captureEvent(event: NIDEvent) {
         if ignoreLists.contains(className) { return }
-        var tg: [String: TargetValue] = event.tg ?? [:]
-        tg["className"] = TargetValue.string(className)
-        tg["title"] = TargetValue.string(title ?? "")
 
         // TODO: Implement UIAlertController
 //        if let vc = self as? UIAlertController {
@@ -83,12 +80,8 @@ public extension UIViewController {
     }
 
     func captureEvent(eventName: NIDEventName, params: [String: TargetValue]? = nil) {
-        let event: NIDEvent
-        if params.isEmptyOrNil {
-            event = NIDEvent(type: eventName, view: view)
-        } else {
-            event = NIDEvent(type: eventName, tg: params, view: view)
-        }
+        let event = NIDEvent(type: eventName, tg: params, view: view)
+
         captureEvent(event: event)
     }
 }
