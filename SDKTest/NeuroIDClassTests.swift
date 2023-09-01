@@ -10,15 +10,11 @@ import XCTest
 
 class NeuroIDClassTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    let userId = "form_mobilesandbox"
 
     // Keys for storage:
     let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
     let clientKeyKey = Constants.storageClientKey.rawValue
-    let clientIdKey = Constants.storageClientIdKey.rawValue
-    let sessionIdKey = Constants.storageSiteIdKey.rawValue
     let tabIdKey = Constants.storageTabIdKey.rawValue
-    let userIdKey = Constants.storageUserIdKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -77,89 +73,24 @@ class NeuroIDClassTests: XCTestCase {
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
     }
 
-    func test_configure_endpoint() {
-        clearOutDataStore()
-        // remove things configured in setup
-        NeuroID.clientKey = nil
-        UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
-        UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
+    func test_start() {
+        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
+        NeuroID._isSDKStarted = false
 
-        NeuroID.configure(clientKey: clientKey, collectorEndPoint: "testEndpoint")
+        // pre tests
+        assert(!NeuroID.isSDKStarted)
 
-        let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
-        assert(clientKeyValue == clientKey)
+        let NIDStopTracking = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
+        assert(NIDStopTracking)
 
-        let tabIdValue = UserDefaults.standard.string(forKey: tabIdKey)
-        assert(tabIdValue == nil)
+        // action
+        NeuroID.start()
 
-        assert(NeuroID.collectorURLFromConfig == "testEndpoint")
+        // post action test
+        assert(NeuroID.isSDKStarted)
 
-        assertStoredEventCount(type: "CREATE_SESSION", count: 0)
-    }
-
-    func test_enableLogging_true() {
-        NeuroID.enableLogging(true)
-
-        assert(NeuroID.logVisible)
-    }
-
-    func test_enableLogging_false() {
-        NeuroID.enableLogging(false)
-
-        assert(!NeuroID.logVisible)
-    }
-
-    let cidKey = Constants.storageClientIdKey.rawValue
-    func test_getClientID() {
-        UserDefaults.standard.setValue("test-cid", forKey: cidKey)
-        NeuroID.clientId = nil
-        let value = NeuroID.getClientID()
-
-        assert(value == "test-cid")
-    }
-
-    func test_getClientId_existing() {
-        let expectedValue = "test-cid"
-
-        NeuroID.clientId = expectedValue
-        UserDefaults.standard.set(expectedValue, forKey: cidKey)
-
-        let value = NeuroID.getClientID()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getClientId_random() {
-        let expectedValue = "test_cid"
-
-        UserDefaults.standard.set(expectedValue, forKey: cidKey)
-
-        let value = NeuroID.getClientID()
-
-        assert(value != expectedValue)
-    }
-
-    func test_getEnvironment() {
-        NeuroID.setEnvironmentProduction(false)
-        assert(NeuroID.getEnvironment() == "TEST")
-    }
-
-    func test_setEnvironmentProduction_true() {
-        NeuroID.setEnvironmentProduction(true)
-
-        assert(NeuroID.getEnvironment() == "LIVE")
-    }
-
-    func test_setEnvironmentProduction_false() {
-        NeuroID.setEnvironmentProduction(false)
-
-        assert(NeuroID.getEnvironment() == "TEST")
-    }
-
-    func test_setSiteId() {
-        NeuroID.setSiteId(siteId: "test_site")
-
-        assert(NeuroID.siteId == "test_site")
+        let NIDStopTrackingAfter = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
+        assert(!NIDStopTrackingAfter)
     }
 
     func test_stop() {
@@ -171,6 +102,83 @@ class NeuroIDClassTests: XCTestCase {
 
         let stopped2 = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
         assert(stopped2 == true)
+    }
+
+    func test_isStopped() {
+        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
+
+        let NIDStopTracking = NeuroID.isStopped()
+        assert(NIDStopTracking)
+    }
+
+    func test_isStopped_false() {
+        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+
+        let NIDStopTracking = NeuroID.isStopped()
+        assert(!NIDStopTracking)
+    }
+
+    func test_isSDKStarted() {
+        NeuroID._isSDKStarted = true
+        assert(NeuroID.isSDKStarted)
+
+        NeuroID._isSDKStarted = false
+        assert(!NeuroID.isSDKStarted)
+
+        NeuroID.isSDKStarted = true
+        assert(!NeuroID.isSDKStarted)
+    }
+
+    func test_saveEventToLocalDataStore() {
+        let event = NIDEvent(type: NIDEventName.heartbeat)
+
+        NeuroID.saveEventToLocalDataStore(event)
+
+        assertStoredEventTypeAndCount(type: "HEARTBEAT", count: 1)
+    }
+
+    func test_getSDKVersion() {
+        let expectedValue = ParamsCreator.getSDKVersion()
+
+        let value = NeuroID.getSDKVersion()
+
+        assert(value == expectedValue)
+    }
+}
+
+class NIDRegistrationTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+    }
+
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func setUp() {
+        NeuroID.start()
+    }
+
+    override func tearDown() {
+        NeuroID.stop()
+
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
+    }
+
+    func assertDataStoreCount(count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        assert(allEvents.count == count)
+    }
+
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
     }
 
     func test_excludeViewByTestID() {
@@ -186,28 +194,87 @@ class NeuroIDClassTests: XCTestCase {
         assert(NeuroID.excludedViewsTestIDs.count == 1)
     }
 
-    func test_setScreenName_getScreenName() {
+    func test_manuallyRegisterTarget_valid_type() {
         clearOutDataStore()
-        let expectedValue = "testScreen"
-        try? NeuroID.setScreenName(screen: expectedValue)
+        let uiView = UITextField()
+        uiView.id = "wow"
 
-        let value = NeuroID.getScreenName()
+        NeuroID.manuallyRegisterTarget(view: uiView)
 
-        assert(value == expectedValue)
+        assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
 
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+        let allEvents = DataStore.getAllEvents()
+        let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
+        assert(validEvents[0].tgs == "wow")
+        assert(validEvents[0].et == "UITextField::UITextField")
     }
 
-    func test_setScreenName_getScreenName_withSpace() {
+    func test_manuallyRegisterTarget_invalid_type() {
         clearOutDataStore()
-        let expectedValue = "test Screen"
-        try? NeuroID.setScreenName(screen: expectedValue)
+        let uiView = UIView()
 
-        let value = NeuroID.getScreenName()
+        NeuroID.manuallyRegisterTarget(view: uiView)
 
-        assert(value == "test%20Screen")
+        assertDataStoreCount(count: 0)
+    }
 
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+    func test_manuallyRegisterRNTarget() {
+        clearOutDataStore()
+
+        let event = NeuroID.manuallyRegisterRNTarget(
+            id: "test",
+            className: "testClassName",
+            screenName: "testScreenName",
+            placeHolder: "testPlaceholder"
+        )
+
+        assert(event.tgs == "test")
+        assert(event.et == "testClassName")
+        assert(event.etn == "INPUT")
+
+        assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
+    }
+
+    func test_setCustomVariable() {
+        clearOutDataStore()
+        let event = NeuroID.setCustomVariable(key: "t", v: "v")
+
+        XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
+    }
+}
+
+class NIDSessionTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    let sessionIdKey = Constants.storageSiteIdKey.rawValue
+    let clientIdKey = Constants.storageClientIdKey.rawValue
+
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+    }
+
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func setUp() {
+        NeuroID.start()
+    }
+
+    override func tearDown() {
+        NeuroID.stop()
+
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
+    }
+
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
     }
 
     func test_clearSession() {
@@ -291,39 +358,39 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
+}
 
-    func test_start() {
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
-        NeuroID.isSDKStarted = false
+class NIDFormTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-        // pre tests
-        assert(!NeuroID.isSDKStarted)
+    let sessionIdKey = Constants.storageSiteIdKey.rawValue
+    let clientIdKey = Constants.storageClientIdKey.rawValue
 
-        let NIDStopTracking = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(NIDStopTracking)
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+    }
 
-        // action
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func setUp() {
         NeuroID.start()
-
-        // post action test
-        assert(NeuroID.isSDKStarted)
-
-        let NIDStopTrackingAfter = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(!NIDStopTrackingAfter)
     }
 
-    func test_isStopped() {
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
+    override func tearDown() {
+        NeuroID.stop()
 
-        let NIDStopTracking = NeuroID.isStopped()
-        assert(NIDStopTracking)
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
     }
 
-    func test_isStopped_false() {
-        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
 
-        let NIDStopTracking = NeuroID.isStopped()
-        assert(!NIDStopTracking)
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
     }
 
     func test_formSubmit() {
@@ -346,78 +413,93 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventTypeAndCount(type: "APPLICATION_SUBMIT_SUCCESS", count: 1)
     }
+}
 
-    func test_setCustomVariable() {
+class NIDScreenTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+    }
+
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func setUp() {
+        NeuroID.start()
+    }
+
+    override func tearDown() {
+        NeuroID.stop()
+
+        // Clear out the DataStore Events after each test
         clearOutDataStore()
-        let event = NeuroID.setCustomVariable(key: "t", v: "v")
-
-        XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
     }
 
-    func test_getCollectionEndpointURL() {
-        let expectedValue = "https://receiver.neuroid.cloud/c"
-
-        let value = NeuroID.getCollectionEndpointURL()
-        assert(value == expectedValue)
-    }
-
-    func test_getClientKey() {
-        let expectedValue = clientKey
-
-        let value = NeuroID.getClientKey()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getClientKeyFromLocalStorage() {
-        let expectedValue = "testClientKey"
-
-        UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
-
-        let value = NeuroID.getClientKeyFromLocalStorage()
-        assert(value == expectedValue)
-    }
-
-    func test_manuallyRegisterTarget_valid_type() {
-        clearOutDataStore()
-        let uiView = UITextField()
-        uiView.id = "wow"
-
-        NeuroID.manuallyRegisterTarget(view: uiView)
-
-        assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
-
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
         let allEvents = DataStore.getAllEvents()
-        let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
-        assert(validEvents[0].tgs == "wow")
-        assert(validEvents[0].et == "UITextField::UITextField")
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
     }
 
-    func test_manuallyRegisterTarget_invalid_type() {
+    func test_setScreenName_getScreenName() {
         clearOutDataStore()
-        let uiView = UIView()
+        let expectedValue = "testScreen"
+        try? NeuroID.setScreenName(screen: expectedValue)
 
-        NeuroID.manuallyRegisterTarget(view: uiView)
+        let value = NeuroID.getScreenName()
 
-        assertDataStoreCount(count: 0)
+        assert(value == expectedValue)
+
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
-    func test_manuallyRegisterRNTarget() {
+    func test_setScreenName_getScreenName_withSpace() {
         clearOutDataStore()
+        let expectedValue = "test Screen"
+        try? NeuroID.setScreenName(screen: expectedValue)
 
-        let event = NeuroID.manuallyRegisterRNTarget(
-            id: "test",
-            className: "testClassName",
-            screenName: "testScreenName",
-            placeHolder: "testPlaceholder"
-        )
+        let value = NeuroID.getScreenName()
 
-        assert(event.tgs == "test")
-        assert(event.et == "testClassName")
-        assert(event.etn == "INPUT")
+        assert(value == "test%20Screen")
 
-        assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+    }
+}
+
+class NIDUserTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    let userIdKey = Constants.storageUserIdKey.rawValue
+
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+    }
+
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func setUp() {
+        NeuroID.start()
+    }
+
+    override func tearDown() {
+        NeuroID.stop()
+
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
+    }
+
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
     }
 
     func test_setUserID() {
@@ -490,33 +572,108 @@ class NeuroIDClassTests: XCTestCase {
         assert(value == expectedValue)
         assert(NeuroID.userId != expectedValue)
     }
+}
 
-    func test_saveEventToLocalDataStore() {
-        let event = NIDEvent(type: NIDEventName.heartbeat)
-
-        NeuroID.saveEventToLocalDataStore(event)
-
-        assertStoredEventTypeAndCount(type: "HEARTBEAT", count: 1)
+class NIDEnvTests: XCTestCase {
+    func test_getEnvironment() {
+        NeuroID.setEnvironmentProduction(false)
+        assert(NeuroID.getEnvironment() == "TEST")
     }
 
-    func test_cleanUpForTesting() {
-        let expectedValue = "dummyKey"
-        NeuroID.clientKey = expectedValue
+    func test_setEnvironmentProduction_true() {
+        NeuroID.setEnvironmentProduction(true)
 
-        assert(NeuroID.clientKey == expectedValue)
-
-        NeuroID.cleanUpForTesting()
-
-        assert(NeuroID.clientKey != expectedValue)
-        assert(NeuroID.clientKey == nil)
+        assert(NeuroID.getEnvironment() == "LIVE")
     }
 
-    func test_getSDKVersion() {
-        let expectedValue = ParamsCreator.getSDKVersion()
+    func test_setEnvironmentProduction_false() {
+        NeuroID.setEnvironmentProduction(false)
 
-        let value = NeuroID.getSDKVersion()
+        assert(NeuroID.getEnvironment() == "TEST")
+    }
+}
+
+class NIDClientSiteIdTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    // Keys for storage:
+    let clientKeyKey = Constants.storageClientKey.rawValue
+    let cidKey = Constants.storageClientIdKey.rawValue
+
+    func test_getClientID() {
+        UserDefaults.standard.setValue("test-cid", forKey: cidKey)
+        NeuroID.clientId = nil
+        let value = NeuroID.getClientID()
+
+        assert(value == "test-cid")
+    }
+
+    func test_getClientId_existing() {
+        let expectedValue = "test-cid"
+
+        NeuroID.clientId = expectedValue
+        UserDefaults.standard.set(expectedValue, forKey: cidKey)
+
+        let value = NeuroID.getClientID()
 
         assert(value == expectedValue)
+    }
+
+    func test_getClientId_random() {
+        let expectedValue = "test_cid"
+
+        UserDefaults.standard.set(expectedValue, forKey: cidKey)
+
+        let value = NeuroID.getClientID()
+
+        assert(value != expectedValue)
+    }
+
+    func test_getClientKey() {
+        NeuroID.configure(clientKey: clientKey)
+        let expectedValue = clientKey
+
+        let value = NeuroID.getClientKey()
+
+        assert(value == expectedValue)
+    }
+
+    func test_getClientKeyFromLocalStorage() {
+        let expectedValue = "testClientKey"
+
+        UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
+
+        let value = NeuroID.getClientKeyFromLocalStorage()
+        assert(value == expectedValue)
+    }
+
+    func test_setSiteId() {
+        NeuroID.setSiteId(siteId: "test_site")
+
+        assert(NeuroID.siteId == "test_site")
+    }
+}
+
+class NIDSendTests: XCTestCase {
+    func test_getCollectionEndpointURL() {
+        let expectedValue = "https://receiver.neuroid.cloud/c"
+
+        let value = NeuroID.getCollectionEndpointURL()
+        assert(value == expectedValue)
+    }
+}
+
+class NIDLogTests: XCTestCase {
+    func test_enableLogging_true() {
+        NeuroID.enableLogging(true)
+
+        assert(NeuroID.logVisible)
+    }
+
+    func test_enableLogging_false() {
+        NeuroID.enableLogging(false)
+
+        assert(!NeuroID.logVisible)
     }
 }
 
