@@ -22,6 +22,50 @@ class NIDEventTests: XCTestCase {
         NeuroID.currentScreenName = nil
     }
     
+    func initV6BasicTests(
+        nidEvent: NIDEvent,
+        screenName: String = "",
+        eventType: NIDEventName = NIDEventName.blur,
+        tgs: String = "",
+        tgCount: Int = 1,
+        x: CGFloat? = nil,
+        y: CGFloat? = nil,
+        touchesNil: Bool = true)
+    {
+        assert(nidEvent.type == eventType.rawValue)
+
+        assert(nidEvent.url == screenName)
+        assert(nidEvent.tgs == tgs)
+        
+        assert(nidEvent.tg != nil)
+        assert(nidEvent.tg?.count == tgCount)
+        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == tgs)
+        
+        assert(nidEvent.x == x)
+        assert(nidEvent.y == y)
+        
+        if touchesNil {
+            assert(nidEvent.touches == nil)
+        } else {
+            assert(nidEvent.touches != nil)
+        }
+    }
+    
+    func dictionaryTests(dict: [String: Any?], expectedV: String) {
+        let actualType = dict["type"] ?? ""
+        let actualV = dict["v"] ?? ""
+        let actualP = dict["p"] ?? ""
+        
+        assert(actualType as! String == NIDEventName.blur.rawValue)
+        assert(actualV as! String == expectedV)
+        assert(actualP as! String? == nil)
+    }
+    
+    func setRtsTests(nidEvent: NIDEvent, rts: String?) {
+        assert(nidEvent.type == NIDEventName.blur.rawValue)
+        assert(nidEvent.rts == rts)
+    }
+    
     func testFullPayload() {
         NeuroID.start()
         var tracker: NeuroIDTracker?
@@ -236,18 +280,7 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: nil)
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-
-        assert(nidEvent.url == screenName)
-        assert(nidEvent.tgs == "")
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == "")
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        assert(nidEvent.touches == nil)
+        initV6BasicTests(nidEvent: nidEvent, screenName: screenName)
     }
     
     func test_init_6_1() {
@@ -258,19 +291,8 @@ class NIDEventTests: XCTestCase {
             tg: ["foo": TargetValue.string("bar")],
             view: nil)
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-
-        assert(nidEvent.url == screenName)
-        assert(nidEvent.tgs == "")
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 2)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == "")
+        initV6BasicTests(nidEvent: nidEvent, screenName: screenName, tgCount: 2)
         assert(nidEvent.tg?["foo"]?.toString() == "bar")
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        assert(nidEvent.touches == nil)
     }
     
     func test_init_6_2() {
@@ -278,23 +300,14 @@ class NIDEventTests: XCTestCase {
         let uiView = UIView()
         uiView.id = uiId
         
+        let screenName = "UIView"
+        
         let nidEvent = NIDEvent(
             type: .blur,
             tg: nil,
             view: uiView)
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-
-        assert(nidEvent.url == "UIView")
-        assert(nidEvent.tgs == uiId)
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == uiId)
-        
-        assert(nidEvent.x == 0.0)
-        assert(nidEvent.y == 0.0)
-        assert(nidEvent.touches == nil)
+        initV6BasicTests(nidEvent: nidEvent, screenName: screenName, tgs: uiId, x: 0.0, y: 0.0)
     }
     
     func test_init_6_2_1() {
@@ -310,18 +323,7 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: uiView)
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-
-        assert(nidEvent.url == screenName)
-        assert(nidEvent.tgs == uiId)
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == uiId)
-        
-        assert(nidEvent.x == 0.0)
-        assert(nidEvent.y == 0.0)
-        assert(nidEvent.touches == nil)
+        initV6BasicTests(nidEvent: nidEvent, screenName: screenName, tgs: uiId, x: 0.0, y: 0.0)
     }
     
     func test_init_6_3() {
@@ -330,23 +332,13 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: nil)
         
-        assert(nidEvent.type == NIDEventName.touchStart.rawValue)
-
-        assert(nidEvent.url == "")
-        assert(nidEvent.tgs == "")
+        initV6BasicTests(nidEvent: nidEvent, eventType: .touchStart, touchesNil: false)
         
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == "")
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        
-        assert(nidEvent.touches != nil)
         assert(nidEvent.touches?.count == 1)
     }
     
     func test_init_6_3_1() {
+        let screenName = "UIView"
         let uiView = UIView()
         
         let nidEvent = NIDEvent(
@@ -354,19 +346,13 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: uiView)
         
-        assert(nidEvent.type == NIDEventName.touchStart.rawValue)
+        initV6BasicTests(
+            nidEvent: nidEvent,
+            screenName: screenName,
+            eventType: .touchStart,
+            tgs: "UIView_UNKNOWN_NO_ID_SET_\(uiView.description.hashValue)",
+            touchesNil: false)
 
-        assert(nidEvent.url == "UIView")
-        assert(nidEvent.tgs?.contains("UIView_UNKNOWN_NO_ID_SET") == true)
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString().contains("UIView_UNKNOWN_NO_ID_SET") == true)
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        
-        assert(nidEvent.touches != nil)
         assert(nidEvent.touches?.count == 1)
     }
     
@@ -376,20 +362,10 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: nil)
         
-        assert(nidEvent.type == NIDEventName.touchMove.rawValue)
-
-        assert(nidEvent.url == "")
-        assert(nidEvent.tgs == "")
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == "")
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        
-        assert(nidEvent.touches != nil)
-        assert(nidEvent.touches?.count == 1)
+        initV6BasicTests(
+            nidEvent: nidEvent,
+            eventType: .touchMove,
+            touchesNil: false)
     }
     
     func test_init_6_3_3() {
@@ -398,20 +374,10 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: nil)
         
-        assert(nidEvent.type == NIDEventName.touchEnd.rawValue)
-
-        assert(nidEvent.url == "")
-        assert(nidEvent.tgs == "")
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == "")
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        
-        assert(nidEvent.touches != nil)
-        assert(nidEvent.touches?.count == 1)
+        initV6BasicTests(
+            nidEvent: nidEvent,
+            eventType: .touchEnd,
+            touchesNil: false)
     }
     
     func test_init_6_3_4() {
@@ -420,20 +386,10 @@ class NIDEventTests: XCTestCase {
             tg: nil,
             view: nil)
         
-        assert(nidEvent.type == NIDEventName.touchCancel.rawValue)
-
-        assert(nidEvent.url == "")
-        assert(nidEvent.tgs == "")
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == "")
-        
-        assert(nidEvent.x == nil)
-        assert(nidEvent.y == nil)
-        
-        assert(nidEvent.touches != nil)
-        assert(nidEvent.touches?.count == 1)
+        initV6BasicTests(
+            nidEvent: nidEvent,
+            eventType: .touchCancel,
+            touchesNil: false)
     }
     
     func test_asDictionary() {
@@ -444,15 +400,7 @@ class NIDEventTests: XCTestCase {
         
         let dict = nidEvent.asDictionary
         
-        print(dict)
-        
-        let actualType = dict["type"] ?? ""
-        let actualV = dict["v"] ?? ""
-        let actualP = dict["p"] ?? ""
-        
-        assert(actualType as! String == NIDEventName.blur.rawValue)
-        assert(actualV as! String == expectedV)
-        assert(actualP as! String? == nil)
+        dictionaryTests(dict: dict, expectedV: expectedV)
     }
     
     func test_toDictionary() {
@@ -463,23 +411,14 @@ class NIDEventTests: XCTestCase {
         
         let dict = nidEvent.toDict()
         
-        print(dict)
-        
-        let actualType = dict["type"] ?? ""
-        let actualV = dict["v"] ?? ""
-        let actualP = dict["p"] ?? ""
-        
-        assert(actualType as! String == NIDEventName.blur.rawValue)
-        assert(actualV as! String == expectedV)
-        assert(actualP as! String? == nil)
+        dictionaryTests(dict: dict, expectedV: expectedV)
     }
     
     func test_setRTS_false() {
         let nidEvent = NIDEvent(type: .blur)
         nidEvent.setRTS()
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.rts == nil)
+        setRtsTests(nidEvent: nidEvent, rts: nil)
     }
     
     func test_setRTS_false_existing() {
@@ -487,16 +426,14 @@ class NIDEventTests: XCTestCase {
         nidEvent.rts = "test"
         nidEvent.setRTS()
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.rts == "test")
+        setRtsTests(nidEvent: nidEvent, rts: "test")
     }
     
     func test_setRTS_true() {
         let nidEvent = NIDEvent(type: .blur)
         nidEvent.setRTS(true)
         
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.rts == "targetInteractionEvent")
+        setRtsTests(nidEvent: nidEvent, rts: "targetInteractionEvent")
     }
     
     func test_copy() {

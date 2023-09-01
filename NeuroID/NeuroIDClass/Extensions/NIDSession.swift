@@ -9,6 +9,30 @@ import Foundation
 import UIKit
 
 public extension NeuroID {
+    internal static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
+        return NIDEvent(
+            session: sessionEvent,
+            f: NeuroID.getClientKey(),
+            sid: NeuroID.getSessionID(),
+            lsid: nil,
+            cid: NeuroID.getClientID(),
+            did: ParamsCreator.getDeviceId(),
+            loc: ParamsCreator.getLocale(),
+            ua: ParamsCreator.getUserAgent(),
+            tzo: ParamsCreator.getTimezone(),
+            lng: ParamsCreator.getLanguage(),
+            p: ParamsCreator.getPlatform(),
+            dnt: false,
+            tch: ParamsCreator.getTouch(),
+            pageTag: NeuroID.getScreenName(),
+            ns: ParamsCreator.getCommandQueueNamespace(),
+            jsv: ParamsCreator.getSDKVersion(),
+            sh: UIScreen.main.bounds.height,
+            sw: UIScreen.main.bounds.width,
+            metadata: NIDMetadata()
+        )
+    }
+
     static func clearSession() {
         setUserDefaultKey(Constants.storageSiteIdKey.rawValue, value: nil)
     }
@@ -40,27 +64,7 @@ public extension NeuroID {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
-        let event = NIDEvent(
-            session: .createSession,
-            f: NeuroID.getClientKey(),
-            sid: NeuroID.getSessionID(),
-            lsid: nil,
-            cid: NeuroID.getClientID(),
-            did: ParamsCreator.getDeviceId(),
-            loc: ParamsCreator.getLocale(),
-            ua: ParamsCreator.getUserAgent(),
-            tzo: ParamsCreator.getTimezone(),
-            lng: ParamsCreator.getLanguage(),
-            p: ParamsCreator.getPlatform(),
-            dnt: false,
-            tch: ParamsCreator.getTouch(),
-            pageTag: NeuroID.getScreenName(),
-            ns: ParamsCreator.getCommandQueueNamespace(),
-            jsv: ParamsCreator.getSDKVersion(),
-            sh: UIScreen.main.bounds.height,
-            sw: UIScreen.main.bounds.width,
-            metadata: NIDMetadata()
-        )
+        let event = createNIDSessionEvent()
         saveEventToLocalDataStore(event)
 
         captureMobileMetadata()
@@ -82,27 +86,7 @@ public extension NeuroID {
     }
 
     static func captureMobileMetadata() {
-        let event = NIDEvent(
-            session: .mobileMetadataIOS,
-            f: NeuroID.getClientKey(),
-            sid: NeuroID.getSessionID(),
-            lsid: nil,
-            cid: NeuroID.getClientID(),
-            did: ParamsCreator.getDeviceId(),
-            loc: ParamsCreator.getLocale(),
-            ua: ParamsCreator.getUserAgent(),
-            tzo: ParamsCreator.getTimezone(),
-            lng: ParamsCreator.getLanguage(),
-            p: ParamsCreator.getPlatform(),
-            dnt: false,
-            tch: ParamsCreator.getTouch(),
-            pageTag: NeuroID.getScreenName(),
-            ns: ParamsCreator.getCommandQueueNamespace(),
-            jsv: ParamsCreator.getSDKVersion(),
-            sh: UIScreen.main.bounds.height,
-            sw: UIScreen.main.bounds.width,
-            metadata: NIDMetadata()
-        )
+        let event = createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
 
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
