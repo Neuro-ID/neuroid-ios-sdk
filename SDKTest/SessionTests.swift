@@ -44,7 +44,6 @@ class SessionTests: XCTestCase {
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
             print(key)
         }
-//        print(key)
     }
 
     func testTextInputEvents() throws {
