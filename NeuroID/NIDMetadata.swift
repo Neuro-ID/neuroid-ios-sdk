@@ -141,6 +141,7 @@ extension NIDMetadata {
         }
     }
 
+    @available(iOSApplicationExtension, unavailable)
     static func isCydiaAppInstalled() -> Bool {
         return UIApplication.shared.canOpenURL(URL(string: "cydia://")!)
     }

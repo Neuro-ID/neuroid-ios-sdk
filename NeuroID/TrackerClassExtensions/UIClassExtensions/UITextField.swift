@@ -123,18 +123,6 @@ internal extension UITextField {
         self.neuroIDPaste(caller: caller)
         UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
     }
-
-    func isSensitiveEntry() -> Bool {
-        // isSecureText
-        if #available(iOS 11.0, *) {
-            if self.textContentType == .password || self.isSecureTextEntry { return true }
-        }
-        if #available(iOS 12.0, *) {
-            if self.textContentType == .newPassword { return true }
-        }
-
-        return false
-    }
 }
 
 func containsGestureRecognizer(recognizers: [UIGestureRecognizer]?, find: UIGestureRecognizer) -> Bool {
