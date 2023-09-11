@@ -60,9 +60,9 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          key: ${{ runner.os }}-pods-prod-apps-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pods-
+            ${{ runner.os }}-pods-prod-apps
 
       - name: CocoaPod Install
         run: pod install
@@ -72,7 +72,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          key: ${{ runner.os }}-pods-prod-apps-${{ hashFiles('**/Podfile.lock') }}
 
       - name: Get last version from tags
         run: |
@@ -135,7 +135,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Send Slack Notification on Failure
-        if: ${{ needs.deploySandboxApps.result != 'success' }}
+        if: ${{ needs.deploySandboxApps.result == 'failure' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team

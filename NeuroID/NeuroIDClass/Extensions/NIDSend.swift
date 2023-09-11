@@ -104,7 +104,7 @@ public extension NeuroID {
 
         let tabId = ParamsCreator.getTabId()
 
-        let randomString = UUID().uuidString
+        let randomString = ParamsCreator.genId()
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
 
         let neuroHTTPRequest = NeuroHTTPRequest(

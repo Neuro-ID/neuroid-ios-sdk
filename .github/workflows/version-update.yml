@@ -53,9 +53,9 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          key: ${{ runner.os }}-pods-version-${{ hashFiles('**/Podfile.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pods-
+            ${{ runner.os }}-pods-version
 
       - name: CocoaPod Install
         run: pod install
@@ -65,7 +65,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          key: ${{ runner.os }}-pods-version-${{ hashFiles('**/Podfile.lock') }}
 
       - name: Run iOS Unit Testing for SDK
         run: bundle exec fastlane test

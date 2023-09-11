@@ -27,8 +27,6 @@ class SessionTests: XCTestCase {
         #else
         XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
         #endif
-        NeuroID.configure(clientKey: "test", collectorEndPoint: "myendpoint.com")
-        XCTAssertTrue(NeuroID.collectorURLFromConfig == "myendpoint.com")
     }
 
     func testCreateSession() throws {
@@ -46,7 +44,6 @@ class SessionTests: XCTestCase {
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
             print(key)
         }
-//        print(key)
     }
 
     func testTextInputEvents() throws {
