@@ -65,12 +65,12 @@ internal extension NeuroIDTracker {
             case is UITextField:
 
                 let textControl = notification.object as! UITextField
-                NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
+                _ = NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
             case is UITextView:
                 let textControl = notification.object as! UITextView
-                NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
+                _ = NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
 
@@ -82,7 +82,7 @@ internal extension NeuroIDTracker {
         if let textControl = notification.object as? UISearchBar {
             let id = textControl.id
             let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar", attrParams: nil)
-            var searchEvent = NIDEvent(type: eventType, tg: tg)
+            let searchEvent = NIDEvent(type: eventType, tg: tg)
             searchEvent.tgs = TargetValue.string(id).toString()
             captureEvent(event: searchEvent)
         }

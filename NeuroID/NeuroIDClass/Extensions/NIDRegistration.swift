@@ -17,7 +17,7 @@ public extension NeuroID {
     /** Public API for manually registering a target. This should only be used when automatic fails. */
     static func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
-        let guid = UUID().uuidString
+        let guid = ParamsCreator.genId()
         NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering single view: \(screenName)")
         NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
         let childViews = view.subviewsRecursive()
@@ -29,7 +29,7 @@ public extension NeuroID {
 
     /** React Native API for manual registration */
     static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
-        let guid = UUID().uuidString
+        let guid = ParamsCreator.genId()
         let fullViewString = UtilFunctions.getFullViewlURLPath(currView: nil, screenName: screenName)
 
         let nidEvent = NIDEvent(type: .registerTarget)

@@ -17,42 +17,45 @@ import WebKit
 // MARK: - Neuro ID Class
 
 public enum NeuroID {
-    fileprivate static var sequenceId = 1
+    internal static let SEND_INTERVAL: Double = 5
+
     internal static var clientKey: String?
     internal static var siteId: String?
+
     internal static var clientId: String?
     internal static var userId: String?
 
-    public static var registeredTargets = [String]()
-    internal static let SEND_INTERVAL: Double = 5
     internal static var trackers = [String: NeuroIDTracker]()
-    internal static var secretViews = [UIView]()
-    internal static let showDebugLog = false
-    fileprivate static var _currentScreenName: String?
 
-    static var excludedViewsTestIDs = [String]()
+    /// Turn on/off printing the SDK log to your console
+    public static var logVisible = true
+    internal static let showDebugLog = false
+
+    internal static var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
 
     internal static var environment: String = Constants.environmentTest.rawValue
+
+    fileprivate static var _currentScreenName: String?
     internal static var currentScreenName: String? {
         get { lock.withCriticalSection { _currentScreenName } }
         set { lock.withCriticalSection { _currentScreenName = newValue } }
     }
 
-    fileprivate static let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
+    internal static var _isSDKStarted: Bool = false
+    public static var isSDKStarted: Bool {
+        get { _isSDKStarted }
+        set {}
+    }
 
-    /// Turn on/off printing the SDK log to your console
-    public static var logVisible = true
-    public static var activeView: UIView?
-    public static var collectorURLFromConfig: String?
-    public static var isSDKStarted = false
-    public static var observingInputs = false
+    internal static var observingInputs = false
     internal static var observingKeyboard = false
+    internal static var didSwizzle: Bool = false
 
     internal static var verifyIntegrationHealth: Bool = false
     internal static var debugIntegrationHealthEvents: [NIDEvent] = []
 
-    internal static var didSwizzle: Bool = false
+    public static var registeredTargets = [String]()
 
     // MARK: - Setup
 
@@ -74,27 +77,15 @@ public enum NeuroID {
         setUserDefaultKey(Constants.storageTabIdKey.rawValue, value: nil)
     }
 
-    // Allow for configuring of collector endpoint (useful for testing before MSA is signed)
-    public static func configure(clientKey: String, collectorEndPoint: String) {
-        collectorURLFromConfig = collectorEndPoint
-        configure(clientKey: clientKey)
-    }
-
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start() {
-        NeuroID.isSDKStarted = true
-        setUserDefaultKey(localStorageNIDStopAll, value: false)
+        NeuroID._isSDKStarted = true
+        setUserDefaultKey(Constants.storageLocalNIDStopAllKey.rawValue, value: false)
 
         NeuroID.startIntegrationHealthCheck()
 
         NeuroID.createSession()
         swizzle()
-
-        if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
-            let filemgr = FileManager.default
-            let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(Constants.debugJsonFileName.rawValue)
-            NIDPrintLog("DEBUG PATH: \(path.absoluteString)")
-        }
 
         #if DEBUG
         if NSClassFromString("XCTest") == nil {
@@ -110,21 +101,21 @@ public enum NeuroID {
 
     public static func stop() {
         NIDPrintLog("NeuroID Stopped")
-        setUserDefaultKey(localStorageNIDStopAll, value: true)
+        setUserDefaultKey(Constants.storageLocalNIDStopAllKey.rawValue, value: true)
         do {
             _ = try closeSession(skipStop: true)
         } catch {
-            NIDPrintLog("Failed to Stop because: \(error)")
+            NIDPrintLog("NeuroID Error: Failed to Stop because \(error)")
         }
 
-        NeuroID.isSDKStarted = false
+        NeuroID._isSDKStarted = false
 
         // save captured health events to file
         saveIntegrationHealthEvents()
     }
 
     public static func isStopped() -> Bool {
-        return getUserDefaultKeyBool(localStorageNIDStopAll)
+        return getUserDefaultKeyBool(Constants.storageLocalNIDStopAllKey.rawValue)
     }
 
     private static func swizzle() {
@@ -145,14 +136,6 @@ public enum NeuroID {
 
     public static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
-    }
-}
-
-// MARK: - NeuroID for testing functions
-
-public extension NeuroID {
-    internal static func cleanUpForTesting() {
-        clientKey = nil
     }
 
     /// Get the current SDK versión from bundle

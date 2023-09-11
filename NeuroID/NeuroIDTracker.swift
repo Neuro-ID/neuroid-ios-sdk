@@ -25,17 +25,11 @@ public class NeuroIDTracker: NSObject {
     }
     
     public func captureEvent(event: NIDEvent) {
-        let screenName = screen ?? UUID().uuidString
+        let screenName = screen ?? ParamsCreator.genId()
         let newEvent = event
         // Make sure we have a valid url set
         newEvent.url = NeuroID.getScreenName()
         DataStore.insertEvent(screen: screenName, event: newEvent)
-    }
-    
-    func excludeViews(views: UIView...) {
-        for v in views {
-            NeuroID.secretViews.append(v)
-        }
     }
     
     public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
@@ -216,7 +210,7 @@ public class NeuroIDTracker: NSObject {
     static func registerViewIfNotRegistered(view: UIView) -> Bool {
         if !NeuroID.registeredTargets.contains(view.id) {
             NeuroID.registeredTargets.append(view.id)
-            let guid = UUID().uuidString
+            let guid = ParamsCreator.genId()
             NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid, rts: true)
             return true
         }

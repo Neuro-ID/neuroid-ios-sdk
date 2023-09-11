@@ -87,7 +87,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Send Slack Notification on Failure
-        if: ${{ needs.releaseProjectVersion.result != 'success' }}
+        if: ${{ needs.releaseProjectVersion.result == 'failure' }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: mobile-sdk-tech-team

@@ -33,7 +33,7 @@ internal extension UITableView {
         if NeuroID.isStopped() {
             return
         }
-        let guid = UUID().uuidString
+        let guid = ParamsCreator.genId()
         let oldCells = visibleCells
         let newCells = visibleCells
         let currentNewViews = newCells.filter { !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.className) }

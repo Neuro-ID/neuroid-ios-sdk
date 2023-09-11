@@ -34,7 +34,7 @@ internal enum UtilFunctions {
             guard let view = ctrls.view else {
                 return
             }
-            let guid = UUID().uuidString
+            let guid = ParamsCreator.genId()
 
             NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
             let childViews = ctrls.view.subviewsRecursive()
@@ -106,7 +106,7 @@ internal enum UtilFunctions {
         event.hv = hashValue
         event.tgs = view.id
 
-        let screenName = className ?? UUID().uuidString
+        let screenName = className ?? ParamsCreator.genId()
         // Make sure we have a valid url set
         event.url = screenName
         DataStore.insertEvent(screen: screenName, event: event)
