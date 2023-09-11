@@ -63,8 +63,8 @@
 		F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */; };
 		F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */; };
 		F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */; };
-		F26E03B22AA139A20075E824 /* UIClassExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26E03B12AA139A20075E824 /* UIClassExtensionTests.swift */; };
-		F27883E82AA23F920063F78B /* TrackerEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27883E72AA23F920063F78B /* TrackerEventsTests.swift */; };
+		F26E03B22AA139A20075E824 /* UIViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26E03B12AA139A20075E824 /* UIViewExtensionTests.swift */; };
+		F27883E82AA23F920063F78B /* TouchEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27883E72AA23F920063F78B /* TouchEventsTests.swift */; };
 		F2AEE7372A27A5D6009690CB /* NIDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7362A27A5D6009690CB /* NIDLog.swift */; };
 		F2AEE7392A27A64E009690CB /* NIDSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7382A27A64E009690CB /* NIDSession.swift */; };
 		F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE73A2A27A684009690CB /* NIDForm.swift */; };
@@ -153,8 +153,8 @@
 		F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
 		F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
 		F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealth.swift; sourceTree = "<group>"; };
-		F26E03B12AA139A20075E824 /* UIClassExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIClassExtensionTests.swift; sourceTree = "<group>"; };
-		F27883E72AA23F920063F78B /* TrackerEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerEventsTests.swift; sourceTree = "<group>"; };
+		F26E03B12AA139A20075E824 /* UIViewExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionTests.swift; sourceTree = "<group>"; };
+		F27883E72AA23F920063F78B /* TouchEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchEventsTests.swift; sourceTree = "<group>"; };
 		F2AEE7362A27A5D6009690CB /* NIDLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDLog.swift; sourceTree = "<group>"; };
 		F2AEE7382A27A64E009690CB /* NIDSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSession.swift; sourceTree = "<group>"; };
 		F2AEE73A2A27A684009690CB /* NIDForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDForm.swift; sourceTree = "<group>"; };
@@ -272,8 +272,8 @@
 				F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */,
 				F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */,
 				F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */,
-				F26E03B12AA139A20075E824 /* UIClassExtensionTests.swift */,
-				F27883E72AA23F920063F78B /* TrackerEventsTests.swift */,
+				F26E03B12AA139A20075E824 /* UIViewExtensionTests.swift */,
+				F27883E72AA23F920063F78B /* TouchEventsTests.swift */,
 			);
 			path = SDKTest;
 			sourceTree = "<group>";
@@ -664,8 +664,8 @@
 				6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */,
 				6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
 				07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */,
-				F27883E82AA23F920063F78B /* TrackerEventsTests.swift in Sources */,
-				F26E03B22AA139A20075E824 /* UIClassExtensionTests.swift in Sources */,
+				F27883E82AA23F920063F78B /* TouchEventsTests.swift in Sources */,
+				F26E03B22AA139A20075E824 /* UIViewExtensionTests.swift in Sources */,
 				F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */,
 				07A2668C28A6A5BC00E973E2 /* PayloadTest.swift in Sources */,
 				F2F0A3F029F6C8390083D43C /* IntegrationHealthTests.swift in Sources */,
