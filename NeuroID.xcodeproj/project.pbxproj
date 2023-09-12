@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -30,6 +30,9 @@
 		6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FE77FE82937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF06B26271FCA8300F6704C /* DataStoreTests.swift */; };
+		6FF260A52AB0F53700FFAB14 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */; };
+		6FF260A62AB0F53700FFAB14 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */; };
+		6FF260A72AB0F53700FFAB14 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */; };
 		E494C0748D7A30D17CC3E764 /* Pods_SDKTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */; };
 		F216C4022A718AEA001DDABB /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4012A718AEA001DDABB /* Optional.swift */; };
 		F216C4042A718B0A001DDABB /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */; };
@@ -118,6 +121,7 @@
 		6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTextFieldUtils.swift; sourceTree = "<group>"; };
 		6FE77FE52937B3F700357284 /* NIDErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDErrors.swift; sourceTree = "<group>"; };
 		6FF06B26271FCA8300F6704C /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
+		6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		83613AC6E4FDA7686908AF6F /* Pods-NeuroID.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.release.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.release.xcconfig"; sourceTree = "<group>"; };
 		83932C67921B213F9F8EC020 /* Pods-NeuroID.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.staging.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.staging.xcconfig"; sourceTree = "<group>"; };
 		90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SDKTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -242,6 +246,7 @@
 				07A05C2028B91B4D00509509 /* NIDMetadata.swift */,
 				6FE77FE52937B3F700357284 /* NIDErrors.swift */,
 				F2F0A3F429FB05A90083D43C /* Constants.swift */,
+				6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";
@@ -514,6 +519,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FF260A52AB0F53700FFAB14 /* PrivacyInfo.xcprivacy in Resources */,
 				F228AA8F2A0180F80004892F /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,6 +528,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FF260A62AB0F53700FFAB14 /* PrivacyInfo.xcprivacy in Resources */,
 				F228AA902A0180F80004892F /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -530,6 +537,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FF260A72AB0F53700FFAB14 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
