@@ -32,7 +32,7 @@ internal extension NeuroIDTracker {
     func touchEvent(sender: UIView, eventName: NIDEventName) {
         let tg = ParamsCreator.getTgParams(
             view: sender,
-            extraParams: ["sender": TargetValue.string(sender.className)])
+            extraParams: ["sender": TargetValue.string(sender.nidClassName)])
 
         captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
     }

@@ -27,7 +27,7 @@ internal enum UtilFunctions {
     }
 
     static func registerSubViewsTargets(subViewControllers: [UIViewController]) {
-        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
+        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.nidClassName) }
         for ctrls in filtered {
             let screenName = ctrls.className
             NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")

@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-   PrivacyInfo.xcprivacy
-   NeuroID
-
-   Created by Clayton Selby on 9/12/23.
-   Copyright (c) 2023 NeuroID. All rights reserved.
--->
 <plist version="1.0">
 <dict>
-    <key>NSPrivacyCollectedDataType</key>
-    <string>NSPrivacyCollectedDataTypeProductInteraction</string>
-    <key>NSPrivacyCollectedDataTypeLinked</key>
-    <false/>
-    <key>NSPrivacyCollectedDataTypeTracking</key>
-    <false/>
-    <key>NSPrivacyCollectedDataTypePurposes</key>
-    <array>
-        <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
-    </array>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>Synthetic device detection</string>
+			</array>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>App functionality</string>
+			</array>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+		</dict>
+	</array>
 </dict>
 </plist>

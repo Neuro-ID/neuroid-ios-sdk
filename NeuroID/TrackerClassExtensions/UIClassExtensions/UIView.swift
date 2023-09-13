@@ -20,7 +20,7 @@ extension UIView {
         return subviews + subviews.flatMap { $0.subviewsRecursive() }
     }
 
-    var className: String {
+    var nidClassName: String {
         return String(describing: type(of: self))
     }
 

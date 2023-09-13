@@ -11,7 +11,7 @@ import WebKit
 
 public class NeuroIDTracker: NSObject {
     private var screen: String?
-    private var className: String?
+    private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
@@ -21,7 +21,7 @@ public class NeuroIDTracker: NSObject {
         if !NeuroID.isStopped() {
             subscribe(inScreen: controller)
         }
-        className = controller?.className
+        nidClassName = controller?.nidClassName
     }
     
     public func captureEvent(event: NIDEvent) {

@@ -87,7 +87,7 @@ public extension UIViewController {
 }
 
 extension UIViewController {
-    var className: String {
+    var nidClassName: String {
         return String(describing: type(of: self))
     }
 }
