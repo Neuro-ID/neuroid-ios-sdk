@@ -69,6 +69,12 @@ jobs:
           git push origin latest
           set -e
 
+      - name: Release to Cocoapods
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          pod trunk push NeuroID.podspec --allow-warnings
+
   notifications:
     runs-on: ubuntu-latest
     if: ${{ always() }}
