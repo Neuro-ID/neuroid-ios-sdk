@@ -233,6 +233,7 @@
 				F228AA8E2A0180F80004892F /* Resources */,
 				26BCF349268DA7CF0002C289 /* DataStore.swift */,
 				26BCF34B268DA7CF0002C289 /* NIDEvent.swift */,
+				6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */,
 				26BCF340268DA3C40002C289 /* Info.plist */,
 				F217029A29D4C76100133A1C /* TrackerEvents */,
 				F217029729D4C4BE00133A1C /* TrackerClassExtensions */,
@@ -246,7 +247,6 @@
 				07A05C2028B91B4D00509509 /* NIDMetadata.swift */,
 				6FE77FE52937B3F700357284 /* NIDErrors.swift */,
 				F2F0A3F429FB05A90083D43C /* Constants.swift */,
-				6FF260A42AB0F53700FFAB14 /* PrivacyInfo.xcprivacy */,
 			);
 			path = NeuroID;
 			sourceTree = "<group>";

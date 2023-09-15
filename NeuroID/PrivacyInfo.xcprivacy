@@ -17,7 +17,7 @@
 		<dict>
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
-				<string>App functionality</string>
+				<string>App functionality for keeping state of the SDK</string>
 			</array>
 			<key>NSPrivacyAccessedAPIType</key>
 			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
