@@ -140,7 +140,7 @@ public enum NeuroID {
 
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
-    static func getSDKVersion() -> String? {
+    public static func getSDKVersion() -> String? {
         return ParamsCreator.getSDKVersion()
     }
 }
