@@ -65,7 +65,11 @@ jobs:
             ${{ runner.os }}-pods-prod-apps
 
       - name: CocoaPod Install
-        run: pod install
+        run: |
+            pod cache clean --all
+            pod repo update
+            pod update
+            pod install
 
       - name: Save Updated Pods
         id: cache-pods-save
