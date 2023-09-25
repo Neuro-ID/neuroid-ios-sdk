@@ -45,7 +45,6 @@ jobs:
   deploySandboxApps:
     if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/')
     runs-on: macos-latest
-    needs: updateSchema
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v3
