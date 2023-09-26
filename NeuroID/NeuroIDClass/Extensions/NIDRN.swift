@@ -8,7 +8,7 @@
 import Foundation
 
 public extension NeuroID {
-    static func isRNSDK() {
+    static func setIsRN() {
         isRN = true
     }
 }
