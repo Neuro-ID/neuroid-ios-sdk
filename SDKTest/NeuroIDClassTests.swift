@@ -689,6 +689,15 @@ class NIDLogTests: XCTestCase {
     }
 }
 
+class NIDRNTests: XCTestCase {
+    func test_isRN() {
+        assert(!NeuroID.isRN)
+        NeuroID.setIsRN()
+
+        assert(NeuroID.isRN)
+    }
+}
+
 // swizzle
 // initTimer
 // send

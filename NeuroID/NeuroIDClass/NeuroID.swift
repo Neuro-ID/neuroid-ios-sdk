@@ -57,6 +57,8 @@ public enum NeuroID {
 
     public static var registeredTargets = [String]()
 
+    internal static var isRN: Bool = false
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -140,7 +142,7 @@ public enum NeuroID {
 
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
-    public static func getSDKVersion() -> String? {
+    public static func getSDKVersion() -> String {
         return ParamsCreator.getSDKVersion()
     }
 }
