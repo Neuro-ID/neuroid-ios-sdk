@@ -11,7 +11,7 @@ import WebKit
 
 public class NeuroIDTracker: NSObject {
     private var screen: String?
-    private var className: String?
+    private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
@@ -21,7 +21,7 @@ public class NeuroIDTracker: NSObject {
         if !NeuroID.isStopped() {
             subscribe(inScreen: controller)
         }
-        className = controller?.className
+        nidClassName = controller?.nidClassName
     }
     
     public func captureEvent(event: NIDEvent) {
@@ -55,7 +55,7 @@ public class NeuroIDTracker: NSObject {
         var value = ""
         var etn = "INPUT"
         let id = currView?.id ?? ""
-        let classname = currView?.className ?? ""
+        let nidClassName = currView?.nidClassName ?? ""
         var type = ""
         var extraAttrs: [Attrs] = []
         var rawText = false
@@ -175,14 +175,14 @@ public class NeuroIDTracker: NSObject {
             // UNSUPPORTED AS OF RIGHT NOW
             case is UIPickerView:
                 let element = v as! UIPickerView
-                NIDDebugPrint(tag: "NID FE:", "Picker View Found NOT Registered: \(element.className) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
+                NIDDebugPrint(tag: "NID FE:", "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
             case is UITableViewCell:
                 // swiftUI list
                 let element = v as! UITableViewCell
-                NIDDebugPrint(tag: "NID FE:", "TABLE View Found NOT Registered: \(element.className) - \(element.id)-")
+                NIDDebugPrint(tag: "NID FE:", "TABLE View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
             case is UIScrollView:
                 let element = v as! UIScrollView
-                NIDDebugPrint(tag: "NID FE:", "SCROLL View Found NOT Registered: \(element.className) - \(element.id)-")
+                NIDDebugPrint(tag: "NID FE:", "SCROLL View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
                 
             default:
                 if !found {
@@ -194,7 +194,7 @@ public class NeuroIDTracker: NSObject {
             UtilFunctions.registerField(textValue: value,
                                         etn: etn,
                                         id: id,
-                                        className: classname,
+                                        className: nidClassName,
                                         type: type,
                                         screenName: screenName,
                                         tg: tg,
@@ -211,7 +211,7 @@ public class NeuroIDTracker: NSObject {
         if !NeuroID.registeredTargets.contains(view.id) {
             NeuroID.registeredTargets.append(view.id)
             let guid = ParamsCreator.genId()
-            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.className, guid: guid, rts: true)
+            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.nidClassName, guid: guid, rts: true)
             return true
         }
         return false
