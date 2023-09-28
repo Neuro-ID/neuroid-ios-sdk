@@ -15,7 +15,7 @@ enum ParamsCreator {
         // TODO, figure out if we need to find super class of ETN
         var params: [String: TargetValue] = [
             "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
-            "\(Constants.etnKey.rawValue)": TargetValue.string(view.className),
+            "\(Constants.etnKey.rawValue)": TargetValue.string(view.nidClassName),
         ]
 
         for (key, value) in extraParams {
@@ -72,7 +72,7 @@ enum ParamsCreator {
 
     static func getUiControlTgParams(sender: UIView) -> [String: TargetValue] {
         var tg: [String: TargetValue] = [
-            "sender": TargetValue.string(sender.className),
+            "sender": TargetValue.string(sender.nidClassName),
             "\(Constants.tgsKey.rawValue)": TargetValue.string(sender.id),
         ]
 

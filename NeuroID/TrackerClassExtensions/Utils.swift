@@ -13,8 +13,8 @@ internal enum UtilFunctions {
         if currView == nil {
             return screenName
         }
-        let parentView = currView!.superview?.className
-        let grandParentView = currView!.superview?.superview?.className
+        let parentView = currView!.superview?.nidClassName
+        let grandParentView = currView!.superview?.superview?.nidClassName
         var fullViewString = ""
         if grandParentView != nil {
             fullViewString += "\(grandParentView ?? "")/"
@@ -27,9 +27,9 @@ internal enum UtilFunctions {
     }
 
     static func registerSubViewsTargets(subViewControllers: [UIViewController]) {
-        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
+        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.nidClassName) }
         for ctrls in filtered {
-            let screenName = ctrls.className
+            let screenName = ctrls.nidClassName
             NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
             guard let view = ctrls.view else {
                 return

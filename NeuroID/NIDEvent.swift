@@ -410,7 +410,7 @@ public class NIDEvent: Codable {
         self.ts = ParamsCreator.getTimeStamp()
         self.url = UtilFunctions.getFullViewlURLPath(
             currView: view,
-            screenName: NeuroID.getScreenName() ?? view?.className ?? ""
+            screenName: NeuroID.getScreenName() ?? view?.nidClassName ?? ""
         )
 
         self.tgs = viewId.toString()

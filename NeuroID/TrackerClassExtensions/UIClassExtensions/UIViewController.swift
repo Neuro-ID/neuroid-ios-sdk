@@ -45,24 +45,28 @@ public extension UIViewController {
     }
 
     @objc internal var neuroScreenName: String {
-        return className
+        return nidClassName
     }
 
     var tracker: NeuroIDTracker? {
-        if ignoreLists.contains(className) { return nil }
-        if self is UINavigationController, className == "UINavigationController" { return nil }
-        if let tracker = NeuroID.trackers[className] {
+        if ignoreLists.contains(nidClassName) { return nil }
+        // Separating these into individual checks for easy debugging or reverting
+        if self.nidClassName == "RNSNavigationController" { return nil }
+        if self.nidClassName == "RNSScreen" { return nil}
+        if self is UINavigationController, nidClassName == "UINavigationController" { return nil }
+        if let tracker = NeuroID.trackers[nidClassName] {
             tracker.subscribe(inScreen: self)
             return tracker
         } else {
-            let tracker = NeuroID.trackers[className] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
-            NeuroID.trackers[className] = tracker
+            print("NEW TRACKER CREATED!!", nidClassName)
+            let tracker = NeuroID.trackers[nidClassName] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
+            NeuroID.trackers[nidClassName] = tracker
             return tracker
         }
     }
 
     func captureEvent(event: NIDEvent) {
-        if ignoreLists.contains(className) { return }
+        if ignoreLists.contains(nidClassName) { return }
 
         // TODO: Implement UIAlertController
 //        if let vc = self as? UIAlertController {
@@ -87,7 +91,7 @@ public extension UIViewController {
 }
 
 extension UIViewController {
-    var className: String {
+    var nidClassName: String {
         return String(describing: type(of: self))
     }
 }
@@ -155,20 +159,20 @@ internal extension UIViewController {
         UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
         registerViews = view.subviewsDescriptions
 
-        NeuroID.registerKeyboardListener(className: className, view: self)
+        NeuroID.registerKeyboardListener(className: nidClassName, view: self)
 
-        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: className)
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: nidClassName)
     }
 
     @objc func neuroIDViewDidDisappear() {
         neuroIDViewDidDisappear()
 
-        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowUnload, id: hash.string, className: className)
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowUnload, id: hash.string, className: nidClassName)
     }
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
-        NeuroID.removeKeyboardListener(className: className, view: self)
+        NeuroID.removeKeyboardListener(className: nidClassName, view: self)
     }
 
     @objc func keyboardWillShow(notification: Notification) {
@@ -212,8 +216,8 @@ internal extension UIViewController {
             ]
 
             // Make sure we have a valid url set
-            event.url = className
-            DataStore.insertEvent(screen: className, event: event)
+            event.url = nidClassName
+            DataStore.insertEvent(screen: nidClassName, event: event)
         }
     }
 
@@ -230,7 +234,7 @@ internal extension UIViewController {
         ]
 
         // Make sure we have a valid url set
-        event.url = className
-        DataStore.insertEvent(screen: className, event: event)
+        event.url = nidClassName
+        DataStore.insertEvent(screen: nidClassName, event: event)
     }
 }
