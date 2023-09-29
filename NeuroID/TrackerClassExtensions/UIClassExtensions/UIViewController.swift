@@ -42,7 +42,7 @@ public extension UIViewController {
             "UIKeyboardDockItemButton",
             "UIEditingOverlayGestureView",
             "RNSNavigationController",
-            "RNSScreen"
+            "RNSScreen",
         ]
     }
 
@@ -57,7 +57,6 @@ public extension UIViewController {
             tracker.subscribe(inScreen: self)
             return tracker
         } else {
-            print("NEW TRACKER CREATED!!", nidClassName)
             let tracker = NeuroID.trackers[nidClassName] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
             NeuroID.trackers[nidClassName] = tracker
             return tracker
@@ -146,8 +145,8 @@ internal extension UIViewController {
     @objc func neuroIDViewDidAppear() {
         neuroIDViewDidAppear()
 
-        if ignoreLists.contains(self.nidClassName) { return }
-        
+        if ignoreLists.contains(nidClassName) { return }
+
         if NeuroID.isStopped() {
             return
         }
