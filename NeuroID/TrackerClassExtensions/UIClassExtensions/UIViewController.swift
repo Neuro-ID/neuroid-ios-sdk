@@ -41,6 +41,8 @@ public extension UIViewController {
             "UIKBKeyView",
             "UIKeyboardDockItemButton",
             "UIEditingOverlayGestureView",
+            "RNSNavigationController",
+            "RNSScreen"
         ]
     }
 
@@ -50,9 +52,6 @@ public extension UIViewController {
 
     var tracker: NeuroIDTracker? {
         if ignoreLists.contains(nidClassName) { return nil }
-        // Separating these into individual checks for easy debugging or reverting
-        if self.nidClassName == "RNSNavigationController" { return nil }
-        if self.nidClassName == "RNSScreen" { return nil}
         if self is UINavigationController, nidClassName == "UINavigationController" { return nil }
         if let tracker = NeuroID.trackers[nidClassName] {
             tracker.subscribe(inScreen: self)
@@ -147,6 +146,8 @@ internal extension UIViewController {
     @objc func neuroIDViewDidAppear() {
         neuroIDViewDidAppear()
 
+        if ignoreLists.contains(self.nidClassName) { return }
+        
         if NeuroID.isStopped() {
             return
         }
@@ -154,7 +155,7 @@ internal extension UIViewController {
         // We need to init the tracker on the views.
         tracker
 //        let subViews = view.subviews
-        var allViewControllers = children
+        var allViewControllers = children.filter { !ignoreLists.contains($0.nidClassName) }
         allViewControllers.append(self)
         UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
         registerViews = view.subviewsDescriptions
