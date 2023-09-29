@@ -186,7 +186,16 @@ public class NeuroIDTracker: NSObject {
                 
             default:
                 if !found {
-                    return
+                    // Capture custom RN elements that have a testID set
+                    if NeuroID.isRN && !id.contains("UNKNOWN_NO_ID_SET") {
+                        value = id
+                        etn = "ELEMENT"
+                        type = "ReactNativeElement"
+                        
+                        found = true
+                    } else {
+                        return
+                    }
                 }
         }
         
