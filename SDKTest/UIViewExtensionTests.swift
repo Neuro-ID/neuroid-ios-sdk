@@ -51,19 +51,19 @@ class UIViewExtensionTests: XCTestCase {
     func test_uiview_className() {
         let uiView = UIView()
 
-        let value = uiView.className
+        let value = uiView.nidClassName
 
         assert(value == "UIView")
 
         let uiButton = UIButton()
 
-        let valueButton = uiButton.className
+        let valueButton = uiButton.nidClassName
 
         assert(valueButton == "UIButton")
 
         let uiText = UITextField()
 
-        let valueText = uiText.className
+        let valueText = uiText.nidClassName
 
         assert(valueText == "UITextField")
     }
