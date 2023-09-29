@@ -110,7 +110,7 @@ public extension NeuroID {
         let neuroHTTPRequest = NeuroHTTPRequest(
             clientId: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
-            sdkVersion: ParamsCreator.getSDKVersion(),
+            sdkVersion: NeuroID.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseId: ParamsCreator.generateUniqueHexId(),
             siteId: NeuroID.siteId ?? "",

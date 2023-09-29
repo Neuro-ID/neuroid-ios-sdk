@@ -180,7 +180,7 @@ enum ParamsCreator {
     static func getSDKVersion() -> String {
         // Version MUST start with 4. in order to be processed correctly
         let version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        return "5.ios-\(version ?? "?")"
+        return "5.ios-\(NeuroID.isRN ? "rn-" : "")\(version ?? "?")"
     }
 
     static func getCommandQueueNamespace() -> String {
