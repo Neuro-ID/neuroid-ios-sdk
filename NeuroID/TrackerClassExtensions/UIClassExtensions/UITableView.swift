@@ -36,10 +36,10 @@ internal extension UITableView {
         let guid = ParamsCreator.genId()
         let oldCells = visibleCells
         let newCells = visibleCells
-        let currentNewViews = newCells.filter { !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.className) }
+        let currentNewViews = newCells.filter { !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.nidClassName) }
 
         for cell in currentNewViews {
-            let cellName = cell.className
+            let cellName = cell.nidClassName
             let childViews = cell.contentView.subviewsRecursive()
             for _view in childViews {
                 NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering single view for cell.")
