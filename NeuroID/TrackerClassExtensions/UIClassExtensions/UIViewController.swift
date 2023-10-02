@@ -145,23 +145,7 @@ internal extension UIViewController {
     @objc func neuroIDViewDidAppear() {
         neuroIDViewDidAppear()
 
-        if ignoreLists.contains(nidClassName) { return }
-
-        if NeuroID.isStopped() {
-            return
-        }
-
-        // We need to init the tracker on the views.
-        tracker
-//        let subViews = view.subviews
-        var allViewControllers = children.filter { !ignoreLists.contains($0.nidClassName) }
-        allViewControllers.append(self)
-        UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
-        registerViews = view.subviewsDescriptions
-
-        NeuroID.registerKeyboardListener(className: nidClassName, view: self)
-
-        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: nidClassName)
+        registerPageTargets()
     }
 
     @objc func neuroIDViewDidDisappear() {
@@ -173,6 +157,30 @@ internal extension UIViewController {
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
         NeuroID.removeKeyboardListener(className: nidClassName, view: self)
+    }
+
+    @objc func registerPageTargets() {
+        if NeuroID.isStopped() {
+            return
+        }
+
+        if ignoreLists.contains(nidClassName) { return }
+
+        if NeuroID.isStopped() {
+            return
+        }
+
+        // We need to init the tracker on the views.
+        tracker
+
+        var allViewControllers = children.filter { !ignoreLists.contains($0.nidClassName) }
+        allViewControllers.append(self)
+        UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
+        registerViews = view.subviewsDescriptions
+
+        NeuroID.registerKeyboardListener(className: nidClassName, view: self)
+
+        UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: nidClassName)
     }
 
     @objc func keyboardWillShow(notification: Notification) {

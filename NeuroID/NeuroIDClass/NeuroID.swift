@@ -120,6 +120,14 @@ public enum NeuroID {
         return getUserDefaultKeyBool(Constants.storageLocalNIDStopAllKey.rawValue)
     }
 
+    public static func forceStart() {
+        if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+            DispatchQueue.main.async {
+                viewController.registerPageTargets()
+            }
+        }
+    }
+
     private static func swizzle() {
         if didSwizzle {
             return
