@@ -42,7 +42,6 @@ public extension UIViewController {
             "UIKeyboardDockItemButton",
             "UIEditingOverlayGestureView",
             "RNSNavigationController",
-            "RNSScreen",
         ]
     }
 
@@ -160,11 +159,11 @@ internal extension UIViewController {
     }
 
     @objc func registerPageTargets() {
-        if NeuroID.isStopped() {
-            return
-        }
 
         if ignoreLists.contains(nidClassName) { return }
+
+        // check if its RN, using the React Navigation Package, and Matching the ClassName
+        if NeuroID.isRN, NeuroID.rnOptions[.usingReactNavigation] as? Bool ?? false, nidClassName == "UIViewController" { return }
 
         if NeuroID.isStopped() {
             return

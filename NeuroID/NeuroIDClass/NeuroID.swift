@@ -58,6 +58,7 @@ public enum NeuroID {
     public static var registeredTargets = [String]()
 
     internal static var isRN: Bool = false
+    internal static var rnOptions: [RNConfigOptions: Any] = [:]
 
     // MARK: - Setup
 
