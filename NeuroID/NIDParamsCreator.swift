@@ -179,8 +179,14 @@ enum ParamsCreator {
     /** Start with primar JS version as TrackJS requires to force correct session structure */
     static func getSDKVersion() -> String {
         // Version MUST start with 4. in order to be processed correctly
-        let version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        return "5.ios-\(NeuroID.isRN ? "rn-" : "")\(version ?? "?")"
+        var version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+
+        // Get Version number from bundled info.plist file if included
+        if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle") {
+            version = Bundle(url: bundleURL)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        }
+
+        return "5.ios-\(version ?? "?")\(NeuroID.isRN ? "-rn" : "")"
     }
 
     static func getCommandQueueNamespace() -> String {
