@@ -103,7 +103,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "uid=\(mutableEvent.uid ?? "")"
 
         case NIDSessionEventName.createSession.rawValue:
-            contextString = "cid=\(mutableEvent.cid ?? ""), sh=\(String(describing: mutableEvent.sh ?? nil)), sw=\(String(describing: mutableEvent.sw ?? nil))"
+            contextString = "cid=\(mutableEvent.cid ?? ""), sh=\(String(describing: mutableEvent.sh ?? nil)), sw=\(String(describing: mutableEvent.sw ?? nil)), jsv=\(mutableEvent.jsv ?? "")"
 
         case NIDEventName.applicationSubmit.rawValue:
             contextString = ""
