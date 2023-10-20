@@ -17,8 +17,21 @@ s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 s.resource_bundles = {
     'Resources' => ['NeuroID/Resources/**/*', 'Info.plist']
 }
+s.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
 
 s.dependency 'Alamofire'
+
+s.default_subspecs = 'Core'
+s.subspec 'Core' do |core|
+    core.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+    core.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
+end
+
+s.subspec 'AdvancedDevice' do |advanced|
+    advanced.ios.deployment_target = '12.0'
+    advanced.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+    advanced.dependency 'NeuroIDAdvancedDevice'
+end
 
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>

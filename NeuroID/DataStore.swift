@@ -78,6 +78,10 @@ internal func getUserDefaultKeyString(_ key: String) -> String? {
     return UserDefaults.standard.string(forKey: key)
 }
 
+internal func getUserDefaultKeyDict(_ key: String) -> String? {
+    return UserDefaults.standard.dictionary(forKey: key)
+}
+
 internal func setUserDefaultKey(_ key: String, value: Any?) {
     UserDefaults.standard.set(value, forKey: key)
 }
