@@ -280,6 +280,7 @@ public class NIDEvent: Codable {
     var sh: CGFloat?
     var sw: CGFloat?
     var rts: String?
+    var c: Bool?
 
     var m: String? // part of LOG events
     var level: String? // part of LOG events
@@ -505,6 +506,7 @@ public class NIDEvent: Codable {
         copy.sh = self.sh
         copy.sw = self.sw
         copy.rts = self.rts
+        copy.c = self.c
         return copy
     }
 }

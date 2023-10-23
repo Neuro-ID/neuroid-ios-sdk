@@ -21,6 +21,7 @@ public extension NeuroID {
                     if currentTimeEpoch < exp {
                         let nidEvent = NIDEvent(type: .advancedDevice)
                         nidEvent.rid = requestID
+                        nidEvent.c = true
                         
                         NeuroID.saveEventToLocalDataStore(nidEvent)
                         return
@@ -33,6 +34,7 @@ public extension NeuroID {
                 case .success(let requestID):
                     let nidEvent = NIDEvent(type: .advancedDevice)
                     nidEvent.rid = requestID
+                    nidEvent.c = false
                         
                     NeuroID.saveEventToLocalDataStore(nidEvent)
                         
