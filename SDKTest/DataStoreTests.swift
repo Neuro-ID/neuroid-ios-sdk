@@ -201,6 +201,26 @@ class DataStoreTests: XCTestCase {
         assert(value == nil)
     }
 
+    func test_getUserDefaultKeyDict_value() {
+        let key = "MyDictKey"
+        UserDefaults.standard.set(["foo": "bar"], forKey: key)
+
+        let value = getUserDefaultKeyDict(key)
+        if let myV = value {
+            assert(myV["foo"] != nil)
+        } else {
+            assertionFailure("Dictionary Missing")
+        }
+    }
+
+    func test_getUserDefaultKeyDict_nil() {
+        let key = "MyDictKey"
+        UserDefaults.standard.set(nil, forKey: key)
+
+        let value = getUserDefaultKeyDict(key)
+        assert(value == nil)
+    }
+
     func test_setUserDefaultKey_string() {
         let key = "MyStringKey"
 
@@ -227,5 +247,4 @@ class DataStoreTests: XCTestCase {
         let value = UserDefaults.standard.bool(forKey: key)
         assert(value == true)
     }
-
 }

@@ -634,6 +634,7 @@
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
 				F21702C929D5D5D000133A1C /* TouchEvents.swift in Sources */,
+				F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */,
 				F217029E29D4C7CE00133A1C /* DeviceEvents.swift in Sources */,
 				F21702A629D4CA8E00133A1C /* UITextView.swift in Sources */,
 				F21702B029D4CCA800133A1C /* UITableView.swift in Sources */,
