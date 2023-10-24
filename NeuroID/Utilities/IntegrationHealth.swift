@@ -57,7 +57,7 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
         model: device.model,
         type: device.type.rawValue,
         customDeviceType: "",
-        nidSDKVersion: NeuroID.getSDKVersion() ?? "1.0.0"
+        nidSDKVersion: NeuroID.getSDKVersion()
     )
 
     do {

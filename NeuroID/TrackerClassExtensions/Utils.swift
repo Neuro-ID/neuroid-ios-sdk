@@ -14,7 +14,7 @@ internal enum UtilFunctions {
         let currentTime = Date()
 
         // Create a Calendar object
-        var calendar = Calendar.current
+        let calendar = Calendar.current
 
         // Add the specified number of hours to the current time
         if let futureTime = calendar.date(byAdding: .hour, value: hoursToAdd, to: currentTime) {

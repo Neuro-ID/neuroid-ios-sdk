@@ -175,6 +175,10 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "tg=\(tgString)"
         case NIDEventName.windowOrientationChange.rawValue:
             contextString = "tg=\(tgString)"
+        case NIDEventName.log.rawValue:
+            contextString = "m=\(mutableEvent.m ?? "")"
+        case NIDEventName.advancedDevice.rawValue:
+            contextString = "rid=\(mutableEvent.rid ?? "") c=\(mutableEvent.c ?? false)"
 
         default:
             contextString = ""

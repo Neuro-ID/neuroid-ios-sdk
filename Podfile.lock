@@ -1,24 +1,32 @@
 PODS:
   - Alamofire (5.8.0)
   - DSJSONSchemaValidation (2.0.7)
+  - FingerprintPro (2.2.0)
   - JSONSchema (0.5.0)
+  - NeuroIDAdvancedDevice (1.0.0):
+    - FingerprintPro (~> 2.0)
 
 DEPENDENCIES:
   - Alamofire
   - DSJSONSchemaValidation
   - JSONSchema (= 0.5.0)
+  - NeuroIDAdvancedDevice
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - DSJSONSchemaValidation
+    - FingerprintPro
     - JSONSchema
+    - NeuroIDAdvancedDevice
 
 SPEC CHECKSUMS:
   Alamofire: 0e92e751b3e9e66d7982db43919d01f313b8eb91
   DSJSONSchemaValidation: 46e30ccfa9908c49d184f453d556f55aa0aac1ff
+  FingerprintPro: 72e35dc0315b75ba36eafaaed996dbb2f35f7326
   JSONSchema: 52453ed2f570370b5e3ccd1c943afdfa5ea70db5
+  NeuroIDAdvancedDevice: 43d75a0f62e6b26859f095a49772807045c9ab66
 
-PODFILE CHECKSUM: f17d4908a725d1f7a00298c625f580e0fa05271b
+PODFILE CHECKSUM: 35ff14788a9a8d65d33b4d604d9dd1558f0d71c5
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0

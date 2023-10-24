@@ -15,7 +15,7 @@ public extension NeuroID {
         if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
             if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
-                if let exp = storedADVKey["exp"] as? Int, let requestID = storedADVKey["key"] as? String {
+                if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
                     let currentTimeEpoch = Date().timeIntervalSince1970
                     
                     if currentTimeEpoch < exp {
@@ -41,7 +41,7 @@ public extension NeuroID {
                     setUserDefaultKey(
                         Constants.storageAdvancedDeviceKey.rawValue,
                         value: ["exp": UtilFunctions.getFutureTimeStamp(24),
-                                "key": requestID]
+                                "key": requestID] as [String: Any]
                     )
                 case .failure(let error):
                     let nidEvent = NIDEvent(type: .log)
