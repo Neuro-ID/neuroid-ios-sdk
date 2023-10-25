@@ -9,6 +9,21 @@ import Foundation
 import UIKit
 
 internal enum UtilFunctions {
+    static func getFutureTimeStamp(_ hoursToAdd: Int) -> Int {
+        // Get the current time
+        let currentTime = Date()
+
+        // Create a Calendar object
+        let calendar = Calendar.current
+
+        // Add the specified number of hours to the current time
+        if let futureTime = calendar.date(byAdding: .hour, value: hoursToAdd, to: currentTime) {
+            return Int(futureTime.timeIntervalSince1970)
+        } else {
+            return 0
+        }
+    }
+
     static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String {
         if currView == nil {
             return screenName

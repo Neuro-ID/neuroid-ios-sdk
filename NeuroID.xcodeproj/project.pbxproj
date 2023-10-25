@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -60,6 +60,7 @@
 		F228AA8F2A0180F80004892F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = F228AA8E2A0180F80004892F /* Resources */; };
 		F228AA902A0180F80004892F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = F228AA8E2A0180F80004892F /* Resources */; };
 		F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B75532AC36F8A00A7DF4D /* NIDRN.swift */; };
+		F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */; };
 		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
 		F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */; };
 		F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */; };
@@ -151,6 +152,7 @@
 		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
 		F228AA8E2A0180F80004892F /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		F23B75532AC36F8A00A7DF4D /* NIDRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRN.swift; sourceTree = "<group>"; };
+		F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDAdvancedDevice.swift; sourceTree = "<group>"; };
 		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
 		F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
@@ -372,6 +374,7 @@
 				F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */,
 				F2AEE7462A27A84B009690CB /* NIDSend.swift */,
 				F23B75532AC36F8A00A7DF4D /* NIDRN.swift */,
+				F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -474,11 +477,12 @@
 		26BCF333268DA3C40002C289 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				KnownAssetTags = (
 					static,
 				);
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					26BCF33B268DA3C40002C289 = {
 						CreatedOnToolsVersion = 12.5;
@@ -631,6 +635,7 @@
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
 				F21702C929D5D5D000133A1C /* TouchEvents.swift in Sources */,
+				F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */,
 				F217029E29D4C7CE00133A1C /* DeviceEvents.swift in Sources */,
 				F21702A629D4CA8E00133A1C /* UITextView.swift in Sources */,
 				F21702B029D4CCA800133A1C /* UITableView.swift in Sources */,
@@ -746,7 +751,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-DNDEBUG";
@@ -764,6 +769,7 @@
 			baseConfigurationReference = 83932C67921B213F9F8EC020 /* Pods-NeuroID.staging.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
@@ -771,16 +777,19 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = NeuroID/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.5;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.sdk.staging;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -800,7 +809,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X9986UAU23;
 				INFOPLIST_FILE = SDKTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -821,7 +830,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X9986UAU23;
 				INFOPLIST_FILE = SDKUITest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -889,7 +898,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -949,7 +958,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-DNDEBUG";
@@ -967,6 +976,7 @@
 			baseConfigurationReference = 5673F9FA8B2A2E3203FF181B /* Pods-NeuroID.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
@@ -974,19 +984,22 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = NeuroID/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.5;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1004,6 +1017,7 @@
 			baseConfigurationReference = 83613AC6E4FDA7686908AF6F /* Pods-NeuroID.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
@@ -1011,16 +1025,19 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = NeuroID/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.5;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1044,7 +1061,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = SDKTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1066,7 +1083,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X9986UAU23;
 				INFOPLIST_FILE = SDKTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1091,7 +1108,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = SDKUITest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1113,7 +1130,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X9986UAU23;
 				INFOPLIST_FILE = SDKUITest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
