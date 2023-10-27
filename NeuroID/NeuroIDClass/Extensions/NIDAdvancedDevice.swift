@@ -9,7 +9,7 @@ import Foundation
 import NeuroIDAdvancedDevice
 
 public extension NeuroID {
-    static func start(advancedDeviceSignals: Bool) {
+    static func start(_ advancedDeviceSignals: Bool) {
         NeuroID.start()
         
         if advancedDeviceSignals {
