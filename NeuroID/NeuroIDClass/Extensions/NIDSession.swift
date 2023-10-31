@@ -56,7 +56,7 @@ public extension NeuroID {
         let id = ParamsCreator.genId()
         setUserDefaultKey(sidKeyName, value: id)
 
-        NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
+        NIDLog.i("\(Constants.sessionTag.rawValue)", id)
         return id
     }
 

@@ -170,12 +170,12 @@ class NIDEventTests: XCTestCase {
             let encoder = JSONEncoder()
             let values = try encoder.encode(neuroHTTPRequest)
             let str = String(data: values, encoding: .utf8)
-            print(str as Any)
+            NIDLog.log(str as Any)
             let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
-            print("************\(filename)*************")
+            NIDLog.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
         } catch {
-            print(error)
+            NIDLog.e(error)
         }
         assert(neuroHTTPRequest != nil)
     }

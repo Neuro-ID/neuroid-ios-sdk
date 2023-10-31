@@ -25,7 +25,7 @@ public extension NeuroID {
      Enable or disable the NeuroID debug logging
      */
     static func enableLogging(_ value: Bool) {
-        logVisible = value
+        showLogs = value
     }
 
     static func logInfo(category: String = "default", content: Any...) {
@@ -73,11 +73,11 @@ public extension NeuroID {
                     fileUpdater.write(",\n".data(using: .utf8)!)
                     fileUpdater.write(jsonStringNIDEvents)
                 } else {
-                    print("Unable to append DEBUG JSON")
+                    NIDLog.e("Unable to append DEBUG JSON")
                 }
             }
         } catch {
-            print(String(describing: error))
+            NIDLog.e(String(describing: error))
         }
     }
 }
@@ -184,23 +184,33 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = ""
     }
 
-    NIDDebugPrint(tag: "NID Event:", "\(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDLog.d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
 }
 
-func NIDPrintLog(_ strings: Any...) {
-    if NeuroID.isStopped() {
-        return
-    }
-    if NeuroID.logVisible {
-        Swift.print(strings)
-    }
-}
+class NIDLog {
+    init() {}
 
-func NIDDebugPrint(tag: String = "\(Constants.debugTag.rawValue)", _ strings: Any...) {
-    if NeuroID.isStopped() || NeuroID.getEnvironment() != "TEST" {
-        return
+    static func log(tag: String = "", _ strings: Any...) {
+        if NeuroID._isSDKStarted, NeuroID.showLogs {
+            Swift.print("(NeuroID) \(tag) \(strings)")
+        }
     }
-    if NeuroID.logVisible {
-        Swift.print("\(tag) \(strings)")
+
+    static func d(tag: String = "", _ strings: Any...) {
+        if NeuroID._isSDKStarted, NeuroID.showLogs {
+            Swift.print("(NeuroID Debug) \(tag) \(strings)")
+        }
+    }
+
+    static func i(tag: String = "", _ strings: Any...) {
+        if NeuroID.showLogs {
+            Swift.print("(NeuroID Info) \(tag) \(strings)")
+        }
+    }
+
+    static func e(tag: String = "", _ strings: Any...) {
+        if NeuroID.showLogs {
+            Swift.print("****** NEUROID ERROR: ******\n\(tag) \(strings)")
+        }
     }
 }

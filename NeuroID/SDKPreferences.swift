@@ -18,7 +18,7 @@ public class SDKPreferences {
 
         guard let plist = try! PropertyListSerialization.propertyList(from: data, options: .mutableContainers, format: nil) as? [[String:String]] else {return []}
         
-        print(plist)
+        NIDLog.log(plist)
         return plist;
     }
 }
