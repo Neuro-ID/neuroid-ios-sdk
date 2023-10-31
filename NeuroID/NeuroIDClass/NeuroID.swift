@@ -70,6 +70,17 @@ public enum NeuroID {
             print("NeuroID Error: You already configured the SDK")
         }
 
+        if !validateClientKey(clientKey) {
+            print("****** NeuroID Error: ****** Invalid Client Key")
+            return
+        }
+
+        if clientKey.contains("_live_") {
+            environment = Constants.environmentLive.rawValue
+        } else {
+            environment = Constants.environmentTest.rawValue
+        }
+
         // Call clear session here
         clearSession()
 

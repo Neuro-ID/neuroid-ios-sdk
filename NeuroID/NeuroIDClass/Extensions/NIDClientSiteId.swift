@@ -44,4 +44,21 @@ public extension NeuroID {
     static func setSiteId(siteId: String) {
         self.siteId = siteId
     }
+
+    static func validateClientKey(_ clientKey: String) -> Bool {
+        var validKey = false
+
+        let pattern = "key_(live|test)_[A-Za-z0-9]+"
+        let regex = try! NSRegularExpression(pattern: pattern)
+
+        if let _ = regex.firstMatch(
+            in: clientKey,
+            options: NSRegularExpression.MatchingOptions(rawValue: 0),
+            range: NSMakeRange(0, clientKey.count)
+        ) {
+            validKey = true
+        }
+
+        return validKey
+    }
 }
