@@ -106,7 +106,7 @@ func saveIntegrationHealthResources() {
 
 internal extension NeuroID {
     static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
-        if verifyIntegrationHealth, getEnvironment() == Constants.environmentTest.rawValue {
+        if verifyIntegrationHealth {
             ifTrueCB()
         }
     }
