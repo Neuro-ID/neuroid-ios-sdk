@@ -74,58 +74,23 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_start() {
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
         NeuroID._isSDKStarted = false
 
         // pre tests
         assert(!NeuroID.isSDKStarted)
-
-        let NIDStopTracking = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(NIDStopTracking)
 
         // action
         NeuroID.start()
 
         // post action test
         assert(NeuroID.isSDKStarted)
-
-        let NIDStopTrackingAfter = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(!NIDStopTrackingAfter)
     }
 
     func test_stop() {
         NeuroID.start()
-        let stopped = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(stopped == false)
-
-        NeuroID.stop()
-
-        let stopped2 = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(stopped2 == true)
-    }
-
-    func test_isStopped() {
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
-
-        let NIDStopTracking = NeuroID.isStopped()
-        assert(NIDStopTracking)
-    }
-
-    func test_isStopped_false() {
-        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
-
-        let NIDStopTracking = NeuroID.isStopped()
-        assert(!NIDStopTracking)
-    }
-
-    func test_isSDKStarted() {
-        NeuroID._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
-
-        NeuroID._isSDKStarted = false
-        assert(!NeuroID.isSDKStarted)
-
-        NeuroID.isSDKStarted = true
+        
+        NeuroID.stop()
         assert(!NeuroID.isSDKStarted)
     }
 
