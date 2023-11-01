@@ -20,7 +20,7 @@ extension UIView {
         return subviews + subviews.flatMap { $0.subviewsRecursive() }
     }
 
-    var className: String {
+    var nidClassName: String {
         return String(describing: type(of: self))
     }
 
@@ -39,7 +39,7 @@ public extension UIView {
                 title = title.replacingOccurrences(of: " ", with: "_")
             }
 
-            title = "\(className)_\(title)"
+            title = "\(nidClassName)_\(title)"
             var backupName = "\(description.hashValue)"
 
             var placeholder = ""

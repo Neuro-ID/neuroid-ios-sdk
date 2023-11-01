@@ -9,12 +9,27 @@ import Foundation
 import UIKit
 
 internal enum UtilFunctions {
+    static func getFutureTimeStamp(_ hoursToAdd: Int) -> Int {
+        // Get the current time
+        let currentTime = Date()
+
+        // Create a Calendar object
+        let calendar = Calendar.current
+
+        // Add the specified number of hours to the current time
+        if let futureTime = calendar.date(byAdding: .hour, value: hoursToAdd, to: currentTime) {
+            return Int(futureTime.timeIntervalSince1970)
+        } else {
+            return 0
+        }
+    }
+
     static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String {
         if currView == nil {
             return screenName
         }
-        let parentView = currView!.superview?.className
-        let grandParentView = currView!.superview?.superview?.className
+        let parentView = currView!.superview?.nidClassName
+        let grandParentView = currView!.superview?.superview?.nidClassName
         var fullViewString = ""
         if grandParentView != nil {
             fullViewString += "\(grandParentView ?? "")/"
@@ -27,9 +42,9 @@ internal enum UtilFunctions {
     }
 
     static func registerSubViewsTargets(subViewControllers: [UIViewController]) {
-        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.className) }
+        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.nidClassName) }
         for ctrls in filtered {
-            let screenName = ctrls.className
+            let screenName = ctrls.nidClassName
             NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
             guard let view = ctrls.view else {
                 return

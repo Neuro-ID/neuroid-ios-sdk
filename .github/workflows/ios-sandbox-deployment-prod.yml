@@ -45,7 +45,6 @@ jobs:
   deploySandboxApps:
     if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/')
     runs-on: macos-latest
-    needs: updateSchema
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v3
@@ -126,22 +125,22 @@ jobs:
         if: ${{ needs.deploySandboxApps.result == 'success' }}
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: mobile-sdk-tech-team
+          SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_MESSAGE: "Successful Prod Sandbox Deployment for iOS"
           SLACK_TITLE: Successful Prod Sandbox Deployment for iOS
           SLACK_USERNAME: rtBot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
 
       - name: Send Slack Notification on Failure
         if: ${{ needs.deploySandboxApps.result == 'failure' }}
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: mobile-sdk-tech-team
+          SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_MESSAGE: "Failed Prod Sandbox Deployment for iOS"
           SLACK_TITLE: Failed Prod Sandbox Deployment for iOS
           SLACK_USERNAME: rtBot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}

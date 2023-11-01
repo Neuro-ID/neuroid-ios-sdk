@@ -22,7 +22,6 @@ final class NIDMetadata: Codable {
     var osVersion: String
     var displayResolution: String
     var carrier: String
-    var totalMemory: Double
     var batteryLevel: Double
     var isJailBreak: Bool
     var isWifiOn: Bool
@@ -40,7 +39,6 @@ final class NIDMetadata: Codable {
         self.osVersion = NIDMetadata.getOSVersion()
         self.isWifiOn = NIDMetadata.isWifiEnable()
         self.carrier = NIDMetadata.getCurrentCarrier()
-        self.totalMemory = NIDMetadata.getTotalMemory()
         self.batteryLevel = NIDMetadata.getBaterryLevel()
         self.isJailBreak = NIDMetadata.hasJailbreak()
         self.isSimulator = NIDMetadata.isSimulator()
@@ -95,21 +93,6 @@ extension NIDMetadata {
         } else {
             return ""
         }
-    }
-
-    static func getTotalMemory() -> Double {
-        do {
-            let url = NSURL(fileURLWithPath: NSHomeDirectory())
-            let values = try url.resourceValues(forKeys: [.volumeAvailableCapacityKey, .volumeTotalCapacityKey])
-            let capacity = values[.volumeTotalCapacityKey] as! Double
-            let storage = capacity / (1048576 * 1024)
-            return storage
-        } catch {
-            #if DEBUG
-            print(error)
-            #endif
-        }
-        return 0.0
     }
 
     static func getBaterryLevel() -> Double {

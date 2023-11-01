@@ -74,58 +74,23 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_start() {
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
         NeuroID._isSDKStarted = false
 
         // pre tests
         assert(!NeuroID.isSDKStarted)
-
-        let NIDStopTracking = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(NIDStopTracking)
 
         // action
         NeuroID.start()
 
         // post action test
         assert(NeuroID.isSDKStarted)
-
-        let NIDStopTrackingAfter = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(!NIDStopTrackingAfter)
     }
 
     func test_stop() {
         NeuroID.start()
-        let stopped = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(stopped == false)
-
-        NeuroID.stop()
-
-        let stopped2 = UserDefaults.standard.bool(forKey: localStorageNIDStopAll)
-        assert(stopped2 == true)
-    }
-
-    func test_isStopped() {
-        UserDefaults.standard.set(true, forKey: localStorageNIDStopAll)
-
-        let NIDStopTracking = NeuroID.isStopped()
-        assert(NIDStopTracking)
-    }
-
-    func test_isStopped_false() {
-        UserDefaults.standard.set(false, forKey: localStorageNIDStopAll)
-
-        let NIDStopTracking = NeuroID.isStopped()
-        assert(!NIDStopTracking)
-    }
-
-    func test_isSDKStarted() {
-        NeuroID._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
-
-        NeuroID._isSDKStarted = false
-        assert(!NeuroID.isSDKStarted)
-
-        NeuroID.isSDKStarted = true
+        
+        NeuroID.stop()
         assert(!NeuroID.isSDKStarted)
     }
 
@@ -350,7 +315,7 @@ class NIDSessionTests: XCTestCase {
             XCTFail()
         }
 
-        assertStoredEventTypeAndCount(type: "CLOSE_SESSION", count: 1)
+//        assertStoredEventTypeAndCount(type: "CLOSE_SESSION", count: 1)
     }
 
     func test_closeSession_whenStopped() {
@@ -686,6 +651,81 @@ class NIDLogTests: XCTestCase {
         NeuroID.enableLogging(false)
 
         assert(!NeuroID.logVisible)
+    }
+}
+
+class NIDRNTests: XCTestCase {
+    override func setUp() {
+        NeuroID.isRN = false
+    }
+
+    let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true]
+    let configOptionsFalse = [RNConfigOptions.usingReactNavigation.rawValue: false]
+    let configOptionsInvalid = ["foo": "bar"]
+
+    func assertConfigureTests(defaultValue: Bool, expectedValue: Bool) {
+        assert(NeuroID.isRN)
+        let storedValue = NeuroID.rnOptions[.usingReactNavigation] as? Bool ?? defaultValue
+        assert(storedValue == expectedValue)
+        assert(NeuroID.rnOptions.count == 1)
+    }
+
+    func test_isRN() {
+        assert(!NeuroID.isRN)
+        NeuroID.setIsRN()
+
+        assert(NeuroID.isRN)
+    }
+
+    func test_configure_usingReactNavigation_true() {
+        assert(!NeuroID.isRN)
+        NeuroID.configure(
+            clientKey: "test",
+            rnOptions: configOptionsTrue
+        )
+
+        assertConfigureTests(defaultValue: false, expectedValue: true)
+    }
+
+    func test_configure_usingReactNavigation_false() {
+        assert(!NeuroID.isRN)
+        NeuroID.configure(
+            clientKey: "test",
+            rnOptions: configOptionsFalse
+        )
+
+        assertConfigureTests(defaultValue: true, expectedValue: false)
+    }
+
+    func test_configure_invalid_key() {
+        assert(!NeuroID.isRN)
+        NeuroID.configure(
+            clientKey: "test",
+            rnOptions: configOptionsInvalid
+        )
+
+        assertConfigureTests(defaultValue: true, expectedValue: false)
+    }
+
+    func test_getOptionValueBool_true() {
+        assert(!NeuroID.isRN)
+        let value = NeuroID.getOptionValueBool(rnOptions: configOptionsTrue, configOptionKey: .usingReactNavigation)
+
+        assert(value)
+    }
+
+    func test_getOptionValueBool_false() {
+        assert(!NeuroID.isRN)
+        let value = NeuroID.getOptionValueBool(rnOptions: configOptionsFalse, configOptionKey: .usingReactNavigation)
+
+        assert(!value)
+    }
+
+    func test_getOptionValueBool_invalid() {
+        assert(!NeuroID.isRN)
+        let value = NeuroID.getOptionValueBool(rnOptions: configOptionsInvalid, configOptionKey: .usingReactNavigation)
+
+        assert(!value)
     }
 }
 

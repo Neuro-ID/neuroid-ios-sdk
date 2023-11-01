@@ -93,7 +93,7 @@ class NIDEventTests: XCTestCase {
         /// Create touch event
         let tg = ParamsCreator.getTgParams(
             view: textfield,
-            extraParams: ["sender": TargetValue.string(textfield.className)])
+            extraParams: ["sender": TargetValue.string(textfield.nidClassName)])
         
         let touch = NIDEvent(type: .touchStart, tg: tg, view: textfield)
         tracker?.captureEvent(event: touch)
@@ -139,7 +139,7 @@ class NIDEventTests: XCTestCase {
         /// Touch a button
         let tg2 = ParamsCreator.getTgParams(
             view: button,
-            extraParams: ["sender": TargetValue.string(button.className)])
+            extraParams: ["sender": TargetValue.string(button.nidClassName)])
         
         let touch2 = NIDEvent(type: .touchStart, tg: tg2, view: button)
         tracker?.captureEvent(event: touch2)

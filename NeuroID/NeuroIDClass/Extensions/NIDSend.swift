@@ -66,7 +66,6 @@ public extension NeuroID {
         post(events: cleanEvents, screen: getScreenName() ?? altScreenName, onSuccess: { _ in
             logInfo(category: "APICall", content: "Sending successfully")
             // send success -> delete
-
         }, onFailure: { error in
             logError(category: "APICall", content: String(describing: error))
         })
@@ -79,13 +78,11 @@ public extension NeuroID {
             parameters: neuroHTTPRequest,
             encoder: JSONParameterEncoder.default,
             headers: headers
-        ).responseData { response in
-            completion(response)
-
-            if response.error != nil, retryCount > 0 {
+        ).validate().responseData { response in
+            if response.error != nil, retryCount > 0, response.response?.statusCode != 403 {
                 print("NeruoID network Retrying...")
                 retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
-            }
+            } else { completion(response) }
         }
     }
 
@@ -110,7 +107,7 @@ public extension NeuroID {
         let neuroHTTPRequest = NeuroHTTPRequest(
             clientId: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
-            sdkVersion: ParamsCreator.getSDKVersion(),
+            sdkVersion: NeuroID.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseId: ParamsCreator.generateUniqueHexId(),
             siteId: NeuroID.siteId ?? "",

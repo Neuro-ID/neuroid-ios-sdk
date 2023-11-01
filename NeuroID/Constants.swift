@@ -30,6 +30,8 @@ internal enum Constants: String {
     case storageSessionExpiredKey = "nid_sid_expires"
     case storageSaltKey = "nid_sk"
 
+    case storageAdvancedDeviceKey = "nid_advancedDevice"
+
     case orientationKey = "orientation"
     case orientationLandscape = "Landscape"
     case orientationPortrait = "Portrait"

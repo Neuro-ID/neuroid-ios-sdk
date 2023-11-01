@@ -57,7 +57,7 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
         model: device.model,
         type: device.type.rawValue,
         customDeviceType: "",
-        nidSDKVersion: NeuroID.getSDKVersion() ?? "1.0.0"
+        nidSDKVersion: NeuroID.getSDKVersion()
     )
 
     do {
@@ -144,7 +144,7 @@ internal extension NeuroID {
 }
 
 public extension NeuroID {
-    static func printIntegrationHealthInstruction() -> String {
+    static func printIntegrationHealthInstruction() {
         var instructions = ""
 
         shouldDebugIntegrationHealth {
@@ -165,15 +165,12 @@ public extension NeuroID {
             saveIntegrationHealthResources()
             startIntegrationHealthCheck()
         }
-        return instructions
     }
 
-    static func setVerifyIntegrationHealth(_ verify: Bool) -> String {
+    static func setVerifyIntegrationHealth(_ verify: Bool) {
         verifyIntegrationHealth = verify
-        var instructions = ""
         if verify {
-            instructions = printIntegrationHealthInstruction()
+            printIntegrationHealthInstruction()
         }
-        return instructions
     }
 }

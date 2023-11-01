@@ -99,16 +99,16 @@ internal extension UITextView {
 
     @objc func neuroIDCut(caller: UIResponder) {
         self.neuroIDCut(caller: caller)
-        UtilFunctions.captureContextMenuAction(type: NIDEventName.cut, view: self, text: text, className: className)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.cut, view: self, text: text, className: nidClassName)
     }
 
     @objc func neuroIDCopy(caller: UIResponder) {
         self.neuroIDCopy(caller: caller)
-        UtilFunctions.captureContextMenuAction(type: NIDEventName.copy, view: self, text: text, className: className)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.copy, view: self, text: text, className: nidClassName)
     }
 
     @objc func neuroIDPaste(caller: UIResponder) {
         self.neuroIDPaste(caller: caller)
-        UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: className)
+        UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: nidClassName)
     }
 }
