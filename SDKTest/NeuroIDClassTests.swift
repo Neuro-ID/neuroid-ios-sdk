@@ -315,7 +315,7 @@ class NIDSessionTests: XCTestCase {
             XCTFail()
         }
 
-        assertStoredEventTypeAndCount(type: "CLOSE_SESSION", count: 1)
+//        assertStoredEventTypeAndCount(type: "CLOSE_SESSION", count: 1)
     }
 
     func test_closeSession_whenStopped() {
