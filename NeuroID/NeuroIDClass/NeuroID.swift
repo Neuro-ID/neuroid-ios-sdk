@@ -83,7 +83,6 @@ public enum NeuroID {
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start() {
         NeuroID._isSDKStarted = true
-        setUserDefaultKey(Constants.storageLocalNIDStopAllKey.rawValue, value: false)
 
         NeuroID.startIntegrationHealthCheck()
 
@@ -104,13 +103,13 @@ public enum NeuroID {
 
     public static func stop() {
         NIDLog.i("NeuroID Stopped")
-        setUserDefaultKey(Constants.storageLocalNIDStopAllKey.rawValue, value: true)
         do {
             _ = try closeSession(skipStop: true)
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
         }
 
+        NeuroID.groupAndPOST()
         NeuroID._isSDKStarted = false
 
         // save captured health events to file
@@ -118,7 +117,7 @@ public enum NeuroID {
     }
 
     public static func isStopped() -> Bool {
-        return getUserDefaultKeyBool(Constants.storageLocalNIDStopAllKey.rawValue)
+        return _isSDKStarted != true
     }
 
     public static func forceStart() {
