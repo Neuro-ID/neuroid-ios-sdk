@@ -140,7 +140,7 @@ public extension NeuroID {
             case .success:
                 NIDLog.i("NeuroID post to API Successful")
             case let .failure(error):
-                NIDLog.i("NeuroID FAIL to post API")
+                NIDLog.e("NeuroID FAIL to post API")
                 logError(content: "Neuro-ID post Error: \(error)")
             }
         }
