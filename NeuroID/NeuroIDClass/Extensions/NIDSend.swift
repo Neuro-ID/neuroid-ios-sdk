@@ -80,7 +80,7 @@ public extension NeuroID {
             headers: headers
         ).validate().responseData { response in
             if response.error != nil, retryCount > 0, response.response?.statusCode != 403 {
-                print("NeruoID network Retrying...")
+                NIDLog.i("NeruoID network Retrying...")
                 retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
             } else { completion(response) }
         }
@@ -119,7 +119,7 @@ public extension NeuroID {
         )
 
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
-            saveDebugJSON(events: "******************** New POST to NID Collector")
+            saveDebugJSON(events: "******************** New POST to NeuroID Collector")
 //            saveDebugJSON(events: dataString)
 //            saveDebugJSON(events: jsonEvents):
             saveDebugJSON(events: "******************** END")
@@ -134,13 +134,13 @@ public extension NeuroID {
         let maxRetries = 3
 
         retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: maxRetries) { response in
-            NIDPrintLog("NID Response \(response.response?.statusCode ?? 000)")
-            NIDPrintLog("NID Payload: \(neuroHTTPRequest)")
+            NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
+            NIDLog.i("NeuroID Payload: \(neuroHTTPRequest)")
             switch response.result {
             case .success:
-                NIDPrintLog("Neuro-ID post to API Successful")
+                NIDLog.i("NeuroID post to API Successful")
             case let .failure(error):
-                NIDPrintLog("Neuro-ID FAIL to post API")
+                NIDLog.e("NeuroID FAIL to post API")
                 logError(content: "Neuro-ID post Error: \(error)")
             }
         }
@@ -150,7 +150,7 @@ public extension NeuroID {
             do {
                 let data = try JSONEncoder().encode(neuroHTTPRequest)
                 let str = String(data: data, encoding: .utf8)
-                NIDPrintLog(str as Any)
+                NIDLog.i(str as Any)
             } catch {}
         }
     }

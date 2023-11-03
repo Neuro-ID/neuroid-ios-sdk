@@ -45,7 +45,7 @@ internal enum UtilFunctions {
         let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.nidClassName) }
         for ctrls in filtered {
             let screenName = ctrls.nidClassName
-            NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
+            NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
             guard let view = ctrls.view else {
                 return
             }
@@ -54,7 +54,7 @@ internal enum UtilFunctions {
             NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
             let childViews = ctrls.view.subviewsRecursive()
             for _view in childViews {
-                NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
+                NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
                 NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
             }
         }
@@ -93,7 +93,7 @@ internal enum UtilFunctions {
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
 
-        NIDDebugPrint("*****************   Actually Registered View: \(className) - \(id)")
+        NIDLog.d("Registered View: \(className) - \(id)")
     }
 
     static func captureContextMenuAction(
@@ -173,7 +173,7 @@ internal enum UtilFunctions {
         hashValue: String,
         attrParams: [String: String]
     ) {
-        NIDDebugPrint("NID Input = <\(textControl.id)>")
+        NIDLog.d("Input = <\(textControl.id)>")
         let eventTg = ParamsCreator.getTGParamsForInput(
             eventName: eventType,
             view: textControl,

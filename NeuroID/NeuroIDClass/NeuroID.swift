@@ -28,7 +28,7 @@ public enum NeuroID {
     internal static var trackers = [String: NeuroIDTracker]()
 
     /// Turn on/off printing the SDK log to your console
-    public static var logVisible = true
+    public static var showLogs = true
     internal static let showDebugLog = false
 
     internal static var excludedViewsTestIDs = [String]()
@@ -67,7 +67,7 @@ public enum NeuroID {
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String) {
         if NeuroID.clientKey != nil {
-            print("NeuroID Error: You already configured the SDK")
+            NIDLog.e("You already configured the SDK")
         }
 
         // Call clear session here
@@ -102,11 +102,11 @@ public enum NeuroID {
     }
 
     public static func stop() {
-        NIDPrintLog("NeuroID Stopped")
+        NIDLog.i("NeuroID Stopped")
         do {
             _ = try closeSession(skipStop: true)
         } catch {
-            NIDPrintLog("NeuroID Error: Failed to Stop because \(error)")
+            NIDLog.e("Failed to Stop because \(error)")
         }
 
         NeuroID.groupAndPOST()

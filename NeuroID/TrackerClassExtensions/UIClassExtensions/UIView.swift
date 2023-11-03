@@ -57,9 +57,6 @@ public extension UIView {
                 backupName = "\(textControl.hash)"
             }
 
-            //            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")
-            //            print("view ID: \((accessibilityIdentifier.isEmptyOrNil) ? title : accessibilityIdentifier!)")
-
             return (accessibilityIdentifier.isEmptyOrNil) ? placeholder != "" ? placeholder : "\(title)_\(backupName)" : accessibilityIdentifier!
         }
         set {

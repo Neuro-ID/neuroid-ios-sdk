@@ -311,7 +311,7 @@ class NIDSessionTests: XCTestCase {
             assert(closeSession.ct == "SDK_EVENT")
         }
         catch {
-            print("Threw on Close Session that shouldn't")
+            NIDLog.e("Threw on Close Session that shouldn't")
             XCTFail()
         }
 
@@ -644,13 +644,13 @@ class NIDLogTests: XCTestCase {
     func test_enableLogging_true() {
         NeuroID.enableLogging(true)
 
-        assert(NeuroID.logVisible)
+        assert(NeuroID.showLogs)
     }
 
     func test_enableLogging_false() {
         NeuroID.enableLogging(false)
 
-        assert(!NeuroID.logVisible)
+        assert(!NeuroID.showLogs)
     }
 }
 
