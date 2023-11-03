@@ -25,7 +25,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -96,23 +96,41 @@ class NeuroIDClassTests: XCTestCase {
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
     }
 
-    func test_start() {
+    func test_start_failure() {
+        NeuroID._isSDKStarted = false
+        NeuroID.clientKey = nil
+
+        // pre tests
+        assert(!NeuroID.isSDKStarted)
+        assert(NeuroID.clientKey == nil)
+
+        // action
+        do {
+            try NeuroID.start()
+        } catch {
+            assert(error.localizedDescription == "The Client Key is missing")
+        }
+        // post action test
+        assert(!NeuroID.isSDKStarted)
+    }
+
+    func test_start_success() {
         NeuroID._isSDKStarted = false
 
         // pre tests
         assert(!NeuroID.isSDKStarted)
 
         // action
-        NeuroID.start()
+        try? NeuroID.start()
 
         // post action test
         assert(NeuroID.isSDKStarted)
     }
 
     func test_stop() {
-        NeuroID.start()
+        NeuroID._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
-        
+
         NeuroID.stop()
         assert(!NeuroID.isSDKStarted)
     }
@@ -146,7 +164,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -247,7 +265,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -332,8 +350,7 @@ class NIDSessionTests: XCTestCase {
         do {
             let closeSession = try NeuroID.closeSession()
             assert(closeSession.ct == "SDK_EVENT")
-        }
-        catch {
+        } catch {
             NIDLog.e("Threw on Close Session that shouldn't")
             XCTFail()
         }
@@ -375,7 +392,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -427,7 +444,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -484,7 +501,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {

@@ -20,7 +20,7 @@ class NeuroIDTrackerTests: XCTestCase {
     }
     
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
     
     override func tearDown() {
