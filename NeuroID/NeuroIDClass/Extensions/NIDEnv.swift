@@ -13,6 +13,6 @@ public extension NeuroID {
     }
 
     static func setEnvironmentProduction(_ value: Bool) {
-        NIDPrintLog("**** NeuroID NOTE: THIS METHOD IS DEPRECATED")
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
     }
 }

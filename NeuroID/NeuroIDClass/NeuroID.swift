@@ -71,7 +71,7 @@ public enum NeuroID {
         }
 
         if !validateClientKey(clientKey) {
-            print("****** NeuroID Error: ****** Invalid Client Key")
+            NIDLog.e("Invalid Client Key")
             return
         }
 
