@@ -62,7 +62,7 @@ enum ParamsCreator {
                 "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
             ]
         default:
-            print("Invalid type")
+            NIDLog.log("Invalid input type")
         }
         for (key, value) in extraParams {
             params[key] = value

@@ -18,7 +18,7 @@ internal func getFileURL(_ fileName: String?) throws -> URL {
         return fileURL
     }
     catch {
-        NIDPrintLog("Error Retrieving the FileURL: \(fileName ?? "") - \(error.localizedDescription)")
+        NIDLog.e("Error Retrieving the FileURL: \(fileName ?? "") - \(error.localizedDescription)")
         throw error
     }
 }
@@ -31,7 +31,7 @@ internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) throws
         try encoder.encode(items).write(to: fileURL)
     }
     catch {
-        NIDPrintLog("Error Writing to File: \(fileName) - \(error.localizedDescription)")
+        NIDLog.e("Error Writing to File: \(fileName) - \(error.localizedDescription)")
         throw error
     }
 }
@@ -44,7 +44,7 @@ internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealth
         try encoder.encode(items).write(to: fileURL)
     }
     catch {
-        NIDPrintLog("Error Writing to File: \(fileName) - \(error.localizedDescription)")
+        NIDLog.e("Error Writing to File: \(fileName) - \(error.localizedDescription)")
         throw error
     }
 }
@@ -64,7 +64,7 @@ internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundl
             try! fileManager.copyItem(at: serverURL, to: fileDirectory.appendingPathComponent(fileName))
         }
         else {
-            NIDPrintLog("Error Copying Resource: \(fileName) - \(error.localizedDescription)")
+            NIDLog.e("Error Copying Resource: \(fileName) - \(error.localizedDescription)")
             throw error
         }
     }
@@ -80,7 +80,7 @@ internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, b
         try fileManager.createDirectory(at: fileDirectory, withIntermediateDirectories: false, attributes: nil)
     }
     catch let error as NSError {
-        NIDPrintLog("Error Copying Resource Directory: \(folderName) - \(error.localizedDescription)")
+        NIDLog.e("Error Copying Resource Directory: \(folderName) - \(error.localizedDescription)")
         throw error
     }
 
@@ -90,7 +90,7 @@ internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, b
         try fileManager.copyItem(at: resourcesURL, to: fileDirectory.appendingPathComponent(folderName))
     }
     catch let error as NSError {
-        NIDPrintLog("Error Copying Resource Directory: \(resourcesURL) - \(error.localizedDescription)")
+        NIDLog.e("Error Copying Resource Directory: \(resourcesURL) - \(error.localizedDescription)")
         throw error
     }
 }
@@ -106,7 +106,7 @@ internal func checkAndDeleteItems(fileDirectory: URL) {
         }
         catch {
             // Handle the error if something goes wrong during the deletion
-            NIDPrintLog("Error Removing Folder: \(error)")
+            NIDLog.e("Error Removing Folder: \(error)")
         }
     }
 }

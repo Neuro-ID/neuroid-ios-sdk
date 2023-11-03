@@ -75,7 +75,7 @@ internal extension NeuroIDTracker {
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
 
             default:
-                NIDDebugPrint(tag: Constants.extraInfoTag.rawValue, "No known text object")
+                NIDLog.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
         }
 
         // DO WE WANT THIS?

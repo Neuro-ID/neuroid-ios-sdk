@@ -80,18 +80,6 @@ public class NeuroIDTracker: NSObject {
         
         switch v {
             case is UITextField:
-                //           @objc func myTargetFunction(textField: UITextField) {     print("myTargetFunction") }
-                //            // Add view on top of textfield to get taps
-                //            var invisView = UIView.init(frame: element.frame)
-                //            invisView.backgroundColor = UIColor(red: 100.0, green: 0.0, blue: 0.0, alpha: 0.0)
-                //
-                //            invisView.backgroundColor = UIColor(red: 0.8, green: 0.1, blue: 0.5, alpha: 1)
-                //            element.addSubview(invisView)
-                //            let tap = UITapGestureRecognizer(target: self , action: #selector(self.handleTap(_:)))
-                //            invisView.addGestureRecognizer(tap)
-                //            invisView.superview?.bringSubviewToFront(invisView)
-                //            invisView.superview?.layer.zPosition = 10000000
-                
                 let element = v as! UITextField
                 element.addTapGesture()
                 
@@ -175,14 +163,14 @@ public class NeuroIDTracker: NSObject {
             // UNSUPPORTED AS OF RIGHT NOW
             case is UIPickerView:
                 let element = v as! UIPickerView
-                NIDDebugPrint(tag: "NID FE:", "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
+                NIDLog.d(tag: "NeuroID FE:", "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
             case is UITableViewCell:
                 // swiftUI list
                 let element = v as! UITableViewCell
-                NIDDebugPrint(tag: "NID FE:", "TABLE View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
+                NIDLog.d(tag: "NeuroID FE:", "TABLE View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
             case is UIScrollView:
                 let element = v as! UIScrollView
-                NIDDebugPrint(tag: "NID FE:", "SCROLL View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
+                NIDLog.d(tag: "NeuroID FE:", "SCROLL View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
                 
             default:
                 if !found {

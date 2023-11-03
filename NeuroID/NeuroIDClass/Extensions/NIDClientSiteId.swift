@@ -35,7 +35,7 @@ public extension NeuroID {
 
     internal static func getClientKey() -> String {
         guard let key = NeuroID.clientKey else {
-            print("Error: clientKey is not set")
+            NIDLog.e("ClientKey is not set")
             return ""
         }
         return key
