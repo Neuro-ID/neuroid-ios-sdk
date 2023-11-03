@@ -42,6 +42,7 @@ public extension NeuroID {
     }
 
     static func setSiteId(siteId: String) {
+        NIDPrintLog("**** NeuroID NOTE: THIS METHOD IS DEPRECATED")
         self.siteId = siteId
     }
 
