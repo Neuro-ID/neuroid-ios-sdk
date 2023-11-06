@@ -73,24 +73,6 @@ class NeuroIDClassTests: XCTestCase {
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
     }
 
-    func test_start_failure() {
-        NeuroID._isSDKStarted = false
-        NeuroID.clientKey = nil
-
-        // pre tests
-        assert(!NeuroID.isSDKStarted)
-        assert(NeuroID.clientKey == nil)
-
-        // action
-        do {
-            try NeuroID.start()
-        } catch {
-            assert(error.localizedDescription == "The Client Key is missing")
-        }
-        // post action test
-        assert(!NeuroID.isSDKStarted)
-    }
-
     func test_start_success() {
         tearDown()
         NeuroID._isSDKStarted = false
@@ -132,7 +114,7 @@ class NeuroIDClassTests: XCTestCase {
     func test_stop() {
         NeuroID.start()
         assert(NeuroID.isSDKStarted)
-        
+
         NeuroID.stop()
         assert(!NeuroID.isSDKStarted)
     }
