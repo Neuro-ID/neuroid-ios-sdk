@@ -99,6 +99,11 @@ public enum NeuroID {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+
+        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+        queuedEvents.forEach { event in
+            DataStore.insertEvent(screen: "", event: event)
+        }
     }
 
     public static func stop() {
@@ -146,6 +151,10 @@ public enum NeuroID {
 
     public static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
+    }
+
+    internal static func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
+        DataStore.insertQueuedEvent(screen: event.type, event: event)
     }
 
     /// Get the current SDK versión from bundle

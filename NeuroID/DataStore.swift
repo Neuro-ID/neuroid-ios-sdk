@@ -9,23 +9,29 @@ public enum DataStore {
         set { lock.withCriticalSection { _events = newValue } }
     }
 
+    static var _queuedEvents = [NIDEvent]()
+    static var queuedEvents: [NIDEvent] {
+        get { lock.withCriticalSection { _queuedEvents } }
+        set { lock.withCriticalSection { _queuedEvents = newValue } }
+    }
+
     static func insertEvent(screen: String, event: NIDEvent) {
-        let sensorManager = NIDSensorManager.shared
-        NeuroID.logDebug(category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer))
-        NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
-        event.gyro = sensorManager.getSensorData(sensor: .gyro)
-        event.accel = sensorManager.getSensorData(sensor: .accelerometer)
-
-        NeuroID.logDebug(category: "saveEvent", content: event.toDict())
-
-        let mutableEvent = event
-
         if NeuroID.isStopped() {
             return
         }
 
+        DataStore.cleanAndStoreEvent(screen: screen, event: event, storeType: "event")
+    }
+
+    static func insertQueuedEvent(screen: String, event: NIDEvent) {
+        DataStore.cleanAndStoreEvent(screen: screen, event: event, storeType: "queue")
+    }
+
+    static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
+        let mutableEvent = event
+
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
-        if let eventURL = event.url {
+        if let eventURL = mutableEvent.url {
             if eventURL.contains("RNScreensNavigationController") {
                 return
             }
@@ -39,17 +45,36 @@ public enum DataStore {
                 return
             }
         }
+
         // Ensure this event is not on the exclude list
         if NeuroID.excludedViewsTestIDs.contains(where: { $0 == mutableEvent.tgs || $0 == mutableEvent.en }) {
             return
         }
 
-        NeuroID.captureIntegrationHealthEvent(mutableEvent.copy())
+        let sensorManager = NIDSensorManager.shared
+        mutableEvent.gyro = sensorManager.getSensorData(sensor: .gyro)
+        mutableEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
 
-        NIDPrintEvent(mutableEvent)
+        NeuroID.logDebug(category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer))
+        NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
+        NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
-        DispatchQueue.global(qos: .utility).sync {
-            DataStore.events.append(mutableEvent)
+        DataStore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
+    }
+
+    static func insertCleanedEvent(event: NIDEvent, storeType: String) {
+        if storeType == "queue" {
+            NIDLog.d("Store Queued Event: \(event.type)")
+            DispatchQueue.global(qos: .utility).sync {
+                DataStore.queuedEvents.append(event)
+            }
+        } else {
+            NeuroID.captureIntegrationHealthEvent(event.copy())
+
+            NIDPrintEvent(event)
+            DispatchQueue.global(qos: .utility).sync {
+                DataStore.events.append(event)
+            }
         }
     }
 
@@ -65,6 +90,14 @@ public enum DataStore {
         return self.lock.withCriticalSection {
             let result = self._events
             self._events = []
+            return result
+        }
+    }
+
+    static func getAndRemoveAllQueuedEvents() -> [NIDEvent] {
+        return self.lock.withCriticalSection {
+            let result = self._queuedEvents
+            self._queuedEvents = []
             return result
         }
     }
