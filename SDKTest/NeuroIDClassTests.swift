@@ -25,7 +25,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -55,7 +55,7 @@ class NeuroIDClassTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
-    func test_configure() {
+    func test_configure_success() {
         clearOutDataStore()
         // remove things configured in setup
         NeuroID.clientKey = nil
@@ -71,6 +71,48 @@ class NeuroIDClassTests: XCTestCase {
         assert(tabIdValue == nil)
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
+
+        assert(NeuroID.environment == "\(Constants.environmentLive.rawValue)")
+    }
+
+    func test_configure_invalidKey() {
+        clearOutDataStore()
+        // remove things configured in setup
+        NeuroID.environment = Constants.environmentTest.rawValue
+        NeuroID.clientKey = nil
+        UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
+        UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
+
+        NeuroID.configure(clientKey: "invalid_key")
+
+        let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
+        assert(clientKeyValue == nil)
+
+        let tabIdValue = UserDefaults.standard.string(forKey: tabIdKey)
+        assert(tabIdValue == "testTabId")
+
+        assertStoredEventCount(type: "CREATE_SESSION", count: 0)
+
+        assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
+    }
+
+    func test_start_failure() {
+        tearDown()
+        NeuroID._isSDKStarted = false
+        NeuroID.clientKey = nil
+
+        // pre tests
+        assert(!NeuroID.isSDKStarted)
+        assert(NeuroID.clientKey == nil)
+
+        // action
+        do {
+            try NeuroID.start()
+        } catch {
+            assert(error.localizedDescription == "The Client Key is missing")
+        }
+        // post action test
+        assert(!NeuroID.isSDKStarted)
     }
 
     func test_start_success() {
@@ -81,7 +123,7 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        NeuroID.start()
+        try? NeuroID.start()
 
         // post action test
         assert(NeuroID.isSDKStarted)
@@ -112,7 +154,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_stop() {
-        NeuroID.start()
+        NeuroID._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
 
         NeuroID.stop()
@@ -148,7 +190,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -249,7 +291,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -334,8 +376,7 @@ class NIDSessionTests: XCTestCase {
         do {
             let closeSession = try NeuroID.closeSession()
             assert(closeSession.ct == "SDK_EVENT")
-        }
-        catch {
+        } catch {
             NIDLog.e("Threw on Close Session that shouldn't")
             XCTFail()
         }
@@ -377,7 +418,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -429,7 +470,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -487,7 +528,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -598,20 +639,24 @@ class NIDUserTests: XCTestCase {
 
 class NIDEnvTests: XCTestCase {
     func test_getEnvironment() {
-        NeuroID.setEnvironmentProduction(false)
+        NeuroID.environment = Constants.environmentTest.rawValue
         assert(NeuroID.getEnvironment() == "TEST")
     }
 
     func test_setEnvironmentProduction_true() {
+        NeuroID.environment = ""
         NeuroID.setEnvironmentProduction(true)
 
-        assert(NeuroID.getEnvironment() == "LIVE")
+        // Should do nothing because deprecated
+        assert(NeuroID.getEnvironment() == "")
     }
 
     func test_setEnvironmentProduction_false() {
+        NeuroID.environment = ""
         NeuroID.setEnvironmentProduction(false)
 
-        assert(NeuroID.getEnvironment() == "TEST")
+        // Should do nothing because deprecated
+        assert(NeuroID.getEnvironment() == "")
     }
 }
 
@@ -673,6 +718,30 @@ class NIDClientSiteIdTests: XCTestCase {
         NeuroID.setSiteId(siteId: "test_site")
 
         assert(NeuroID.siteId == "test_site")
+    }
+
+    func test_validateClientKey_valid_live() {
+        let value = NeuroID.validateClientKey("key_live_XXXXXXXXXXX")
+
+        assert(value)
+    }
+
+    func test_validateClientKey_valid_test() {
+        let value = NeuroID.validateClientKey("key_test_XXXXXXXXXXX")
+
+        assert(value)
+    }
+
+    func test_validateClientKey_invalid_env() {
+        let value = NeuroID.validateClientKey("key_foo_XXXXXXXXXXX")
+
+        assert(!value)
+    }
+
+    func test_validateClientKey_invalid_random() {
+        let value = NeuroID.validateClientKey("sdfsdfsdfsdf")
+
+        assert(!value)
     }
 }
 

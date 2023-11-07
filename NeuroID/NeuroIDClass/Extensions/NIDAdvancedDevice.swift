@@ -9,8 +9,8 @@ import Foundation
 import NeuroIDAdvancedDevice
 
 public extension NeuroID {
-    static func start(_ advancedDeviceSignals: Bool) {
-        NeuroID.start()
+    static func start(_ advancedDeviceSignals: Bool) throws {
+        try NeuroID.start()
         
         if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing

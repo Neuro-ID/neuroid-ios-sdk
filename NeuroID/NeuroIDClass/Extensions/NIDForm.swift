@@ -14,21 +14,21 @@ public extension NeuroID {
     static func formSubmit() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
         saveEventToLocalDataStore(submitEvent)
-        NIDLog.i("**** NeuroID NOTE: THIS METHOD IS BEING DEPRECATED AND IS NO LONGER REQUIRED")
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }
 
     static func formSubmitFailure() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
         saveEventToLocalDataStore(submitEvent)
-        NIDLog.i("**** NeuroID NOTE: THIS METHOD IS BEING DEPRECATED AND IS NO LONGER REQUIRED")
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }
 
     static func formSubmitSuccess() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
         saveEventToLocalDataStore(submitEvent)
-        NIDLog.i("**** NeuroID NOTE: THIS METHOD IS BEING DEPRECATED AND IS NO LONGER REQUIRED")
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }
 }
