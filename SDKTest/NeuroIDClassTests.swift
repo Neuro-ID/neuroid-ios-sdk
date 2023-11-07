@@ -17,7 +17,7 @@ class NeuroIDClassTests: XCTestCase {
     let tabIdKey = Constants.storageTabIdKey.rawValue
 
     func clearOutDataStore() {
-        DataStore.removeSentEvents()
+        let _ = DataStore.getAndRemoveAllEvents()
     }
 
     override func setUpWithError() throws {
@@ -97,6 +97,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_start_failure() {
+        tearDown()
         NeuroID._isSDKStarted = false
         NeuroID.clientKey = nil
 
@@ -115,6 +116,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_start_success() {
+        tearDown()
         NeuroID._isSDKStarted = false
 
         // pre tests
@@ -125,6 +127,30 @@ class NeuroIDClassTests: XCTestCase {
 
         // post action test
         assert(NeuroID.isSDKStarted)
+        assert(DataStore.events.count == 2)
+        assertStoredEventCount(type: "CREATE_SESSION", count: 1)
+        assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
+    }
+
+    func test_start_success_queuedEvent() {
+        NeuroID.stop()
+        try? NeuroID.setUserID("test_uid")
+
+        NeuroID._isSDKStarted = false
+
+        // pre tests
+        assert(!NeuroID.isSDKStarted)
+
+        // action
+        try? NeuroID.start()
+
+        // post action test
+        assert(NeuroID.isSDKStarted)
+
+        assert(DataStore.events.count == 3)
+        assertStoredEventCount(type: "CREATE_SESSION", count: 1)
+        assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
+        assertStoredEventCount(type: "SET_USER_ID", count: 1)
     }
 
     func test_stop() {
@@ -494,6 +520,7 @@ class NIDUserTests: XCTestCase {
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
+        let _ = DataStore.getAndRemoveAllQueuedEvents()
     }
 
     override func setUpWithError() throws {
@@ -519,7 +546,7 @@ class NIDUserTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
-    func test_setUserID() {
+    func test_setUserID_started() {
         UserDefaults.standard.removeObject(forKey: userIdKey)
 
         let expectedValue = "test_uid"
@@ -529,9 +556,28 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(NeuroID.userId == expectedValue)
-        assert(storedValue == expectedValue)
+        assert(storedValue == nil)
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assert(DataStore.queuedEvents.count == 0)
+    }
+
+    func test_setUserID_pre_start() {
+        NeuroID.stop()
+        UserDefaults.standard.removeObject(forKey: userIdKey)
+
+        let expectedValue = "test_uid"
+
+        try? NeuroID.setUserID(expectedValue)
+
+        let storedValue = UserDefaults.standard.string(forKey: userIdKey)
+
+        assert(NeuroID.userId == expectedValue)
+        assert(storedValue == nil)
+
+        assert(DataStore.events.count == 0)
+        assert(DataStore.queuedEvents.count == 1)
+        assert(DataStore.queuedEvents[0].type == "SET_USER_ID")
     }
 
     func test_setUserID_valid_id() {
@@ -586,7 +632,7 @@ class NIDUserTests: XCTestCase {
 
         let value = NeuroID.getUserID()
 
-        assert(value == expectedValue)
+        assert(value == "")
         assert(NeuroID.userId != expectedValue)
     }
 }
