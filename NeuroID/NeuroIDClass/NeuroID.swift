@@ -165,7 +165,7 @@ public enum NeuroID {
         didSwizzle.toggle()
     }
 
-    public static func saveEventToLocalDataStore(_ event: NIDEvent) {
+    internal static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
     }
 

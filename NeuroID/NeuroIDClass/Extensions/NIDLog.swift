@@ -20,11 +20,11 @@ private enum Log {
     }
 }
 
-public extension NeuroID {
+internal extension NeuroID {
     /**
      Enable or disable the NeuroID debug logging
      */
-    static func enableLogging(_ value: Bool) {
+    public static func enableLogging(_ value: Bool) {
         showLogs = value
     }
 
@@ -55,7 +55,7 @@ public extension NeuroID {
     /**
      Save the params being sent to POST to collector endpoint to a local file
      */
-    internal static func saveDebugJSON(events: String) {
+    static func saveDebugJSON(events: String) {
         let jsonStringNIDEvents = "\(events)".data(using: .utf8)!
         do {
             let filemgr = FileManager.default
