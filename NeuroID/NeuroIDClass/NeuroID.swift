@@ -141,7 +141,7 @@ public enum NeuroID {
         return _isSDKStarted != true
     }
 
-    public static func forceStart() {
+    public static func registerPageTargets() {
         if let viewController = UIApplication.shared.keyWindow?.rootViewController {
             DispatchQueue.main.async {
                 viewController.registerPageTargets()
