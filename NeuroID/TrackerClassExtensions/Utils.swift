@@ -9,12 +9,27 @@ import Foundation
 import UIKit
 
 internal enum UtilFunctions {
+    static func getFutureTimeStamp(_ hoursToAdd: Int) -> Int {
+        // Get the current time
+        let currentTime = Date()
+
+        // Create a Calendar object
+        let calendar = Calendar.current
+
+        // Add the specified number of hours to the current time
+        if let futureTime = calendar.date(byAdding: .hour, value: hoursToAdd, to: currentTime) {
+            return Int(futureTime.timeIntervalSince1970)
+        } else {
+            return 0
+        }
+    }
+
     static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String {
         if currView == nil {
             return screenName
         }
-        let parentView = currView!.superview?.className
-        let grandParentView = currView!.superview?.superview?.className
+        let parentView = currView!.superview?.nidClassName
+        let grandParentView = currView!.superview?.superview?.nidClassName
         var fullViewString = ""
         if grandParentView != nil {
             fullViewString += "\(grandParentView ?? "")/"
@@ -29,8 +44,8 @@ internal enum UtilFunctions {
     static func registerSubViewsTargets(subViewControllers: [UIViewController]) {
         let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.nidClassName) }
         for ctrls in filtered {
-            let screenName = ctrls.className
-            NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
+            let screenName = ctrls.nidClassName
+            NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
             guard let view = ctrls.view else {
                 return
             }
@@ -39,7 +54,7 @@ internal enum UtilFunctions {
             NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
             let childViews = ctrls.view.subviewsRecursive()
             for _view in childViews {
-                NIDDebugPrint(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
+                NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
                 NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
             }
         }
@@ -78,7 +93,7 @@ internal enum UtilFunctions {
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
 
-        NIDDebugPrint("*****************   Actually Registered View: \(className) - \(id)")
+        NIDLog.d("Registered View: \(className) - \(id)")
     }
 
     static func captureContextMenuAction(
@@ -158,7 +173,7 @@ internal enum UtilFunctions {
         hashValue: String,
         attrParams: [String: String]
     ) {
-        NIDDebugPrint("NID Input = <\(textControl.id)>")
+        NIDLog.d("Input = <\(textControl.id)>")
         let eventTg = ParamsCreator.getTGParamsForInput(
             eventName: eventType,
             view: textControl,

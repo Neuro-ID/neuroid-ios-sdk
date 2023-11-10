@@ -16,7 +16,7 @@ class TouchEventTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
 
     override func tearDown() {
@@ -60,7 +60,7 @@ class TouchEventTests: XCTestCase {
 
     func test_captureTouchEvent() {
         captureTouchEvent(type: .touchStart, view: UIView(), location: CGPoint(x: 0.0, y: 1.1))
-        
+
         assertEventTypeCount(type: NIDEventName.touchStart.rawValue, expectedCount: 1)
     }
 }

@@ -1,24 +1,37 @@
 Pod::Spec.new do |s|
 
 s.platform = :ios
-s.ios.deployment_target = '11.0'
+s.ios.deployment_target = '12.0'
 s.swift_version = '5.0'
 
 s.name = "NeuroID"
 s.module_name = "NeuroID"
 s.summary = "NeuroID's official SDK for the iOS platform"
 s.requires_arc = true
-s.version = "3.0.0"
+s.version = "3.0.2"
 s.author = { "NeuroID" => "NeuroID" }
 s.homepage = "https://neuro-id.com/"
 
-s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
+s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
 s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 s.resource_bundles = {
-    'Resources' => ['NeuroID/Resources/**/*']
+    'Resources' => ['NeuroID/Resources/**/*', 'Info.plist']
 }
+s.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
 
 s.dependency 'Alamofire'
+
+s.default_subspecs = 'Core'
+s.subspec 'Core' do |core|
+    core.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+    core.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
+end
+
+s.subspec 'AdvancedDevice' do |advanced|
+    advanced.ios.deployment_target = '12.0'
+    advanced.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+    advanced.dependency 'NeuroIDAdvancedDevice'
+end
 
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>

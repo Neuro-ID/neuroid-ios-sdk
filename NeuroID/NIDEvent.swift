@@ -80,6 +80,8 @@ public enum NIDEventName: String {
 
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 
+    case advancedDevice = "ADVANCED_DEVICE_REQUEST"
+
     var etn: String? {
         switch self {
         case .change, .textChange, .radioChange, .inputChange,
@@ -255,6 +257,7 @@ public class NIDEvent: Codable {
     var sid: String? // Done
     var cid: String? // Done
     var did: String? // Done
+    var rid: String?
     var loc: String? // Done
     var ua: String? // Done
     var tzo: Int? // Done
@@ -277,6 +280,10 @@ public class NIDEvent: Codable {
     var sh: CGFloat?
     var sw: CGFloat?
     var rts: String?
+    var c: Bool?
+
+    var m: String? // part of LOG events
+    var level: String? // part of LOG events
 
     /** Register Target
        {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
@@ -410,7 +417,7 @@ public class NIDEvent: Codable {
         self.ts = ParamsCreator.getTimeStamp()
         self.url = UtilFunctions.getFullViewlURLPath(
             currView: view,
-            screenName: NeuroID.getScreenName() ?? view?.className ?? ""
+            screenName: NeuroID.getScreenName() ?? view?.nidClassName ?? ""
         )
 
         self.tgs = viewId.toString()
@@ -476,6 +483,7 @@ public class NIDEvent: Codable {
         copy.sid = self.sid
         copy.cid = self.cid
         copy.did = self.did
+        copy.rid = self.rid
         copy.loc = self.loc
         copy.ua = self.ua
         copy.tzo = self.tzo
@@ -498,6 +506,7 @@ public class NIDEvent: Codable {
         copy.sh = self.sh
         copy.sw = self.sw
         copy.rts = self.rts
+        copy.c = self.c
         return copy
     }
 }

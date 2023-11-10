@@ -57,7 +57,7 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
         model: device.model,
         type: device.type.rawValue,
         customDeviceType: "",
-        nidSDKVersion: NeuroID.getSDKVersion() ?? "1.0.0"
+        nidSDKVersion: NeuroID.getSDKVersion()
     )
 
     do {
@@ -106,7 +106,7 @@ func saveIntegrationHealthResources() {
 
 internal extension NeuroID {
     static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
-        if verifyIntegrationHealth, getEnvironment() == Constants.environmentTest.rawValue {
+        if verifyIntegrationHealth {
             ifTrueCB()
         }
     }
@@ -121,7 +121,7 @@ internal extension NeuroID {
 
     static func captureIntegrationHealthEvent(_ event: NIDEvent) {
         shouldDebugIntegrationHealth {
-            NIDDebugPrint(tag: "\(Constants.integrationHealthTag.rawValue)", "Adding NID Health Event \(event.type)")
+            NIDLog.d(tag: "\(Constants.integrationHealthTag.rawValue)", "Adding NeuroID Health Event \(event.type)")
             debugIntegrationHealthEvents.append(event)
         }
     }
@@ -144,7 +144,7 @@ internal extension NeuroID {
 }
 
 public extension NeuroID {
-    static func printIntegrationHealthInstruction() -> String {
+    static func printIntegrationHealthInstruction() {
         var instructions = ""
 
         shouldDebugIntegrationHealth {
@@ -160,20 +160,17 @@ public extension NeuroID {
                    \n   **************************************************************
                     \n\n
                 """
-                print(instructions)
+                NIDLog.log(instructions)
             } catch {}
             saveIntegrationHealthResources()
             startIntegrationHealthCheck()
         }
-        return instructions
     }
 
-    static func setVerifyIntegrationHealth(_ verify: Bool) -> String {
+    static func setVerifyIntegrationHealth(_ verify: Bool) {
         verifyIntegrationHealth = verify
-        var instructions = ""
         if verify {
-            instructions = printIntegrationHealthInstruction()
+            printIntegrationHealthInstruction()
         }
-        return instructions
     }
 }

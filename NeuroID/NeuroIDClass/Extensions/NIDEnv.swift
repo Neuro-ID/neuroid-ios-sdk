@@ -13,10 +13,6 @@ public extension NeuroID {
     }
 
     static func setEnvironmentProduction(_ value: Bool) {
-        if value {
-            environment = Constants.environmentLive.rawValue
-        } else {
-            environment = Constants.environmentTest.rawValue
-        }
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
     }
 }

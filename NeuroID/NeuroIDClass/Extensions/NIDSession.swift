@@ -26,7 +26,7 @@ public extension NeuroID {
             tch: ParamsCreator.getTouch(),
             pageTag: NeuroID.getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
-            jsv: ParamsCreator.getSDKVersion(),
+            jsv: NeuroID.getSDKVersion(),
             sh: UIScreen.main.bounds.height,
             sw: UIScreen.main.bounds.width,
             metadata: NIDMetadata()
@@ -56,7 +56,7 @@ public extension NeuroID {
         let id = ParamsCreator.genId()
         setUserDefaultKey(sidKeyName, value: id)
 
-        NIDPrintLog("\(Constants.sessionTag.rawValue)", id)
+        NIDLog.i("\(Constants.sessionTag.rawValue)", id)
         return id
     }
 
@@ -90,6 +90,7 @@ public extension NeuroID {
 
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
+            Attrs(n: "isRN", v: "\(isRN)"),
         ]
         saveEventToLocalDataStore(event)
     }

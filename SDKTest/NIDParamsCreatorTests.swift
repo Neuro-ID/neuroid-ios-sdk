@@ -94,7 +94,7 @@ class NIDParamsCreatorTests: XCTestCase {
     func createUIViewDict(view: UIView, extraValues: [String: TargetValue]) -> [String: TargetValue] {
         var dict: [String: TargetValue] = [:]
 
-        dict["sender"] = TargetValue.string(view.className)
+        dict["sender"] = TargetValue.string(view.nidClassName)
         dict["\(tgsKey)"] = TargetValue.string(view.id)
 
         dict = dict.merging(extraValues) { _, new in new }

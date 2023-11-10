@@ -30,6 +30,8 @@ internal enum Constants: String {
     case storageSessionExpiredKey = "nid_sid_expires"
     case storageSaltKey = "nid_sk"
 
+    case storageAdvancedDeviceKey = "nid_advancedDevice"
+
     case orientationKey = "orientation"
     case orientationLandscape = "Landscape"
     case orientationPortrait = "Portrait"
@@ -47,11 +49,11 @@ internal enum Constants: String {
     case hashKey = "hash"
 
     // Tags
-    case debugTag = "NID Debug:"
-    case integrationHealthTag = "NID IH:"
-    case extraInfoTag = "NID Extra:"
-    case registrationTag = "NID Registration:"
-    case sessionTag = "NID SessionId:"
-    case userTag = "NID UserId:"
+    case debugTag = "NeuroID Debug:"
+    case integrationHealthTag = "NeuroID IH:"
+    case extraInfoTag = "NeuroID Extra:"
+    case registrationTag = "NeuroID Registration:"
+    case sessionTag = "NeuroID SessionId:"
+    case userTag = "NeuroID UserId:"
     case debugTest = "TEST: "
 }

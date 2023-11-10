@@ -20,7 +20,7 @@ class NeuroIDTrackerTests: XCTestCase {
     }
     
     override func setUp() {
-        NeuroID.start()
+        try? NeuroID.start()
     }
     
     override func tearDown() {
@@ -59,7 +59,7 @@ class NeuroIDTrackerTests: XCTestCase {
         
         let firstEvent = filteredEvent[0]
         assert(firstEvent.type == "REGISTER_TARGET")
-        assert((firstEvent.tgs?.contains("\(v.className)_UNKNOWN_NO_ID_SET")) != nil)
+        assert((firstEvent.tgs?.contains("\(v.nidClassName)_UNKNOWN_NO_ID_SET")) != nil)
     }
     
     func assertViewNOTRegistered(v: UIView) {

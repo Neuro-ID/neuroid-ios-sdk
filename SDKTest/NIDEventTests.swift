@@ -67,7 +67,7 @@ class NIDEventTests: XCTestCase {
     }
     
     func testFullPayload() {
-        NeuroID.start()
+        try? NeuroID.start()
         var tracker: NeuroIDTracker?
         /// Create a textfield
         lazy var textfield: UITextField = {
@@ -93,7 +93,7 @@ class NIDEventTests: XCTestCase {
         /// Create touch event
         let tg = ParamsCreator.getTgParams(
             view: textfield,
-            extraParams: ["sender": TargetValue.string(textfield.className)])
+            extraParams: ["sender": TargetValue.string(textfield.nidClassName)])
         
         let touch = NIDEvent(type: .touchStart, tg: tg, view: textfield)
         tracker?.captureEvent(event: touch)
@@ -139,7 +139,7 @@ class NIDEventTests: XCTestCase {
         /// Touch a button
         let tg2 = ParamsCreator.getTgParams(
             view: button,
-            extraParams: ["sender": TargetValue.string(button.className)])
+            extraParams: ["sender": TargetValue.string(button.nidClassName)])
         
         let touch2 = NIDEvent(type: .touchStart, tg: tg2, view: button)
         tracker?.captureEvent(event: touch2)
@@ -170,12 +170,12 @@ class NIDEventTests: XCTestCase {
             let encoder = JSONEncoder()
             let values = try encoder.encode(neuroHTTPRequest)
             let str = String(data: values, encoding: .utf8)
-            print(str as Any)
+            NIDLog.log(str as Any)
             let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
-            print("************\(filename)*************")
+            NIDLog.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
         } catch {
-            print(error)
+            NIDLog.e(error)
         }
         assert(neuroHTTPRequest != nil)
     }

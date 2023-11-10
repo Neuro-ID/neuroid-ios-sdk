@@ -39,7 +39,7 @@ public extension UIView {
                 title = title.replacingOccurrences(of: " ", with: "_")
             }
 
-            title = "\(className)_\(title)"
+            title = "\(nidClassName)_\(title)"
             var backupName = "\(description.hashValue)"
 
             var placeholder = ""
@@ -56,9 +56,6 @@ public extension UIView {
             } else if let textControl = self as? UISwitch {
                 backupName = "\(textControl.hash)"
             }
-
-            //            print("view access \(accessibilityIdentifier) - \(accessibilityLabel) - end")
-            //            print("view ID: \((accessibilityIdentifier.isEmptyOrNil) ? title : accessibilityIdentifier!)")
 
             return (accessibilityIdentifier.isEmptyOrNil) ? placeholder != "" ? placeholder : "\(title)_\(backupName)" : accessibilityIdentifier!
         }

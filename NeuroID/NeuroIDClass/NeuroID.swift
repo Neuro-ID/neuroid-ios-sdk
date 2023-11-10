@@ -28,7 +28,7 @@ public enum NeuroID {
     internal static var trackers = [String: NeuroIDTracker]()
 
     /// Turn on/off printing the SDK log to your console
-    public static var logVisible = true
+    public static var showLogs = true
     internal static let showDebugLog = false
 
     internal static var excludedViewsTestIDs = [String]()
@@ -57,6 +57,9 @@ public enum NeuroID {
 
     public static var registeredTargets = [String]()
 
+    internal static var isRN: Bool = false
+    internal static var rnOptions: [RNConfigOptions: Any] = [:]
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -64,7 +67,18 @@ public enum NeuroID {
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String) {
         if NeuroID.clientKey != nil {
-            print("NeuroID Error: You already configured the SDK")
+            NIDLog.e("You already configured the SDK")
+        }
+
+        if !validateClientKey(clientKey) {
+            NIDLog.e("Invalid Client Key")
+            return
+        }
+
+        if clientKey.contains("_live_") {
+            environment = Constants.environmentLive.rawValue
+        } else {
+            environment = Constants.environmentTest.rawValue
         }
 
         // Call clear session here
@@ -78,9 +92,13 @@ public enum NeuroID {
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
-    public static func start() {
+    public static func start() throws {
+        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
+            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+            throw NIDError.missingClientKey
+        }
+
         NeuroID._isSDKStarted = true
-        setUserDefaultKey(Constants.storageLocalNIDStopAllKey.rawValue, value: false)
 
         NeuroID.startIntegrationHealthCheck()
 
@@ -97,17 +115,22 @@ public enum NeuroID {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+
+        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+        queuedEvents.forEach { event in
+            DataStore.insertEvent(screen: "", event: event)
+        }
     }
 
     public static func stop() {
-        NIDPrintLog("NeuroID Stopped")
-        setUserDefaultKey(Constants.storageLocalNIDStopAllKey.rawValue, value: true)
+        NIDLog.i("NeuroID Stopped")
         do {
             _ = try closeSession(skipStop: true)
         } catch {
-            NIDPrintLog("NeuroID Error: Failed to Stop because \(error)")
+            NIDLog.e("Failed to Stop because \(error)")
         }
 
+        NeuroID.groupAndPOST()
         NeuroID._isSDKStarted = false
 
         // save captured health events to file
@@ -115,7 +138,15 @@ public enum NeuroID {
     }
 
     public static func isStopped() -> Bool {
-        return getUserDefaultKeyBool(Constants.storageLocalNIDStopAllKey.rawValue)
+        return _isSDKStarted != true
+    }
+
+    public static func forceStart() {
+        if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+            DispatchQueue.main.async {
+                viewController.registerPageTargets()
+            }
+        }
     }
 
     private static func swizzle() {
@@ -138,9 +169,13 @@ public enum NeuroID {
         DataStore.insertEvent(screen: event.type, event: event)
     }
 
+    internal static func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
+        DataStore.insertQueuedEvent(screen: event.type, event: event)
+    }
+
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
-    static func getSDKVersion() -> String? {
+    public static func getSDKVersion() -> String {
         return ParamsCreator.getSDKVersion()
     }
 }

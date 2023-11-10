@@ -14,7 +14,7 @@ class SessionTests: XCTestCase {
     override func setUpWithError() throws {
         NeuroID.configure(clientKey: clientKey)
         NeuroID.clearSession()
-        NeuroID.start()
+        try? NeuroID.start()
         DataStore.removeSentEvents()
         UserDefaults.standard.removeObject(forKey: Constants.storageSiteIdKey.rawValue)
     }
@@ -42,7 +42,7 @@ class SessionTests: XCTestCase {
     func testRandom() throws {
         let dictRandom = ["events": "eventstringt", "status": "pending"]
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
-            print(key)
+            NIDLog.log(key)
         }
     }
 

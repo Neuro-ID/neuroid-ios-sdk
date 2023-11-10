@@ -45,25 +45,26 @@ class UIViewExtensionTests: XCTestCase {
 
         let value = uiView.subviewsRecursive()
 
-        assert(value.count == 4)
+        // iOS 17 introduces new view, so this can also be 5
+        assert(value.count >= 4)
     }
 
     func test_uiview_className() {
         let uiView = UIView()
 
-        let value = uiView.className
+        let value = uiView.nidClassName
 
         assert(value == "UIView")
 
         let uiButton = UIButton()
 
-        let valueButton = uiButton.className
+        let valueButton = uiButton.nidClassName
 
         assert(valueButton == "UIButton")
 
         let uiText = UITextField()
 
-        let valueText = uiText.className
+        let valueText = uiText.nidClassName
 
         assert(valueText == "UITextField")
     }
