@@ -33,10 +33,6 @@ public extension NeuroID {
         )
     }
 
-    static func clearSession() {
-        setUserDefaultKey(Constants.storageSiteIdKey.rawValue, value: nil)
-    }
-
     // Sessions are created under conditions:
     // Launch of application
     // If user idles for > 30 min
@@ -60,7 +56,11 @@ public extension NeuroID {
         return id
     }
 
-    static func createSession() {
+    internal static func clearSession() {
+        setUserDefaultKey(Constants.storageSiteIdKey.rawValue, value: nil)
+    }
+
+    internal static func createSession() {
         // Since we are creating a new session, clear any existing session ID
         NeuroID.clearSession()
         // TODO, return session if already exists
@@ -70,7 +70,7 @@ public extension NeuroID {
         captureMobileMetadata()
     }
 
-    static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
+    internal static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         if !NeuroID.isSDKStarted {
             throw NIDError.sdkNotStarted
         }
@@ -85,7 +85,7 @@ public extension NeuroID {
         return closeEvent
     }
 
-    static func captureMobileMetadata() {
+    internal static func captureMobileMetadata() {
         let event = createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
 
         event.attrs = [

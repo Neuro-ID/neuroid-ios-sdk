@@ -25,7 +25,7 @@ public extension NeuroID {
         self.rnOptions[.usingReactNavigation] = usingReactNavigation
     }
 
-    static func getOptionValueBool(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> Bool {
+    internal static func getOptionValueBool(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> Bool {
         if let configValue = rnOptions[configOptionKey.rawValue] as? Bool {
             return configValue
         }

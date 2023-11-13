@@ -46,7 +46,7 @@ public extension NeuroID {
         self.siteId = siteId
     }
 
-    static func validateClientKey(_ clientKey: String) -> Bool {
+    internal static func validateClientKey(_ clientKey: String) -> Bool {
         var validKey = false
 
         let pattern = "key_(live|test)_[A-Za-z0-9]+"
