@@ -106,11 +106,8 @@ class NeuroIDClassTests: XCTestCase {
         assert(NeuroID.clientKey == nil)
 
         // action
-        do {
-            try NeuroID.start()
-        } catch {
-            assert(error.localizedDescription == "The Client Key is missing")
-        }
+        let started = NeuroID.start()
+        assert(!started)
         // post action test
         assert(!NeuroID.isSDKStarted)
     }
@@ -123,9 +120,10 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        try? NeuroID.start()
+        let started = NeuroID.start()
 
         // post action test
+        assert(started)
         assert(NeuroID.isSDKStarted)
         assert(DataStore.events.count == 2)
         assertStoredEventCount(type: "CREATE_SESSION", count: 1)
@@ -134,7 +132,9 @@ class NeuroIDClassTests: XCTestCase {
 
     func test_start_success_queuedEvent() {
         NeuroID.stop()
-        try? NeuroID.setUserID("test_uid")
+        let setUserIDRes = NeuroID.setUserID("test_uid")
+
+        assert(setUserIDRes)
 
         NeuroID._isSDKStarted = false
 
@@ -142,9 +142,10 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        try? NeuroID.start()
+        let started = NeuroID.start()
 
         // post action test
+        assert(started)
         assert(NeuroID.isSDKStarted)
 
         assert(DataStore.events.count == 3)
@@ -307,18 +308,6 @@ class NIDSessionTests: XCTestCase {
 
         assert(validEvent.count == count)
         assert(validEvent[0].type == type)
-    }
-
-    func test_setScreenName_getScreenName_withSpace() {
-        clearOutDataStore()
-        let expectedValue = "test Screen"
-        try? NeuroID.setScreenName(screen: expectedValue)
-
-        let value = NeuroID.getScreenName()
-
-        assert(value == "test%20Screen")
-
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
     func test_clearSession() {
@@ -491,11 +480,12 @@ class NIDScreenTests: XCTestCase {
     func test_setScreenName_getScreenName() {
         clearOutDataStore()
         let expectedValue = "testScreen"
-        try? NeuroID.setScreenName(screen: expectedValue)
+        let screenNameSet = NeuroID.setScreenName(expectedValue)
 
         let value = NeuroID.getScreenName()
 
         assert(value == expectedValue)
+        assert(screenNameSet == true)
 
         assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
@@ -503,13 +493,29 @@ class NIDScreenTests: XCTestCase {
     func test_setScreenName_getScreenName_withSpace() {
         clearOutDataStore()
         let expectedValue = "test Screen"
-        try? NeuroID.setScreenName(screen: expectedValue)
+        let screenNameSet = NeuroID.setScreenName(expectedValue)
 
         let value = NeuroID.getScreenName()
 
         assert(value == "test%20Screen")
+        assert(screenNameSet == true)
 
         assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+    }
+
+    func test_setScreenName_not_started() {
+        clearOutDataStore()
+        NeuroID._isSDKStarted = false
+        let expectedValue = "test Screen"
+        let screenNameSet = NeuroID.setScreenName(expectedValue)
+
+        let value = NeuroID.getScreenName()
+
+        assert(value != "test%20Screen")
+        assert(screenNameSet == false)
+
+        let allEvents = DataStore.getAllEvents()
+        assert(allEvents.count == 0)
     }
 }
 
@@ -588,7 +594,8 @@ class NIDUserTests: XCTestCase {
         ]
 
         for userId in validUserIds {
-            XCTAssertNoThrow(try NeuroID.setUserID(userId))
+            let userNameSet = NeuroID.setUserID(userId)
+            assert(userNameSet == true)
         }
     }
 
@@ -604,10 +611,8 @@ class NIDUserTests: XCTestCase {
         ]
 
         for userId in invalidUserIds {
-            XCTAssertThrowsError(try NeuroID.setUserID(userId)) { error in
-                // could not get checks against error of type NIDError and instance of invalidUserID to work hence the following hack
-                assert(String(describing: error) == String(describing: NIDError.invalidUserID))
-            }
+            let userNameSet = NeuroID.setUserID(userId)
+            assert(userNameSet == false)
         }
     }
 

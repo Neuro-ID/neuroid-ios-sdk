@@ -11,23 +11,23 @@ public extension NeuroID {
     /**
      Set screen name. We ensure that this is a URL valid name by replacing non alphanumber chars with underscore
      */
-    static func setScreenName(_ screen: String) throws {
-        try setScreenName(screen: screen)
-    }
-
-    static func setScreenName(screen: String) throws {
+    static func setScreenName(_ screen: String) -> Bool {
         if !NeuroID.isSDKStarted {
-            throw NIDError.sdkNotStarted
+            NIDLog.e(NIDError.sdkNotStarted.rawValue)
+            return false
         }
 
         if let urlEncode = screen.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             currentScreenName = urlEncode
         } else {
-            NIDLog.i("Invalid Screenname for NeuroID. \(screen) can't be encode")
+            NIDLog.e("Invalid Screenname for NeuroID. \(screen) can't be encode")
             logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
+            return false
         }
-        
+
         captureMobileMetadata()
+
+        return true
     }
 
     static func getScreenName() -> String? {
