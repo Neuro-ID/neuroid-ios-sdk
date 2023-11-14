@@ -92,10 +92,10 @@ public enum NeuroID {
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
-    public static func start() throws {
+    public static func start() -> Bool {
         if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
             NIDLog.e("Missing Client Key - please call configure prior to calling start")
-            throw NIDError.missingClientKey
+            return false
         }
 
         NeuroID._isSDKStarted = true
@@ -120,6 +120,8 @@ public enum NeuroID {
         queuedEvents.forEach { event in
             DataStore.insertEvent(screen: "", event: event)
         }
+
+        return true
     }
 
     public static func stop() {

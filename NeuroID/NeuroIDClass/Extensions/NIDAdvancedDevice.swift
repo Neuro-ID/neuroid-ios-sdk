@@ -9,9 +9,13 @@ import Foundation
 import NeuroIDAdvancedDevice
 
 public extension NeuroID {
-    static func start(_ advancedDeviceSignals: Bool) throws {
-        try NeuroID.start()
+    static func start(_ advancedDeviceSignals: Bool) -> Bool {
+        let started = NeuroID.start()
         
+        if !started {
+            return started
+        }
+       
         if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
             if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
@@ -24,7 +28,7 @@ public extension NeuroID {
                         nidEvent.c = true
                         
                         NeuroID.saveEventToLocalDataStore(nidEvent)
-                        return
+                        return started
                     }
                 }
             }
@@ -53,5 +57,7 @@ public extension NeuroID {
                 }
             }
         }
+        
+        return started
     }
 }
