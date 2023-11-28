@@ -41,6 +41,7 @@ public extension NeuroID {
         return key
     }
 
+    @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
     static func setSiteId(siteId: String) {
         NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
         self.siteId = siteId
