@@ -9,9 +9,13 @@ import Foundation
 import UIKit
 
 public extension NeuroID {
-    static func excludeViewByTestID(excludedView: String) {
+    static func excludeViewByTestID(_ excludedView: String) {
         NIDLog.i("Exclude view called - \(excludedView)")
         NeuroID.excludedViewsTestIDs.append(excludedView)
+    }
+
+    static func excludeViewByTestID(excludedView: String) {
+        NeuroID.excludeViewByTestID(excludedView)
     }
 
     /** Public API for manually registering a target. This should only be used when automatic fails. */

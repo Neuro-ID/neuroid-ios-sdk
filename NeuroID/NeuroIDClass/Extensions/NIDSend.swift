@@ -105,16 +105,17 @@ internal extension NeuroID {
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
 
         let neuroHTTPRequest = NeuroHTTPRequest(
-            clientId: NeuroID.getClientID(),
+            clientID: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
             sdkVersion: NeuroID.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
-            responseId: ParamsCreator.generateUniqueHexId(),
-            siteId: NeuroID.siteId ?? "",
-            userId: NeuroID.getUserID(),
+            responseID: ParamsCreator.generateUniqueHexID(),
+            siteID: NeuroID.siteId ?? "",
+            userID: NeuroID.getUserID(),
+            registeredUserID: NeuroID.getRegisteredUserID(),
             jsonEvents: events,
-            tabId: "\(tabId)",
-            pageId: "\(pageid)",
+            tabID: "\(tabId)",
+            pageID: "\(pageid)",
             url: "ios://\(NeuroID.getScreenName() ?? "")"
         )
 
