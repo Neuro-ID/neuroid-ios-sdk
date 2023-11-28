@@ -24,6 +24,7 @@ public enum NeuroID {
 
     internal static var clientId: String?
     internal static var userId: String?
+    internal static var registeredUserId: String = ""
 
     internal static var trackers = [String: NeuroIDTracker]()
 

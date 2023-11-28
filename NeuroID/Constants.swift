@@ -57,3 +57,8 @@ internal enum Constants: String {
     case userTag = "NeuroID UserId:"
     case debugTest = "TEST: "
 }
+
+internal enum UserIDTypes: String {
+    case userID
+    case registeredUserID
+}
