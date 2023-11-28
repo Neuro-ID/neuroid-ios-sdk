@@ -403,12 +403,12 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value == expectedValue)
     }
 
-    func test_generateUniqueHexId() {
-        let value = ParamsCreator.generateUniqueHexId()
+    func test_generateUniqueHexID() {
+        let value = ParamsCreator.generateUniqueHexID()
         assert(value.count == 8)
 
         sleep(timeout: 0.2)
-        let secondValue = ParamsCreator.generateUniqueHexId()
+        let secondValue = ParamsCreator.generateUniqueHexID()
         assert(secondValue.count == 8)
 
         assert(value != secondValue)

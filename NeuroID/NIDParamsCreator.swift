@@ -193,7 +193,7 @@ enum ParamsCreator {
         return "nid"
     }
 
-    static func generateUniqueHexId() -> String {
+    static func generateUniqueHexID() -> String {
         let x = 1
         let now = Date().timeIntervalSince1970 * 1000
         let rawId = (Int(now) - 1488084578518) * 1024 + (x + 1)
