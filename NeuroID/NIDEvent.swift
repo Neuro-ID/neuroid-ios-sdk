@@ -114,17 +114,17 @@ public struct NIDTouches: Codable, Equatable {
 }
 
 public struct NeuroHTTPRequest: Codable {
-    var clientID: String
+    var clientId: String
     var environment: String
     var sdkVersion: String
     var pageTag: String
-    var responseID: String
-    var siteID: String
-    var userID: String
-    var registeredUserID: String
+    var responseId: String
+    var siteId: String
+    var userId: String
+    var registeredUserId: String
     var jsonEvents: [NIDEvent]
-    var tabID: String
-    var pageID: String
+    var tabId: String
+    var pageId: String
     var url: String
     var jsVersion: String = "5.0.0"
 
@@ -142,17 +142,17 @@ public struct NeuroHTTPRequest: Codable {
         pageID: String,
         url: String
     ) {
-        self.clientID = clientID
+        self.clientId = clientID
         self.environment = environment
         self.sdkVersion = sdkVersion
         self.pageTag = pageTag
-        self.responseID = responseID
-        self.siteID = siteID
-        self.userID = userID
-        self.registeredUserID = registeredUserID
+        self.responseId = responseID
+        self.siteId = siteID
+        self.userId = userID
+        self.registeredUserId = registeredUserID
         self.jsonEvents = jsonEvents
-        self.tabID = tabID
-        self.pageID = pageID
+        self.tabId = tabID
+        self.pageId = pageID
         self.url = url
     }
 }
