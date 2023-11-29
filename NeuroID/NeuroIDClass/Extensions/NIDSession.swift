@@ -145,6 +145,9 @@ public extension NeuroID {
     }
 
     static func pauseCollection() {
+        // flush all events immediately before pause
+        groupAndPOST()
+
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()
         NeuroID.sendCollectionWorkItem = nil
@@ -162,10 +165,6 @@ public extension NeuroID {
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
 
-        // save captured health events to file
-        saveIntegrationHealthEvents()
-
-        groupAndPOST()
         pauseCollection()
 
         clearSessionVariables()
