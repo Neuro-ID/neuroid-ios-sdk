@@ -25,7 +25,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -191,7 +191,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -292,7 +292,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -310,11 +310,11 @@ class NIDSessionTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
-    func test_clearSession() {
+    func test_clearStoredSessionID() {
         UserDefaults.standard.set("session", forKey: sessionIdKey)
         UserDefaults.standard.set("client", forKey: clientIdKey)
 
-        NeuroID.clearSession()
+        NeuroID.clearStoredSessionID()
 
         let session = UserDefaults.standard.string(forKey: sessionIdKey)
         let client = UserDefaults.standard.string(forKey: clientIdKey)
@@ -407,7 +407,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -459,7 +459,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -535,7 +535,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {

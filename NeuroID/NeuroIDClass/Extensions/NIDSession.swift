@@ -56,13 +56,14 @@ public extension NeuroID {
         return id
     }
 
-    internal static func clearSession() {
-        setUserDefaultKey(Constants.storageSiteIdKey.rawValue, value: nil)
+    internal static func clearStoredSessionID() {
+        setUserDefaultKey(Constants.storageSessionIDKey.rawValue, value: nil)
     }
 
     internal static func createSession() {
         // Since we are creating a new session, clear any existing session ID
-        NeuroID.clearSession()
+        clearStoredSessionID()
+
         // TODO, return session if already exists
         let event = createNIDSessionEvent()
         saveEventToLocalDataStore(event)

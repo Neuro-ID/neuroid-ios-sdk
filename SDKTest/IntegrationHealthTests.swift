@@ -21,7 +21,7 @@ class IntegrationHealthTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
         NeuroID.debugIntegrationHealthEvents = []
         NeuroID.setEnvironmentProduction(true)
         NeuroID.setVerifyIntegrationHealth(false)

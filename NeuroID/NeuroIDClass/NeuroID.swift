@@ -82,8 +82,7 @@ public enum NeuroID {
             environment = Constants.environmentTest.rawValue
         }
 
-        // Call clear session here
-        clearSession()
+        clearStoredSessionID()
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
