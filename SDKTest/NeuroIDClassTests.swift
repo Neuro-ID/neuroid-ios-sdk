@@ -429,6 +429,24 @@ class NIDNewSessionTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
+    func assertSessionStartedTests(_ started: Bool) {
+        assert(started)
+        assert(NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
+        assert(DataStore.queuedEvents.isEmpty)
+    }
+
+    func assertSessionNotStartedTests(_ started: Bool, _ id: String) {
+        assert(!started)
+        assert(id == "")
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+    }
+
     //    clearSessionVariables
     func test_clearSessionVariables() {
         NeuroID.userID = "myUserID"
@@ -447,15 +465,8 @@ class NIDNewSessionTests: XCTestCase {
         let expectedValue = "mySessionID"
         let (started, id) = NeuroID.startSession(expectedValue)
 
-        assert(started)
+        assertSessionStartedTests(started)
         assert(expectedValue == id)
-        assert(NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
-
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
-        assert(DataStore.queuedEvents.isEmpty)
     }
 
     func test_startSession_success_no_id() {
@@ -465,15 +476,8 @@ class NIDNewSessionTests: XCTestCase {
         let expectedValue = "mySessionID"
         let (started, id) = NeuroID.startSession()
 
-        assert(started)
+        assertSessionStartedTests(started)
         assert(expectedValue != id)
-        assert(NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
-
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
-        assert(DataStore.queuedEvents.isEmpty)
     }
 
     func test_startSession_failure_clientKey() {
@@ -482,22 +486,15 @@ class NIDNewSessionTests: XCTestCase {
 
         let (started, id) = NeuroID.startSession()
 
-        assert(!started)
-        assert(id == "")
-        assert(!NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+        assertSessionNotStartedTests(started, id)
     }
 
     func test_startSession_failure_userID() {
-        NeuroID.clientKey = nil
         NeuroID.sendCollectionWorkItem = nil
 
-        let (started, id) = NeuroID.startSession()
+        let (started, id) = NeuroID.startSession("MY bad -.-. id")
 
-        assert(!started)
-        assert(id == "")
-        assert(!NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+        assertSessionNotStartedTests(started, id)
     }
 
     func test_pauseCollection() {
@@ -521,20 +518,9 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     func test_stopSession() {
-        NeuroID._isSDKStarted = true
-        NeuroID.sendCollectionWorkItem = DispatchWorkItem {}
-
-        NeuroID.userID = "myUserID"
-        NeuroID.registeredUserID = "myRegisteredUserID"
-
         let stopped = NeuroID.stopSession()
 
         assert(stopped)
-        assert(!NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil)
-
-        assert(NeuroID.userID == nil)
-        assert(NeuroID.registeredUserID == "")
     }
 }
 

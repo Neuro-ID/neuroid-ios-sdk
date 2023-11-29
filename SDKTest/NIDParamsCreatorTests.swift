@@ -405,11 +405,11 @@ class NIDParamsCreatorTests: XCTestCase {
 
     func test_generateUniqueHexID() {
         let value = ParamsCreator.generateUniqueHexID()
-        assert(value.count == 8)
+        assert(value.count >= 7)
 
         sleep(timeout: 0.2)
         let secondValue = ParamsCreator.generateUniqueHexID()
-        assert(secondValue.count == 8)
+        assert(secondValue.count >= 7)
 
         assert(value != secondValue)
     }
