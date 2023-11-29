@@ -75,9 +75,11 @@ public extension NeuroID {
         if !NeuroID.isSDKStarted {
             throw NIDError.sdkNotStarted
         }
+
         let closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
+
         if skipStop {
             return closeEvent
         }
@@ -94,5 +96,80 @@ public extension NeuroID {
             Attrs(n: "isRN", v: "\(isRN)"),
         ]
         saveEventToLocalDataStore(event)
+    }
+
+    internal static func clearSessionVariables() {
+        NeuroID.userID = nil
+        NeuroID.registeredUserID = ""
+    }
+
+    static func startSession(_ sessionID: String? = nil) -> (Bool, String) {
+        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
+            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+            return (false, "")
+        }
+
+        // stop existing session if one is open
+        if NeuroID.userID != nil || NeuroID.isSDKStarted {
+            _ = stopSession()
+        }
+
+        let finalSessionID = sessionID ?? ParamsCreator.generateID()
+        if !setUserID(finalSessionID) {
+            return (false, "")
+        }
+
+        NeuroID._isSDKStarted = true
+        startIntegrationHealthCheck()
+
+        createSession()
+        swizzle()
+
+        #if DEBUG
+        if NSClassFromString("XCTest") == nil {
+            resumeCollection()
+        }
+        #else
+        resumeCollection()
+        #endif
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
+
+        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+        queuedEvents.forEach { event in
+            DataStore.insertEvent(screen: "", event: event)
+        }
+
+        return (true, finalSessionID)
+    }
+
+    static func pauseCollection() {
+        NeuroID._isSDKStarted = false
+        NeuroID.sendCollectionWorkItem?.cancel()
+        NeuroID.sendCollectionWorkItem = nil
+    }
+
+    static func resumeCollection() {
+        NeuroID._isSDKStarted = true
+        let workItem = NeuroID.createCollectionWorkItem()
+        NeuroID.sendCollectionWorkItem = workItem
+        initCollectionTimer()
+    }
+
+    static func stopSession() -> Bool {
+        let closeEvent = NIDEvent(type: NIDEventName.closeSession)
+        closeEvent.ct = "SDK_EVENT"
+        saveEventToLocalDataStore(closeEvent)
+
+        // save captured health events to file
+        saveIntegrationHealthEvents()
+
+        groupAndPOST()
+        pauseCollection()
+
+        clearSessionVariables()
+
+        return true
     }
 }

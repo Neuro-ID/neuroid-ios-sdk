@@ -49,6 +49,8 @@ public enum NeuroID {
         set {}
     }
 
+    internal static var sendCollectionWorkItem: DispatchWorkItem?
+
     internal static var observingInputs = false
     internal static var observingKeyboard = false
     internal static var didSwizzle: Bool = false
@@ -151,7 +153,7 @@ public enum NeuroID {
         }
     }
 
-    private static func swizzle() {
+    internal static func swizzle() {
         if didSwizzle {
             return
         }

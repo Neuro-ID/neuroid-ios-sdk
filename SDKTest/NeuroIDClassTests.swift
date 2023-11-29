@@ -388,7 +388,150 @@ class NIDSessionTests: XCTestCase {
 
         NeuroID.captureMobileMetadata()
 
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+    }
+}
+
+class NIDNewSessionTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    let sessionIdKey = Constants.storageSessionIDKey.rawValue
+    let clientIdKey = Constants.storageClientIDKey.rawValue
+
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+        let _ = DataStore.getAndRemoveAllQueuedEvents()
+    }
+
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func tearDown() {
+        NeuroID.stop()
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
+    }
+
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
+    }
+
+    func assertQueuedEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.queuedEvents
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
+    }
+
+    //    clearSessionVariables
+    func test_clearSessionVariables() {
+        NeuroID.userID = "myUserID"
+        NeuroID.registeredUserID = "myRegisteredUserID"
+
+        NeuroID.clearSessionVariables()
+
+        assert(NeuroID.userID == nil)
+        assert(NeuroID.registeredUserID == "")
+    }
+
+    func test_startSession_success_id() {
+        NeuroID.userID = nil
+        NeuroID._isSDKStarted = false
+
+        let expectedValue = "mySessionID"
+        let (started, id) = NeuroID.startSession(expectedValue)
+
+        assert(started)
+        assert(expectedValue == id)
+        assert(NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
+        assert(DataStore.queuedEvents.isEmpty)
+    }
+
+    func test_startSession_success_no_id() {
+        NeuroID.userID = nil
+        NeuroID._isSDKStarted = false
+
+        let expectedValue = "mySessionID"
+        let (started, id) = NeuroID.startSession()
+
+        assert(started)
+        assert(expectedValue != id)
+        assert(NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
+        assert(DataStore.queuedEvents.isEmpty)
+    }
+
+    func test_startSession_failure_clientKey() {
+        NeuroID.clientKey = nil
+
+        let (started, id) = NeuroID.startSession()
+
+        assert(!started)
+        assert(id == "")
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+    }
+
+    func test_startSession_failure_userID() {
+        NeuroID.clientKey = nil
+
+        let (started, id) = NeuroID.startSession()
+
+        assert(!started)
+        assert(id == "")
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+    }
+
+    func test_pauseCollection() {
+        NeuroID._isSDKStarted = true
+        NeuroID.sendCollectionWorkItem = DispatchWorkItem {}
+
+        NeuroID.pauseCollection()
+
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil)
+    }
+
+    func test_resumeCollection() {
+        NeuroID._isSDKStarted = false
+        NeuroID.sendCollectionWorkItem = nil
+
+        NeuroID.resumeCollection()
+
+        assert(NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem != nil)
+    }
+
+    func test_stopSession() {
+        NeuroID._isSDKStarted = true
+        NeuroID.sendCollectionWorkItem = DispatchWorkItem {}
+
+        NeuroID.userID = "myUserID"
+        NeuroID.registeredUserID = "myRegisteredUserID"
+
+        let stopped = NeuroID.stopSession()
+
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil)
+
+        assert(NeuroID.userID == nil)
+        assert(NeuroID.registeredUserID == "")
     }
 }
 
@@ -881,6 +1024,47 @@ class NIDSendTests: XCTestCase {
         let value = NeuroID.getCollectionEndpointURL()
         assert(value == expectedValue)
     }
+
+    func test_initCollectionTimer_item() {
+        NeuroID._isSDKStarted = false
+        let expectation = XCTestExpectation(description: "Wait for 5 seconds")
+
+        let workItem = DispatchWorkItem {
+            NeuroID._isSDKStarted = true
+            expectation.fulfill()
+        }
+        NeuroID.sendCollectionWorkItem = workItem
+
+        NeuroID.initCollectionTimer()
+
+        // Wait for the expectation to be fulfilled, or timeout after 7 seconds
+        wait(for: [expectation], timeout: 7)
+
+        assert(NeuroID._isSDKStarted)
+        NeuroID._isSDKStarted = false
+    }
+
+    func test_initCollectionTimer_item_nil() {
+        NeuroID._isSDKStarted = false
+        let expectation = XCTestExpectation(description: "Wait for 5 seconds")
+
+        // setting the item as nil so the queue won't run
+        NeuroID.sendCollectionWorkItem = nil
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            expectation.fulfill()
+        }
+
+        NeuroID.initCollectionTimer()
+
+        // Wait for the expectation to be fulfilled, or timeout after 7 seconds
+        wait(for: [expectation], timeout: 7)
+
+        assert(!NeuroID._isSDKStarted)
+        NeuroID._isSDKStarted = false
+    }
+
+//    createCollectionWorkItem // Not sure how to test because it returns an item that always exists
 }
 
 class NIDLogTests: XCTestCase {
