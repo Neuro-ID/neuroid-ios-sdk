@@ -40,7 +40,7 @@ public extension NeuroID {
         // We don't do anything with this?
         let _ = Constants.storageSessionExpiredKey.rawValue
 
-        let sidKeyName = Constants.storageSiteIdKey.rawValue
+        let sidKeyName = Constants.storageSessionIDKey.rawValue
 
         let sid = getUserDefaultKeyString(sidKeyName)
 
@@ -49,7 +49,7 @@ public extension NeuroID {
             return sidValue
         }
 
-        let id = ParamsCreator.genId()
+        let id = ParamsCreator.generateID()
         setUserDefaultKey(sidKeyName, value: id)
 
         NIDLog.i("\(Constants.sessionTag.rawValue)", id)

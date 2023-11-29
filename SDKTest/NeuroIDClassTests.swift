@@ -14,7 +14,7 @@ class NeuroIDClassTests: XCTestCase {
     // Keys for storage:
     let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
     let clientKeyKey = Constants.storageClientKey.rawValue
-    let tabIdKey = Constants.storageTabIdKey.rawValue
+    let tabIdKey = Constants.storageTabIDKey.rawValue
 
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
@@ -280,8 +280,8 @@ class NIDRegistrationTests: XCTestCase {
 class NIDSessionTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-    let sessionIdKey = Constants.storageSiteIdKey.rawValue
-    let clientIdKey = Constants.storageClientIdKey.rawValue
+    let sessionIdKey = Constants.storageSessionIDKey.rawValue
+    let clientIdKey = Constants.storageClientIDKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -395,8 +395,8 @@ class NIDSessionTests: XCTestCase {
 class NIDFormTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-    let sessionIdKey = Constants.storageSiteIdKey.rawValue
-    let clientIdKey = Constants.storageClientIdKey.rawValue
+    let sessionIdKey = Constants.storageSessionIDKey.rawValue
+    let clientIdKey = Constants.storageClientIDKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -523,7 +523,7 @@ class NIDScreenTests: XCTestCase {
 class NIDUserTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-    let userIdKey = Constants.storageUserIdKey.rawValue
+    let userIdKey = Constants.storageUserIDKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -667,7 +667,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess)
-        assert(NeuroID.userId == expectedValue)
+        assert(NeuroID.userID == expectedValue)
         assert(storedValue == nil)
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
@@ -685,7 +685,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess == true)
-        assert(NeuroID.userId == expectedValue)
+        assert(NeuroID.userID == expectedValue)
         assert(storedValue == nil)
 
         assert(DataStore.events.count == 0)
@@ -697,11 +697,11 @@ class NIDUserTests: XCTestCase {
 
         let expectedValue = "test_uid"
 
-        NeuroID.userId = expectedValue
+        NeuroID.userID = expectedValue
 
         let value = NeuroID.getUserID()
 
-        assert(NeuroID.userId == expectedValue)
+        assert(NeuroID.userID == expectedValue)
         assert(value == expectedValue)
     }
 
@@ -709,12 +709,12 @@ class NIDUserTests: XCTestCase {
         let expectedValue = "test_uid"
         UserDefaults.standard.set(expectedValue, forKey: userIdKey)
 
-        NeuroID.userId = nil
+        NeuroID.userID = nil
 
         let value = NeuroID.getUserID()
 
         assert(value == "")
-        assert(NeuroID.userId != expectedValue)
+        assert(NeuroID.userID != expectedValue)
     }
 
     func test_getRegisteredUserID_objectLevel() {
@@ -722,11 +722,11 @@ class NIDUserTests: XCTestCase {
 
         let expectedValue = "test_uid"
 
-        NeuroID.registeredUserId = expectedValue
+        NeuroID.registeredUserID = expectedValue
 
         let value = NeuroID.getRegisteredUserID()
 
-        assert(NeuroID.registeredUserId == expectedValue)
+        assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
     }
 
@@ -740,7 +740,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserId == expectedValue)
+        assert(NeuroID.registeredUserID == expectedValue)
         assert(storedValue == nil)
 
         assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
@@ -758,7 +758,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserId == expectedValue)
+        assert(NeuroID.registeredUserID == expectedValue)
         assert(storedValue == nil)
 
         assert(DataStore.events.count == 0)
@@ -794,11 +794,11 @@ class NIDClientSiteIdTests: XCTestCase {
 
     // Keys for storage:
     let clientKeyKey = Constants.storageClientKey.rawValue
-    let cidKey = Constants.storageClientIdKey.rawValue
+    let cidKey = Constants.storageClientIDKey.rawValue
 
     func test_getClientID() {
         UserDefaults.standard.setValue("test-cid", forKey: cidKey)
-        NeuroID.clientId = nil
+        NeuroID.clientID = nil
         let value = NeuroID.getClientID()
 
         assert(value == "test-cid")
@@ -807,7 +807,7 @@ class NIDClientSiteIdTests: XCTestCase {
     func test_getClientId_existing() {
         let expectedValue = "test-cid"
 
-        NeuroID.clientId = expectedValue
+        NeuroID.clientID = expectedValue
         UserDefaults.standard.set(expectedValue, forKey: cidKey)
 
         let value = NeuroID.getClientID()
@@ -846,7 +846,7 @@ class NIDClientSiteIdTests: XCTestCase {
     func test_setSiteId() {
         NeuroID.setSiteId(siteId: "test_site")
 
-        assert(NeuroID.siteId == "test_site")
+        assert(NeuroID.siteID == "test_site")
     }
 
     func test_validateClientKey_valid_live() {

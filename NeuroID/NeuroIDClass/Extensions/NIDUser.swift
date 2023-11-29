@@ -52,7 +52,7 @@ public extension NeuroID {
             userId: userId, type: .userID
         ) { success in
             if success {
-                NeuroID.userId = userId
+                NeuroID.userID = userId
             }
             return success
         }
@@ -61,11 +61,11 @@ public extension NeuroID {
     }
 
     static func getUserID() -> String {
-        return NeuroID.userId ?? ""
+        return NeuroID.userID ?? ""
     }
 
     static func getRegisteredUserID() -> String {
-        return NeuroID.registeredUserId
+        return NeuroID.registeredUserID
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
@@ -73,7 +73,7 @@ public extension NeuroID {
             userId: registeredUserID, type: .registeredUserID
         ) { success in
             if success {
-                NeuroID.registeredUserId = registeredUserID
+                NeuroID.registeredUserID = registeredUserID
             }
             return success
         }

@@ -266,7 +266,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assertExpectedTVDictValues(expected: expectedValue, value: value)
     }
 
-    let tidKey = Constants.storageTabIdKey.rawValue
+    let tidKey = Constants.storageTabIDKey.rawValue
     func test_getTabId_existing() {
         let expectedValue = "test_tid"
 
@@ -287,7 +287,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value != expectedValue)
     }
 
-    let didKey = Constants.storageDeviceIdKey.rawValue
+    let didKey = Constants.storageDeviceIDKey.rawValue
     func test_getDeviceId_existing() {
         let expectedValue = "test_did"
 
@@ -309,10 +309,10 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     // Private Access Level
-    func test_genId() {
+    func test_generateID() {
         let expectedValue = 36
 
-        let value = ParamsCreator.genId()
+        let value = ParamsCreator.generateID()
 
         assert(value.count == expectedValue)
     }

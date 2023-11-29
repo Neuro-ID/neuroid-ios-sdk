@@ -20,11 +20,11 @@ public enum NeuroID {
     internal static let SEND_INTERVAL: Double = 5
 
     internal static var clientKey: String?
-    internal static var siteId: String?
+    internal static var siteID: String?
 
-    internal static var clientId: String?
-    internal static var userId: String?
-    internal static var registeredUserId: String = ""
+    internal static var clientID: String?
+    internal static var userID: String?
+    internal static var registeredUserID: String = ""
 
     internal static var trackers = [String: NeuroIDTracker]()
 
@@ -89,7 +89,7 @@ public enum NeuroID {
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id on configure
-        setUserDefaultKey(Constants.storageTabIdKey.rawValue, value: nil)
+        setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
