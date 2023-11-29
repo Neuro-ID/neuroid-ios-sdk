@@ -478,6 +478,7 @@ class NIDNewSessionTests: XCTestCase {
 
     func test_startSession_failure_clientKey() {
         NeuroID.clientKey = nil
+        NeuroID.sendCollectionWorkItem = nil
 
         let (started, id) = NeuroID.startSession()
 
@@ -489,6 +490,7 @@ class NIDNewSessionTests: XCTestCase {
 
     func test_startSession_failure_userID() {
         NeuroID.clientKey = nil
+        NeuroID.sendCollectionWorkItem = nil
 
         let (started, id) = NeuroID.startSession()
 
@@ -527,6 +529,7 @@ class NIDNewSessionTests: XCTestCase {
 
         let stopped = NeuroID.stopSession()
 
+        assert(stopped)
         assert(!NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem == nil)
 
