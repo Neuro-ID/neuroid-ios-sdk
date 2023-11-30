@@ -26,11 +26,11 @@ public extension NeuroID {
         return started
     }
     
-    static func startSession(_ sessionID: String? = nil, _ advancedDeviceSignals: Bool) -> (Bool, String) {
-        let (started, id) = NeuroID.startSession(sessionID)
+    static func startSession(_ sessionID: String? = nil, _ advancedDeviceSignals: Bool) -> SessionStartResult {
+        let sessionRes = NeuroID.startSession(sessionID)
         
-        if !started {
-            return (started, id)
+        if !sessionRes.started {
+            return sessionRes
         }
        
         if advancedDeviceSignals {
@@ -40,7 +40,7 @@ public extension NeuroID {
             }
         }
         
-        return (started, id)
+        return sessionRes
     }
     
     internal static func getCachedADV() -> Bool {

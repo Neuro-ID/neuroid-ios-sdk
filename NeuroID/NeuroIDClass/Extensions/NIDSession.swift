@@ -8,6 +8,16 @@
 import Foundation
 import UIKit
 
+public struct SessionStartResult {
+    let started: Bool
+    let sessionID: String
+
+    init(_ started: Bool, _ sessionID: String) {
+        self.started = started
+        self.sessionID = sessionID
+    }
+}
+
 public extension NeuroID {
     internal static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
         return NIDEvent(
@@ -103,10 +113,10 @@ public extension NeuroID {
         NeuroID.registeredUserID = ""
     }
 
-    static func startSession(_ sessionID: String? = nil) -> (Bool, String) {
+    static func startSession(_ sessionID: String? = nil) -> SessionStartResult {
         if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
             NIDLog.e("Missing Client Key - please call configure prior to calling start")
-            return (false, "")
+            return SessionStartResult(false, "")
         }
 
         // stop existing session if one is open
@@ -116,7 +126,7 @@ public extension NeuroID {
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
         if !setUserID(finalSessionID) {
-            return (false, "")
+            return SessionStartResult(false, "")
         }
 
         NeuroID._isSDKStarted = true
@@ -141,7 +151,7 @@ public extension NeuroID {
             DataStore.insertEvent(screen: "", event: event)
         }
 
-        return (true, finalSessionID)
+        return SessionStartResult(true, finalSessionID)
     }
 
     static func pauseCollection() {

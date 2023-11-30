@@ -429,8 +429,8 @@ class NIDNewSessionTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
-    func assertSessionStartedTests(_ started: Bool) {
-        assert(started)
+    func assertSessionStartedTests(_ sessionRes: SessionStartResult) {
+        assert(sessionRes.started)
         assert(NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
 
@@ -440,9 +440,9 @@ class NIDNewSessionTests: XCTestCase {
         assert(DataStore.queuedEvents.isEmpty)
     }
 
-    func assertSessionNotStartedTests(_ started: Bool, _ id: String) {
-        assert(!started)
-        assert(id == "")
+    func assertSessionNotStartedTests(_ sessionRes: SessionStartResult) {
+        assert(!sessionRes.started)
+        assert(sessionRes.sessionID == "")
         assert(!NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
     }
@@ -463,10 +463,10 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        let (started, id) = NeuroID.startSession(expectedValue)
+        let sessionRes = NeuroID.startSession(expectedValue)
 
-        assertSessionStartedTests(started)
-        assert(expectedValue == id)
+        assertSessionStartedTests(sessionRes)
+        assert(expectedValue == sessionRes.sessionID)
     }
 
     func test_startSession_success_no_id() {
@@ -474,27 +474,27 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        let (started, id) = NeuroID.startSession()
+        let sessionRes = NeuroID.startSession()
 
-        assertSessionStartedTests(started)
-        assert(expectedValue != id)
+        assertSessionStartedTests(sessionRes)
+        assert(expectedValue != sessionRes.sessionID)
     }
 
     func test_startSession_failure_clientKey() {
         NeuroID.clientKey = nil
         NeuroID.sendCollectionWorkItem = nil
 
-        let (started, id) = NeuroID.startSession()
+        let sessionRes = NeuroID.startSession()
 
-        assertSessionNotStartedTests(started, id)
+        assertSessionNotStartedTests(sessionRes)
     }
 
     func test_startSession_failure_userID() {
         NeuroID.sendCollectionWorkItem = nil
 
-        let (started, id) = NeuroID.startSession("MY bad -.-. id")
+        let sessionRes = NeuroID.startSession("MY bad -.-. id")
 
-        assertSessionNotStartedTests(started, id)
+        assertSessionNotStartedTests(sessionRes)
     }
 
     func test_pauseCollection() {
