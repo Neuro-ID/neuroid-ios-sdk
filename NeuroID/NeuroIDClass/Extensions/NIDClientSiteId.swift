@@ -12,17 +12,17 @@ public extension NeuroID {
      Public user facing getClientID function
      */
     static func getClientID() -> String {
-        let clientIdName = Constants.storageClientIdKey.rawValue
+        let clientIdName = Constants.storageClientIDKey.rawValue
         var cid = getUserDefaultKeyString(clientIdName)
-        if NeuroID.clientId != nil {
-            cid = NeuroID.clientId
+        if NeuroID.clientID != nil {
+            cid = NeuroID.clientID
         }
         // Ensure we aren't on old client id
         if cid != nil && !cid!.contains("_") {
             return cid!
         } else {
-            cid = ParamsCreator.genId()
-            NeuroID.clientId = cid
+            cid = ParamsCreator.generateID()
+            NeuroID.clientID = cid
             setUserDefaultKey(clientIdName, value: cid)
             return cid!
         }
@@ -44,7 +44,7 @@ public extension NeuroID {
     @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
     static func setSiteId(siteId: String) {
         NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
-        self.siteId = siteId
+        self.siteID = siteId
     }
 
     internal static func validateClientKey(_ clientKey: String) -> Bool {

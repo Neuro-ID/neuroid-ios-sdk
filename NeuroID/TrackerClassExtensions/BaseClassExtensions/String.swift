@@ -12,7 +12,7 @@ internal extension String {
         var existingSalt = getUserDefaultKeyString(Constants.storageSaltKey.rawValue) ?? ""
 
         if existingSalt == "" {
-            existingSalt = ParamsCreator.genId()
+            existingSalt = ParamsCreator.generateID()
             setUserDefaultKey(Constants.storageSaltKey.rawValue, value: existingSalt)
         }
 

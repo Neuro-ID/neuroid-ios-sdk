@@ -9,21 +9,47 @@ import Alamofire
 import Foundation
 
 internal extension NeuroID {
-    static func initTimer() {
-        // Send up the first payload, and then setup a repeating timer
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
-            self.send()
-            self.initTimer()
-        }
-    }
-
     static func getCollectionEndpointURL() -> String {
         return "https://receiver.neuroid.cloud/c"
     }
 
-    /**
-     Publically exposed just for testing. This should not be any reason to call this directly.
-     */
+    static func initTimer() {
+        // Send up the first payload, and then setup a repeating timer
+        DispatchQueue
+            .global(qos: .utility)
+            .asyncAfter(deadline: .now() + SEND_INTERVAL) {
+                self.send()
+                self.initTimer()
+            }
+    }
+
+    static func initCollectionTimer() {
+        if let workItem = NeuroID.sendCollectionWorkItem {
+            // Send up the first payload, and then setup a repeating timer
+            DispatchQueue
+                .global(qos: .utility)
+                .asyncAfter(
+                    deadline: .now() + SEND_INTERVAL,
+                    execute: workItem
+                )
+        }
+    }
+
+    static func createCollectionWorkItem() -> DispatchWorkItem {
+        let workItem = DispatchWorkItem {
+            guard !(NeuroID.sendCollectionWorkItem?.isCancelled ?? false) else {
+                return
+            }
+
+            if !NeuroID.isStopped() {
+                self.send()
+                self.initCollectionTimer()
+            }
+        }
+
+        return workItem
+    }
+
     static func send() {
         DispatchQueue.global(qos: .utility).async {
             if !NeuroID.isStopped() {
@@ -101,7 +127,7 @@ internal extension NeuroID {
 
         let tabId = ParamsCreator.getTabId()
 
-        let randomString = ParamsCreator.genId()
+        let randomString = ParamsCreator.generateID()
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
 
         let neuroHTTPRequest = NeuroHTTPRequest(
@@ -110,7 +136,7 @@ internal extension NeuroID {
             sdkVersion: NeuroID.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseID: ParamsCreator.generateUniqueHexID(),
-            siteID: NeuroID.siteId ?? "",
+            siteID: NeuroID.siteID ?? "",
             userID: NeuroID.getUserID(),
             registeredUserID: NeuroID.getRegisteredUserID(),
             jsonEvents: events,

@@ -108,13 +108,13 @@ enum ParamsCreator {
     }
 
     static func getTabId() -> String {
-        let tabIdName = Constants.storageTabIdKey.rawValue
+        let tabIdName = Constants.storageTabIDKey.rawValue
         let tid = getUserDefaultKeyString(tabIdName)
 
         if tid != nil && !tid!.contains("-") {
             return tid!
         } else {
-            let randString = genId()
+            let randString = generateID()
             let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
             setUserDefaultKey(tabIdName, value: tid)
             return "\(tid)"
@@ -122,19 +122,19 @@ enum ParamsCreator {
     }
 
     static func getDeviceId() -> String {
-        let deviceIdCacheKey = Constants.storageDeviceIdKey.rawValue
+        let deviceIdCacheKey = Constants.storageDeviceIDKey.rawValue
         var did = getUserDefaultKeyString(deviceIdCacheKey)
 
         if did != nil && did!.contains("_") {
             return did!
         } else {
-            did = genId()
+            did = generateID()
             setUserDefaultKey(deviceIdCacheKey, value: did)
             return did!
         }
     }
 
-    internal static func genId() -> String {
+    internal static func generateID() -> String {
         return UUID().uuidString
     }
 

@@ -14,7 +14,7 @@ class NeuroIDClassTests: XCTestCase {
     // Keys for storage:
     let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
     let clientKeyKey = Constants.storageClientKey.rawValue
-    let tabIdKey = Constants.storageTabIdKey.rawValue
+    let tabIdKey = Constants.storageTabIDKey.rawValue
 
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
@@ -25,7 +25,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -191,7 +191,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -280,8 +280,8 @@ class NIDRegistrationTests: XCTestCase {
 class NIDSessionTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-    let sessionIdKey = Constants.storageSiteIdKey.rawValue
-    let clientIdKey = Constants.storageClientIdKey.rawValue
+    let sessionIdKey = Constants.storageSessionIDKey.rawValue
+    let clientIdKey = Constants.storageClientIDKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -292,7 +292,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -310,11 +310,11 @@ class NIDSessionTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
 
-    func test_clearSession() {
+    func test_clearStoredSessionID() {
         UserDefaults.standard.set("session", forKey: sessionIdKey)
         UserDefaults.standard.set("client", forKey: clientIdKey)
 
-        NeuroID.clearSession()
+        NeuroID.clearStoredSessionID()
 
         let session = UserDefaults.standard.string(forKey: sessionIdKey)
         let client = UserDefaults.standard.string(forKey: clientIdKey)
@@ -388,15 +388,147 @@ class NIDSessionTests: XCTestCase {
 
         NeuroID.captureMobileMetadata()
 
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+    }
+}
+
+class NIDNewSessionTests: XCTestCase {
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+
+    let sessionIdKey = Constants.storageSessionIDKey.rawValue
+    let clientIdKey = Constants.storageClientIDKey.rawValue
+
+    func clearOutDataStore() {
+        DataStore.removeSentEvents()
+        let _ = DataStore.getAndRemoveAllQueuedEvents()
+    }
+
+    override func setUpWithError() throws {
+        NeuroID.configure(clientKey: clientKey)
+    }
+
+    override func tearDown() {
+        NeuroID.stop()
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
+    }
+
+    func assertStoredEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
+    }
+
+    func assertQueuedEventTypeAndCount(type: String, count: Int) {
+        let allEvents = DataStore.queuedEvents
+        let validEvent = allEvents.filter { $0.type == type }
+
+        assert(validEvent.count == count)
+        assert(validEvent[0].type == type)
+    }
+
+    func assertSessionStartedTests(_ sessionRes: SessionStartResult) {
+        assert(sessionRes.started)
+        assert(NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
+        assert(DataStore.queuedEvents.isEmpty)
+    }
+
+    func assertSessionNotStartedTests(_ sessionRes: SessionStartResult) {
+        assert(!sessionRes.started)
+        assert(sessionRes.sessionID == "")
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
+    }
+
+    //    clearSessionVariables
+    func test_clearSessionVariables() {
+        NeuroID.userID = "myUserID"
+        NeuroID.registeredUserID = "myRegisteredUserID"
+
+        NeuroID.clearSessionVariables()
+
+        assert(NeuroID.userID == nil)
+        assert(NeuroID.registeredUserID == "")
+    }
+
+    func test_startSession_success_id() {
+        NeuroID.userID = nil
+        NeuroID._isSDKStarted = false
+
+        let expectedValue = "mySessionID"
+        let sessionRes = NeuroID.startSession(expectedValue)
+
+        assertSessionStartedTests(sessionRes)
+        assert(expectedValue == sessionRes.sessionID)
+    }
+
+    func test_startSession_success_no_id() {
+        NeuroID.userID = nil
+        NeuroID._isSDKStarted = false
+
+        let expectedValue = "mySessionID"
+        let sessionRes = NeuroID.startSession()
+
+        assertSessionStartedTests(sessionRes)
+        assert(expectedValue != sessionRes.sessionID)
+    }
+
+    func test_startSession_failure_clientKey() {
+        NeuroID.clientKey = nil
+        NeuroID.sendCollectionWorkItem = nil
+
+        let sessionRes = NeuroID.startSession()
+
+        assertSessionNotStartedTests(sessionRes)
+    }
+
+    func test_startSession_failure_userID() {
+        NeuroID.sendCollectionWorkItem = nil
+
+        let sessionRes = NeuroID.startSession("MY bad -.-. id")
+
+        assertSessionNotStartedTests(sessionRes)
+    }
+
+    func test_pauseCollection() {
+        NeuroID._isSDKStarted = true
+        NeuroID.sendCollectionWorkItem = DispatchWorkItem {}
+
+        NeuroID.pauseCollection()
+
+        assert(!NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem == nil)
+    }
+
+    func test_resumeCollection() {
+        NeuroID._isSDKStarted = false
+        NeuroID.sendCollectionWorkItem = nil
+
+        NeuroID.resumeCollection()
+
+        assert(NeuroID._isSDKStarted)
+        assert(NeuroID.sendCollectionWorkItem != nil)
+    }
+
+    func test_stopSession() {
+        let stopped = NeuroID.stopSession()
+
+        assert(stopped)
     }
 }
 
 class NIDFormTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-    let sessionIdKey = Constants.storageSiteIdKey.rawValue
-    let clientIdKey = Constants.storageClientIdKey.rawValue
+    let sessionIdKey = Constants.storageSessionIDKey.rawValue
+    let clientIdKey = Constants.storageClientIDKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -407,7 +539,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -459,7 +591,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -523,7 +655,7 @@ class NIDScreenTests: XCTestCase {
 class NIDUserTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
-    let userIdKey = Constants.storageUserIdKey.rawValue
+    let userIdKey = Constants.storageUserIDKey.rawValue
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
@@ -535,7 +667,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {
@@ -667,7 +799,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess)
-        assert(NeuroID.userId == expectedValue)
+        assert(NeuroID.userID == expectedValue)
         assert(storedValue == nil)
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
@@ -685,7 +817,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess == true)
-        assert(NeuroID.userId == expectedValue)
+        assert(NeuroID.userID == expectedValue)
         assert(storedValue == nil)
 
         assert(DataStore.events.count == 0)
@@ -697,11 +829,11 @@ class NIDUserTests: XCTestCase {
 
         let expectedValue = "test_uid"
 
-        NeuroID.userId = expectedValue
+        NeuroID.userID = expectedValue
 
         let value = NeuroID.getUserID()
 
-        assert(NeuroID.userId == expectedValue)
+        assert(NeuroID.userID == expectedValue)
         assert(value == expectedValue)
     }
 
@@ -709,12 +841,12 @@ class NIDUserTests: XCTestCase {
         let expectedValue = "test_uid"
         UserDefaults.standard.set(expectedValue, forKey: userIdKey)
 
-        NeuroID.userId = nil
+        NeuroID.userID = nil
 
         let value = NeuroID.getUserID()
 
         assert(value == "")
-        assert(NeuroID.userId != expectedValue)
+        assert(NeuroID.userID != expectedValue)
     }
 
     func test_getRegisteredUserID_objectLevel() {
@@ -722,11 +854,11 @@ class NIDUserTests: XCTestCase {
 
         let expectedValue = "test_uid"
 
-        NeuroID.registeredUserId = expectedValue
+        NeuroID.registeredUserID = expectedValue
 
         let value = NeuroID.getRegisteredUserID()
 
-        assert(NeuroID.registeredUserId == expectedValue)
+        assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
     }
 
@@ -740,7 +872,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserId == expectedValue)
+        assert(NeuroID.registeredUserID == expectedValue)
         assert(storedValue == nil)
 
         assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
@@ -758,7 +890,7 @@ class NIDUserTests: XCTestCase {
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserId == expectedValue)
+        assert(NeuroID.registeredUserID == expectedValue)
         assert(storedValue == nil)
 
         assert(DataStore.events.count == 0)
@@ -794,11 +926,11 @@ class NIDClientSiteIdTests: XCTestCase {
 
     // Keys for storage:
     let clientKeyKey = Constants.storageClientKey.rawValue
-    let cidKey = Constants.storageClientIdKey.rawValue
+    let cidKey = Constants.storageClientIDKey.rawValue
 
     func test_getClientID() {
         UserDefaults.standard.setValue("test-cid", forKey: cidKey)
-        NeuroID.clientId = nil
+        NeuroID.clientID = nil
         let value = NeuroID.getClientID()
 
         assert(value == "test-cid")
@@ -807,7 +939,7 @@ class NIDClientSiteIdTests: XCTestCase {
     func test_getClientId_existing() {
         let expectedValue = "test-cid"
 
-        NeuroID.clientId = expectedValue
+        NeuroID.clientID = expectedValue
         UserDefaults.standard.set(expectedValue, forKey: cidKey)
 
         let value = NeuroID.getClientID()
@@ -846,7 +978,7 @@ class NIDClientSiteIdTests: XCTestCase {
     func test_setSiteId() {
         NeuroID.setSiteId(siteId: "test_site")
 
-        assert(NeuroID.siteId == "test_site")
+        assert(NeuroID.siteID == "test_site")
     }
 
     func test_validateClientKey_valid_live() {
@@ -881,6 +1013,47 @@ class NIDSendTests: XCTestCase {
         let value = NeuroID.getCollectionEndpointURL()
         assert(value == expectedValue)
     }
+
+    func test_initCollectionTimer_item() {
+        NeuroID._isSDKStarted = false
+        let expectation = XCTestExpectation(description: "Wait for 5 seconds")
+
+        let workItem = DispatchWorkItem {
+            NeuroID._isSDKStarted = true
+            expectation.fulfill()
+        }
+        NeuroID.sendCollectionWorkItem = workItem
+
+        NeuroID.initCollectionTimer()
+
+        // Wait for the expectation to be fulfilled, or timeout after 7 seconds
+        wait(for: [expectation], timeout: 7)
+
+        assert(NeuroID._isSDKStarted)
+        NeuroID._isSDKStarted = false
+    }
+
+    func test_initCollectionTimer_item_nil() {
+        NeuroID._isSDKStarted = false
+        let expectation = XCTestExpectation(description: "Wait for 5 seconds")
+
+        // setting the item as nil so the queue won't run
+        NeuroID.sendCollectionWorkItem = nil
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            expectation.fulfill()
+        }
+
+        NeuroID.initCollectionTimer()
+
+        // Wait for the expectation to be fulfilled, or timeout after 7 seconds
+        wait(for: [expectation], timeout: 7)
+
+        assert(!NeuroID._isSDKStarted)
+        NeuroID._isSDKStarted = false
+    }
+
+//    createCollectionWorkItem // Not sure how to test because it returns an item that always exists
 }
 
 class NIDLogTests: XCTestCase {

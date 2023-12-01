@@ -18,46 +18,73 @@ public extension NeuroID {
        
         if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
-            if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
-                if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
-                    let currentTimeEpoch = Date().timeIntervalSince1970
-                    
-                    if currentTimeEpoch < exp {
-                        let nidEvent = NIDEvent(type: .advancedDevice)
-                        nidEvent.rid = requestID
-                        nidEvent.c = true
-                        
-                        NeuroID.saveEventToLocalDataStore(nidEvent)
-                        return started
-                    }
-                }
-            }
-            
-            NeuroIDADV.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
-                switch request {
-                case .success(let requestID):
-                    let nidEvent = NIDEvent(type: .advancedDevice)
-                    nidEvent.rid = requestID
-                    nidEvent.c = false
-                        
-                    NeuroID.saveEventToLocalDataStore(nidEvent)
-                        
-                    setUserDefaultKey(
-                        Constants.storageAdvancedDeviceKey.rawValue,
-                        value: ["exp": UtilFunctions.getFutureTimeStamp(24),
-                                "key": requestID] as [String: Any]
-                    )
-                case .failure(let error):
-                    let nidEvent = NIDEvent(type: .log)
-                    nidEvent.m = error.localizedDescription
-                    nidEvent.level = "ERROR"
-                        
-                    NeuroID.saveEventToLocalDataStore(nidEvent)
-                    return
-                }
+            if !getCachedADV() {
+                getNewADV()
             }
         }
         
         return started
+    }
+    
+    static func startSession(_ sessionID: String? = nil, _ advancedDeviceSignals: Bool) -> SessionStartResult {
+        let sessionRes = NeuroID.startSession(sessionID)
+        
+        if !sessionRes.started {
+            return sessionRes
+        }
+       
+        if advancedDeviceSignals {
+            // call stored value, if expired then clear and get new one, else send existing
+            if !getCachedADV() {
+                getNewADV()
+            }
+        }
+        
+        return sessionRes
+    }
+    
+    internal static func getCachedADV() -> Bool {
+        if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
+            if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
+                let currentTimeEpoch = Date().timeIntervalSince1970
+                
+                if currentTimeEpoch < exp {
+                    captureADVEvent(requestID, cached: true)
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    internal static func getNewADV() {
+        NeuroIDADV.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
+            switch request {
+            case .success(let requestID):
+                captureADVEvent(requestID, cached: false)
+                    
+                setUserDefaultKey(
+                    Constants.storageAdvancedDeviceKey.rawValue,
+                    value: ["exp": UtilFunctions.getFutureTimeStamp(24),
+                            "key": requestID] as [String: Any]
+                )
+            case .failure(let error):
+                let nidEvent = NIDEvent(type: .log)
+                nidEvent.m = error.localizedDescription
+                nidEvent.level = "ERROR"
+                    
+                NeuroID.saveEventToLocalDataStore(nidEvent)
+                return
+            }
+        }
+    }
+    
+    internal static func captureADVEvent(_ requestID: String, cached: Bool) {
+        let nidEvent = NIDEvent(type: .advancedDevice)
+        nidEvent.rid = requestID
+        nidEvent.c = cached
+            
+        NeuroID.saveEventToLocalDataStore(nidEvent)
     }
 }
