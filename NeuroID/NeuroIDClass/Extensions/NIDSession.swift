@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 public struct SessionStartResult {
-    let started: Bool
-    let sessionID: String
+    public let started: Bool
+    public let sessionID: String
 
     init(_ started: Bool, _ sessionID: String) {
         self.started = started
