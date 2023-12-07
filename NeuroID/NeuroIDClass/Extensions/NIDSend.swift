@@ -126,6 +126,8 @@ internal extension NeuroID {
         }
 
         let tabId = ParamsCreator.getTabId()
+        let userID = NeuroID.getUserID()
+        let registeredUserID = NeuroID.getRegisteredUserID()
 
         let randomString = ParamsCreator.generateID()
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
@@ -137,8 +139,8 @@ internal extension NeuroID {
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: NeuroID.siteID ?? "",
-            userID: NeuroID.getUserID(),
-            registeredUserID: NeuroID.getRegisteredUserID(),
+            userID: userID == "" ? nil : userID,
+            registeredUserID: registeredUserID == "" ? nil : registeredUserID,
             jsonEvents: events,
             tabID: "\(tabId)",
             pageID: "\(pageid)",
