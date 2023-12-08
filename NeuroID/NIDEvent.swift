@@ -120,8 +120,8 @@ public struct NeuroHTTPRequest: Codable {
     var pageTag: String
     var responseId: String
     var siteId: String
-    var userId: String
-    var registeredUserId: String
+    var userId: String?
+    var registeredUserId: String?
     var jsonEvents: [NIDEvent]
     var tabId: String
     var pageId: String
@@ -135,8 +135,8 @@ public struct NeuroHTTPRequest: Codable {
         pageTag: String,
         responseID: String,
         siteID: String,
-        userID: String,
-        registeredUserID: String,
+        userID: String?,
+        registeredUserID: String?,
         jsonEvents: [NIDEvent],
         tabID: String,
         pageID: String,
