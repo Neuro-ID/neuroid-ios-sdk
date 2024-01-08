@@ -8,6 +8,7 @@
 import Foundation
 
 public extension NeuroID {
+    
     internal static func validateUserID(_ userId: String) -> Bool {
         // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
         do {
@@ -19,6 +20,7 @@ public extension NeuroID {
             }
         } catch {
             NIDLog.e(NIDError.invalidUserID.rawValue)
+            sendOriginEvent(orign:  NID_ORIGIN_NID_SET, originCode: NID_ORIGIN_CODE_FAIL, originSessionID: userId)
             return false
         }
 
@@ -47,13 +49,50 @@ public extension NeuroID {
         return completion(true)
     }
 
+    internal static func sendOriginEvent(orign: String, originCode: String, originSessionID: String) {
+        var sessionIdCodeEvent =
+            NIDEvent(
+                sessionEvent: NIDSessionEventName.setVariable,
+                key: "sessionIdCode",
+                v: originCode
+            )
+        
+
+        var sessionIdSourceEvent =
+            NIDEvent(
+                sessionEvent: NIDSessionEventName.setVariable,
+                key: "sessionIdSource",
+                v: orign
+            )
+        
+
+        var sessionIdEvent =
+        NIDEvent(
+            sessionEvent: NIDSessionEventName.setVariable,
+                key: "sessionId",
+                v: originSessionID
+            )
+        
+        if !NeuroID.isSDKStarted {
+            saveQueuedEventToLocalDataStore(sessionIdCodeEvent)
+            saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
+            saveQueuedEventToLocalDataStore(sessionIdEvent)
+        } else {
+            saveEventToLocalDataStore(sessionIdCodeEvent)
+            saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
+            saveQueuedEventToLocalDataStore(sessionIdEvent)
+        }
+    }
+
     static func setUserID(_ userId: String) -> Bool {
         let res = setGenericUserID(
             userId: userId, type: .userID
         ) { success in
             if success {
+                sendOriginEvent(orign:  NID_ORIGIN_NID_SET, originCode: NID_ORIGIN_CODE_CUSTOMER, originSessionID: userId)
                 NeuroID.userID = userId
             }
+            
             return success
         }
 
