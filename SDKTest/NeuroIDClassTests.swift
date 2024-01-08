@@ -467,7 +467,7 @@ class NIDNewSessionTests: XCTestCase {
         let sessionRes = NeuroID.startSession(expectedValue)
 
         assertSessionStartedTests(sessionRes)
-        assert(NeuroID.CURRENT_ORIGIN == NeuroID.NID_ORIGIN_CUSTOMER_SET)
+        assert(NeuroID.CURRENT_ORIGIN == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
         assert(expectedValue == sessionRes.sessionID)
     }
 
@@ -806,7 +806,7 @@ class NIDUserTests: XCTestCase {
         assert(storedValue == nil)
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assert(NeuroID.CURRENT_ORIGIN == NeuroID.NID_ORIGIN_CUSTOMER_SET)
+        assert(NeuroID.CURRENT_ORIGIN == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
         assert(DataStore.queuedEvents.count == 0)
     }
 

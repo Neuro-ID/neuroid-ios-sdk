@@ -23,10 +23,10 @@ public extension NeuroID {
             // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
             if (CURRENT_ORIGIN == nil)
             {
-                CURRENT_ORIGIN = NID_ORIGIN_CUSTOMER_SET
-                CURRENT_ORIGIN_CODE = NID_ORIGIN_CODE_CUSTOMER
+                CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+                CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
             }
-            sendOriginEvent(orign:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
+            sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
             return false
         }
 
@@ -55,8 +55,8 @@ public extension NeuroID {
         return completion(true)
     }
 
-    internal static func sendOriginEvent(orign: String, originCode: String, originSessionID: String) {
-        var sessionIdCodeEvent =
+    internal static func sendOriginEvent(origin: String, originCode: String, originSessionID: String) {
+        let sessionIdCodeEvent =
             NIDEvent(
                 sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionIdCode",
@@ -64,15 +64,15 @@ public extension NeuroID {
             )
         
 
-        var sessionIdSourceEvent =
+        let sessionIdSourceEvent =
             NIDEvent(
                 sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionIdSource",
-                v: orign
+                v: origin
             )
         
 
-        var sessionIdEvent =
+        let sessionIdEvent =
         NIDEvent(
             sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionId",
@@ -94,14 +94,14 @@ public extension NeuroID {
         // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
         if (CURRENT_ORIGIN == nil)
         {
-            CURRENT_ORIGIN = NID_ORIGIN_CUSTOMER_SET
-            CURRENT_ORIGIN_CODE = NID_ORIGIN_CODE_CUSTOMER
+            CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
         }
         let res = setGenericUserID(
             userId: userId, type: .userID
         ) { success in
             if success {
-                sendOriginEvent(orign:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
+                sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
                 NeuroID.userID = userId
             }
             

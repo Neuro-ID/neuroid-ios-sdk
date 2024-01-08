@@ -126,10 +126,9 @@ public extension NeuroID {
         
         // If sessionID is nil, set origin as NID here
         if (sessionID == nil){
-            NeuroID.CURRENT_ORIGIN = NeuroID.NID_ORIGIN_NID_SET
-            NeuroID.CURRENT_ORIGIN_CODE = NeuroID.NID_ORIGIN_CODE_NID
+            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
+            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
         }
-        
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
         if !setUserID(finalSessionID) {

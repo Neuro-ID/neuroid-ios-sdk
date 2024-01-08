@@ -62,3 +62,11 @@ internal enum UserIDTypes: String {
     case userID
     case registeredUserID
 }
+
+internal enum SessionOrigin: String {
+    case NID_ORIGIN_NID_SET = "nid"
+    case NID_ORIGIN_CUSTOMER_SET = "customer"
+    case NID_ORIGIN_CODE_FAIL = "400"
+    case NID_ORIGIN_CODE_NID = "200"
+    case NID_ORIGIN_CODE_CUSTOMER = "201"
+}

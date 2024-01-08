@@ -63,16 +63,8 @@ public enum NeuroID {
     internal static var isRN: Bool = false
     internal static var rnOptions: [RNConfigOptions: Any] = [:]
     
-    internal static var NID_ORIGIN_NID_SET = "nid"
-    internal static var NID_ORIGIN_CUSTOMER_SET = "customer"
-    internal static var NID_ORIGIN_CODE_FAIL = "400"
-    internal static var NID_ORIGIN_CODE_NID = "200"
-    internal static var NID_ORIGIN_CODE_CUSTOMER = "201"
     internal static var CURRENT_ORIGIN: String?
     internal static var CURRENT_ORIGIN_CODE: String?
-    
-
-
     // MARK: - Setup
 
     /// 1. Configure the SDK
