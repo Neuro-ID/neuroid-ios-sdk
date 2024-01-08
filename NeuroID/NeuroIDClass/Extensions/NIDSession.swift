@@ -123,6 +123,13 @@ public extension NeuroID {
         if NeuroID.userID != nil || NeuroID.isSDKStarted {
             _ = stopSession()
         }
+        
+        // If sessionID is nil, set origin as NID here
+        if (sessionID == nil){
+            NeuroID.CURRENT_ORIGIN = NeuroID.NID_ORIGIN_NID_SET
+            NeuroID.CURRENT_ORIGIN_CODE = NeuroID.NID_ORIGIN_CODE_NID
+        }
+        
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
         if !setUserID(finalSessionID) {

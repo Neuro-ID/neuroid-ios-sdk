@@ -68,6 +68,9 @@ public enum NeuroID {
     internal static var NID_ORIGIN_CODE_FAIL = "400"
     internal static var NID_ORIGIN_CODE_NID = "200"
     internal static var NID_ORIGIN_CODE_CUSTOMER = "201"
+    internal static var CURRENT_ORIGIN: String?
+    internal static var CURRENT_ORIGIN_CODE: String?
+    
 
 
     // MARK: - Setup

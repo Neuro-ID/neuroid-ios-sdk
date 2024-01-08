@@ -20,7 +20,13 @@ public extension NeuroID {
             }
         } catch {
             NIDLog.e(NIDError.invalidUserID.rawValue)
-            sendOriginEvent(orign:  NID_ORIGIN_NID_SET, originCode: NID_ORIGIN_CODE_FAIL, originSessionID: userId)
+            // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
+            if (CURRENT_ORIGIN == nil)
+            {
+                CURRENT_ORIGIN = NID_ORIGIN_CUSTOMER_SET
+                CURRENT_ORIGIN_CODE = NID_ORIGIN_CODE_CUSTOMER
+            }
+            sendOriginEvent(orign:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
             return false
         }
 
@@ -85,11 +91,17 @@ public extension NeuroID {
     }
 
     static func setUserID(_ userId: String) -> Bool {
+        // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
+        if (CURRENT_ORIGIN == nil)
+        {
+            CURRENT_ORIGIN = NID_ORIGIN_CUSTOMER_SET
+            CURRENT_ORIGIN_CODE = NID_ORIGIN_CODE_CUSTOMER
+        }
         let res = setGenericUserID(
             userId: userId, type: .userID
         ) { success in
             if success {
-                sendOriginEvent(orign:  NID_ORIGIN_NID_SET, originCode: NID_ORIGIN_CODE_CUSTOMER, originSessionID: userId)
+                sendOriginEvent(orign:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
                 NeuroID.userID = userId
             }
             
