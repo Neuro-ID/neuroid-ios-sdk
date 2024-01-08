@@ -85,8 +85,8 @@ public extension NeuroID {
             saveQueuedEventToLocalDataStore(sessionIdEvent)
         } else {
             saveEventToLocalDataStore(sessionIdCodeEvent)
-            saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
-            saveQueuedEventToLocalDataStore(sessionIdEvent)
+            saveEventToLocalDataStore(sessionIdSourceEvent)
+            saveEventToLocalDataStore(sessionIdEvent)
         }
     }
 
