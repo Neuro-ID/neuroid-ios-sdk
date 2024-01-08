@@ -148,10 +148,11 @@ class NeuroIDClassTests: XCTestCase {
         assert(started)
         assert(NeuroID.isSDKStarted)
 
-        assert(DataStore.events.count == 3)
+        assert(DataStore.events.count == 6)
         assertStoredEventCount(type: "CREATE_SESSION", count: 1)
         assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
         assertStoredEventCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventCount(type: "SET_VARIABLE", count: 3)
     }
 
     func test_stop() {
@@ -463,7 +464,7 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        let sessionRes = NeuroID.startSession(expectedValue)        
+        let sessionRes = NeuroID.startSession(expectedValue)
 
         assertSessionStartedTests(sessionRes)
         assert(NeuroID.CURRENT_ORIGIN == NeuroID.NID_ORIGIN_CUSTOMER_SET)
@@ -794,7 +795,8 @@ class NIDUserTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: userIdKey)
 
         let expectedValue = "test_uid"
-
+        // Reset origin
+        NeuroID.CURRENT_ORIGIN = nil
         let fnSuccess = NeuroID.setUserID(expectedValue)
 
         let storedValue = UserDefaults.standard.string(forKey: userIdKey)
