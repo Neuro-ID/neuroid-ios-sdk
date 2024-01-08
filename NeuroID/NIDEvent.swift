@@ -409,7 +409,15 @@ public class NIDEvent: Codable {
         self.sw = sw
         self.metadata = metadata
     }
+    /**
+     SET_TARGET
+     */
 
+    init(sessionEvent: NIDSessionEventName, key: String, v: String) {
+        self.type = sessionEvent.rawValue
+        self.key = key
+        self.v = v
+    }
     /**
      FOCUS
      BLUR

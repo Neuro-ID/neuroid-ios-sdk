@@ -8,6 +8,7 @@
 import Foundation
 
 public extension NeuroID {
+    
     internal static func validateUserID(_ userId: String) -> Bool {
         // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
         do {
@@ -19,6 +20,13 @@ public extension NeuroID {
             }
         } catch {
             NIDLog.e(NIDError.invalidUserID.rawValue)
+            // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
+            if (CURRENT_ORIGIN == nil)
+            {
+                CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+                CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
+            }
+            sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
             return false
         }
 
@@ -47,13 +55,56 @@ public extension NeuroID {
         return completion(true)
     }
 
+    internal static func sendOriginEvent(origin: String, originCode: String, originSessionID: String) {
+        let sessionIdCodeEvent =
+            NIDEvent(
+                sessionEvent: NIDSessionEventName.setVariable,
+                key: "sessionIdCode",
+                v: originCode
+            )
+        
+
+        let sessionIdSourceEvent =
+            NIDEvent(
+                sessionEvent: NIDSessionEventName.setVariable,
+                key: "sessionIdSource",
+                v: origin
+            )
+        
+
+        let sessionIdEvent =
+        NIDEvent(
+            sessionEvent: NIDSessionEventName.setVariable,
+                key: "sessionId",
+                v: originSessionID
+            )
+        
+        if !NeuroID.isSDKStarted {
+            saveQueuedEventToLocalDataStore(sessionIdCodeEvent)
+            saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
+            saveQueuedEventToLocalDataStore(sessionIdEvent)
+        } else {
+            saveEventToLocalDataStore(sessionIdCodeEvent)
+            saveEventToLocalDataStore(sessionIdSourceEvent)
+            saveEventToLocalDataStore(sessionIdEvent)
+        }
+    }
+
     static func setUserID(_ userId: String) -> Bool {
+        // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
+        if (CURRENT_ORIGIN == nil)
+        {
+            CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
+        }
         let res = setGenericUserID(
             userId: userId, type: .userID
         ) { success in
             if success {
+                sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
                 NeuroID.userID = userId
             }
+            
             return success
         }
 
