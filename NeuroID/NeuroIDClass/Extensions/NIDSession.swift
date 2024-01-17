@@ -111,6 +111,8 @@ public extension NeuroID {
     internal static func clearSessionVariables() {
         NeuroID.userID = nil
         NeuroID.registeredUserID = ""
+        CURRENT_ORIGIN = nil
+        CURRENT_ORIGIN_CODE = nil
     }
 
     static func startSession(_ sessionID: String? = nil) -> SessionStartResult {
