@@ -49,7 +49,7 @@ jobs:
       - name: Branch Checkout
         uses: actions/checkout@v3
         with:
-          ref: master
+          ref: main
           fetch-tags: true
 
       - name: Set up ruby env
