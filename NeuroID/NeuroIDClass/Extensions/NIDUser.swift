@@ -16,6 +16,15 @@ public extension NeuroID {
             let result = expression.matches(in: userId, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, userId.count))
             if result.count != 1 {
                 NIDLog.e(NIDError.invalidUserID.rawValue)
+                // If Validation fails send origin event
+                if (CURRENT_ORIGIN == nil)
+                {
+                    CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+                }
+                CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
+
+                sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
+                
                 return false
             }
         } catch {
@@ -24,8 +33,9 @@ public extension NeuroID {
             if (CURRENT_ORIGIN == nil)
             {
                 CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
-                CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
             }
+            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
+
             sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
             return false
         }
@@ -126,6 +136,10 @@ public extension NeuroID {
             if success {
                 NeuroID.registeredUserID = registeredUserID
             }
+            CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
+            sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: registeredUserID)
+            
             return success
         }
 

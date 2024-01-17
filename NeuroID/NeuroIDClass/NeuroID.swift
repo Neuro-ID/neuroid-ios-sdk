@@ -70,29 +70,31 @@ public enum NeuroID {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String) {
+    public static func configure(clientKey: String) -> Bool {
         if NeuroID.clientKey != nil {
             NIDLog.e("You already configured the SDK")
+            return false
         }
-
+        
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
-            return
+            return false
         }
-
+        
         if clientKey.contains("_live_") {
             environment = Constants.environmentLive.rawValue
         } else {
             environment = Constants.environmentTest.rawValue
         }
-
+        
         clearStoredSessionID()
-
+        
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
-
+        
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+        return true
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
@@ -128,12 +130,13 @@ public enum NeuroID {
         return true
     }
 
-    public static func stop() {
+    public static func stop() -> Bool {
         NIDLog.i("NeuroID Stopped")
         do {
             _ = try closeSession(skipStop: true)
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
+            return false
         }
 
         NeuroID.groupAndPOST()
@@ -141,6 +144,7 @@ public enum NeuroID {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+        return true
     }
 
     public static func isStopped() -> Bool {
