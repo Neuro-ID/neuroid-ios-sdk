@@ -65,6 +65,7 @@ public enum NeuroID {
     
     internal static var CURRENT_ORIGIN: String?
     internal static var CURRENT_ORIGIN_CODE: String?
+    internal static var callObserver: NIDCallStatusObserver?
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -94,6 +95,8 @@ public enum NeuroID {
         
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+        
+        callObserver = NIDCallStatusObserver()
         return true
     }
 

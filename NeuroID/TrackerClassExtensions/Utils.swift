@@ -213,6 +213,22 @@ internal enum UtilFunctions {
 
         // URL capture?
     }
+    
+    static func captureCallStatusEvent(
+        eventType: NIDEventName,
+        status: String
+    ) {
+        let event = NIDEvent(
+            type: eventType,
+            tg: [
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(status),
+            ]
+        )
+
+        event.tgs = status
+
+        NeuroID.saveEventToLocalDataStore(event)
+    }
 
     static func captureWindowLoadUnloadEvent(
         eventType: NIDEventName,

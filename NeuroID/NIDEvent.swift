@@ -82,6 +82,7 @@ public enum NIDEventName: String {
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
+    case callStatus = "CALL_STATUS"
 
     var etn: String? {
         switch self {
