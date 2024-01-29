@@ -21,6 +21,7 @@ public enum NeuroID {
 
     internal static var clientKey: String?
     internal static var siteID: String?
+    internal static var locationManager: LocationManager?
 
     internal static var clientID: String?
     internal static var userID: String?
@@ -94,6 +95,9 @@ public enum NeuroID {
         
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+
+
+        locationManager = LocationManager()
         return true
     }
 
