@@ -82,6 +82,7 @@ public enum NIDEventName: String {
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
+    case cadenceReadingAccel = "CADENCE_READING_ACCEL"
 
     var etn: String? {
         switch self {
@@ -409,6 +410,7 @@ public class NIDEvent: Codable {
         self.sw = sw
         self.metadata = metadata
     }
+
     /**
      SET_TARGET
      */
@@ -418,6 +420,7 @@ public class NIDEvent: Codable {
         self.key = key
         self.v = v
     }
+
     /**
      FOCUS
      BLUR
