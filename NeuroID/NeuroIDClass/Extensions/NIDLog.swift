@@ -180,6 +180,9 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
         case NIDEventName.advancedDevice.rawValue:
             contextString = "rid=\(mutableEvent.rid ?? "") c=\(mutableEvent.c ?? false)"
         case NIDEventName.callStatus.rawValue: contextString = "cs=\(mutableEvent.cs ?? false)"
+        case NIDEventName.mobileMetadataIOS.rawValue:
+            contextString = "latong=\(mutableEvent.metadata?.gpsCoordinates.latitude ?? -1), \(mutableEvent.metadata?.gpsCoordinates.longitude ?? -1)"
+
         default:
             contextString = ""
     }
