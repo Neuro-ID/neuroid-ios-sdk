@@ -21,6 +21,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -188,6 +189,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -289,6 +291,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -405,6 +408,7 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -537,6 +541,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -589,6 +594,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -665,6 +671,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 

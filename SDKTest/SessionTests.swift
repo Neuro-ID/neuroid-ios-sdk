@@ -12,6 +12,7 @@ class SessionTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
         NeuroID.clearStoredSessionID()
         let _ = NeuroID.start()

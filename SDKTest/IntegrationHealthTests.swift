@@ -16,6 +16,7 @@ class IntegrationHealthTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
         NeuroID.setEnvironmentProduction(false)
     }
