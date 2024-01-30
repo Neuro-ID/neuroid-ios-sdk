@@ -149,6 +149,9 @@ public enum NeuroID {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+        
+        //  stop listening to changes in call status
+        NeuroID.callObserver?.stopListeningToCallStatus()
         return true
     }
 

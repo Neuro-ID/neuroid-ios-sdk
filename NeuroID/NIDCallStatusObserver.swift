@@ -33,4 +33,8 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
             NIDLog.d("Incoming Call observed")
         }
     }
+    
+    func stopListeningToCallStatus(){
+        self.callObserver.setDelegate(nil, queue: nil)
+    }
 }

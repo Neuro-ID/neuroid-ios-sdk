@@ -186,6 +186,9 @@ public extension NeuroID {
         pauseCollection()
 
         clearSessionVariables()
+        
+        // Stop listening to changes in call status
+        NeuroID.callObserver?.stopListeningToCallStatus()
 
         return true
     }
