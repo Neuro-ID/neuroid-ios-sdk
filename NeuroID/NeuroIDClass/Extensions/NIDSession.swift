@@ -125,9 +125,9 @@ public extension NeuroID {
         if NeuroID.userID != nil || NeuroID.isSDKStarted {
             _ = stopSession()
         }
-        
+
         // If sessionID is nil, set origin as NID here
-        if (sessionID == nil){
+        if sessionID == nil {
             NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
             NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
         }
@@ -176,6 +176,7 @@ public extension NeuroID {
         let workItem = NeuroID.createCollectionWorkItem()
         NeuroID.sendCollectionWorkItem = workItem
         initCollectionTimer()
+        initGyroAccelCollectionTimer()
     }
 
     static func stopSession() -> Bool {

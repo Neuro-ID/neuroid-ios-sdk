@@ -50,6 +50,39 @@ internal extension NeuroID {
         return workItem
     }
 
+    static func initGyroAccelCollectionTimer() {
+        if let workItem = NeuroID.sendGyroAccelCollectionWorkItem {
+            // Send up the first payload, and then setup a repeating timer
+            DispatchQueue
+                .global(qos: .utility)
+                .asyncAfter(
+                    deadline: .now() + GYRO_SAMPLE_INTERVAL, // 200 ms
+                    execute: workItem
+                )
+        }
+    }
+
+    static func createGyroAccelCollectionWorkItem() -> DispatchWorkItem {
+        let workItem = DispatchWorkItem {
+            guard !(NeuroID.sendGyroAccelCollectionWorkItem?.isCancelled ?? false) else {
+                return
+            }
+
+            if NeuroID.captureGyroCadence && !NeuroID.isStopped() {
+                let nidEvent = NIDEvent(type: .cadenceReadingAccel)
+                nidEvent.attrs = [
+                    Attrs(n: "interval", v: "\(1000 * GYRO_SAMPLE_INTERVAL)ms"),
+                ]
+
+                NeuroID.saveEventToLocalDataStore(nidEvent)
+
+                self.initGyroAccelCollectionTimer()
+            }
+        }
+
+        return workItem
+    }
+
     static func send() {
         DispatchQueue.global(qos: .utility).async {
             if !NeuroID.isStopped() {

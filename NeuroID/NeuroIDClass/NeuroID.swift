@@ -18,6 +18,7 @@ import WebKit
 
 public enum NeuroID {
     internal static let SEND_INTERVAL: Double = 5
+    internal static let GYRO_SAMPLE_INTERVAL: Double = 0.2
 
     internal static var clientKey: String?
     internal static var siteID: String?
@@ -52,6 +53,9 @@ public enum NeuroID {
 
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
+    internal static var captureGyroCadence = true
+    internal static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
+
     internal static var observingInputs = false
     internal static var observingKeyboard = false
     internal static var didSwizzle: Bool = false
@@ -63,10 +67,12 @@ public enum NeuroID {
 
     internal static var isRN: Bool = false
     internal static var rnOptions: [RNConfigOptions: Any] = [:]
-    
+
     internal static var CURRENT_ORIGIN: String?
     internal static var CURRENT_ORIGIN_CODE: String?
+
     internal static var callObserver: NIDCallStatusObserver?
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -77,28 +83,32 @@ public enum NeuroID {
             NIDLog.e("You already configured the SDK")
             return false
         }
-        
+
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
             return false
         }
-        
+
         if clientKey.contains("_live_") {
             environment = Constants.environmentLive.rawValue
         } else {
             environment = Constants.environmentTest.rawValue
         }
-        
+
         clearStoredSessionID()
-        
+
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
-        
+
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
 
         callObserver = NIDCallStatusObserver()
+
         locationManager = LocationManager()
+
+        // begin gyro/accel sample rate
+        sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
         return true
     }
 
@@ -131,6 +141,8 @@ public enum NeuroID {
         queuedEvents.forEach { event in
             DataStore.insertEvent(screen: "", event: event)
         }
+
+        initGyroAccelCollectionTimer()
 
         return true
     }
