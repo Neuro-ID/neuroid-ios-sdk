@@ -10,16 +10,16 @@ import CallKit
 
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
-        override init() {
-            super.init()
-            self.callObserver.setDelegate(self, queue: nil)
-        }
-
+    override init() {
+        super.init()
+        self.callObserver.setDelegate(self, queue: nil)
+    }
+    
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasEnded{
             UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: false)
             NIDLog.d("Call has ended")
-        }else if call.isOutgoing {
+        } else if call.isOutgoing {
             UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: true)
             NIDLog.d("Ongoing call observed")
         } else if call.hasConnected {
