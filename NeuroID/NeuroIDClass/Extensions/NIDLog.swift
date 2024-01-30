@@ -179,7 +179,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "m=\(mutableEvent.m ?? "")"
         case NIDEventName.advancedDevice.rawValue:
             contextString = "rid=\(mutableEvent.rid ?? "") c=\(mutableEvent.c ?? false)"
-
+        case NIDEventName.callStatus.rawValue: contextString = "cs=\(mutableEvent.cs ?? false)"
         default:
             contextString = ""
     }

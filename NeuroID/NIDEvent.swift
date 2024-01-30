@@ -295,7 +295,7 @@ public class NIDEvent: Codable {
     var sw: CGFloat?
     var rts: String?
     var c: Bool?
-
+    var cs: Bool? // call in progress status
     var m: String? // part of LOG events
     var level: String? // part of LOG events
 

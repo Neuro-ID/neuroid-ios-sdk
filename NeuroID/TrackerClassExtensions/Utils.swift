@@ -216,17 +216,10 @@ internal enum UtilFunctions {
     
     static func captureCallStatusEvent(
         eventType: NIDEventName,
-        status: String
+        status: Bool
     ) {
-        let event = NIDEvent(
-            type: eventType,
-            tg: [
-                "\(Constants.tgsKey.rawValue)": TargetValue.string(status),
-            ]
-        )
-
-        event.tgs = status
-
+        let event = NIDEvent( type: eventType )
+        event.cs = status
         NeuroID.saveEventToLocalDataStore(event)
     }
 

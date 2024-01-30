@@ -70,11 +70,3 @@ internal enum SessionOrigin: String {
     case NID_ORIGIN_CODE_NID = "200"
     case NID_ORIGIN_CODE_CUSTOMER = "201"
 }
-
-internal enum CallStatus: String {
-    case CONNECTED = "connected"
-    case ON_HOLD = "on hold"
-    case OUTGOING = "outgoing"
-    case ENDED = "ended"
-    case OTHER = "other"
-}

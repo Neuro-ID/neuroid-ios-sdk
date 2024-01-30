@@ -17,22 +17,20 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
 
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasEnded{
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: CallStatus.ENDED.rawValue)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: false)
             NIDLog.d("Call has ended")
         }else if call.isOutgoing {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: CallStatus.OUTGOING.rawValue)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: true)
             NIDLog.d("Ongoing call observed")
         } else if call.hasConnected {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: CallStatus.CONNECTED.rawValue)
+            // Event not captured
             NIDLog.d("Call connected")
         } else if call.isOnHold {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: CallStatus.ON_HOLD.rawValue)
+            // Event not captured
             NIDLog.d("Call on hold")
         } else {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: CallStatus.OTHER.rawValue)
-            NIDLog.d("Call status unrecognized")
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: true)
+            NIDLog.d("Incoming Call observed")
         }
     }
-
-
 }
