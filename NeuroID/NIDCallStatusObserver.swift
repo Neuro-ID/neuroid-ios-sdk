@@ -17,10 +17,10 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasEnded{
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: false)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: false)
             NIDLog.d("Call has ended")
         } else if call.isOutgoing {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: true)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: true)
             NIDLog.d("Ongoing call observed")
         } else if call.hasConnected {
             // Event not captured
@@ -29,7 +29,7 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
             // Event not captured
             NIDLog.d("Call on hold")
         } else {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callStatus, status: true)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: true)
             NIDLog.d("Incoming Call observed")
         }
     }
