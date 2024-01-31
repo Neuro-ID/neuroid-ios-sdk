@@ -9,15 +9,19 @@ import Foundation
 import UIKit
 
 public extension NeuroID {
-    static func excludeViewByTestID(excludedView: String) {
+    static func excludeViewByTestID(_ excludedView: String) {
         NIDLog.i("Exclude view called - \(excludedView)")
         NeuroID.excludedViewsTestIDs.append(excludedView)
+    }
+
+    static func excludeViewByTestID(excludedView: String) {
+        NeuroID.excludeViewByTestID(excludedView)
     }
 
     /** Public API for manually registering a target. This should only be used when automatic fails. */
     static func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
-        let guid = ParamsCreator.genId()
+        let guid = ParamsCreator.generateID()
         NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view: \(screenName)")
         NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
         let childViews = view.subviewsRecursive()
@@ -29,7 +33,7 @@ public extension NeuroID {
 
     /** React Native API for manual registration */
     static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
-        let guid = ParamsCreator.genId()
+        let guid = ParamsCreator.generateID()
         let fullViewString = UtilFunctions.getFullViewlURLPath(currView: nil, screenName: screenName)
 
         let nidEvent = NIDEvent(type: .registerTarget)

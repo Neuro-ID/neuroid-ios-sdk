@@ -8,22 +8,81 @@
 import Alamofire
 import Foundation
 
-public extension NeuroID {
-    internal static func initTimer() {
-        // Send up the first payload, and then setup a repeating timer
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + SEND_INTERVAL) {
-            self.send()
-            self.initTimer()
-        }
-    }
-
+internal extension NeuroID {
     static func getCollectionEndpointURL() -> String {
         return "https://receiver.neuroid.cloud/c"
     }
 
-    /**
-     Publically exposed just for testing. This should not be any reason to call this directly.
-     */
+    static func initTimer() {
+        // Send up the first payload, and then setup a repeating timer
+        DispatchQueue
+            .global(qos: .utility)
+            .asyncAfter(deadline: .now() + SEND_INTERVAL) {
+                self.send()
+                self.initTimer()
+            }
+    }
+
+    static func initCollectionTimer() {
+        if let workItem = NeuroID.sendCollectionWorkItem {
+            // Send up the first payload, and then setup a repeating timer
+            DispatchQueue
+                .global(qos: .utility)
+                .asyncAfter(
+                    deadline: .now() + SEND_INTERVAL,
+                    execute: workItem
+                )
+        }
+    }
+
+    static func createCollectionWorkItem() -> DispatchWorkItem {
+        let workItem = DispatchWorkItem {
+            guard !(NeuroID.sendCollectionWorkItem?.isCancelled ?? false) else {
+                return
+            }
+
+            if !NeuroID.isStopped() {
+                self.send()
+                self.initCollectionTimer()
+            }
+        }
+
+        return workItem
+    }
+
+    static func initGyroAccelCollectionTimer() {
+        if let workItem = NeuroID.sendGyroAccelCollectionWorkItem {
+            // Send up the first payload, and then setup a repeating timer
+            DispatchQueue
+                .global(qos: .utility)
+                .asyncAfter(
+                    deadline: .now() + GYRO_SAMPLE_INTERVAL, // 200 ms
+                    execute: workItem
+                )
+        }
+    }
+
+    static func createGyroAccelCollectionWorkItem() -> DispatchWorkItem {
+        let workItem = DispatchWorkItem {
+            guard !(NeuroID.sendGyroAccelCollectionWorkItem?.isCancelled ?? false) else {
+                return
+            }
+
+            if NeuroID.captureGyroCadence && !NeuroID.isStopped() {
+                let nidEvent = NIDEvent(type: .cadenceReadingAccel)
+                nidEvent.attrs = [
+                    Attrs(n: "interval", v: "\(1000 * GYRO_SAMPLE_INTERVAL)ms"),
+                ]
+
+                NeuroID.saveEventToLocalDataStore(nidEvent)
+
+                self.initGyroAccelCollectionTimer()
+            }
+        }
+
+        return workItem
+    }
+
     static func send() {
         DispatchQueue.global(qos: .utility).async {
             if !NeuroID.isStopped() {
@@ -100,21 +159,24 @@ public extension NeuroID {
         }
 
         let tabId = ParamsCreator.getTabId()
+        let userID = NeuroID.getUserID()
+        let registeredUserID = NeuroID.getRegisteredUserID()
 
-        let randomString = ParamsCreator.genId()
+        let randomString = ParamsCreator.generateID()
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
 
         let neuroHTTPRequest = NeuroHTTPRequest(
-            clientId: NeuroID.getClientID(),
+            clientID: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
             sdkVersion: NeuroID.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
-            responseId: ParamsCreator.generateUniqueHexId(),
-            siteId: NeuroID.siteId ?? "",
-            userId: NeuroID.getUserID(),
+            responseID: ParamsCreator.generateUniqueHexID(),
+            siteID: NeuroID.siteID ?? "",
+            userID: userID == "" ? nil : userID,
+            registeredUserID: registeredUserID == "" ? nil : registeredUserID,
             jsonEvents: events,
-            tabId: "\(tabId)",
-            pageId: "\(pageid)",
+            tabID: "\(tabId)",
+            pageID: "\(pageid)",
             url: "ios://\(NeuroID.getScreenName() ?? "")"
         )
 

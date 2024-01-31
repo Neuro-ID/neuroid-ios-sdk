@@ -23,10 +23,11 @@ class DataStoreTests: XCTestCase {
     let excludeId = "exclude_test_id"
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         NeuroID.configure(clientKey: clientKey)
         NeuroID.stop()
-        try? NeuroID.start()
+        let _ = NeuroID.start()
         let _ = DataStore.getAndRemoveAllEvents()
         let _ = DataStore.getAndRemoveAllQueuedEvents()
     }
@@ -59,7 +60,7 @@ class DataStoreTests: XCTestCase {
     }
 
     func test_insertEvent_stoppedSDK() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         DataStore.insertEvent(screen: screenName, event: nidEvent)
         assert(DataStore.events.count == 0)

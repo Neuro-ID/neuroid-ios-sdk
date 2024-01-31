@@ -18,12 +18,15 @@ import WebKit
 
 public enum NeuroID {
     internal static let SEND_INTERVAL: Double = 5
+    internal static let GYRO_SAMPLE_INTERVAL: Double = 0.2
 
     internal static var clientKey: String?
-    internal static var siteId: String?
+    internal static var siteID: String?
+    internal static var locationManager: LocationManager?
 
-    internal static var clientId: String?
-    internal static var userId: String?
+    internal static var clientID: String?
+    internal static var userID: String?
+    internal static var registeredUserID: String = ""
 
     internal static var trackers = [String: NeuroIDTracker]()
 
@@ -48,6 +51,11 @@ public enum NeuroID {
         set {}
     }
 
+    internal static var sendCollectionWorkItem: DispatchWorkItem?
+
+    internal static var captureGyroCadence = true
+    internal static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
+
     internal static var observingInputs = false
     internal static var observingKeyboard = false
     internal static var didSwizzle: Bool = false
@@ -60,19 +68,23 @@ public enum NeuroID {
     internal static var isRN: Bool = false
     internal static var rnOptions: [RNConfigOptions: Any] = [:]
 
+    internal static var CURRENT_ORIGIN: String?
+    internal static var CURRENT_ORIGIN_CODE: String?
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String) {
+    public static func configure(clientKey: String) -> Bool {
         if NeuroID.clientKey != nil {
             NIDLog.e("You already configured the SDK")
+            return false
         }
 
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
-            return
+            return false
         }
 
         if clientKey.contains("_live_") {
@@ -81,21 +93,26 @@ public enum NeuroID {
             environment = Constants.environmentTest.rawValue
         }
 
-        // Call clear session here
-        clearSession()
+        clearStoredSessionID()
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id on configure
-        setUserDefaultKey(Constants.storageTabIdKey.rawValue, value: nil)
+        setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+
+        locationManager = LocationManager()
+
+        // begin gyro/accel sample rate
+        sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+        return true
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
-    public static func start() throws {
+    public static func start() -> Bool {
         if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
             NIDLog.e("Missing Client Key - please call configure prior to calling start")
-            throw NIDError.missingClientKey
+            return false
         }
 
         NeuroID._isSDKStarted = true
@@ -120,14 +137,19 @@ public enum NeuroID {
         queuedEvents.forEach { event in
             DataStore.insertEvent(screen: "", event: event)
         }
+
+        initGyroAccelCollectionTimer()
+
+        return true
     }
 
-    public static func stop() {
+    public static func stop() -> Bool {
         NIDLog.i("NeuroID Stopped")
         do {
             _ = try closeSession(skipStop: true)
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
+            return false
         }
 
         NeuroID.groupAndPOST()
@@ -135,13 +157,14 @@ public enum NeuroID {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+        return true
     }
 
     public static func isStopped() -> Bool {
         return _isSDKStarted != true
     }
 
-    public static func forceStart() {
+    public static func registerPageTargets() {
         if let viewController = UIApplication.shared.keyWindow?.rootViewController {
             DispatchQueue.main.async {
                 viewController.registerPageTargets()
@@ -149,7 +172,7 @@ public enum NeuroID {
         }
     }
 
-    private static func swizzle() {
+    internal static func swizzle() {
         if didSwizzle {
             return
         }
@@ -165,7 +188,7 @@ public enum NeuroID {
         didSwizzle.toggle()
     }
 
-    public static func saveEventToLocalDataStore(_ event: NIDEvent) {
+    internal static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
     }
 

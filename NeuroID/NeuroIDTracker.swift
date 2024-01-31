@@ -25,7 +25,7 @@ public class NeuroIDTracker: NSObject {
     }
     
     public func captureEvent(event: NIDEvent) {
-        let screenName = screen ?? ParamsCreator.genId()
+        let screenName = screen ?? ParamsCreator.generateID()
         let newEvent = event
         // Make sure we have a valid url set
         newEvent.url = NeuroID.getScreenName()
@@ -207,7 +207,7 @@ public class NeuroIDTracker: NSObject {
     static func registerViewIfNotRegistered(view: UIView) -> Bool {
         if !NeuroID.registeredTargets.contains(view.id) {
             NeuroID.registeredTargets.append(view.id)
-            let guid = ParamsCreator.genId()
+            let guid = ParamsCreator.generateID()
             NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.nidClassName, guid: guid, rts: true)
             return true
         }

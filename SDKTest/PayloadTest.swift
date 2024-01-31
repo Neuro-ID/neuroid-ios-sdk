@@ -32,10 +32,23 @@ class PayloadTest: XCTestCase {
         }
     }
 
-    func testPaylaodSchema() {
+    func testPayloadSchema() {
         do {
             let entity = NIDEvent(type: .radioChange, tg: ["url": TargetValue.string("clay")], view: UIView())
-            let neuroHTTPRequest = NeuroHTTPRequest(clientId: "1", environment: NeuroID.getEnvironment(), sdkVersion: "2.0.0", pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: "2", siteId: "", userId: "", jsonEvents: [entity], tabId: "", pageId: "", url: "")
+            let neuroHTTPRequest = NeuroHTTPRequest(
+                clientID: "1",
+                environment: NeuroID.getEnvironment(),
+                sdkVersion: "2.0.0",
+                pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
+                responseID: "2",
+                siteID: "",
+                userID: "",
+                registeredUserID: "",
+                jsonEvents: [entity],
+                tabID: "",
+                pageID: "",
+                url: ""
+            )
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(neuroHTTPRequest)
             let object = try JSONSerialization.jsonObject(with: data)
@@ -60,7 +73,20 @@ class PayloadTest: XCTestCase {
         do {
             let schema = try DSJSONSchema(data: data, baseURI: nil, referenceStorage: nil, specification: DSJSONSchemaSpecification.draft6(), options: nil)
             let entity = NIDEvent(type: .radioChange, tg: ["url": TargetValue.string("clay")], view: UIView())
-            let neuroHTTPRequest = NeuroHTTPRequest(clientId: "A0CDADAD-1BD3-4570-AA8E-AFF517EFC775", environment: NeuroID.getEnvironment(), sdkVersion: "2.0.0", pageTag: NeuroID.getScreenName() ?? "UNKNOWN", responseId: "D726B802", siteId: "", userId: "", jsonEvents: [entity], tabId: "", pageId: "", url: "")
+            let neuroHTTPRequest = NeuroHTTPRequest(
+                clientID: "A0CDADAD-1BD3-4570-AA8E-AFF517EFC775",
+                environment: NeuroID.getEnvironment(),
+                sdkVersion: "2.0.0",
+                pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
+                responseID: "D726B802",
+                siteID: "",
+                userID: "",
+                registeredUserID: "",
+                jsonEvents: [entity],
+                tabID: "",
+                pageID: "",
+                url: ""
+            )
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(neuroHTTPRequest)
             try schema.validateObject(with: data)

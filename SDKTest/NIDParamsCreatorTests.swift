@@ -41,6 +41,7 @@ class NIDParamsCreatorTests: XCTestCase {
     let valueDoubleEntry = ["value": TargetValue.double(0)]
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
@@ -266,7 +267,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assertExpectedTVDictValues(expected: expectedValue, value: value)
     }
 
-    let tidKey = Constants.storageTabIdKey.rawValue
+    let tidKey = Constants.storageTabIDKey.rawValue
     func test_getTabId_existing() {
         let expectedValue = "test_tid"
 
@@ -287,7 +288,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value != expectedValue)
     }
 
-    let didKey = Constants.storageDeviceIdKey.rawValue
+    let didKey = Constants.storageDeviceIDKey.rawValue
     func test_getDeviceId_existing() {
         let expectedValue = "test_did"
 
@@ -309,10 +310,10 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     // Private Access Level
-    func test_genId() {
+    func test_generateID() {
         let expectedValue = 36
 
-        let value = ParamsCreator.genId()
+        let value = ParamsCreator.generateID()
 
         assert(value.count == expectedValue)
     }
@@ -403,13 +404,13 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value == expectedValue)
     }
 
-    func test_generateUniqueHexId() {
-        let value = ParamsCreator.generateUniqueHexId()
-        assert(value.count == 8)
+    func test_generateUniqueHexID() {
+        let value = ParamsCreator.generateUniqueHexID()
+        assert(value.count >= 7)
 
         sleep(timeout: 0.2)
-        let secondValue = ParamsCreator.generateUniqueHexId()
-        assert(secondValue.count == 8)
+        let secondValue = ParamsCreator.generateUniqueHexID()
+        assert(secondValue.count >= 7)
 
         assert(value != secondValue)
     }

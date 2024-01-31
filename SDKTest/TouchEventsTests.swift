@@ -12,11 +12,12 @@ class TouchEventTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
     }
 
     override func tearDown() {

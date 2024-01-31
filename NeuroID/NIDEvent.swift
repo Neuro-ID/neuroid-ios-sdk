@@ -5,6 +5,7 @@ internal enum NIDSessionEventName: String {
     case closeSession = "CLOSE_SESSION"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
+    case setRegisteredUserId = "REGISTERED_USER_ID"
     case setVariable = "SET_VARIABLE"
     case tag = "TAG"
     case setCheckPoint = "SET_CHECKPOINT"
@@ -81,6 +82,7 @@ public enum NIDEventName: String {
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
+    case cadenceReadingAccel = "CADENCE_READING_ACCEL"
 
     var etn: String? {
         switch self {
@@ -119,27 +121,39 @@ public struct NeuroHTTPRequest: Codable {
     var pageTag: String
     var responseId: String
     var siteId: String
-    var userId: String
+    var userId: String?
+    var registeredUserId: String?
     var jsonEvents: [NIDEvent]
     var tabId: String
     var pageId: String
     var url: String
     var jsVersion: String = "5.0.0"
 
-    public init(clientId: String, environment: String, sdkVersion: String, pageTag: String,
-                responseId: String, siteId: String, userId: String, jsonEvents: [NIDEvent],
-                tabId: String, pageId: String, url: String)
-    {
-        self.clientId = clientId
+    public init(
+        clientID: String,
+        environment: String,
+        sdkVersion: String,
+        pageTag: String,
+        responseID: String,
+        siteID: String,
+        userID: String?,
+        registeredUserID: String?,
+        jsonEvents: [NIDEvent],
+        tabID: String,
+        pageID: String,
+        url: String
+    ) {
+        self.clientId = clientID
         self.environment = environment
         self.sdkVersion = sdkVersion
         self.pageTag = pageTag
-        self.responseId = responseId
-        self.siteId = siteId
-        self.userId = userId
+        self.responseId = responseID
+        self.siteId = siteID
+        self.userId = userID
+        self.registeredUserId = registeredUserID
         self.jsonEvents = jsonEvents
-        self.tabId = tabId
-        self.pageId = pageId
+        self.tabId = tabID
+        self.pageId = pageID
         self.url = url
     }
 }
@@ -348,29 +362,30 @@ public class NIDEvent: Codable {
        ts: Date.now(),
      */
 
-    init(session: NIDSessionEventName,
-         f: String? = nil,
-         sid: String? = nil,
-         lsid: String? = nil,
-         cid: String? = nil,
-         did: String? = nil,
-         loc: String? = nil,
-         ua: String? = nil,
-         tzo: Int? = nil,
-         lng: String? = nil,
-         p: String? = nil,
-         dnt: Bool? = nil,
-         tch: Bool? = nil,
-         pageTag: String? = nil,
-         ns: String? = nil,
-         jsv: String? = nil,
-         gyro: NIDSensorData? = nil,
-         accel: NIDSensorData? = nil,
-         rts: String? = nil,
-         sh: CGFloat? = nil,
-         sw: CGFloat? = nil,
-         metadata: NIDMetadata? = nil)
-    {
+    init(
+        session: NIDSessionEventName,
+        f: String? = nil,
+        sid: String? = nil,
+        lsid: String? = nil,
+        cid: String? = nil,
+        did: String? = nil,
+        loc: String? = nil,
+        ua: String? = nil,
+        tzo: Int? = nil,
+        lng: String? = nil,
+        p: String? = nil,
+        dnt: Bool? = nil,
+        tch: Bool? = nil,
+        pageTag: String? = nil,
+        ns: String? = nil,
+        jsv: String? = nil,
+        gyro: NIDSensorData? = nil,
+        accel: NIDSensorData? = nil,
+        rts: String? = nil,
+        sh: CGFloat? = nil,
+        sw: CGFloat? = nil,
+        metadata: NIDMetadata? = nil
+    ) {
         self.type = session.rawValue
         self.f = f
         self.sid = sid
@@ -394,6 +409,16 @@ public class NIDEvent: Codable {
         self.sh = sh
         self.sw = sw
         self.metadata = metadata
+    }
+
+    /**
+     SET_TARGET
+     */
+
+    init(sessionEvent: NIDSessionEventName, key: String, v: String) {
+        self.type = sessionEvent.rawValue
+        self.key = key
+        self.v = v
     }
 
     /**

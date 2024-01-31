@@ -13,6 +13,7 @@ class NIDEventTests: XCTestCase {
     let userId = "form_mobilesandbox"
     
     override func setUpWithError() throws {
+        NeuroID.captureGyroCadence = false
         NeuroID.configure(clientKey: clientKey)
     }
     
@@ -67,7 +68,7 @@ class NIDEventTests: XCTestCase {
     }
     
     func testFullPayload() {
-        try? NeuroID.start()
+        let _ = NeuroID.start()
         var tracker: NeuroIDTracker?
         /// Create a textfield
         lazy var textfield: UITextField = {
@@ -153,16 +154,17 @@ class NIDEventTests: XCTestCase {
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
         
         let neuroHTTPRequest = NeuroHTTPRequest(
-            clientId: NeuroID.getClientID(),
+            clientID: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
             sdkVersion: ParamsCreator.getSDKVersion(),
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
-            responseId: ParamsCreator.generateUniqueHexId(),
-            siteId: "_",
-            userId: NeuroID.getUserID(),
+            responseID: ParamsCreator.generateUniqueHexID(),
+            siteID: "_",
+            userID: NeuroID.getUserID(),
+            registeredUserID: NeuroID.getRegisteredUserID(),
             jsonEvents: events,
-            tabId: "\(tabId)",
-            pageId: "\(pageid)",
+            tabID: "\(tabId)",
+            pageID: "\(pageid)",
             url: "ios://\(NeuroID.getScreenName() ?? "")")
         /// Transform event into json
         ///
