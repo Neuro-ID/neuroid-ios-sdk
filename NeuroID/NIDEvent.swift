@@ -83,6 +83,7 @@ public enum NIDEventName: String {
 
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
     case cadenceReadingAccel = "CADENCE_READING_ACCEL"
+    case networkState = "NETWORK_STATE"
 
     var etn: String? {
         switch self {
@@ -298,6 +299,9 @@ public class NIDEvent: Codable {
 
     var m: String? // part of LOG events
     var level: String? // part of LOG events
+
+    var iswifi: Bool?
+    var isconnected: Bool?
 
     /** Register Target
        {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
@@ -532,6 +536,9 @@ public class NIDEvent: Codable {
         copy.sw = self.sw
         copy.rts = self.rts
         copy.c = self.c
+        copy.iswifi = self.iswifi
+        copy.isconnected = self.isconnected
+
         return copy
     }
 }

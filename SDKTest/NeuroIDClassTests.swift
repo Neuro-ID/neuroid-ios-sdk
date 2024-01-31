@@ -22,15 +22,15 @@ class NeuroIDClassTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -63,7 +63,8 @@ class NeuroIDClassTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        NeuroID.configure(clientKey: clientKey)
+        let configured = NeuroID.configure(clientKey: clientKey)
+        assert(configured)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
         assert(clientKeyValue == clientKey)
@@ -84,7 +85,8 @@ class NeuroIDClassTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        NeuroID.configure(clientKey: "invalid_key")
+        let configured = NeuroID.configure(clientKey: "invalid_key")
+        assert(configured == false)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
         assert(clientKeyValue == nil)
@@ -132,7 +134,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_start_success_queuedEvent() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
         let setUserIDRes = NeuroID.setUserID("test_uid")
 
         assert(setUserIDRes)
@@ -160,7 +162,8 @@ class NeuroIDClassTests: XCTestCase {
         NeuroID._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
 
-        NeuroID.stop()
+        let stopped = NeuroID.stop()
+        assert(stopped)
         assert(!NeuroID.isSDKStarted)
     }
 
@@ -190,15 +193,15 @@ class NIDRegistrationTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -292,15 +295,15 @@ class NIDSessionTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -378,7 +381,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     func test_closeSession_whenStopped() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
         clearOutDataStore()
 
         XCTAssertThrowsError(
@@ -404,16 +407,16 @@ class NIDNewSessionTests: XCTestCase {
 
     func clearOutDataStore() {
         DataStore.removeSentEvents()
-        let _ = DataStore.getAndRemoveAllQueuedEvents()
+        _ = DataStore.getAndRemoveAllQueuedEvents()
     }
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
         // Clear out the DataStore Events after each test
         clearOutDataStore()
     }
@@ -542,15 +545,15 @@ class NIDFormTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -595,15 +598,15 @@ class NIDScreenTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -672,15 +675,15 @@ class NIDUserTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -818,7 +821,7 @@ class NIDUserTests: XCTestCase {
     }
 
     func test_setUserID_pre_start() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
         UserDefaults.standard.removeObject(forKey: userIdKey)
 
         let expectedValue = "test_uid"
@@ -891,7 +894,7 @@ class NIDUserTests: XCTestCase {
     }
 
     func test_setRegisteredUserID_pre_start() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
         UserDefaults.standard.removeObject(forKey: userIdKey)
 
         let expectedValue = "test_ruid"
@@ -969,7 +972,7 @@ class NIDClientSiteIdTests: XCTestCase {
     }
 
     func test_getClientKey() {
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
         let expectedValue = clientKey
 
         let value = NeuroID.getClientKey()
@@ -1084,6 +1087,7 @@ class NIDLogTests: XCTestCase {
 class NIDRNTests: XCTestCase {
     override func setUp() {
         NeuroID.isRN = false
+        NeuroID.clientKey = nil
     }
 
     let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true]
@@ -1106,31 +1110,34 @@ class NIDRNTests: XCTestCase {
 
     func test_configure_usingReactNavigation_true() {
         assert(!NeuroID.isRN)
-        NeuroID.configure(
-            clientKey: "test",
+        let configured = NeuroID.configure(
+            clientKey: "key_test_XXXXXXXXXXX",
             rnOptions: configOptionsTrue
         )
 
+        assert(configured)
         assertConfigureTests(defaultValue: false, expectedValue: true)
     }
 
     func test_configure_usingReactNavigation_false() {
         assert(!NeuroID.isRN)
-        NeuroID.configure(
-            clientKey: "test",
+        let configured = NeuroID.configure(
+            clientKey: "key_test_XXXXXXXXXXX",
             rnOptions: configOptionsFalse
         )
 
+        assert(configured)
         assertConfigureTests(defaultValue: true, expectedValue: false)
     }
 
     func test_configure_invalid_key() {
         assert(!NeuroID.isRN)
-        NeuroID.configure(
-            clientKey: "test",
+        let configured = NeuroID.configure(
+            clientKey: "key_test_XXXXXXXXXXX",
             rnOptions: configOptionsInvalid
         )
 
+        assert(configured)
         assertConfigureTests(defaultValue: true, expectedValue: false)
     }
 
