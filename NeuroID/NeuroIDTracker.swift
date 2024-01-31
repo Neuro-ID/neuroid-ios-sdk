@@ -171,8 +171,17 @@ public class NeuroIDTracker: NSObject {
             case is UIScrollView:
                 let element = v as! UIScrollView
                 NIDLog.d(tag: "NeuroID FE:", "SCROLL View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
-                
+            case is UIControl:
+                NIDLog.d(v)
+            
             default:
+                if (id.contains("UIButton")) {
+                    NIDLog.d("button")
+                }
+                if (id.contains("back_home")) {
+                    NIDLog.d("back_home")
+                }
+                
                 if !found {
                     // Capture custom RN elements that have a testID set
                     if NeuroID.isRN && !id.contains("UNKNOWN_NO_ID_SET") {
