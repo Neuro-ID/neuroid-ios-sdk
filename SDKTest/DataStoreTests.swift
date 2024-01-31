@@ -25,15 +25,15 @@ class DataStoreTests: XCTestCase {
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
-        NeuroID.configure(clientKey: clientKey)
-        NeuroID.stop()
+        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.stop()
         let _ = NeuroID.start()
         let _ = DataStore.getAndRemoveAllEvents()
         let _ = DataStore.getAndRemoveAllQueuedEvents()
     }
 
     override func tearDownWithError() throws {
-        NeuroID.stop()
+        _ = NeuroID.stop()
     }
 
     func testEncodeAndDecode() throws {

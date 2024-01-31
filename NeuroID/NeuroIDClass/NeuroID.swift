@@ -22,7 +22,9 @@ public enum NeuroID {
 
     internal static var clientKey: String?
     internal static var siteID: String?
+
     internal static var locationManager: LocationManager?
+    internal static var networkMonitor: NetworkMonitoringService?
 
     internal static var clientID: String?
     internal static var userID: String?
@@ -102,6 +104,8 @@ public enum NeuroID {
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
 
         locationManager = LocationManager()
+        networkMonitor = NetworkMonitoringService()
+        networkMonitor?.startMonitoring()
 
         // begin gyro/accel sample rate
         sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()

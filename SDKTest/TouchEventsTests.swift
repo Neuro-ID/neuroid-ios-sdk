@@ -13,15 +13,15 @@ class TouchEventTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+          _ = NeuroID.start()
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         DataStore.removeSentEvents()

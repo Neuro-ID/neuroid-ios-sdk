@@ -14,7 +14,7 @@ class NIDEventTests: XCTestCase {
     
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
     
     override func setUp() {
