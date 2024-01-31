@@ -83,7 +83,7 @@ public enum NIDEventName: String {
 
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
 
-    case callStatus = "CALL_STATUS"
+    case callInProgress = "CALL_IN_PROGRESS"
   
     case cadenceReadingAccel = "CADENCE_READING_ACCEL"
 
@@ -299,7 +299,7 @@ public class NIDEvent: Codable {
     var sw: CGFloat?
     var rts: String?
     var c: Bool?
-    var cs: Bool? // call in progress status
+    var cp: Bool? // call in progress status
     var m: String? // part of LOG events
     var level: String? // part of LOG events
 
@@ -388,7 +388,8 @@ public class NIDEvent: Codable {
         rts: String? = nil,
         sh: CGFloat? = nil,
         sw: CGFloat? = nil,
-        metadata: NIDMetadata? = nil
+        metadata: NIDMetadata? = nil,
+        cp:Bool? = nil
     ) {
         self.type = session.rawValue
         self.f = f
@@ -413,6 +414,7 @@ public class NIDEvent: Codable {
         self.sh = sh
         self.sw = sw
         self.metadata = metadata
+        self.cp = cp
     }
 
     /**
@@ -536,6 +538,7 @@ public class NIDEvent: Codable {
         copy.sw = self.sw
         copy.rts = self.rts
         copy.c = self.c
+        copy.cp = self.cp
         return copy
     }
 }

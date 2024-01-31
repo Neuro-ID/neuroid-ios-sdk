@@ -179,7 +179,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "m=\(mutableEvent.m ?? "")"
         case NIDEventName.advancedDevice.rawValue:
             contextString = "rid=\(mutableEvent.rid ?? "") c=\(mutableEvent.c ?? false)"
-        case NIDEventName.callStatus.rawValue: contextString = "cs=\(mutableEvent.cs ?? false)"
+        case NIDEventName.callInProgress.rawValue: contextString = "cp=\(mutableEvent.cp ?? false)"
         case NIDEventName.mobileMetadataIOS.rawValue:
             contextString = "latong=\(mutableEvent.metadata?.gpsCoordinates.latitude ?? -1), \(mutableEvent.metadata?.gpsCoordinates.longitude ?? -1)"
         case NIDEventName.cadenceReadingAccel.rawValue:

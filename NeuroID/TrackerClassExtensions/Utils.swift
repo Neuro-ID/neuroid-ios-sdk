@@ -219,7 +219,7 @@ internal enum UtilFunctions {
         status: Bool
     ) {
         let event = NIDEvent( type: eventType )
-        event.cs = status
+        event.cp = status
         NeuroID.saveEventToLocalDataStore(event)
     }
 
