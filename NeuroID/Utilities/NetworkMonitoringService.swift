@@ -69,7 +69,7 @@ internal class NetworkMonitoringService {
             NeuroID.saveEventToLocalDataStore(nidEvent)
 
             if connectionStatus != self.isConnected {
-                self.isConnected = path.status == .satisfied
+                self.isConnected = connectionStatus
                 if !self.isConnected {
                     if !NeuroID.isSDKStarted {
                         return
