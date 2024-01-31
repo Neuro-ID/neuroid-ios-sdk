@@ -139,7 +139,7 @@ internal extension NeuroID {
             headers: headers
         ).validate().responseData { response in
             if response.error != nil, retryCount > 0, response.response?.statusCode != 403 {
-                NIDLog.i("NeruoID network Retrying...")
+                NIDLog.i("NeuroID network Retrying...")
                 retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
             } else { completion(response) }
         }
