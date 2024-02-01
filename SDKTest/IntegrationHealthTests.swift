@@ -17,19 +17,17 @@ class IntegrationHealthTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
-        NeuroID.setEnvironmentProduction(false)
+        _ = NeuroID.configure(clientKey: clientKey)
     }
 
     override func setUp() {
         let _ = NeuroID.start()
         NeuroID.debugIntegrationHealthEvents = []
-        NeuroID.setEnvironmentProduction(true)
         NeuroID.setVerifyIntegrationHealth(false)
     }
 
     override func tearDown() {
-        NeuroID.stop()
+        _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
@@ -37,7 +35,6 @@ class IntegrationHealthTests: XCTestCase {
 
     func allowIH() {
         NeuroID.setVerifyIntegrationHealth(true)
-        NeuroID.setEnvironmentProduction(false)
     }
 
     func generateTestEvent(_ target: UIView = UITextField(), _ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
@@ -79,32 +76,15 @@ class IntegrationHealthTests: XCTestCase {
 //    }
 
     func test_shouldDebugIntegrationHealth() {
-        // set NID to prod so should not run
         NeuroID.setVerifyIntegrationHealth(true)
-        NeuroID.setEnvironmentProduction(true)
         NeuroID.shouldDebugIntegrationHealth {
             assert(true)
         }
 
         // set NID verify Health to false
         NeuroID.setVerifyIntegrationHealth(false)
-        NeuroID.setEnvironmentProduction(false)
         NeuroID.shouldDebugIntegrationHealth {
             XCTFail("Ran when VIH was FALSE")
-        }
-
-        // set NID verify Health to false & env to PROD
-        NeuroID.setVerifyIntegrationHealth(false)
-        NeuroID.setEnvironmentProduction(true)
-        NeuroID.shouldDebugIntegrationHealth {
-            XCTFail("Ran when VIH was FALSE && ENV was PROD")
-        }
-
-        // set NID verify Health to true & env to TEST
-        NeuroID.setVerifyIntegrationHealth(true)
-        NeuroID.setEnvironmentProduction(false)
-        NeuroID.shouldDebugIntegrationHealth {
-            assert(true)
         }
     }
 

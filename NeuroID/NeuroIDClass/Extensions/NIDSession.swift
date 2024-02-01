@@ -163,8 +163,14 @@ public extension NeuroID {
     }
 
     static func pauseCollection() {
-        // flush all events immediately before pause
-        groupAndPOST()
+        pauseCollection(flushEventQueue: true)
+    }
+
+    internal static func pauseCollection(flushEventQueue: Bool = false) {
+        if flushEventQueue {
+            // flush all events immediately before pause
+            groupAndPOST()
+        }
 
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()

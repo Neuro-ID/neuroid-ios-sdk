@@ -12,8 +12,13 @@ public extension NeuroID {
         isRN = true
     }
 
-    static func configure(clientKey: String, rnOptions: [String: Any]) {
-        configure(clientKey: clientKey)
+    static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
+        let configured = configure(clientKey: clientKey)
+
+        if !configured {
+            return false
+        }
+
         setIsRN()
 
         // Extract RN Options and put them in NeuroID Class Dict to be referenced
@@ -23,6 +28,8 @@ public extension NeuroID {
         )
 
         self.rnOptions[.usingReactNavigation] = usingReactNavigation
+
+        return true
     }
 
     internal static func getOptionValueBool(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> Bool {

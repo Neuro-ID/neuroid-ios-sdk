@@ -13,9 +13,9 @@ class SessionTests: XCTestCase {
 
     override func setUpWithError() throws {
         NeuroID.captureGyroCadence = false
-        NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.clearStoredSessionID()
-        let _ = NeuroID.start()
+          _ = NeuroID.start()
         DataStore.removeSentEvents()
         UserDefaults.standard.removeObject(forKey: Constants.storageSessionIDKey.rawValue)
     }
