@@ -70,3 +70,8 @@ internal enum SessionOrigin: String {
     case NID_ORIGIN_CODE_NID = "200"
     case NID_ORIGIN_CODE_CUSTOMER = "201"
 }
+internal enum CallInProgress: String {
+    case ACTIVE = "true"
+    case INACTIVE = "false"
+    case UNAUTHORIZED = "unauthorized"
+}

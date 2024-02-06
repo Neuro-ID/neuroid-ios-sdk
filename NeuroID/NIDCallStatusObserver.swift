@@ -10,17 +10,19 @@ import CallKit
 
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
+    private var isRegistered = false
     override init() {
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
+        isRegistered = true
     }
     
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         if call.hasEnded{
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: false)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue)
             NIDLog.d("Call has ended")
         } else if call.isOutgoing {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: true)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue)
             NIDLog.d("Ongoing call observed")
         } else if call.hasConnected {
             // Event not captured
@@ -29,12 +31,20 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
             // Event not captured
             NIDLog.d("Call on hold")
         } else {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: true)
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue)
             NIDLog.d("Incoming Call observed")
         }
     }
     
+    func startListeningToCallStatus(){
+        if(!isRegistered){
+            self.callObserver.setDelegate(self, queue: nil)
+        }
+    }
+    
     func stopListeningToCallStatus(){
-        self.callObserver.setDelegate(nil, queue: nil)
+        if(isRegistered){
+            self.callObserver.setDelegate(nil, queue: nil)
+        }
     }
 }

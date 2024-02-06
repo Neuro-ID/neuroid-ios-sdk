@@ -300,7 +300,7 @@ public class NIDEvent: Codable {
     var sw: CGFloat?
     var rts: String?
     var c: Bool?
-    var cp: Bool? // call in progress status
+    var cp: String? // call in progress status
     var m: String? // part of LOG events
     var level: String? // part of LOG events
 
@@ -393,7 +393,7 @@ public class NIDEvent: Codable {
         sh: CGFloat? = nil,
         sw: CGFloat? = nil,
         metadata: NIDMetadata? = nil,
-        cp:Bool? = nil
+        cp:String? = nil
     ) {
         self.type = session.rawValue
         self.f = f

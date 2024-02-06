@@ -216,7 +216,7 @@ internal enum UtilFunctions {
     
     static func captureCallStatusEvent(
         eventType: NIDEventName,
-        status: Bool
+        status: String
     ) {
         let event = NIDEvent( type: eventType )
         event.cp = status

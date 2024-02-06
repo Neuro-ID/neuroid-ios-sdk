@@ -123,6 +123,8 @@ public enum NeuroID {
             return false
         }
 
+        NeuroID.callObserver?.startListeningToCallStatus()
+        
         NeuroID._isSDKStarted = true
 
         NeuroID.startIntegrationHealthCheck()

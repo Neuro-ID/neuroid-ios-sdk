@@ -138,6 +138,9 @@ public extension NeuroID {
         }
 
         NeuroID._isSDKStarted = true
+        
+        NeuroID.callObserver?.startListeningToCallStatus()
+        
         startIntegrationHealthCheck()
 
         createSession()
