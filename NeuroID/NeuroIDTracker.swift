@@ -13,6 +13,7 @@ public class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
+    
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
     public init(screen: String, controller: UIViewController?) {
@@ -24,7 +25,15 @@ public class NeuroIDTracker: NSObject {
         nidClassName = controller?.nidClassName
     }
     
+    
     public func captureEvent(event: NIDEvent) {
+        if (NeuroID.isLowMemory()){
+            if !NeuroID.isStopped() {
+                DataStore.insertCleanedEvent(event: NIDEvent(type: NIDEventName.lowMemory), storeType: "event")
+                // Try to send the events, send() will then stop the SDK to prevent further memory allocations
+                NeuroID.send()
+            }
+        }
         let screenName = screen ?? ParamsCreator.generateID()
         let newEvent = event
         // Make sure we have a valid url set

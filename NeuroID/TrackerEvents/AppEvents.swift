@@ -21,6 +21,9 @@ internal extension NeuroIDTracker {
 
             NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appLowMemoryWarning), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        
     }
 
     @objc func appMovedToBackground() {
@@ -29,5 +32,10 @@ internal extension NeuroIDTracker {
 
     @objc func appMovedToForeground() {
         captureEvent(event: NIDEvent(type: NIDEventName.windowFocus))
+    }
+    
+    @objc func appLowMemoryWarning() {
+        setLowMemory(true)
+        captureEvent(event: NIDEvent(type: NIDEventName.lowMemory))
     }
 }
