@@ -3,6 +3,7 @@ import Foundation
 public enum DataStore {
     static var _events = [NIDEvent]()
     private static let lock = NSLock()
+    private static let max_event_size = 2000
 
     static var events: [NIDEvent] {
         get { lock.withCriticalSection { _events } }
@@ -64,11 +65,22 @@ public enum DataStore {
 
     static func insertCleanedEvent(event: NIDEvent, storeType: String) {
         if storeType == "queue" {
+            // If queue has more than 2000 event and  send a queue full event and return
+            if (DataStore.queuedEvents.count >= 2000 && DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
+                var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
+                DataStore.queuedEvents.append(fullEvent)
+                return
+            }
             NIDLog.d("Store Queued Event: \(event.type)")
             DispatchQueue.global(qos: .utility).sync {
                 DataStore.queuedEvents.append(event)
             }
         } else {
+            if (DataStore.events.count >= 2000 && DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
+                var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
+                DataStore.events.append(fullEvent)
+                return
+            }
             NeuroID.captureIntegrationHealthEvent(event.copy())
 
             NIDPrintEvent(event)
