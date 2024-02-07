@@ -64,25 +64,27 @@ public enum DataStore {
     }
 
     static func insertCleanedEvent(event: NIDEvent, storeType: String) {
-        if storeType == "queue" {
-            // If queue has more than 2000 events, send a queue full event and return
-            if (DataStore.queuedEvents.count >= 2000 && DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
+    
+        // If queue has more than 2000 events, send a queue full event and return
+        if (DataStore.queuedEvents.count >= 2000 || DataStore.events.count >= 20000) {
+            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
                 var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
-                DataStore.queuedEvents.append(fullEvent)
-                return
+                if storeType == "queue" {
+                    DataStore.queuedEvents.append(fullEvent)
+                } else {
+                    DataStore.events.append(fullEvent)
+                }
             }
+            return
+        }
+        
+        if storeType == "queue" {
             NIDLog.d("Store Queued Event: \(event.type)")
             DispatchQueue.global(qos: .utility).sync {
                 DataStore.queuedEvents.append(event)
             }
         } else {
-            if (DataStore.events.count >= 2000 && DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
-                var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
-                DataStore.events.append(fullEvent)
-                return
-            }
             NeuroID.captureIntegrationHealthEvent(event.copy())
-
             NIDPrintEvent(event)
             DispatchQueue.global(qos: .utility).sync {
                 DataStore.events.append(event)

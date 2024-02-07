@@ -27,7 +27,7 @@ public class NeuroIDTracker: NSObject {
     
     
     public func captureEvent(event: NIDEvent) {
-        if (NeuroID.isLowMemory()){
+        if (NeuroID.lowMemory){
             if !NeuroID.isStopped() {
                 DataStore.insertCleanedEvent(event: NIDEvent(type: NIDEventName.lowMemory), storeType: "event")
                 // Try to send the events, send() will then stop the SDK to prevent further memory allocations

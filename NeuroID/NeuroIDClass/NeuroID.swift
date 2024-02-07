@@ -73,7 +73,7 @@ public enum NeuroID {
     internal static var CURRENT_ORIGIN: String?
     internal static var CURRENT_ORIGIN_CODE: String?
     
-    private static var lowMemory: Bool = false
+    internal static var lowMemory: Bool = false
 
 
     // MARK: - Setup
@@ -203,16 +203,6 @@ public enum NeuroID {
         DataStore.insertQueuedEvent(screen: event.type, event: event)
     }
     
-    /**
-     If app is low memory, keep track of this state and stop NeuroID
-     */
-    internal static func setLowMemory(_ mem: Bool) {
-        NeuroID.lowMemory = mem
-    }
-
-    internal static func isLowMemory() -> Bool {
-        return NeuroID.lowMemory
-    }
     
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format

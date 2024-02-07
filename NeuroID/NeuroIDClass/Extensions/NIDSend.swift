@@ -129,7 +129,7 @@ internal extension NeuroID {
             logError(category: "APICall", content: String(describing: error))
         })
         
-        if NeuroID.isLowMemory() {
+        if NeuroID.lowMemory {
             NeuroID.forcePauseCollection()
         }
     }

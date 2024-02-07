@@ -35,7 +35,7 @@ internal extension NeuroIDTracker {
     }
     
     @objc func appLowMemoryWarning() {
-        setLowMemory(true)
+        NeuroID.lowMemory = true
         captureEvent(event: NIDEvent(type: NIDEventName.lowMemory))
     }
 }
