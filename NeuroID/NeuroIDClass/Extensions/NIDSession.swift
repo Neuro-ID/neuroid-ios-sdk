@@ -165,10 +165,6 @@ public extension NeuroID {
     static func pauseCollection() {
         pauseCollection(flushEventQueue: true)
     }
-    
-    static func forcePauseCollection() {
-        pauseCollection(flushEventQueue: false)
-    }
 
     internal static func pauseCollection(flushEventQueue: Bool = false) {
         if flushEventQueue {

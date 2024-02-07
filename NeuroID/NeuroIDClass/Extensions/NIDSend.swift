@@ -128,10 +128,6 @@ internal extension NeuroID {
         }, onFailure: { error in
             logError(category: "APICall", content: String(describing: error))
         })
-        
-        if NeuroID.lowMemory {
-            NeuroID.forcePauseCollection()
-        }
     }
 
     static func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
