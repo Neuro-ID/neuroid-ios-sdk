@@ -66,7 +66,7 @@ public enum DataStore {
     static func insertCleanedEvent(event: NIDEvent, storeType: String) {
     
         // If queue has more than 2000 events, send a queue full event and return
-        if (DataStore.queuedEvents.count >= 2000 || DataStore.events.count >= 20000) {
+        if (DataStore.queuedEvents.count >= max_event_size || DataStore.events.count >= max_event_size) {
             if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
                 var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
                 if storeType == "queue" {
