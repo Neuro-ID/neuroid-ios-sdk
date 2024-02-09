@@ -29,6 +29,20 @@ public enum DataStore {
     }
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
+        
+        // If queue has more than 2000 events, send a queue full event and return
+        if (DataStore.queuedEvents.count >= max_event_size || DataStore.events.count >= max_event_size) {
+            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
+                var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
+                if storeType == "queue" {
+                    DataStore.queuedEvents.append(fullEvent)
+                } else {
+                    DataStore.events.append(fullEvent)
+                }
+            }
+            return
+        }
+        
         let mutableEvent = event
 
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
@@ -64,20 +78,6 @@ public enum DataStore {
     }
 
     static func insertCleanedEvent(event: NIDEvent, storeType: String) {
-    
-        // If queue has more than 2000 events, send a queue full event and return
-        if (DataStore.queuedEvents.count >= max_event_size || DataStore.events.count >= max_event_size) {
-            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
-                var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
-                if storeType == "queue" {
-                    DataStore.queuedEvents.append(fullEvent)
-                } else {
-                    DataStore.events.append(fullEvent)
-                }
-            }
-            return
-        }
-        
         if storeType == "queue" {
             NIDLog.d("Store Queued Event: \(event.type)")
             DispatchQueue.global(qos: .utility).sync {
