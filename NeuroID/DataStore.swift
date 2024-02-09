@@ -40,6 +40,7 @@ public enum DataStore {
                     DataStore.events.append(fullEvent)
                 }
             }
+            NIDLog.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
             return
         }
         
