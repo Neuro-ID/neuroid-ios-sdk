@@ -52,6 +52,8 @@ public enum NeuroID {
         get { _isSDKStarted }
         set {}
     }
+    
+    public static var isDevelopment: Bool = false
 
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
