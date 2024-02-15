@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 
 internal extension NeuroID {
-    static var networkService: NetworkServiceProtocol = NIDNetworkService.shared
+    static var networkService = NIDNetworkServiceImpl.init()
 
     static func getCollectionEndpointURL() -> String {
         if (NeuroID.isDevelopment) {
@@ -208,63 +208,3 @@ internal extension NeuroID {
         }
     }
 }
-
-protocol NetworkServiceProtocol {
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void)
-}
-
-
-class NIDNetworkService: NetworkServiceProtocol {
-    static let shared = NIDNetworkService()
-
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
-        AF.request(
-            url,
-            method: .post,
-            parameters: neuroHTTPRequest,
-            encoder: JSONParameterEncoder.default,
-            headers: headers
-        ).validate().responseData { response in
-            if response.error != nil, retryCount > 0, response.response?.statusCode != 403 {
-                NIDLog.i("NeuroID network Retrying...")
-                self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
-            } else { completion(response) }
-        }
-    }
-}
-
-class MockNetworkService: NetworkServiceProtocol {
-    var mockResponse: Data?
-    var mockError: Error?
-
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
-        // WIP Mock response logic
-    }
-    
-    func createMockAlamofireResponse(successful: Bool, responseData: Data?, statusCode: Int) -> AFDataResponse<Data> {
-        let url = URL(string: "https://mock-nid.com")!
-        let request = URLRequest(url: url)
-
-        let response = HTTPURLResponse(url: url, statusCode: successful ? 200 : 500, httpVersion: nil, headerFields: nil)
-
-        var result: Result<Data, AFError>
-            if successful {
-                result = .success(responseData ?? Data())
-            } else {
-                let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: statusCode))
-                result = .failure(error)
-            }
-
-        let mockResponse = AFDataResponse<Data>(
-            request: request,
-            response: response,
-            data: responseData,
-            metrics: nil,
-            serializationDuration: 0,
-            result: result
-        )
-
-        return mockResponse
-    }
-}
-
