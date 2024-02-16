@@ -12,9 +12,13 @@ import Alamofire
 class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
     var mockResponse: Data?
     var mockError: Error?
+    
 
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
-        // WIP Mock response logic
+        // Set collection URL to dev
+        NeuroID.collectionURL = "https://receiver.neuro-dev.com/c"
+        
+        print("NIDNetworkServiceTestImpl Mocked Request \(neuroHTTPRequest)")
     }
     
     func createMockAlamofireResponse(successful: Bool, responseData: Data?, statusCode: Int) -> AFDataResponse<Data> {

@@ -32,7 +32,7 @@ public enum DataStore {
         
         // If queue has more than 2000 events, send a queue full event and return
         if (DataStore.queuedEvents.count >= max_event_size || DataStore.events.count >= max_event_size) {
-            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue) {
+            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue && DataStore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue) {
                 var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
                 if storeType == "queue" {
                     DataStore.queuedEvents.append(fullEvent)

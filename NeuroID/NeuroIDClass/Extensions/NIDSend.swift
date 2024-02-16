@@ -9,13 +9,12 @@ import Alamofire
 import Foundation
 
 internal extension NeuroID {
-    static var networkService = NIDNetworkServiceImpl.init()
+    static var networkService:NIDNetworkServiceProtocol = NIDNetworkServiceImpl.init()
 
+    static var collectionURL = "https://receiver.neuroid.cloud/c"
+    
     static func getCollectionEndpointURL() -> String {
-        if (NeuroID.isDevelopment) {
-            return "https://receiver.neuro-dev.com/c"
-        }
-        return "https://receiver.neuroid.cloud/c"
+        return collectionURL
     }
 
     static func initTimer() {

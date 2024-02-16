@@ -10,8 +10,8 @@ import XCTest
 
 final class NIDPerformanceTests: XCTestCase {
 
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox";
+    
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
     }
@@ -22,7 +22,7 @@ final class NIDPerformanceTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.isDevelopment = true
+        NeuroID.networkService = NIDNetworkServiceTestImpl.init()
         _ = NeuroID.start()
     }
 
@@ -33,7 +33,7 @@ final class NIDPerformanceTests: XCTestCase {
         clearOutDataStore()
     }
 
-    func testQueueBufferFull() throws {
+    func testBufferFull() throws {
         
         for i in 1...3000 {
             let expectedValue = "myTestUserID"
@@ -44,15 +44,24 @@ final class NIDPerformanceTests: XCTestCase {
                 res
             }
         }
-        print("NID Queue Size: \(DataStore.queuedEvents.count)")
-        assert(DataStore.queuedEvents.count <= 2001)
+        print("NID Size: \(DataStore.events.count)")
+        assert(DataStore.events.count <= 2001)
+        assert(DataStore.events.last!.type == NIDEventName.bufferFull.rawValue)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    func testQueuedEvents() throws {
+        _ = NeuroID.stop()
+        for i in 1...3000 {
+            let expectedValue = "myTestUserID"
+            let result = NeuroID.setGenericUserID(
+                userId: expectedValue,
+                type: .registeredUserID
+            ) { res in
+                res
+            }
         }
+        print("NID Size: \(DataStore.queuedEvents.count)")
+        assert(DataStore.queuedEvents.count <= 2001)
+        assert(DataStore.queuedEvents.last!.type == NIDEventName.bufferFull.rawValue)
     }
-
 }

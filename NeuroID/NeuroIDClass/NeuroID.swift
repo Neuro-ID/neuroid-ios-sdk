@@ -53,8 +53,6 @@ public enum NeuroID {
         set {}
     }
     
-    public static var isDevelopment: Bool = false
-
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
     internal static var captureGyroCadence = true
