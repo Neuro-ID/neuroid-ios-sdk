@@ -74,6 +74,7 @@ public enum NeuroID {
     internal static var CURRENT_ORIGIN_CODE: String?
     
     internal static var lowMemory: Bool = false
+    internal static var didRecordLowMemory: Bool = false
 
 
     // MARK: - Setup

@@ -23,7 +23,7 @@ internal extension NeuroIDTracker {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(appLowMemoryWarning), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
-        
+                
     }
 
     @objc func appMovedToBackground() {

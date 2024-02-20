@@ -27,11 +27,6 @@ public class NeuroIDTracker: NSObject {
     
     
     public func captureEvent(event: NIDEvent) {
-        if (NeuroID.lowMemory){
-            if !NeuroID.isStopped() {
-                NeuroID.send()
-            }
-        }
         let screenName = screen ?? ParamsCreator.generateID()
         let newEvent = event
         // Make sure we have a valid url set
