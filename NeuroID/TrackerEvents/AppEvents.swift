@@ -35,7 +35,17 @@ internal extension NeuroIDTracker {
     }
     
     @objc func appLowMemoryWarning() {
-        NeuroID.lowMemory = true
+        // Reduce memory footprint
+        // Only clear this event queue the first time as it might be triggered a few times in a row (dropping our low mem event)
+        if (!NeuroID.lowMemory) {
+            DataStore.events = []
+            DataStore.queuedEvents = []
+            NeuroID.lowMemory = true
+        }
         captureEvent(event: NIDEvent(type: NIDEventName.lowMemory))
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            NeuroID.lowMemory = false
+        }
     }
 }
