@@ -29,8 +29,6 @@ final class NIDPerformanceTests: XCTestCase {
 
     override func tearDown() {
         _ = NeuroID.stop()
-        // Reset low mem flag
-        NeuroID.didRecordLowMemory = false
         NeuroID.lowMemory = false
         // Clear out the DataStore Events after each test
         clearOutDataStore()

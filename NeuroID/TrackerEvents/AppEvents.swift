@@ -40,9 +40,10 @@ internal extension NeuroIDTracker {
         if (!NeuroID.lowMemory) {
             DataStore.events = []
             DataStore.queuedEvents = []
+            captureEvent(event: NIDEvent(type: NIDEventName.lowMemory))
+            NeuroID.groupAndPOST()
             NeuroID.lowMemory = true
         }
-        captureEvent(event: NIDEvent(type: NIDEventName.lowMemory))
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             NeuroID.lowMemory = false

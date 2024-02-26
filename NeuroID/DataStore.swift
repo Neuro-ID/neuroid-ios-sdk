@@ -30,7 +30,7 @@ public enum DataStore {
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
         // If we hit a low memory event, drop events and early return.
-        if (NeuroID.lowMemory && NeuroID.didRecordLowMemory) {
+        if (NeuroID.lowMemory) {
             return
         }
         // If queue has more than 2000 events, send a queue full event and return
@@ -79,10 +79,6 @@ public enum DataStore {
         NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
         DataStore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
-        // Flag to indicate a memory event has been created
-        if (event.type == NIDEventName.lowMemory.rawValue) {
-            NeuroID.didRecordLowMemory = true
-        }
     }
 
     static func insertCleanedEvent(event: NIDEvent, storeType: String) {
