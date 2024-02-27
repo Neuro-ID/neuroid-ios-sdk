@@ -137,7 +137,7 @@ internal extension NeuroID {
 
     /// Direct send to API to create session
     /// Regularly send in loop
-    fileprivate static func post(events: [NIDEvent],
+    static func post(events: [NIDEvent],
                                  screen: String,
                                  onSuccess: @escaping (Any) -> Void,
                                  onFailure: @escaping

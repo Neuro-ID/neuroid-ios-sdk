@@ -40,8 +40,15 @@ internal extension NeuroIDTracker {
         if (!NeuroID.lowMemory) {
             DataStore.events = []
             DataStore.queuedEvents = []
-            captureEvent(event: NIDEvent(type: NIDEventName.lowMemory))
-            NeuroID.groupAndPOST()
+            let lowMemEvent = NIDEvent(type: NIDEventName.lowMemory)
+            captureEvent(event: lowMemEvent)
+           
+            NeuroID.post(events: [lowMemEvent], screen: NeuroID.getScreenName() ?? "low_mem_no_screen", onSuccess: { _ in
+                NeuroID.logInfo(category: "APICall", content: "Sending successfully")
+            }, onFailure: { error in
+                NeuroID.logError(category: "APICall", content: String(describing: error))
+            })
+            
             NeuroID.lowMemory = true
         }
         
