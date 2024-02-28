@@ -29,14 +29,14 @@ public enum DataStore {
     }
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
-        // If we hit a low memory event, drop events and early return.
+        // If we hit a low memory event, drop events and e1arly return.
         if (NeuroID.lowMemory) {
             return
         }
         // If queue has more than 2000 events, send a queue full event and return
-        if (DataStore.queuedEvents.count >= max_event_size || DataStore.events.count >= max_event_size) {
+        if (DataStore.queuedEvents.count + DataStore.events.count >= max_event_size) {
             if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue && DataStore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue) {
-                var fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
+                let fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
                 if storeType == "queue" {
                     DataStore.queuedEvents.append(fullEvent)
                 } else {
