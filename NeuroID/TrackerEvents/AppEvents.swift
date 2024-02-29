@@ -41,7 +41,7 @@ internal extension NeuroIDTracker {
             DataStore.events = []
             DataStore.queuedEvents = []
             let lowMemEvent = NIDEvent(type: NIDEventName.lowMemory)
-            captureEvent(event: lowMemEvent)
+            lowMemEvent.url = NeuroID.getScreenName()
            
             NeuroID.post(events: [lowMemEvent], screen: NeuroID.getScreenName() ?? "low_mem_no_screen", onSuccess: { _ in
                 NeuroID.logInfo(category: "APICall", content: "Sending successfully")

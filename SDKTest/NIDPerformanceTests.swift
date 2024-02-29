@@ -94,8 +94,7 @@ final class NIDPerformanceTests: XCTestCase {
             }
         }
         print("NID Event Size low Memory: \(DataStore.events.count)")
-        assert(DataStore.events.count <= 10) // Event size to 10 because event order/volume can be slightly erratic
-        assert(DataStore.events.last!.type == NIDEventName.lowMemory.rawValue)
+        assert(DataStore.events.count == 0) 
 
     }
 }
