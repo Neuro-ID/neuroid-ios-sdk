@@ -27,6 +27,7 @@ class NeuroIDClassTests: XCTestCase {
 
     override func setUp() {
         _ = NeuroID.start()
+        NeuroID.networkService = NIDNetworkServiceTestImpl.init()
     }
 
     override func tearDown() {
