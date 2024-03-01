@@ -1022,7 +1022,7 @@ class NIDClientSiteIdTests: XCTestCase {
 
 class NIDSendTests: XCTestCase {
     func test_getCollectionEndpointURL() {
-        let expectedValue = "https://receiver.neuroid-dev.com/c"
+        let expectedValue = "https://receiver.neuro-dev.com/c"
 
         let value = NeuroID.getCollectionEndpointURL()
         assert(value == expectedValue)

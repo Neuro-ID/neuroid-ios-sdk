@@ -16,7 +16,7 @@ class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
 
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
         // Set collection URL to dev
-        NeuroID.collectionURL = "https://receiver.neuroid-dev.com/c"
+        NeuroID.collectionURL = "https://receiver.neuro-dev.com/c"
         
         print("NIDNetworkServiceTestImpl Mocked Request \(neuroHTTPRequest)")
     }
