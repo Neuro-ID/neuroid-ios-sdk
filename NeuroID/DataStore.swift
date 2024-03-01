@@ -3,7 +3,7 @@ import Foundation
 public enum DataStore {
     static var _events = [NIDEvent]()
     private static let lock = NSLock()
-    private static let max_event_size = 2000
+    private static let max_event_size = 1999
 
     static var events: [NIDEvent] {
         get { lock.withCriticalSection { _events } }
