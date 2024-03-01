@@ -27,7 +27,6 @@ class NeuroIDClassTests: XCTestCase {
 
     override func setUp() {
         _ = NeuroID.start()
-        NeuroID.networkService = NIDNetworkServiceTestImpl.init()
     }
 
     override func tearDown() {
@@ -1023,7 +1022,7 @@ class NIDClientSiteIdTests: XCTestCase {
 
 class NIDSendTests: XCTestCase {
     func test_getCollectionEndpointURL() {
-        let expectedValue = "https://receiver.neuroid.cloud/c"
+        let expectedValue = "https://receiver.neuroid-dev.com/c"
 
         let value = NeuroID.getCollectionEndpointURL()
         assert(value == expectedValue)
