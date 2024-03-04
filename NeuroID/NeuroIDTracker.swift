@@ -13,6 +13,7 @@ public class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
+    
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
     public init(screen: String, controller: UIViewController?) {
@@ -23,6 +24,7 @@ public class NeuroIDTracker: NSObject {
         }
         nidClassName = controller?.nidClassName
     }
+    
     
     public func captureEvent(event: NIDEvent) {
         let screenName = screen ?? ParamsCreator.generateID()

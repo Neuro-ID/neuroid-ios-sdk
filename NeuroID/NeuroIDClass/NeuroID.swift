@@ -52,7 +52,7 @@ public enum NeuroID {
         get { _isSDKStarted }
         set {}
     }
-
+    
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
     internal static var captureGyroCadence = true
@@ -72,6 +72,8 @@ public enum NeuroID {
 
     internal static var CURRENT_ORIGIN: String?
     internal static var CURRENT_ORIGIN_CODE: String?
+    
+    internal static var lowMemory: Bool = false
 
     // MARK: - Setup
 
@@ -199,7 +201,8 @@ public enum NeuroID {
     internal static func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertQueuedEvent(screen: event.type, event: event)
     }
-
+    
+    
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
     public static func getSDKVersion() -> String {

@@ -3,6 +3,7 @@ import Foundation
 public enum DataStore {
     static var _events = [NIDEvent]()
     private static let lock = NSLock()
+    private static let max_event_size = 1999
 
     static var events: [NIDEvent] {
         get { lock.withCriticalSection { _events } }
@@ -28,6 +29,24 @@ public enum DataStore {
     }
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
+        // If we hit a low memory event, drop events and e1arly return.
+        if (NeuroID.lowMemory) {
+            return
+        }
+        // If queue has more than 2000 events, send a queue full event and return
+        if (DataStore.queuedEvents.count + DataStore.events.count > max_event_size) {
+            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue && DataStore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue) {
+                let fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
+                if storeType == "queue" {
+                    DataStore.queuedEvents.append(fullEvent)
+                } else {
+                    DataStore.events.append(fullEvent)
+                }
+            }
+            NIDLog.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
+            return
+        }
+        
         let mutableEvent = event
 
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
@@ -70,7 +89,6 @@ public enum DataStore {
             }
         } else {
             NeuroID.captureIntegrationHealthEvent(event.copy())
-
             NIDPrintEvent(event)
             DispatchQueue.global(qos: .utility).sync {
                 DataStore.events.append(event)
