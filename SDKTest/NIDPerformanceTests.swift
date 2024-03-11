@@ -9,8 +9,7 @@
 import XCTest
 
 final class NIDPerformanceTests: XCTestCase {
-
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox";
+    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
@@ -22,20 +21,20 @@ final class NIDPerformanceTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.networkService = NIDNetworkServiceTestImpl.init()
+        NeuroID.networkService = NIDNetworkServiceTestImpl()
         
         _ = NeuroID.start()
     }
 
     override func tearDown() {
         _ = NeuroID.stop()
+        NeuroID.collectionURL = Constants.productionURL.rawValue
         NeuroID.lowMemory = false
         // Clear out the DataStore Events after each test
         clearOutDataStore()
     }
 
     func testBufferFull() throws {
-        
         for _ in 1...3000 {
             let expectedValue = "myTestUserID"
             _ = NeuroID.setGenericUserID(
@@ -66,14 +65,13 @@ final class NIDPerformanceTests: XCTestCase {
         assert(DataStore.queuedEvents.last?.type == NIDEventName.bufferFull.rawValue)
     }
     
-    func testLowMemory() throws { 
-        
+    func testLowMemory() throws {
         // Setup a view and invoke observeAppEvents to get listeners attached for the test
         let uiView = UITextView()
         
         let screenNameValue = "testScreen"
         
-        let tracker = NeuroIDTracker.init(screen: "Temp", controller: uiView.inputViewController)
+        let tracker = NeuroIDTracker(screen: "Temp", controller: uiView.inputViewController)
 
         let guidValue = "\(Constants.attrGuidKey.rawValue)"
         
@@ -94,7 +92,6 @@ final class NIDPerformanceTests: XCTestCase {
             }
         }
         print("NID Event Size low Memory: \(DataStore.events.count)")
-        assert(DataStore.events.count == 0) 
-
+        assert(DataStore.events.count == 0)
     }
 }

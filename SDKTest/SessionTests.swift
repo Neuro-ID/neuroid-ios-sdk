@@ -15,14 +15,16 @@ class SessionTests: XCTestCase {
         NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.clearStoredSessionID()
-          _ = NeuroID.start()
+        _ = NeuroID.start()
         DataStore.removeSentEvents()
         UserDefaults.standard.removeObject(forKey: Constants.storageSessionIDKey.rawValue)
+
+        NeuroID.collectionURL = Constants.productionURL.rawValue
     }
 
     func testConfigureEndpoint() throws {
         #if DEBUG
-        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuro-dev.com/c")
+        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
         #elseif STAGING
         XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
         #else
