@@ -9,8 +9,12 @@ import Alamofire
 import Foundation
 
 internal extension NeuroID {
+    static var networkService:NIDNetworkServiceProtocol = NIDNetworkServiceImpl.init()
+
+    static var collectionURL = "https://receiver.neuroid.cloud/c"
+    
     static func getCollectionEndpointURL() -> String {
-        return "https://receiver.neuroid.cloud/c"
+        return collectionURL
     }
 
     static func initTimer() {
@@ -130,24 +134,10 @@ internal extension NeuroID {
         })
     }
 
-    static func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
-        AF.request(
-            url,
-            method: .post,
-            parameters: neuroHTTPRequest,
-            encoder: JSONParameterEncoder.default,
-            headers: headers
-        ).validate().responseData { response in
-            if response.error != nil, retryCount > 0, response.response?.statusCode != 403 {
-                NIDLog.i("NeuroID network Retrying...")
-                retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
-            } else { completion(response) }
-        }
-    }
 
     /// Direct send to API to create session
     /// Regularly send in loop
-    fileprivate static func post(events: [NIDEvent],
+    static func post(events: [NIDEvent],
                                  screen: String,
                                  onSuccess: @escaping (Any) -> Void,
                                  onFailure: @escaping
@@ -195,7 +185,7 @@ internal extension NeuroID {
 
         let maxRetries = 3
 
-        retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: maxRetries) { response in
+        networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: maxRetries) { response in
             NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
             NIDLog.i("NeuroID Payload: \(neuroHTTPRequest)")
             switch response.result {
@@ -206,7 +196,7 @@ internal extension NeuroID {
                 logError(content: "Neuro-ID post Error: \(error)")
             }
         }
-
+        
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
             do {

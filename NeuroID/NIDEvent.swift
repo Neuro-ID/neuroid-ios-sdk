@@ -87,8 +87,11 @@ public enum NIDEventName: String {
   
     case cadenceReadingAccel = "CADENCE_READING_ACCEL"
     case networkState = "NETWORK_STATE"
-
-
+    
+    // Memory and queue events
+    case bufferFull = "FULL_BUFFER"
+    case lowMemory = "LOW_MEMORY"
+    
     var etn: String? {
         switch self {
         case .change, .textChange, .radioChange, .inputChange,
