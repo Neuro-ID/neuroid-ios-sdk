@@ -39,12 +39,14 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     func startListeningToCallStatus(){
         if(!isRegistered){
             self.callObserver.setDelegate(self, queue: nil)
+            isRegistered = true
         }
     }
     
     func stopListeningToCallStatus(){
         if(isRegistered){
             self.callObserver.setDelegate(nil, queue: nil)
+            isRegistered = false
         }
     }
 }
