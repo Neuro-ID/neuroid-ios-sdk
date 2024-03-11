@@ -9,10 +9,10 @@ import Alamofire
 import Foundation
 
 internal extension NeuroID {
-    static var networkService:NIDNetworkServiceProtocol = NIDNetworkServiceImpl.init()
+    static var networkService: NIDNetworkServiceProtocol = NIDNetworkServiceImpl()
 
-    static var collectionURL = "https://receiver.neuroid.cloud/c"
-    
+    static var collectionURL = Constants.productionURL.rawValue
+
     static func getCollectionEndpointURL() -> String {
         return collectionURL
     }
@@ -134,14 +134,13 @@ internal extension NeuroID {
         })
     }
 
-
     /// Direct send to API to create session
     /// Regularly send in loop
     static func post(events: [NIDEvent],
-                                 screen: String,
-                                 onSuccess: @escaping (Any) -> Void,
-                                 onFailure: @escaping
-                                 (Error) -> Void)
+                     screen: String,
+                     onSuccess: @escaping (Any) -> Void,
+                     onFailure: @escaping
+                     (Error) -> Void)
     {
         guard let url = URL(string: NeuroID.getCollectionEndpointURL()) else {
             logError(content: "NeuroID base URL found")
@@ -196,7 +195,7 @@ internal extension NeuroID {
                 logError(content: "Neuro-ID post Error: \(error)")
             }
         }
-        
+
         // Output post data to terminal if debug
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
             do {

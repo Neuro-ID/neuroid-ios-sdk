@@ -16,6 +16,9 @@ internal enum Constants: String {
     case environmentTest = "TEST"
     case environmentLive = "LIVE"
 
+    case productionURL = "https://receiver.neuroid.cloud/c"
+    case developmentURL = "https://receiver.neuro-dev.com/c"
+
     case debugJsonKey = "debugJSON"
     case debugJsonFileName = "nidJSONPOSTFormat.txt"
 
@@ -56,7 +59,6 @@ internal enum Constants: String {
     case sessionTag = "NeuroID SessionId:"
     case userTag = "NeuroID UserId:"
     case debugTest = "TEST: "
-    
 }
 
 internal enum UserIDTypes: String {
