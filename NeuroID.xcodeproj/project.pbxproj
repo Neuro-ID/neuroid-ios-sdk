@@ -67,6 +67,7 @@
 		F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B75532AC36F8A00A7DF4D /* NIDRN.swift */; };
 		F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */; };
 		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
+		F2546A6E2B9A121500348BD7 /* NIDTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2546A6D2B9A121500348BD7 /* NIDTesting.swift */; };
 		F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */; };
 		F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */; };
 		F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */; };
@@ -166,6 +167,7 @@
 		F23B75532AC36F8A00A7DF4D /* NIDRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRN.swift; sourceTree = "<group>"; };
 		F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDAdvancedDevice.swift; sourceTree = "<group>"; };
 		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
+		F2546A6D2B9A121500348BD7 /* NIDTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDTesting.swift; sourceTree = "<group>"; };
 		F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
 		F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
 		F25F4C7629F185CF00E31B32 /* IntegrationHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealth.swift; sourceTree = "<group>"; };
@@ -414,6 +416,7 @@
 				F2AEE7462A27A84B009690CB /* NIDSend.swift */,
 				F23B75532AC36F8A00A7DF4D /* NIDRN.swift */,
 				F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */,
+				F2546A6D2B9A121500348BD7 /* NIDTesting.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -674,6 +677,7 @@
 				F21702B829D4CDD300133A1C /* Data.swift in Sources */,
 				6FE77FE62937B3F700357284 /* NIDErrors.swift in Sources */,
 				F21702BC29D4CDF900133A1C /* Dictionary.swift in Sources */,
+				F2546A6E2B9A121500348BD7 /* NIDTesting.swift in Sources */,
 				F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */,
 				07A05C2128B91B4D00509509 /* NIDMetadata.swift in Sources */,
 				F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */,
