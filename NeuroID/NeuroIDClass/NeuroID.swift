@@ -75,6 +75,8 @@ public enum NeuroID {
     
     internal static var lowMemory: Bool = false
 
+    internal static var callObserver: NIDCallStatusObserver?
+
     // MARK: - Setup
 
     /// 1. Configure the SDK
@@ -105,6 +107,8 @@ public enum NeuroID {
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
 
+        callObserver = NIDCallStatusObserver()
+
         locationManager = LocationManager()
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
@@ -121,6 +125,8 @@ public enum NeuroID {
             return false
         }
 
+        NeuroID.callObserver?.startListeningToCallStatus()
+        
         NeuroID._isSDKStarted = true
 
         NeuroID.startIntegrationHealthCheck()
@@ -163,6 +169,9 @@ public enum NeuroID {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
+        
+        //  stop listening to changes in call status
+        NeuroID.callObserver?.stopListeningToCallStatus()
         return true
     }
 

@@ -82,6 +82,9 @@ public enum NIDEventName: String {
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
+
+    case callInProgress = "CALL_IN_PROGRESS"
+  
     case cadenceReadingAccel = "CADENCE_READING_ACCEL"
     case networkState = "NETWORK_STATE"
     
@@ -300,7 +303,7 @@ public class NIDEvent: Codable {
     var sw: CGFloat?
     var rts: String?
     var c: Bool?
-
+    var cp: String? // call in progress status
     var m: String? // part of LOG events
     var level: String? // part of LOG events
 
@@ -392,7 +395,8 @@ public class NIDEvent: Codable {
         rts: String? = nil,
         sh: CGFloat? = nil,
         sw: CGFloat? = nil,
-        metadata: NIDMetadata? = nil
+        metadata: NIDMetadata? = nil,
+        cp:String? = nil
     ) {
         self.type = session.rawValue
         self.f = f
@@ -417,6 +421,7 @@ public class NIDEvent: Codable {
         self.sh = sh
         self.sw = sw
         self.metadata = metadata
+        self.cp = cp
     }
 
     /**
@@ -540,6 +545,7 @@ public class NIDEvent: Codable {
         copy.sw = self.sw
         copy.rts = self.rts
         copy.c = self.c
+        copy.cp = self.cp
         copy.iswifi = self.iswifi
         copy.isconnected = self.isconnected
 
