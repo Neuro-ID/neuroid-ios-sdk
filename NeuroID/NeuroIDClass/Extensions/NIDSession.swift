@@ -181,6 +181,10 @@ public extension NeuroID {
     }
 
     static func resumeCollection() {
+        // Don't allow resume to be called if SDK has not been started
+        if (NeuroID.userID.isEmptyOrNil && !NeuroID.isSDKStarted) {
+            return
+        }
         NeuroID._isSDKStarted = true
         let workItem = NeuroID.createCollectionWorkItem()
         NeuroID.sendCollectionWorkItem = workItem
