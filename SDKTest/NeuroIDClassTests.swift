@@ -518,6 +518,7 @@ class NIDNewSessionTests: XCTestCase {
 
     func test_resumeCollection() {
         NeuroID._isSDKStarted = false
+        NeuroID.userID = "temp"
         NeuroID.sendCollectionWorkItem = nil
 
         NeuroID.resumeCollection()
