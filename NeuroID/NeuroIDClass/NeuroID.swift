@@ -55,7 +55,7 @@ public enum NeuroID {
     
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
-    internal static var captureGyroCadence = true
+    internal static var captureGyroCadence = false
     internal static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
 
     internal static var observingInputs = false

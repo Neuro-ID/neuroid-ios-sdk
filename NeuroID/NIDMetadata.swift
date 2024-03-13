@@ -33,7 +33,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             status = CLLocationManager.authorizationStatus()
         }
 
-        print("CHECKING LOCATION AUTHORIZATION")
         switch status {
             case .notDetermined:
                 self.authorizationStatus = "notDetermined"
