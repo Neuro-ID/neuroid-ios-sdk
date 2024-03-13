@@ -526,6 +526,13 @@ class NIDNewSessionTests: XCTestCase {
         assert(NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem != nil)
     }
+    
+    func test_willNotResumeCollectionIfNotStarted() {
+        NeuroID._isSDKStarted = false
+        NeuroID.resumeCollection()
+
+        assert(!NeuroID._isSDKStarted)
+    }
 
     func test_stopSession() {
         let stopped = NeuroID.stopSession()
