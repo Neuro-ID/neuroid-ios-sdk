@@ -518,12 +518,21 @@ class NIDNewSessionTests: XCTestCase {
 
     func test_resumeCollection() {
         NeuroID._isSDKStarted = false
+        NeuroID.userID = "temp"
         NeuroID.sendCollectionWorkItem = nil
 
         NeuroID.resumeCollection()
 
         assert(NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem != nil)
+    }
+    
+    func test_willNotResumeCollectionIfNotStarted() {
+        NeuroID._isSDKStarted = false
+        NeuroID.userID = nil
+        NeuroID.resumeCollection()
+
+        assert(!NeuroID._isSDKStarted)
     }
 
     func test_stopSession() {
