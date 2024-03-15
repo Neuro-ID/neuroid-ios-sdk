@@ -133,8 +133,6 @@ jobs:
               echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
               echo "SLACK_MESSAGE=Failed Prod Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
               echo "SLACK_TITLE=Failed Prod Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-            else
-              echo "SLACK_MESSAGE=Notification not needed" >> $GITHUB_OUTPUT
             fi            
   notifications:
     runs-on: ubuntu-latest
@@ -142,7 +140,7 @@ jobs:
     if: always()
     steps:
       - name: Send Slack Notification Status
-        if: ${{needs.testflight.outputs.slack-message}} != 'Notification not needed'
+        if: needs.testflight.outputs.slack-message
         uses: rtCamp/action-slack-notify@v2
         env: 
           SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
