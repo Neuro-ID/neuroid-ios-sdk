@@ -128,7 +128,7 @@ jobs:
     if: always()
     steps:
       - name: Send Slack Notification Status
-        if: ${{needs.testflight-dev.outputs.slack-message}} != null
+        if: needs.testflight-dev.outputs.slack-message
         uses: rtCamp/action-slack-notify@v2
         env: 
           SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
