@@ -19,9 +19,13 @@ env:
   VERSION: "2.0.0"
 
 jobs:
-  test:
+  deploySandboxApps:
     runs-on: macos-latest
     if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/') != true
+    outputs:
+      slack-message: ${{ steps.slack-settings.outputs.SLACK_MESSAGE }}
+      slack-title: ${{ steps.slack-settings.outputs.SLACK_TITLE }}
+      slack-color: ${{ steps.slack-settings.outputs.SLACK_COLOR }}
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v3
@@ -104,27 +108,33 @@ jobs:
               -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
               https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
               -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
-
-      - name: Send Slack Notification on Success
-        if: success()
+      
+      - name: Set Slack message
+        id: slack-settings
+        if: always()
+        run: |
+            if [[ "${{ job.status }}" == "success" ]]; then
+              echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
+              echo "SLACK_MESSAGE=Successful Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
+              echo "SLACK_TITLE=Successful Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
+            elif [[ "${{ job.status }}" == "failure" ]]; then
+              echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
+              echo "SLACK_MESSAGE=Failed Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
+              echo "SLACK_TITLE=Failed Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
+            fi            
+  notifications:
+    runs-on: ubuntu-latest
+    needs: deploySandboxApps
+    if: always()
+    steps:
+      - name: Send Slack Notification Status
+        if: always()
         uses: rtCamp/action-slack-notify@v2
-        env:
+        env: 
           SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Successful Dev Sandbox Deployment for iOS"
-          SLACK_TITLE: Successful Dev Sandbox Deployment for iOS
-          SLACK_USERNAME: rtBot
           SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
-
-      - name: Send Slack Notification on Failure
-        if: failure()
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
-          SLACK_COLOR: ${{ job.status }}
+          SLACK_COLOR: ${{ needs.deploySandboxApps.outputs.slack-color}}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Failed Dev Sandbox Deployment for iOS"
-          SLACK_TITLE: Failed Dev Sandbox Deployment for iOS
+          SLACK_MESSAGE: ${{needs.deploySandboxApps.outputs.slack-message}}
+          SLACK_TITLE:  ${{needs.deploySandboxApps.outputs.slack-title}}
           SLACK_USERNAME: rtBot
-          SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
