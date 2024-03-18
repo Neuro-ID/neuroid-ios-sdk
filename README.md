@@ -36,6 +36,3 @@ For support or troubleshooting of the NeuroID iOS Mobile SDK please contact a Ne
 ## Contributing
 
 For a feature request in the NeuroID iOS Mobile SDK please contact a NeuroID Customer Support Representative.
-
-<!--
-![Neuro-ID Logo](docs/images/NeuroID%20Logo.png?version%3D1710788080006) // Backup -->
