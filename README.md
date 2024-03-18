@@ -36,3 +36,7 @@ For support or troubleshooting of the NeuroID iOS Mobile SDK please contact a Ne
 ## Contributing
 
 For a feature request in the NeuroID iOS Mobile SDK please contact a NeuroID Customer Support Representative.
+
+## License
+
+The NeuroID iOS Mobile SDK is provided under an [MIT License](LICENSE).
