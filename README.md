@@ -1,8 +1,9 @@
 # NeuroID iOS Mobile SDK
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Neuro-ID_neuroid-ios-sdk&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Neuro-ID_neuroid-ios-sdk)
+[![CocoaPods](https://img.shields.io/cocoapods/v/NeuroID.svg)](https://cocoapods.org/pods/NeuroID)
 
-![Neuro-ID Logo](/docs//images/NeuroID_Logo.png)
+![Neuro-ID Logo](/docs/images/NeuroID_Logo.png)
 
 ## Overview
 
