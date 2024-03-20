@@ -11,7 +11,6 @@
 		07A05C2128B91B4D00509509 /* NIDMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A05C2028B91B4D00509509 /* NIDMetadata.swift */; };
 		07A2668C28A6A5BC00E973E2 /* PayloadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A2668B28A6A5BC00E973E2 /* PayloadTest.swift */; };
 		07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BB4F61287FE8A200910665 /* SensorsTest.swift */; };
-		1D3AC8D5AAE369A7F59E9AFB /* Pods_NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; };
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		26BCF34C268DA7CF0002C289 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF349268DA7CF0002C289 /* DataStore.swift */; };
 		26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */; };
@@ -24,9 +23,13 @@
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
 		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
 		6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */; };
+		6F467EEB2BAA182700B0605D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
+		6F467EED2BAA189E00B0605D /* PrivacyInformation.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EEC2BAA189E00B0605D /* PrivacyInformation.xcprivacy */; };
 		6F47B9AF2B7E80360047DFCB /* NIDNetworkServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9AE2B7E80360047DFCB /* NIDNetworkServiceImpl.swift */; };
 		6F47B9B12B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B02B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift */; };
 		6F47B9B42B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */; };
+		6F543ED32BAA060A00920A7C /* Pods_NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; };
+		6F543ED42BAA060A00920A7C /* Pods_NeuroID.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F6B75512A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
@@ -100,6 +103,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6F543ED52BAA060A00920A7C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6F543ED42BAA060A00920A7C /* Pods_NeuroID.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
 		07A05C2028B91B4D00509509 /* NIDMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDMetadata.swift; sourceTree = "<group>"; };
@@ -126,6 +143,8 @@
 		6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKUITest.swift; sourceTree = "<group>"; };
 		6F39E8DC26CEAA0C00BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEventTests.swift; sourceTree = "<group>"; };
+		6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		6F467EEC2BAA189E00B0605D /* PrivacyInformation.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInformation.xcprivacy; sourceTree = "<group>"; };
 		6F47B9AE2B7E80360047DFCB /* NIDNetworkServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceImpl.swift; sourceTree = "<group>"; };
 		6F47B9B02B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceProtocol.swift; sourceTree = "<group>"; };
 		6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceTestImpl.swift; sourceTree = "<group>"; };
@@ -195,9 +214,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F543ED32BAA060A00920A7C /* Pods_NeuroID.framework in Frameworks */,
 				26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */,
 				26BCF359268DAC530002C289 /* Security.framework in Frameworks */,
-				1D3AC8D5AAE369A7F59E9AFB /* Pods_NeuroID.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +242,7 @@
 		26BCF332268DA3C40002C289 = {
 			isa = PBXGroup;
 			children = (
+				6F467EEC2BAA189E00B0605D /* PrivacyInformation.xcprivacy */,
 				26BCF33E268DA3C40002C289 /* NeuroID */,
 				6F39E8CA26CEA9A800BE9834 /* SDKTest */,
 				6F39E8D926CEAA0C00BE9834 /* SDKUITest */,
@@ -246,6 +266,7 @@
 		26BCF33E268DA3C40002C289 /* NeuroID */ = {
 			isa = PBXGroup;
 			children = (
+				6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */,
 				F228AA8E2A0180F80004892F /* Resources */,
 				26BCF349268DA7CF0002C289 /* DataStore.swift */,
 				26BCF34B268DA7CF0002C289 /* NIDEvent.swift */,
@@ -454,6 +475,7 @@
 				4B0A71FBCF24C81A3D48483D /* [CP] Check Pods Manifest.lock */,
 				26BCF337268DA3C40002C289 /* Headers */,
 				26BCF338268DA3C40002C289 /* Sources */,
+				6F543ED52BAA060A00920A7C /* Embed Frameworks */,
 				26BCF339268DA3C40002C289 /* Frameworks */,
 				26BCF33A268DA3C40002C289 /* Resources */,
 			);
@@ -553,7 +575,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F467EEB2BAA182700B0605D /* PrivacyInfo.xcprivacy in Resources */,
 				F228AA8F2A0180F80004892F /* Resources in Resources */,
+				6F467EED2BAA189E00B0605D /* PrivacyInformation.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -780,6 +804,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -809,11 +834,11 @@
 			baseConfigurationReference = 47EAD830ADF3CCE22244EE89 /* Pods-NeuroID.staging.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -831,10 +856,10 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.sdk.staging;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = STAGING;
 				SWIFT_VERSION = 5.0;
@@ -846,6 +871,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = ADF6B1D19ADA519BE68B6047 /* Pods-SDKTest.staging.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X9986UAU23;
 				INFOPLIST_FILE = SDKTest/Info.plist;
@@ -919,9 +945,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -987,6 +1015,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1016,11 +1045,11 @@
 			baseConfigurationReference = EF519CD46811BD283A2D1533 /* Pods-NeuroID.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1041,10 +1070,10 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1057,11 +1086,11 @@
 			baseConfigurationReference = 91F02E629A22E34E06D2AF87 /* Pods-NeuroID.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1079,10 +1108,10 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.sdk;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
@@ -1094,8 +1123,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 153C967454B5320D895ADE13 /* Pods-SDKTest.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R7TKKHQ7FG;
+				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1111,6 +1141,7 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1120,6 +1151,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AFA17D1FB9CF9E866313997 /* Pods-SDKTest.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X9986UAU23;
 				INFOPLIST_FILE = SDKTest/Info.plist;
