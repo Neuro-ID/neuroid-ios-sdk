@@ -24,7 +24,6 @@
 		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
 		6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */; };
 		6F467EEB2BAA182700B0605D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
-		6F467EED2BAA189E00B0605D /* PrivacyInformation.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EEC2BAA189E00B0605D /* PrivacyInformation.xcprivacy */; };
 		6F47B9AF2B7E80360047DFCB /* NIDNetworkServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9AE2B7E80360047DFCB /* NIDNetworkServiceImpl.swift */; };
 		6F47B9B12B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B02B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift */; };
 		6F47B9B42B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */; };
@@ -144,7 +143,6 @@
 		6F39E8DC26CEAA0C00BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEventTests.swift; sourceTree = "<group>"; };
 		6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		6F467EEC2BAA189E00B0605D /* PrivacyInformation.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInformation.xcprivacy; sourceTree = "<group>"; };
 		6F47B9AE2B7E80360047DFCB /* NIDNetworkServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceImpl.swift; sourceTree = "<group>"; };
 		6F47B9B02B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceProtocol.swift; sourceTree = "<group>"; };
 		6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceTestImpl.swift; sourceTree = "<group>"; };
@@ -242,7 +240,6 @@
 		26BCF332268DA3C40002C289 = {
 			isa = PBXGroup;
 			children = (
-				6F467EEC2BAA189E00B0605D /* PrivacyInformation.xcprivacy */,
 				26BCF33E268DA3C40002C289 /* NeuroID */,
 				6F39E8CA26CEA9A800BE9834 /* SDKTest */,
 				6F39E8D926CEAA0C00BE9834 /* SDKUITest */,
@@ -577,7 +574,6 @@
 			files = (
 				6F467EEB2BAA182700B0605D /* PrivacyInfo.xcprivacy in Resources */,
 				F228AA8F2A0180F80004892F /* Resources in Resources */,
-				6F467EED2BAA189E00B0605D /* PrivacyInformation.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
