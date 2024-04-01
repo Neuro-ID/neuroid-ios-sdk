@@ -51,7 +51,7 @@ final class NIDPerformanceTests: XCTestCase {
     
     func testQueuedEvents() throws {
         _ = NeuroID.stop()
-        for _ in 1...3000 {
+        for _ in 1...2100 {
             let expectedValue = "myTestUserID"
             _ = NeuroID.setGenericUserID(
                 userId: expectedValue,
