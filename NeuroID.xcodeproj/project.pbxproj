@@ -23,7 +23,6 @@
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
 		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
 		6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */; };
-		6F467EEB2BAA182700B0605D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
 		6F47B9AF2B7E80360047DFCB /* NIDNetworkServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9AE2B7E80360047DFCB /* NIDNetworkServiceImpl.swift */; };
 		6F47B9B12B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B02B7E80E50047DFCB /* NIDNetworkServiceProtocol.swift */; };
 		6F47B9B42B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */; };
@@ -33,6 +32,7 @@
 		6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F6B75512A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */; };
+		6FE6C96B2BBC97550033B9C2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
 		6FE77FE62937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FE77FE82937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
@@ -572,7 +572,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F467EEB2BAA182700B0605D /* PrivacyInfo.xcprivacy in Resources */,
+				6FE6C96B2BBC97550033B9C2 /* PrivacyInfo.xcprivacy in Resources */,
 				F228AA8F2A0180F80004892F /* Resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -838,6 +838,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9B7FQ8D7B8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1056,6 +1057,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9B7FQ8D7B8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1099,6 +1101,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2.4.5;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9B7FQ8D7B8;
 				DYLIB_COMPATIBILITY_VERSION = 1;
