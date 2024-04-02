@@ -26,21 +26,21 @@ internal class NIDConfigService {
             case requestTimeout = "request_timeout"
         }
     }
-
-    
-    let headers: HTTPHeaders = [
-        "Content-Type": "application/json",
-        "site_key": NeuroID.getClientKey(),
-        "authority": "receiver.neuroid.cloud",
-    ]
     
     var nidConfigCache:Decodable?
     
-    init() {
+    // Force fetch optional invoke option allows for retrieving a new config always at invoke, regardless if cache is set
+    init(forceFetch: Bool? = false) {
         if (NeuroID.clientKey == nil || NeuroID.clientKey == "") {
             NIDLog.e("Missing Client Key. Config Service not started")
             return
         }
+        
+        if (nidConfigCache != nil && !forceFetch!) {
+            NIDLog.e("NID Config cache has already been set.")
+            return
+        }
+                     
         var config_url = "https://scripts.neuro-id.com/mobile/\(NeuroID.clientKey!)"
         AF.request(config_url, method: .get).responseDecodable(of: ResponseData.self) { response in
             switch response.result {
