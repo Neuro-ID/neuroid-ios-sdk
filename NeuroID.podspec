@@ -15,7 +15,8 @@ s.homepage = "https://neuro-id.com/"
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
 s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 s.resource_bundles = {
-    'Resources' => ['NeuroID/Resources/**/*', 'Info.plist']
+    'Resources' => ['NeuroID/Resources/**/*', 'Info.plist'],
+    'NeuroID' => ['NeuroID/PrivacyInfo.xcprivacy']
 }
 s.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
 
