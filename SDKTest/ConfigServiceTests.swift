@@ -8,6 +8,10 @@
 import XCTest
 
 class ConfigServiceTests: XCTestCase {
+    
+    override func setUpWithError() throws {
+        NIDConfigService.nidURL = "https://scripts.neuro-dev.com/mobile/"
+    }
 
     func testCacheWillFailIfNoKey() throws {
         _ = NIDConfigService { success in

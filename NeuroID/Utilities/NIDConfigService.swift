@@ -31,6 +31,8 @@ internal class NIDConfigService {
     
     static var cacheSet = false
     
+    internal static var nidURL = "https://scripts.neuro-id.com/mobile/"
+    
     init(completion: @escaping (Bool) -> Void) {
 
         if (NeuroID.clientKey == nil || NeuroID.clientKey == "") {
@@ -39,7 +41,7 @@ internal class NIDConfigService {
             return
         }
                      
-        let config_url = "https://scripts.neuro-id.com/mobile/\(NeuroID.clientKey!)"
+        let config_url = NIDConfigService.nidURL + NeuroID.clientKey!
         AF.request(config_url, method: .get).responseDecodable(of: ResponseData.self) { response in
             switch response.result {
             case .success(let responseData):
