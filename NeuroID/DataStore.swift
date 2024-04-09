@@ -33,8 +33,8 @@ public enum DataStore {
         if (NeuroID.lowMemory) {
             return
         }
-        // If queue has more than 2000 events, send a queue full event and return
-        if (DataStore.queuedEvents.count + DataStore.events.count > max_event_size) {
+        // If queue has more than config event queue size (default 2000), send a queue full event and return
+        if (DataStore.queuedEvents.count + DataStore.events.count > NIDConfigService.nidConfigCache.eventQueueFlushSize) {
             if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue && DataStore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue) {
                 let fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
                 if storeType == "queue" {

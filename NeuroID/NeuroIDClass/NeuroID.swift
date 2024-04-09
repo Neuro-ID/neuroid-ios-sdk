@@ -76,6 +76,8 @@ public enum NeuroID {
     internal static var lowMemory: Bool = false
 
     internal static var callObserver: NIDCallStatusObserver?
+    
+    internal static var nidConfigService: NIDConfigService?
 
     // MARK: - Setup
 
@@ -103,13 +105,25 @@ public enum NeuroID {
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
-
+        
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
 
-        callObserver = NIDCallStatusObserver()
+        
+        _ = NIDConfigService { success in
+            if success {
+                if (NIDConfigService.nidConfigCache.callInProgress) {
+                    callObserver = NIDCallStatusObserver()
+                }
+                
+                if (NIDConfigService.nidConfigCache.geoLocation) {
+                    locationManager = LocationManager()
+                }
 
-        locationManager = LocationManager()
+            }
+        }
+
+        
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
 

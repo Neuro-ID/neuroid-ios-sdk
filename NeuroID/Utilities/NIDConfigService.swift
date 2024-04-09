@@ -8,13 +8,13 @@ import Alamofire
 internal class NIDConfigService {
     
     struct ResponseData: Decodable {
-        var callInProgress: Bool
-        var eventQueueFlushInterval: Int
-        var eventQueueFlushSize: Int
-        var geoLocation: Bool
-        var gyroAccelCadence: Bool
-        var gyroAccelCadenceTime: Int
-        var requestTimeout: Int
+        var callInProgress: Bool = true
+        var geoLocation: Bool = true
+        var eventQueueFlushInterval: Int = 5
+        var eventQueueFlushSize: Int = 2000
+        var requestTimeout: Int = 10
+        var gyroAccelCadence: Bool = true
+        var gyroAccelCadenceTime: Int = 200
 
         enum CodingKeys: String, CodingKey {
             case callInProgress = "call_in_progress"
@@ -27,33 +27,35 @@ internal class NIDConfigService {
         }
     }
     
-    var nidConfigCache:Decodable?
+    public static var nidConfigCache:ResponseData = ResponseData()
     
-    // Force fetch optional invoke option allows for retrieving a new config always at invoke, regardless if cache is set
-    init(forceFetch: Bool? = false) {
+    static var cacheSet = false
+    
+    init(completion: @escaping (Bool) -> Void) {
+
         if (NeuroID.clientKey == nil || NeuroID.clientKey == "") {
             NIDLog.e("Missing Client Key. Config Service not started")
-            return
-        }
-        
-        if (nidConfigCache != nil && !forceFetch!) {
-            NIDLog.e("NID Config cache has already been set.")
+            completion(true)
             return
         }
                      
-        var config_url = "https://scripts.neuro-id.com/mobile/\(NeuroID.clientKey!)"
+        let config_url = "https://scripts.neuro-id.com/mobile/\(NeuroID.clientKey!)"
         AF.request(config_url, method: .get).responseDecodable(of: ResponseData.self) { response in
             switch response.result {
             case .success(let responseData):
                 self.setCache(responseData)
+                NIDLog.d("Retrieved config log")
+                NIDConfigService.cacheSet = true
+                completion(true)
             case .failure(let error):
-                NIDLog.e("Failed to retrieve NID Config")
+                NIDLog.e("Failed to retrieve NID Config \(error)")
+                completion(true)
             }
         }
     }
     
-    func setCache(_ responseData: Decodable) {
-        nidConfigCache = responseData
+    func setCache(_ responseData: ResponseData) {
+        NIDConfigService.nidConfigCache = responseData
     }
     
 }
