@@ -27,7 +27,7 @@ class ConfigServiceTests: XCTestCase {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         _ = NIDConfigService { success in
             if success {
-                assert(NIDConfigService.nidConfigCache.callInProgress)
+                assert(NIDConfigService.cacheSetWithRemote)
             }
         }
     }
@@ -38,7 +38,8 @@ class ConfigServiceTests: XCTestCase {
         NIDConfigService.nidConfigCache.eventQueueFlushInterval = 0
         NIDConfigService.nidConfigCache.callInProgress = false
         NIDConfigService.nidConfigCache.geoLocation = false
-        NIDConfigService.nidConfigCache.gyroAccelCadence = false
+        NIDConfigService.nidConfigCache.eventQueueFlushSize = 1999
+        NIDConfigService.nidConfigCache.gyroAccelCadence = true
         NIDConfigService.nidConfigCache.gyroAccelCadenceTime = 0
         NIDConfigService.nidConfigCache.requestTimeout = 0
         
@@ -47,10 +48,8 @@ class ConfigServiceTests: XCTestCase {
         _ = NIDConfigService { success in
             if success {
                 assert(NIDConfigService.nidConfigCache.eventQueueFlushInterval != 0)
-                assert(NIDConfigService.nidConfigCache.callInProgress)
-                assert(NIDConfigService.nidConfigCache.geoLocation)
-                assert(NIDConfigService.nidConfigCache.gyroAccelCadence)
                 assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime != 0)
+                assert(NIDConfigService.nidConfigCache.eventQueueFlushSize != 1999)
                 assert(NIDConfigService.nidConfigCache.requestTimeout != 0)
             }
         }
@@ -63,19 +62,16 @@ class ConfigServiceTests: XCTestCase {
         NIDConfigService.nidConfigCache.eventQueueFlushInterval = 0
         NIDConfigService.nidConfigCache.callInProgress = false
         NIDConfigService.nidConfigCache.geoLocation = false
-        NIDConfigService.nidConfigCache.gyroAccelCadence = false
+        NIDConfigService.nidConfigCache.gyroAccelCadence = true
         NIDConfigService.nidConfigCache.gyroAccelCadenceTime = 0
         NIDConfigService.nidConfigCache.requestTimeout = 0
         
         _ = NIDConfigService { success in
             if success {
                 assert(NIDConfigService.nidConfigCache.eventQueueFlushInterval != 0)
-                assert(NIDConfigService.nidConfigCache.callInProgress)
-                assert(NIDConfigService.nidConfigCache.geoLocation)
-                assert(NIDConfigService.nidConfigCache.gyroAccelCadence)
                 assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime != 0)
                 assert(NIDConfigService.nidConfigCache.requestTimeout != 0)
-                
+                assert(NIDConfigService.cacheSetWithRemote)
             }
         }
     }

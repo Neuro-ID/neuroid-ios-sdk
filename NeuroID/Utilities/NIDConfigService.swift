@@ -13,7 +13,7 @@ internal class NIDConfigService {
         var eventQueueFlushInterval: Int = 5
         var eventQueueFlushSize: Int = 2000
         var requestTimeout: Int = 10
-        var gyroAccelCadence: Bool = true
+        var gyroAccelCadence: Bool = false
         var gyroAccelCadenceTime: Int = 200
 
         enum CodingKeys: String, CodingKey {
@@ -27,6 +27,8 @@ internal class NIDConfigService {
         }
     }
     
+    internal static var cacheSetWithRemote = false
+    
     public static var nidConfigCache:ResponseData = ResponseData()
         
     internal static var nidURL = "https://scripts.neuro-id.com/mobile/"
@@ -39,12 +41,13 @@ internal class NIDConfigService {
             return
         }
                      
-        let config_url = NIDConfigService.nidURL + NeuroID.clientKey!
+        let config_url = NIDConfigService.nidURL + NeuroID.clientKey! + ".json"
         AF.request(config_url, method: .get).responseDecodable(of: ResponseData.self) { response in
             switch response.result {
             case .success(let responseData):
                 self.setCache(responseData)
                 NIDLog.d("Retrieved config log")
+                NIDConfigService.cacheSetWithRemote = true
                 completion(true)
             case .failure(let error):
                 NIDLog.e("Failed to retrieve NID Config \(error)")

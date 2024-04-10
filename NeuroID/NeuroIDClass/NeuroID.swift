@@ -106,7 +106,6 @@ public enum NeuroID {
         
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-
         
         _ = NIDConfigService { success in
             if success {
@@ -123,7 +122,6 @@ public enum NeuroID {
                 }
             }
         }
-
         
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
