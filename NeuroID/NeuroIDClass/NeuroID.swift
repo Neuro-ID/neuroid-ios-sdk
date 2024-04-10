@@ -18,7 +18,6 @@ import WebKit
 
 public enum NeuroID {
     internal static let SEND_INTERVAL: Double = 5
-    internal static let GYRO_SAMPLE_INTERVAL: Double = 0.2
 
     internal static var clientKey: String?
     internal static var siteID: String?
@@ -55,7 +54,6 @@ public enum NeuroID {
     
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
-    internal static var captureGyroCadence = false
     internal static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
 
     internal static var observingInputs = false

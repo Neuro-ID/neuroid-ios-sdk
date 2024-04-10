@@ -77,10 +77,10 @@ internal extension NeuroID {
                 return
             }
 
-            if NeuroID.captureGyroCadence && !NeuroID.isStopped() {
+            if !NeuroID.isStopped() {
                 let nidEvent = NIDEvent(type: .cadenceReadingAccel)
                 nidEvent.attrs = [
-                    Attrs(n: "interval", v: "\(1000 * GYRO_SAMPLE_INTERVAL)ms"),
+                    Attrs(n: "interval", v: "\(NIDConfigService.nidConfigCache.gyroAccelCadenceTime)ms"),
                 ]
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)

@@ -16,7 +16,6 @@ class NeuroIDTrackerTests: XCTestCase {
     let guidValue = "\(Constants.attrGuidKey.rawValue)"
     
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
     

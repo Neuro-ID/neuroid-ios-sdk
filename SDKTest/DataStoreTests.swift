@@ -23,7 +23,6 @@ class DataStoreTests: XCTestCase {
     let excludeId = "exclude_test_id"
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         _ = NeuroID.configure(clientKey: clientKey)
         _ = NeuroID.stop()

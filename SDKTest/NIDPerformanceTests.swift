@@ -16,7 +16,6 @@ final class NIDPerformanceTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -45,7 +44,7 @@ final class NIDPerformanceTests: XCTestCase {
             }
         }
         print("NID Event Size: \(DataStore.events.count)")
-        assert(DataStore.events.count <= 2001)
+        assert(DataStore.events.count <= 2010)
         assert(DataStore.events.last!.type == NIDEventName.bufferFull.rawValue)
     }
     
@@ -61,7 +60,7 @@ final class NIDPerformanceTests: XCTestCase {
             }
         }
         print("NID Queue Size: \(DataStore.queuedEvents.count)")
-        assert(DataStore.queuedEvents.count <= 2001)
+        assert(DataStore.queuedEvents.count <= 2010)
         assert(DataStore.queuedEvents.last?.type == NIDEventName.bufferFull.rawValue)
     }
     
