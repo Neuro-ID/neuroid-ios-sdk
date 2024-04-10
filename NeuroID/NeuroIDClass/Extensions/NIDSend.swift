@@ -59,16 +59,15 @@ internal extension NeuroID {
         if (!NIDConfigService.nidConfigCache.gyroAccelCadence) {
             return
         }
-            if let workItem = NeuroID.sendGyroAccelCollectionWorkItem {
-                // Send up the first payload, and then setup a repeating timer
-                DispatchQueue
-                    .global(qos: .utility)
-                    .asyncAfter(
-                        deadline: .now() + Double(NIDConfigService.nidConfigCache.gyroAccelCadenceTime),
-                        execute: workItem
-                    )
-            }
-        
+        if let workItem = NeuroID.sendGyroAccelCollectionWorkItem {
+            // Send up the first payload, and then setup a repeating timer
+            DispatchQueue
+                .global(qos: .utility)
+                .asyncAfter(
+                    deadline: .now() + Double(NIDConfigService.nidConfigCache.gyroAccelCadenceTime),
+                    execute: workItem
+                )
+        }
     }
 
     static func createGyroAccelCollectionWorkItem() -> DispatchWorkItem {

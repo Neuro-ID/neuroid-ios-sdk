@@ -117,18 +117,17 @@ public enum NeuroID {
                 if (NIDConfigService.nidConfigCache.geoLocation) {
                     locationManager = LocationManager()
                 }
-
+                
+                if (NIDConfigService.nidConfigCache.gyroAccelCadence) {
+                    sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+                }
             }
         }
 
         
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
-
-        // begin gyro/accel sample rate
-        if (NIDConfigService.nidConfigCache.gyroAccelCadence) {
-            sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
-        }
+        
         return true
     }
 
