@@ -21,7 +21,7 @@ internal extension NeuroID {
         // Send up the first payload, and then setup a repeating timer
         DispatchQueue
             .global(qos: .utility)
-            .asyncAfter(deadline: .now() + SEND_INTERVAL) {
+            .asyncAfter(deadline: .now() + Double(NIDConfigService.nidConfigCache.eventQueueFlushInterval)) {
                 self.send()
                 self.initTimer()
             }
@@ -55,12 +55,16 @@ internal extension NeuroID {
     }
 
     static func initGyroAccelCollectionTimer() {
+        // If gyro cadence not enabled, early return
+        if (!NIDConfigService.nidConfigCache.gyroAccelCadence) {
+            return
+        }
         if let workItem = NeuroID.sendGyroAccelCollectionWorkItem {
             // Send up the first payload, and then setup a repeating timer
             DispatchQueue
                 .global(qos: .utility)
                 .asyncAfter(
-                    deadline: .now() + GYRO_SAMPLE_INTERVAL, // 200 ms
+                    deadline: .now() + Double(NIDConfigService.nidConfigCache.gyroAccelCadenceTime),
                     execute: workItem
                 )
         }
@@ -72,10 +76,10 @@ internal extension NeuroID {
                 return
             }
 
-            if NeuroID.captureGyroCadence && !NeuroID.isStopped() {
+            if !NeuroID.isStopped() {
                 let nidEvent = NIDEvent(type: .cadenceReadingAccel)
                 nidEvent.attrs = [
-                    Attrs(n: "interval", v: "\(1000 * GYRO_SAMPLE_INTERVAL)ms"),
+                    Attrs(n: "interval", v: "\(NIDConfigService.nidConfigCache.gyroAccelCadenceTime)ms"),
                 ]
 
                 NeuroID.saveEventToLocalDataStore(nidEvent)

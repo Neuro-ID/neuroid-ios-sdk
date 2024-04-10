@@ -13,7 +13,6 @@ class NIDEventTests: XCTestCase {
     let userId = "form_mobilesandbox"
     
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
     

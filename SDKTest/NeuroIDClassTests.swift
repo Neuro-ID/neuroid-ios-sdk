@@ -21,7 +21,6 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -192,7 +191,6 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -294,7 +292,6 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -411,7 +408,6 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -553,7 +549,6 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -606,7 +601,6 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -683,7 +677,6 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
@@ -981,6 +974,7 @@ class NIDClientSiteIdTests: XCTestCase {
     }
 
     func test_getClientKey() {
+        NeuroID.clientKey = nil
         _ = NeuroID.configure(clientKey: clientKey)
         let expectedValue = clientKey
 

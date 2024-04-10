@@ -41,7 +41,6 @@ class NIDParamsCreatorTests: XCTestCase {
     let valueDoubleEntry = ["value": TargetValue.double(0)]
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 

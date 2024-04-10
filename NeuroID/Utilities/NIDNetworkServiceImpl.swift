@@ -11,7 +11,12 @@ import Alamofire
 class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
 
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
-        AF.request(
+        
+        let configuration = URLSessionConfiguration.af.default
+        configuration.timeoutIntervalForRequest = Double(NIDConfigService.nidConfigCache.requestTimeout)
+        let afCustomRequest = Alamofire.Session(configuration: configuration)
+        
+        afCustomRequest.request(
             url,
             method: .post,
             parameters: neuroHTTPRequest,

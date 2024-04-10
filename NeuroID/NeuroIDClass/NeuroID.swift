@@ -18,7 +18,6 @@ import WebKit
 
 public enum NeuroID {
     internal static let SEND_INTERVAL: Double = 5
-    internal static let GYRO_SAMPLE_INTERVAL: Double = 0.2
 
     internal static var clientKey: String?
     internal static var siteID: String?
@@ -55,7 +54,6 @@ public enum NeuroID {
     
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
-    internal static var captureGyroCadence = false
     internal static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
 
     internal static var observingInputs = false
@@ -76,6 +74,8 @@ public enum NeuroID {
     internal static var lowMemory: Bool = false
 
     internal static var callObserver: NIDCallStatusObserver?
+    
+    internal static var nidConfigService: NIDConfigService?
 
     // MARK: - Setup
 
@@ -103,18 +103,29 @@ public enum NeuroID {
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
-
+        
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-
-        callObserver = NIDCallStatusObserver()
-
-        locationManager = LocationManager()
+        
+        _ = NIDConfigService { success in
+            if success {
+                if (NIDConfigService.nidConfigCache.callInProgress) {
+                    callObserver = NIDCallStatusObserver()
+                }
+                
+                if (NIDConfigService.nidConfigCache.geoLocation) {
+                    locationManager = LocationManager()
+                }
+                
+                if (NIDConfigService.nidConfigCache.gyroAccelCadence) {
+                    sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+                }
+            }
+        }
+        
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
-
-        // begin gyro/accel sample rate
-        sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+        
         return true
     }
 

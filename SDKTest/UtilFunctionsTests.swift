@@ -20,7 +20,6 @@ final class UtilFunctionsTests: XCTestCase {
     let className = "className"
 
     override func setUpWithError() throws {
-        NeuroID.captureGyroCadence = false
         _ = NeuroID.configure(clientKey: clientKey)
     }
 
