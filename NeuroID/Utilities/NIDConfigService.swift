@@ -28,9 +28,7 @@ internal class NIDConfigService {
     }
     
     public static var nidConfigCache:ResponseData = ResponseData()
-    
-    static var cacheSet = false
-    
+        
     internal static var nidURL = "https://scripts.neuro-id.com/mobile/"
     
     init(completion: @escaping (Bool) -> Void) {
@@ -47,10 +45,10 @@ internal class NIDConfigService {
             case .success(let responseData):
                 self.setCache(responseData)
                 NIDLog.d("Retrieved config log")
-                NIDConfigService.cacheSet = true
                 completion(true)
             case .failure(let error):
                 NIDLog.e("Failed to retrieve NID Config \(error)")
+                NIDConfigService.nidConfigCache = ResponseData()
                 completion(true)
             }
         }
