@@ -128,7 +128,9 @@ public enum NeuroID {
         networkMonitor?.startMonitoring()
 
         // begin gyro/accel sample rate
-        sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+        if (NIDConfigService.nidConfigCache.gyroAccelCadence) {
+            sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+        }
         return true
     }
 

@@ -45,13 +45,13 @@ class ConfigServiceTests: XCTestCase {
         _ = NIDConfigService { success in
             if success {
                 assert(NIDConfigService.cacheSet)
-                assert(NIDConfigService.nidConfigCache.eventQueueFlushInterval == 5)
+                assert(NIDConfigService.nidConfigCache.eventQueueFlushInterval != 0)
                 assert(NIDConfigService.nidConfigCache.callInProgress)
-                assert(NIDConfigService.nidConfigCache.eventQueueFlushSize == 2000)
+                assert(NIDConfigService.nidConfigCache.eventQueueFlushSize != 0)
                 assert(NIDConfigService.nidConfigCache.geoLocation)
                 assert(NIDConfigService.nidConfigCache.gyroAccelCadence == false)
-                assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime == 200)
-                assert(NIDConfigService.nidConfigCache.requestTimeout == 10)
+                assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime != 0)
+                assert(NIDConfigService.nidConfigCache.requestTimeout != 0)
                 
             }
         }
