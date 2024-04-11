@@ -186,9 +186,7 @@ internal extension NeuroID {
             "authority": "receiver.neuroid.cloud",
         ]
 
-        let maxRetries = 3
-
-        networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers) { response in
+        networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: 0) { response in
             NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
             NIDLog.i("NeuroID Payload: \(neuroHTTPRequest)")
             switch response.result {

@@ -14,12 +14,13 @@ class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
     private let configuration = URLSessionConfiguration.af.default
     
     init() {
-        
+    
         // Initialize the session
         self.afCustomSession = Alamofire.Session(configuration: configuration)
     }
 
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, completion: @escaping (AFDataResponse<Data>) -> Void) {
+    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int = 0, completion: @escaping (AFDataResponse<Data>) -> Void) {
+        let maxRetryCount = 3
         
         configuration.timeoutIntervalForRequest = Double(NIDConfigService.nidConfigCache.requestTimeout)
         
@@ -30,10 +31,13 @@ class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
             encoder: JSONParameterEncoder.default,
             headers: headers
         ).validate().responseData { response in
-            if response.error != nil, response.response?.statusCode != 403 {
-                NIDLog.i("NeuroID network Retrying...")
-                self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, completion: completion)
-            } else { completion(response) }
+            if let error = response.error, response.response?.statusCode != 403, retryCount < maxRetryCount {
+                NIDLog.i("NeuroID network Retrying... attempt \(retryCount + 1)")
+                self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount + 1, completion: completion)
+            } else {
+                completion(response)
+            }
         }
     }
+
 }
