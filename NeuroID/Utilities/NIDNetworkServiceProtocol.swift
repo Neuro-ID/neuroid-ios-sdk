@@ -9,5 +9,5 @@ import Foundation
 import Alamofire
 
 protocol NIDNetworkServiceProtocol {
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void)
+    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, completion: @escaping (AFDataResponse<Data>) -> Void)
 }

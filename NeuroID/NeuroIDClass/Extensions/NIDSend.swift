@@ -188,7 +188,7 @@ internal extension NeuroID {
 
         let maxRetries = 3
 
-        networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: maxRetries) { response in
+        networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers) { response in
             NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
             NIDLog.i("NeuroID Payload: \(neuroHTTPRequest)")
             switch response.result {

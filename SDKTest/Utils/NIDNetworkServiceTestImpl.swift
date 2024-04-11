@@ -13,7 +13,7 @@ class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
     var mockResponse: Data?
     var mockError: Error?
 
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
+    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, completion: @escaping (AFDataResponse<Data>) -> Void) {
         // Set collection URL to dev
         NeuroID.collectionURL = Constants.developmentURL.rawValue
 
