@@ -11,7 +11,6 @@ import CallKit
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
-    private var turnOnConfigEnabled:Bool = NIDConfigService.nidConfigCache.callInProgress
     
     override init() {
         super.init()
@@ -40,7 +39,7 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     
     func startListeningToCallStatus(){
         if(!isRegistered) {
-            if (turnOnConfigEnabled) {
+            if (NIDConfigService.nidConfigCache.callInProgress) {
                 self.callObserver.setDelegate(self, queue: nil)
                 self.isRegistered = true
             }
