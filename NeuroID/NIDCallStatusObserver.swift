@@ -11,11 +11,9 @@ import CallKit
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
-    // Use the default value before config is loaded
     private var turnOnConfigEnabled:Bool = NIDConfigService.nidConfigCache.callInProgress
     
-    init(_ configToggle: Bool) {
-        turnOnConfigEnabled = configToggle
+    override init() {
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
         isRegistered = true

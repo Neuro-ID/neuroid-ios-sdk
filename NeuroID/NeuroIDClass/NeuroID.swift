@@ -110,7 +110,7 @@ public enum NeuroID {
         _ = NIDConfigService { success in
             if success {
                 if (NIDConfigService.nidConfigCache.callInProgress) {
-                    callObserver = NIDCallStatusObserver(NIDConfigService.nidConfigCache.callInProgress)
+                    callObserver = NIDCallStatusObserver()
                 }
                 
                 if (NIDConfigService.nidConfigCache.geoLocation) {
