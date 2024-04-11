@@ -10,23 +10,34 @@ import Alamofire
 
 class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
 
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void) {
+    private var afCustomSession: Alamofire.Session
+    private let configuration = URLSessionConfiguration.af.default
+    
+    init() {
+    
+        // Initialize the session
+        self.afCustomSession = Alamofire.Session(configuration: configuration)
+    }
+
+    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int = 0, completion: @escaping (AFDataResponse<Data>) -> Void) {
+        let maxRetryCount = 3
         
-        let configuration = URLSessionConfiguration.af.default
         configuration.timeoutIntervalForRequest = Double(NIDConfigService.nidConfigCache.requestTimeout)
-        let afCustomRequest = Alamofire.Session(configuration: configuration)
         
-        afCustomRequest.request(
+        afCustomSession.request(
             url,
             method: .post,
             parameters: neuroHTTPRequest,
             encoder: JSONParameterEncoder.default,
             headers: headers
         ).validate().responseData { response in
-            if response.error != nil, retryCount > 0, response.response?.statusCode != 403 {
-                NIDLog.i("NeuroID network Retrying...")
-                self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount - 1, completion: completion)
-            } else { completion(response) }
+            if let error = response.error, response.response?.statusCode != 403, retryCount < maxRetryCount {
+                NIDLog.i("NeuroID network Retrying... attempt \(retryCount + 1)")
+                self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount + 1, completion: completion)
+            } else {
+                completion(response)
+            }
         }
     }
+
 }

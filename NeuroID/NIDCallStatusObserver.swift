@@ -11,6 +11,7 @@ import CallKit
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
+    
     override init() {
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
@@ -37,9 +38,11 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     }
     
     func startListeningToCallStatus(){
-        if(!isRegistered){
-            self.callObserver.setDelegate(self, queue: nil)
-            isRegistered = true
+        if(!isRegistered) {
+            if (NIDConfigService.nidConfigCache.callInProgress) {
+                self.callObserver.setDelegate(self, queue: nil)
+                self.isRegistered = true
+            }
         }
     }
     
