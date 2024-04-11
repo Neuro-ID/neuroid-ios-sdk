@@ -11,7 +11,11 @@ import CallKit
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
-    override init() {
+    // Use the default value before config is loaded
+    private var turnOnConfigEnabled:Bool = NIDConfigService.nidConfigCache.callInProgress
+    
+    init(_ configToggle: Bool) {
+        turnOnConfigEnabled = configToggle
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
         isRegistered = true
@@ -37,14 +41,10 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     }
     
     func startListeningToCallStatus(){
-        if(!isRegistered){
-            _ = NIDConfigService { success in
-                if success {
-                    if (NIDConfigService.nidConfigCache.callInProgress) {
-                        self.callObserver.setDelegate(self, queue: nil)
-                        self.isRegistered = true
-                    }
-                }
+        if(!isRegistered) {
+            if (turnOnConfigEnabled) {
+                self.callObserver.setDelegate(self, queue: nil)
+                self.isRegistered = true
             }
         }
     }
