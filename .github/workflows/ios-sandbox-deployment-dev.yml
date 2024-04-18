@@ -21,7 +21,7 @@ env:
 jobs:
   testflight-dev:
     runs-on: macos-latest
-    if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/') != true
+    if: github.event.pull_request.merged
     outputs:
       slack-message: ${{ steps.slack-settings.outputs.SLACK_MESSAGE }}
       slack-title: ${{ steps.slack-settings.outputs.SLACK_TITLE }}
