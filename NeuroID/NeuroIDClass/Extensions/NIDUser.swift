@@ -150,8 +150,9 @@ public extension NeuroID {
         This should be called the moment a user trys to login
         @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
-    static func attemptedLogin(attemptedRegisteredUserId:String?) {
-        var hashedUserId = attemptedRegisteredUserId?.hashValue()
-        var loginEvent = NIDEvent(uid: hashedUserId)
+    static func attemptedLogin(_ attemptedRegisteredUserId:String? = nil) {
+        let hashedUserId = attemptedRegisteredUserId?.hashValue()
+        let loginEvent = NIDEvent(uid: hashedUserId)
+        NeuroID.saveEventToLocalDataStore(loginEvent)
     }
 }
