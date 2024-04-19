@@ -151,20 +151,16 @@ public extension NeuroID {
         @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
     static func attemptedLogin(_ attemptedRegisteredUserId:String? = nil) -> Bool{
-        var isValidID = false
-        if (attemptedRegisteredUserId != nil) {
-            if (!NeuroID.validateUserID(attemptedRegisteredUserId!)) {
-                isValidID = false
-            } else {
-                isValidID = true
-            }
+        let validId:Bool = NeuroID.validateUserID(attemptedRegisteredUserId ?? "")
+        let hashedUserId: String;
+        if validId {
+           hashedUserId = attemptedRegisteredUserId!.hashValue()
+        } else {
+           hashedUserId = "scrubbed-id-failed-validation"
         }
-            
-        let hashedUserId = isValidID
-        ? attemptedRegisteredUserId?.hashValue() : "scrubbed-id-failed-validation"
-        
+
         let loginEvent = NIDEvent(uid: hashedUserId)
         NeuroID.saveEventToLocalDataStore(loginEvent)
-        return isValidID
+        return validId
     }
 }
