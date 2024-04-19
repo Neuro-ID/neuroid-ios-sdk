@@ -928,8 +928,9 @@ class NIDUserTests: XCTestCase {
         let invalidID = NeuroID.attemptedLogin("🤣")
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
-        XCTAssert(event.count == 0)
+        XCTAssert(event.count == 1)
         XCTAssertFalse(invalidID)
+        XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
     }
     
     func test_attemptedLoginWithNoUID() {
@@ -937,7 +938,7 @@ class NIDUserTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
-        XCTAssertNil(event[0].uid)
+        XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
     }
     
     func test_multipleAttemptedLogins() {
