@@ -914,17 +914,26 @@ class NIDUserTests: XCTestCase {
     }
     
     func test_attemptedLoginWthUID() {
-        NeuroID.attemptedLogin("valid_user_id")
+        let validID = NeuroID.attemptedLogin("valid_user_id")
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
+        XCTAssertTrue(validID)
         XCTAssertNotNil(event[0].uid!)
         // Value shoould be hashed/salted/prefixed
         XCTAssertEqual("valid_user_id".hashValue(), event[0].uid!)
     }
     
+    func test_attemptedLoginWithInvalidID() {
+        let invalidID = NeuroID.attemptedLogin("🤣")
+        let allEvents = DataStore.getAllEvents()
+        let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
+        XCTAssert(event.count == 0)
+        XCTAssertFalse(invalidID)
+    }
+    
     func test_attemptedLoginWithNoUID() {
-        NeuroID.attemptedLogin()
+        _ = NeuroID.attemptedLogin()
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
@@ -932,8 +941,8 @@ class NIDUserTests: XCTestCase {
     }
     
     func test_multipleAttemptedLogins() {
-        NeuroID.attemptedLogin()
-        NeuroID.attemptedLogin()
+        _ = NeuroID.attemptedLogin()
+        _ = NeuroID.attemptedLogin()
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 2)
     }
 }
