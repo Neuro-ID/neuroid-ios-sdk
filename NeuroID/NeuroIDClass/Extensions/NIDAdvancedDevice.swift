@@ -49,7 +49,7 @@ public extension NeuroID {
                 let currentTimeEpoch = Date().timeIntervalSince1970
                 
                 if currentTimeEpoch < exp {
-                    captureADVEvent(requestID, cached: true)
+                    captureADVEvent(requestID, cached: true, latency: 0)
                     return true
                 }
             }
@@ -59,10 +59,17 @@ public extension NeuroID {
     }
     
     internal static func getNewADV() {
+        let startTime = DispatchTime.now()
+
         NeuroIDADV.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
             switch request {
             case .success(let requestID):
-                captureADVEvent(requestID, cached: false)
+                let endTime = DispatchTime.now()
+                
+                let executionTime = endTime.uptimeNanoseconds - startTime.uptimeNanoseconds
+                let milliseconds = Double(executionTime) / 1_000_000
+
+                captureADVEvent(requestID, cached: false, latency: milliseconds)
                     
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
@@ -80,10 +87,11 @@ public extension NeuroID {
         }
     }
     
-    internal static func captureADVEvent(_ requestID: String, cached: Bool) {
+    internal static func captureADVEvent(_ requestID: String, cached: Bool, latency: Double) {
         let nidEvent = NIDEvent(type: .advancedDevice)
         nidEvent.rid = requestID
         nidEvent.c = cached
+        nidEvent.l = latency
             
         NeuroID.saveEventToLocalDataStore(nidEvent)
     }

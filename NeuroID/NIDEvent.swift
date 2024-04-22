@@ -275,6 +275,7 @@ public class NIDEvent: Codable {
     var h: CGFloat?
     var w: CGFloat?
     var f: String?
+    var l: Double? // Latency (advanced device request)
     var lsid: String?
     var sid: String? // Done
     var cid: String? // Done
