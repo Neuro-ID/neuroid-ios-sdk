@@ -1164,6 +1164,15 @@ class NIDRNTests: XCTestCase {
 
         assert(!value)
     }
+    
+    func test_getAdvDeviceLatency() async {
+        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        NeuroID.deviceSignalService = 
+        NeuroID.getNewADV()
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        print(validEvent)
+    }
 }
 
 // swizzle
