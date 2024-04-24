@@ -155,7 +155,6 @@ public extension NeuroID {
             NeuroID.saveEventToLocalDataStore(NIDEvent(uid: attemptedRegisteredUserId))
         } else {
             NeuroID.saveEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
-
         }
         return true
     }
