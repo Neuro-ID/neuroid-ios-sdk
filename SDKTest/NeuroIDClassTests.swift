@@ -921,7 +921,7 @@ class NIDUserTests: XCTestCase {
         XCTAssertTrue(validID)
         XCTAssertNotNil(event[0].uid!)
         // Value shoould be hashed/salted/prefixed
-        XCTAssertEqual("valid_user_id".hashValue(), event[0].uid!)
+        XCTAssertEqual("valid_user_id", event[0].uid!)
     }
     
     func test_attemptedLoginWithInvalidID() {
@@ -929,7 +929,7 @@ class NIDUserTests: XCTestCase {
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssert(event.count == 1)
-        XCTAssertFalse(invalidID)
+        XCTAssertTrue(invalidID)
         XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
     }
     
