@@ -145,4 +145,17 @@ public extension NeuroID {
 
         return res
     }
+
+    /**
+        This should be called the moment a user trys to login. Returns true always
+        @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
+     */
+    static func attemptedLogin(_ attemptedRegisteredUserId:String? = nil) -> Bool{
+        if NeuroID.validateUserID(attemptedRegisteredUserId ?? "") {
+            NeuroID.saveEventToLocalDataStore(NIDEvent(uid: attemptedRegisteredUserId))
+        } else {
+            NeuroID.saveEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
+        }
+        return true
+    }
 }
