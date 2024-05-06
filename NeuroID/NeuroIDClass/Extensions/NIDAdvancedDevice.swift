@@ -61,7 +61,7 @@ public extension NeuroID {
     internal static func getNewADV() {
         let startTime = DispatchTime.now()
 
-        NeuroIDADV.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
+        NeuroIDADV().getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
             switch request {
             case .success(let requestID):
                 let endTime = DispatchTime.now()

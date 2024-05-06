@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NeuroIDAdvancedDevice
 @testable import NeuroID
 
 class MockDeviceSignalService: DeviceSignalService {

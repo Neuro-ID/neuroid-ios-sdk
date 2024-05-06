@@ -6,6 +6,7 @@
 //
 
 @testable import NeuroID
+@testable import NeuroIDAdvancedDevice
 import XCTest
 
 class NeuroIDClassTests: XCTestCase {
@@ -35,6 +36,18 @@ class NeuroIDClassTests: XCTestCase {
         clearOutDataStore()
     }
 
+    func test_getAdvDeviceLatency() async {
+        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        let mockService = MockDeviceSignalService()
+        // Device signal service mock. Real impl does no require device signal service to be set.
+        NeuroIDADV.deviceSignalService = mockService
+        mockService.mockResult = .success("empty mock result. Can be filled with anything")
+        _ = NeuroID.start(true)
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        XCTAssertTrue(validEvent.count == 1)
+    }
+    
     func assertDataStoreCount(count: Int) {
         let allEvents = DataStore.getAllEvents()
         assert(allEvents.count == count)
@@ -1163,15 +1176,6 @@ class NIDRNTests: XCTestCase {
         let value = NeuroID.getOptionValueBool(rnOptions: configOptionsInvalid, configOptionKey: .usingReactNavigation)
 
         assert(!value)
-    }
-    
-    func test_getAdvDeviceLatency() async {
-        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
-        NeuroID.deviceSignalService = 
-        NeuroID.getNewADV()
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-        print(validEvent)
     }
 }
 
