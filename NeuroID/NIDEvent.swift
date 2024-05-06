@@ -18,6 +18,7 @@ internal enum NIDSessionEventName: String {
 public enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
     case closeSession = "CLOSE_SESSION"
+    case attemptedLogin = "ATTEMPTED_LOGIN"
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -446,6 +447,15 @@ public class NIDEvent: Codable {
         self.tg = tg
     }
 
+    
+    /**
+     Attempted login
+     */
+    public init(uid: String?) {
+        self.type = NIDEventName.attemptedLogin.rawValue
+        self.uid = uid
+    }
+    
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
         let viewId = TargetValue.string(view != nil ? view!.id : "")
 
