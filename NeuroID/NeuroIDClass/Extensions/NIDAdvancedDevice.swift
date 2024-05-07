@@ -9,6 +9,9 @@ import Foundation
 import NeuroIDAdvancedDevice
 
 public extension NeuroID {
+    
+    internal static var deviceSignalService: DeviceSignalService?
+
     static func start(_ advancedDeviceSignals: Bool) -> Bool {
         let started = NeuroID.start()
         

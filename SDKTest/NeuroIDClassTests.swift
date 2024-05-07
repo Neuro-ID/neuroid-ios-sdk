@@ -35,12 +35,14 @@ class NeuroIDClassTests: XCTestCase {
         // Clear out the DataStore Events after each test
         clearOutDataStore()
     }
+    
+   
 
     func test_getAdvDeviceLatency() async {
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let mockService = MockDeviceSignalService()
         // Device signal service mock. Real impl does no require device signal service to be set.
-        NeuroIDADV.deviceSignalService = mockService
+        NeuroID.deviceSignalService = mockService
         mockService.mockResult = .success("empty mock result. Can be filled with anything")
         _ = NeuroID.start(true)
         let allEvents = DataStore.getAllEvents()
