@@ -39,10 +39,10 @@ class NeuroIDClassTests: XCTestCase {
    
 
     func test_getAdvDeviceLatency() async {
-        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let mockService = MockDeviceSignalService()
-        // Device signal service mock. Real impl does no require device signal service to be set.
         NeuroID.deviceSignalService = mockService
+        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success("empty mock result. Can be filled with anything")
         _ = NeuroID.start(true)
         let allEvents = DataStore.getAllEvents()

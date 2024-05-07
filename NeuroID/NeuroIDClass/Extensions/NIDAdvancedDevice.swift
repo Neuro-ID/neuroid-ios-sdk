@@ -10,7 +10,7 @@ import NeuroIDAdvancedDevice
 
 public extension NeuroID {
     
-    internal static var deviceSignalService: DeviceSignalService?
+    internal static var deviceSignalService: DeviceSignalService = NeuroIDADV()
 
     static func start(_ advancedDeviceSignals: Bool) -> Bool {
         let started = NeuroID.start()
@@ -18,8 +18,7 @@ public extension NeuroID {
         if !started {
             return started
         }
-       
-        if advancedDeviceSignals {
+               if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {
                 getNewADV()
@@ -64,7 +63,8 @@ public extension NeuroID {
     internal static func getNewADV() {
         let startTime = DispatchTime.now()
 
-        NeuroIDADV().getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
+        
+        deviceSignalService.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
             switch request {
             case .success(let requestID):
                 let endTime = DispatchTime.now()
