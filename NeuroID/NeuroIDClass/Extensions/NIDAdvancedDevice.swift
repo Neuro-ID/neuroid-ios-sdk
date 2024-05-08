@@ -16,11 +16,11 @@ public extension NeuroID {
             return started
         }
        
+        NeuroID.isAdvancedDevice = advancedDeviceSignals
+        
         if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
-            if !getCachedADV() {
-                getNewADV()
-            }
+            captureAdvancedDevice()
         }
         
         return started
@@ -33,11 +33,11 @@ public extension NeuroID {
             return sessionRes
         }
        
+        NeuroID.isAdvancedDevice = advancedDeviceSignals
+        
         if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
-            if !getCachedADV() {
-                getNewADV()
-            }
+            captureAdvancedDevice()
         }
         
         return sessionRes
@@ -86,5 +86,14 @@ public extension NeuroID {
         nidEvent.c = cached
             
         NeuroID.saveEventToLocalDataStore(nidEvent)
+    }
+    
+    internal static func captureAdvancedDevice() {
+        if NeuroID.isAdvancedDevice {
+              // call stored value, if expired then clear and get new one, else send existing
+              if !getCachedADV() {
+                  getNewADV()
+              }
+          }
     }
 }

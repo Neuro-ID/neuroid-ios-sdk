@@ -21,7 +21,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -62,7 +62,7 @@ class NeuroIDClassTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: clientKey)
+        let configured = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         assert(configured)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -84,7 +84,7 @@ class NeuroIDClassTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: "invalid_key")
+        let configured = NeuroID.configure(clientKey: "invalid_key", isAdvancedDevice: false)
         assert(configured == false)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -191,7 +191,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -292,7 +292,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -408,7 +408,7 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func tearDown() {
@@ -549,7 +549,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -601,7 +601,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -677,7 +677,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -1009,7 +1009,7 @@ class NIDClientSiteIdTests: XCTestCase {
 
     func test_getClientKey() {
         NeuroID.clientKey = nil
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         let expectedValue = clientKey
 
         let value = NeuroID.getClientKey()
@@ -1149,6 +1149,7 @@ class NIDRNTests: XCTestCase {
         assert(!NeuroID.isRN)
         let configured = NeuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
+            isAdvancedDevice: false,
             rnOptions: configOptionsTrue
         )
 
@@ -1160,6 +1161,7 @@ class NIDRNTests: XCTestCase {
         assert(!NeuroID.isRN)
         let configured = NeuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
+            isAdvancedDevice: false,
             rnOptions: configOptionsFalse
         )
 
@@ -1171,6 +1173,7 @@ class NIDRNTests: XCTestCase {
         assert(!NeuroID.isRN)
         let configured = NeuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
+            isAdvancedDevice: false,
             rnOptions: configOptionsInvalid
         )
 

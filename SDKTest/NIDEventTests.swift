@@ -13,7 +13,7 @@ class NIDEventTests: XCTestCase {
     let userId = "form_mobilesandbox"
     
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
     
     override func setUp() {

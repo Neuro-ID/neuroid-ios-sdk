@@ -12,8 +12,8 @@ public extension NeuroID {
         isRN = true
     }
 
-    static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
-        let configured = configure(clientKey: clientKey)
+    static func configure(clientKey: String, isAdvancedDevice: Bool, rnOptions: [String: Any]) -> Bool {
+        let configured = configure(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice)
 
         if !configured {
             return false

@@ -16,7 +16,7 @@ import WebKit
 
 // MARK: - Neuro ID Class
 
-public enum NeuroID {
+public class NeuroID : NSObject {
     internal static let SEND_INTERVAL: Double = 5
 
     internal static var clientKey: String?
@@ -76,13 +76,16 @@ public enum NeuroID {
     internal static var callObserver: NIDCallStatusObserver?
     
     internal static var nidConfigService: NIDConfigService?
+    
+    internal static var isAdvancedDevice: Bool = false
 
     // MARK: - Setup
 
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String) -> Bool {
+    public static func configure(clientKey: String, isAdvancedDevice: Bool) -> Bool {
+        NeuroID.isAdvancedDevice = isAdvancedDevice
         if NeuroID.clientKey != nil {
             NIDLog.e("You already configured the SDK")
             return false
@@ -141,6 +144,8 @@ public enum NeuroID {
         NeuroID._isSDKStarted = true
 
         NeuroID.startIntegrationHealthCheck()
+        
+        NeuroID.checkThenCaptureAdvancedDevice()
 
         NeuroID.createSession()
         swizzle()
@@ -195,6 +200,19 @@ public enum NeuroID {
             DispatchQueue.main.async {
                 viewController.registerPageTargets()
             }
+        }
+    }
+    
+    internal static func checkThenCaptureAdvancedDevice() {
+        let selectorString = "captureAdvancedDevice"
+        let selector = NSSelectorFromString(selectorString)
+
+        // Check if the runtime environemnt has adv libs installed
+        if NeuroID.responds(to: selector) {
+            let res = NeuroID.perform(selector)
+            print("ADV Captured \(res)")
+        } else {
+            print("Selector not found")
         }
     }
 
