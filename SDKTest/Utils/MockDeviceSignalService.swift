@@ -10,9 +10,9 @@ import NeuroIDAdvancedDevice
 @testable import NeuroID
 
 class MockDeviceSignalService: DeviceSignalService {
-    var mockResult: Result<String, Error>?
+    var mockResult: Result<(String, Double), Error>?
 
-    func getAdvancedDeviceSignal(_ apiKey: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func getAdvancedDeviceSignal(_ apiKey: String, completion: @escaping (Result<(String, Double), Error>) -> Void) {
         if let result = mockResult {
             completion(result)
         } else {

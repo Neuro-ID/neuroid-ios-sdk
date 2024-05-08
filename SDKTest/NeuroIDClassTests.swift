@@ -43,7 +43,8 @@ class NeuroIDClassTests: XCTestCase {
         NeuroID.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
-        mockService.mockResult = .success("empty mock result. Can be filled with anything")
+        let randomTimeInMilliseconds = Double(Int.random(in: 0..<3000))
+        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
         _ = NeuroID.start(true)
         let allEvents = DataStore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }

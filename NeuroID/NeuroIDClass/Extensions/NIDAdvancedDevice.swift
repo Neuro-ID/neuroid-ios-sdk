@@ -66,13 +66,9 @@ public extension NeuroID {
         
         deviceSignalService.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
             switch request {
-            case .success(let requestID):
-                let endTime = DispatchTime.now()
-                
-                let executionTime = endTime.uptimeNanoseconds - startTime.uptimeNanoseconds
-                let milliseconds = Double(executionTime) / 1_000_000
+            case .success((let requestID, let duration)):
 
-                captureADVEvent(requestID, cached: false, latency: milliseconds)
+                captureADVEvent(requestID, cached: false, latency: duration)
                     
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
