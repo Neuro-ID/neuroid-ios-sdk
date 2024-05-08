@@ -1127,7 +1127,7 @@ class NIDRNTests: XCTestCase {
         NeuroID.clientKey = nil
     }
 
-    let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true]
+    let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true, RNConfigOptions.isAdvancedDevice.rawValue: false]
     let configOptionsFalse = [RNConfigOptions.usingReactNavigation.rawValue: false]
     let configOptionsInvalid = ["foo": "bar"]
 
@@ -1149,7 +1149,6 @@ class NIDRNTests: XCTestCase {
         assert(!NeuroID.isRN)
         let configured = NeuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
-            isAdvancedDevice: false,
             rnOptions: configOptionsTrue
         )
 
@@ -1161,7 +1160,6 @@ class NIDRNTests: XCTestCase {
         assert(!NeuroID.isRN)
         let configured = NeuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
-            isAdvancedDevice: false,
             rnOptions: configOptionsFalse
         )
 
@@ -1173,7 +1171,6 @@ class NIDRNTests: XCTestCase {
         assert(!NeuroID.isRN)
         let configured = NeuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
-            isAdvancedDevice: false,
             rnOptions: configOptionsInvalid
         )
 
