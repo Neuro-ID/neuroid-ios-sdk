@@ -143,6 +143,8 @@ public extension NeuroID {
         
         startIntegrationHealthCheck()
 
+        checkThenCaptureAdvancedDevice()
+        
         createSession()
         swizzle()
 

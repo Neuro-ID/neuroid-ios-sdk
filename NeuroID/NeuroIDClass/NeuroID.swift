@@ -84,8 +84,7 @@ public class NeuroID : NSObject {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String, isAdvancedDevice: Bool) -> Bool {
-        NeuroID.isAdvancedDevice = isAdvancedDevice
+    public static func configure(clientKey: String, isAdvancedDevice: Bool = false) -> Bool {
         if NeuroID.clientKey != nil {
             NIDLog.e("You already configured the SDK")
             return false
@@ -95,6 +94,8 @@ public class NeuroID : NSObject {
             NIDLog.e("Invalid Client Key")
             return false
         }
+
+        NeuroID.isAdvancedDevice = isAdvancedDevice
 
         if clientKey.contains("_live_") {
             environment = Constants.environmentLive.rawValue
@@ -145,7 +146,7 @@ public class NeuroID : NSObject {
 
         NeuroID.startIntegrationHealthCheck()
         
-        NeuroID.checkThenCaptureAdvancedDevice()
+        checkThenCaptureAdvancedDevice()
 
         NeuroID.createSession()
         swizzle()
