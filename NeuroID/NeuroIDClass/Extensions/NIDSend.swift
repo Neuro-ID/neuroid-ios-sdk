@@ -102,8 +102,8 @@ internal extension NeuroID {
     /**
      Publically exposed just for testing. This should not be any reason to call this directly.
      */
-    static func groupAndPOST() {
-        if NeuroID.isStopped() {
+    static func groupAndPOST(forceSend: Bool = false) {
+        if NeuroID.isStopped(), !forceSend {
             return
         }
 
@@ -165,6 +165,7 @@ internal extension NeuroID {
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: NeuroID.siteID ?? "",
+            linkedSiteId: NeuroID.linkedSiteID,
             userID: userID == "" ? nil : userID,
             registeredUserID: registeredUserID == "" ? nil : registeredUserID,
             jsonEvents: events,

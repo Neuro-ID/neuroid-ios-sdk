@@ -19,15 +19,7 @@ import WebKit
 public enum NeuroID {
     internal static let SEND_INTERVAL: Double = 5
 
-    internal static var clientKey: String?
-    internal static var siteID: String?
-
-    internal static var locationManager: LocationManager?
-    internal static var networkMonitor: NetworkMonitoringService?
-
-    internal static var clientID: String?
-    internal static var userID: String?
-    internal static var registeredUserID: String = ""
+    internal static var linkedSiteID: String?
 
     internal static var trackers = [String: NeuroIDTracker]()
 
@@ -100,6 +92,7 @@ public enum NeuroID {
         }
 
         clearStoredSessionID()
+        NeuroID.linkedSiteID = nil
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
@@ -175,8 +168,9 @@ public enum NeuroID {
             return false
         }
 
-        NeuroID.groupAndPOST()
+        NeuroID.groupAndPOST(forceSend: true)
         NeuroID._isSDKStarted = false
+        NeuroID.linkedSiteID = nil
 
         // save captured health events to file
         saveIntegrationHealthEvents()

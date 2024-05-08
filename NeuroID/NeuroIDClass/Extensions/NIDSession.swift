@@ -94,7 +94,7 @@ public extension NeuroID {
             return closeEvent
         }
 
-        NeuroID.stop()
+        _ = NeuroID.stop()
         return closeEvent
     }
 
@@ -113,6 +113,8 @@ public extension NeuroID {
         NeuroID.registeredUserID = ""
         CURRENT_ORIGIN = nil
         CURRENT_ORIGIN_CODE = nil
+
+        NeuroID.linkedSiteID = nil
     }
 
     static func startSession(_ sessionID: String? = nil) -> SessionStartResult {
@@ -172,7 +174,7 @@ public extension NeuroID {
     internal static func pauseCollection(flushEventQueue: Bool = false) {
         if flushEventQueue {
             // flush all events immediately before pause
-            groupAndPOST()
+            groupAndPOST(forceSend: true)
         }
 
         NeuroID._isSDKStarted = false
@@ -182,7 +184,7 @@ public extension NeuroID {
 
     static func resumeCollection() {
         // Don't allow resume to be called if SDK has not been started
-        if (NeuroID.userID.isEmptyOrNil && !NeuroID.isSDKStarted) {
+        if NeuroID.userID.isEmptyOrNil, !NeuroID.isSDKStarted {
             return
         }
         NeuroID._isSDKStarted = true
@@ -205,5 +207,38 @@ public extension NeuroID {
         NeuroID.callObserver?.stopListeningToCallStatus()
 
         return true
+    }
+
+    static func startAppFlow(siteID: String, userID: String? = nil) -> SessionStartResult {
+        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
+            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+            return SessionStartResult(false, "")
+        }
+
+        // immediately flush events before anything else
+        groupAndPOST(forceSend: true)
+
+        // If not started then start
+        var startStatus: SessionStartResult
+        if !NeuroID._isSDKStarted {
+            if userID != nil {
+                startStatus = NeuroID.startSession(userID)
+            } else {
+                let started = NeuroID.start()
+                startStatus = SessionStartResult(started, "")
+            }
+        } else {
+            startStatus = SessionStartResult(true, NeuroID.getUserID())
+        }
+
+        // add linkedSite var
+        NeuroID.linkedSiteID = siteID
+
+        let setLinkedSiteIDEvent = NIDEvent(type: NIDEventName.closeSession)
+        setLinkedSiteIDEvent.ct = "SET_LINKED_SITE"
+        setLinkedSiteIDEvent.v = siteID
+        saveEventToLocalDataStore(setLinkedSiteIDEvent)
+
+        return startStatus
     }
 }

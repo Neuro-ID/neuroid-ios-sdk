@@ -455,11 +455,13 @@ class NIDNewSessionTests: XCTestCase {
     func test_clearSessionVariables() {
         NeuroID.userID = "myUserID"
         NeuroID.registeredUserID = "myRegisteredUserID"
+        NeuroID.linkedSiteID = "mySite"
 
         NeuroID.clearSessionVariables()
 
         assert(NeuroID.userID == nil)
         assert(NeuroID.registeredUserID == "")
+        assert(NeuroID.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
@@ -535,6 +537,17 @@ class NIDNewSessionTests: XCTestCase {
         let stopped = NeuroID.stopSession()
 
         assert(stopped)
+    }
+
+    func test_startAppFlow() {
+        let mySite = "mySite"
+        NeuroID._isSDKStarted = true
+        let stopped = NeuroID.startAppFlow(siteID: mySite)
+
+        assert(stopped.started)
+        assert(NeuroID.linkedSiteID == mySite)
+
+        NeuroID._isSDKStarted = false
     }
 }
 
