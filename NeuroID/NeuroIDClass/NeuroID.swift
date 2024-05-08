@@ -209,10 +209,9 @@ public class NeuroID : NSObject {
 
         // Check if the runtime environemnt has adv libs installed
         if NeuroID.responds(to: selector) {
-            let res = NeuroID.perform(selector)
-            print("ADV Captured \(res)")
+            NeuroID.perform(selector)
         } else {
-            print("Selector not found")
+            NIDLog.d("No advanced library found")
         }
     }
 
