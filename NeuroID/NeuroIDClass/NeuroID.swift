@@ -80,6 +80,14 @@ public enum NeuroID {
 
     // MARK: - Setup
 
+    static func verifyClientKeyExists() -> Bool {
+        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
+            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+            return false
+        }
+        return true
+    }
+
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
@@ -133,8 +141,7 @@ public enum NeuroID {
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start() -> Bool {
-        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
-            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+        if !NeuroID.verifyClientKeyExists() {
             return false
         }
 

@@ -1,6 +1,6 @@
 import UIKit
 
-internal enum NIDSessionEventName: String {
+enum NIDSessionEventName: String {
     case createSession = "CREATE_SESSION"
     case closeSession = "CLOSE_SESSION"
     case stateChange = "STATE_CHANGE"
@@ -11,6 +11,7 @@ internal enum NIDSessionEventName: String {
     case setCheckPoint = "SET_CHECKPOINT"
     case setCustomEvent = "SET_CUSTOM_EVENT"
     case heartBeat = "HEARTBEAT"
+    case setLinkedSite = "SET_LINKED_SITE"
 
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
 }
@@ -85,14 +86,14 @@ public enum NIDEventName: String {
     case advancedDevice = "ADVANCED_DEVICE_REQUEST"
 
     case callInProgress = "CALL_IN_PROGRESS"
-  
+
     case cadenceReadingAccel = "CADENCE_READING_ACCEL"
     case networkState = "NETWORK_STATE"
-    
+
     // Memory and queue events
     case bufferFull = "FULL_BUFFER"
     case lowMemory = "LOW_MEMORY"
-    
+
     var etn: String? {
         switch self {
         case .change, .textChange, .radioChange, .inputChange,
@@ -137,7 +138,7 @@ public struct NeuroHTTPRequest: Codable {
     var pageId: String
     var url: String
     var jsVersion: String = "5.0.0"
-    var linkedSiteId:String?
+    var linkedSiteId: String?
 
     public init(
         clientID: String,
@@ -146,7 +147,7 @@ public struct NeuroHTTPRequest: Codable {
         pageTag: String,
         responseID: String,
         siteID: String,
-        linkedSiteId:String?,
+        linkedSiteId: String?,
         userID: String?,
         registeredUserID: String?,
         jsonEvents: [NIDEvent],
@@ -400,7 +401,7 @@ public class NIDEvent: Codable {
         sh: CGFloat? = nil,
         sw: CGFloat? = nil,
         metadata: NIDMetadata? = nil,
-        cp:String? = nil
+        cp: String? = nil
     ) {
         self.type = session.rawValue
         self.f = f
@@ -449,7 +450,6 @@ public class NIDEvent: Codable {
         self.tg = tg
     }
 
-    
     /**
      Attempted login
      */
@@ -457,7 +457,7 @@ public class NIDEvent: Codable {
         self.type = NIDEventName.attemptedLogin.rawValue
         self.uid = uid
     }
-    
+
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
         let viewId = TargetValue.string(view != nil ? view!.id : "")
 
