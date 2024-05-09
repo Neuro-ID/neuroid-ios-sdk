@@ -25,13 +25,13 @@ jobs:
           ruby-version: 2.7.6
           bundler-cache: true
 
-      - name: Restore cached Pods
-        uses: actions/cache/restore@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-test-apps-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-test-apps
+      # - name: Restore cached Pods
+      #   uses: actions/cache/restore@v3
+      #   with:
+      #     path: Pods
+      #     key: ${{ runner.os }}-pods-test-apps-${{ hashFiles('**/Podfile.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pods-test-apps
 
       - name: CocoaPod Install
         run: pod cache clean —-all && pod repo update && pod install
