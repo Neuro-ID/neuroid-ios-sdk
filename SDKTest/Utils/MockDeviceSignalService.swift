@@ -3,7 +3,6 @@
 //  SDKTest
 //
 //  Created by Clayton Selby on 4/23/24.
-//
 
 import Foundation
 import NeuroIDAdvancedDevice
