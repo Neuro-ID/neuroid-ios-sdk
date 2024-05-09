@@ -38,7 +38,7 @@ class NeuroIDClassTests: XCTestCase {
     
    
 
-    func test_getAdvDeviceLatency() async {
+    func test_getAdvDeviceLatency() {
         let mockService = MockDeviceSignalService()
         NeuroID.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
