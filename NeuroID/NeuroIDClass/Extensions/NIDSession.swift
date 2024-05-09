@@ -122,6 +122,12 @@ public extension NeuroID {
         return true
     }
 
+    /*
+      Function to allow multiple use cases/flows within a single application
+      Can be used as the original starting function and then use continuously
+       throughout the rest of the session
+      i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
+     */
     static func startAppFlow(siteID: String, userID: String? = nil) -> SessionStartResult {
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             return SessionStartResult(false, "")
