@@ -471,11 +471,13 @@ class NIDNewSessionTests: XCTestCase {
     func test_clearSessionVariables() {
         NeuroID.userID = "myUserID"
         NeuroID.registeredUserID = "myRegisteredUserID"
+        NeuroID.linkedSiteID = "mySite"
 
         NeuroID.clearSessionVariables()
 
         assert(NeuroID.userID == nil)
         assert(NeuroID.registeredUserID == "")
+        assert(NeuroID.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
@@ -538,7 +540,7 @@ class NIDNewSessionTests: XCTestCase {
         assert(NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem != nil)
     }
-    
+
     func test_willNotResumeCollectionIfNotStarted() {
         NeuroID._isSDKStarted = false
         NeuroID.userID = nil
@@ -551,6 +553,32 @@ class NIDNewSessionTests: XCTestCase {
         let stopped = NeuroID.stopSession()
 
         assert(stopped)
+    }
+
+    func test_startAppFlow_valid_site() {
+        let mySite = "form_thing123"
+        NeuroID._isSDKStarted = true
+        NeuroID.linkedSiteID = nil
+
+        let stopped = NeuroID.startAppFlow(siteID: mySite)
+
+        assert(stopped.started)
+        assert(NeuroID.linkedSiteID == mySite)
+
+        NeuroID._isSDKStarted = false
+        NeuroID.linkedSiteID = nil
+    }
+
+    func test_startAppFlow_invalid_site() {
+        let mySite = "mySite"
+        NeuroID._isSDKStarted = true
+        NeuroID.linkedSiteID = nil
+        let stopped = NeuroID.startAppFlow(siteID: mySite)
+
+        assert(!stopped.started)
+        assert(NeuroID.linkedSiteID == nil)
+
+        NeuroID._isSDKStarted = false
     }
 }
 
@@ -928,7 +956,7 @@ class NIDUserTests: XCTestCase {
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
     }
-    
+
     func test_attemptedLoginWthUID() {
         let validID = NeuroID.attemptedLogin("valid_user_id")
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
@@ -939,7 +967,7 @@ class NIDUserTests: XCTestCase {
         // Value shoould be hashed/salted/prefixed
         XCTAssertEqual("valid_user_id", event[0].uid!)
     }
-    
+
     func test_attemptedLoginWithInvalidID() {
         let invalidID = NeuroID.attemptedLogin("🤣")
         let allEvents = DataStore.getAllEvents()
@@ -948,7 +976,7 @@ class NIDUserTests: XCTestCase {
         XCTAssertTrue(invalidID)
         XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
     }
-    
+
     func test_attemptedLoginWithNoUID() {
         _ = NeuroID.attemptedLogin()
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
@@ -956,7 +984,7 @@ class NIDUserTests: XCTestCase {
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
     }
-    
+
     func test_multipleAttemptedLogins() {
         _ = NeuroID.attemptedLogin()
         _ = NeuroID.attemptedLogin()
