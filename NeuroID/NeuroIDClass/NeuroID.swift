@@ -214,17 +214,18 @@ public class NeuroID : NSObject {
         }
     }
     
-    internal static func checkThenCaptureAdvancedDevice() {
-        let selectorString = "captureAdvancedDevice"
+    internal static func checkThenCaptureAdvancedDevice(_ shouldCapture:Bool = NeuroID.isAdvancedDevice) {
+        let selectorString = "captureAdvancedDevice:"
         let selector = NSSelectorFromString(selectorString)
 
         // Check if the runtime environemnt has adv libs installed
         if NeuroID.responds(to: selector) {
-            NeuroID.perform(selector)
+            NeuroID.perform(selector, with: [shouldCapture])
         } else {
             NIDLog.d("No advanced library found")
         }
     }
+    
 
     internal static func swizzle() {
         if didSwizzle {

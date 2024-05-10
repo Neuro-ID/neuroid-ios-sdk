@@ -150,6 +150,7 @@ public extension NeuroID {
             }
         } else {
             startStatus = SessionStartResult(true, NeuroID.getUserID())
+            checkThenCaptureAdvancedDevice()
         }
 
         if !startStatus.started {
