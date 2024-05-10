@@ -18,7 +18,7 @@ public extension NeuroID {
         if !started {
             return started
         }
-               if advancedDeviceSignals {
+        if advancedDeviceSignals {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {
                 getNewADV()
@@ -61,9 +61,6 @@ public extension NeuroID {
     }
     
     internal static func getNewADV() {
-        let startTime = DispatchTime.now()
-
-        
         deviceSignalService.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
             switch request {
             case .success((let requestID, let duration)):
