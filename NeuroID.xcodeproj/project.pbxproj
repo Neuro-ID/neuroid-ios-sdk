@@ -32,6 +32,7 @@
 		6F6B75512A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F709ED32BC58C7700F18895 /* ConfigServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */; };
 		6F709ED72BC5905A00F18895 /* NIDMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A05C2028B91B4D00509509 /* NIDMetadata.swift */; };
+		6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */; };
 		6FA07EFD2BBC5D1600020808 /* NIDConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA07EFC2BBC5D1600020808 /* NIDConfigService.swift */; };
 		6FB4F1D42BD849C200975CE2 /* MockDeviceSignalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */; };
 		6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */; };
@@ -151,6 +152,7 @@
 		6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceTestImpl.swift; sourceTree = "<group>"; };
 		6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTextFieldUtils.swift; sourceTree = "<group>"; };
 		6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigServiceTests.swift; sourceTree = "<group>"; };
+		6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAppFlowTests.swift; sourceTree = "<group>"; };
 		6FA07EFC2BBC5D1600020808 /* NIDConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDConfigService.swift; sourceTree = "<group>"; };
 		6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceSignalService.swift; sourceTree = "<group>"; };
 		6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPerformanceTests.swift; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 				F27883E72AA23F920063F78B /* TouchEventsTests.swift */,
 				F27045EF2B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift */,
 				6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */,
+				6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */,
 			);
 			path = SDKTest;
 			sourceTree = "<group>";
@@ -751,6 +754,7 @@
 				F2F0A3F029F6C8390083D43C /* IntegrationHealthTests.swift in Sources */,
 				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
 				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
+				6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */,
 				6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

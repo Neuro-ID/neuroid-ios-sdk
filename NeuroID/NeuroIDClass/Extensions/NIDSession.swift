@@ -69,6 +69,8 @@ public extension NeuroID {
 
         startIntegrationHealthCheck()
 
+        checkThenCaptureAdvancedDevice()
+        
         createSession()
         swizzle()
 
@@ -148,6 +150,7 @@ public extension NeuroID {
             }
         } else {
             startStatus = SessionStartResult(true, NeuroID.getUserID())
+            checkThenCaptureAdvancedDevice()
         }
 
         if !startStatus.started {

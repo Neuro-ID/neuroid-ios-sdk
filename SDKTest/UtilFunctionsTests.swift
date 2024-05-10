@@ -20,7 +20,7 @@ final class UtilFunctionsTests: XCTestCase {
     let className = "className"
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {

@@ -12,7 +12,7 @@ class TouchEventTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {

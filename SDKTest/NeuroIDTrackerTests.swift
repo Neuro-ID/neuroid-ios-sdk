@@ -16,7 +16,7 @@ class NeuroIDTrackerTests: XCTestCase {
     let guidValue = "\(Constants.attrGuidKey.rawValue)"
     
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
     
     override func setUp() {

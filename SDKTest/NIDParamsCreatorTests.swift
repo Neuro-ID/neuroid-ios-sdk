@@ -41,7 +41,7 @@ class NIDParamsCreatorTests: XCTestCase {
     let valueDoubleEntry = ["value": TargetValue.double(0)]
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
