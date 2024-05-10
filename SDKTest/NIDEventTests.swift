@@ -159,6 +159,7 @@ class NIDEventTests: XCTestCase {
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: "_",
+            linkedSiteId: nil,
             userID: NeuroID.getUserID(),
             registeredUserID: NeuroID.getRegisteredUserID(),
             jsonEvents: events,
