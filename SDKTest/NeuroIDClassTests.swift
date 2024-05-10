@@ -6,6 +6,7 @@
 //
 
 @testable import NeuroID
+@testable import NeuroIDAdvancedDevice
 import XCTest
 
 class NeuroIDClassTests: XCTestCase {
@@ -34,7 +35,23 @@ class NeuroIDClassTests: XCTestCase {
         // Clear out the DataStore Events after each test
         clearOutDataStore()
     }
+    
+   
 
+    func test_getAdvDeviceLatency() {
+        let mockService = MockDeviceSignalService()
+        NeuroID.deviceSignalService = mockService
+        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
+        let randomTimeInMilliseconds = Double(Int.random(in: 0..<3000))
+        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
+        _ = NeuroID.start(true)
+        let allEvents = DataStore.getAllEvents()
+        
+        let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        XCTAssertTrue(validEvent.count == 1)
+    }
+    
     func assertDataStoreCount(count: Int) {
         let allEvents = DataStore.getAllEvents()
         assert(allEvents.count == count)
