@@ -47,6 +47,7 @@ class NeuroIDClassTests: XCTestCase {
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
         _ = NeuroID.start(true)
         let allEvents = DataStore.getAllEvents()
+        
         let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
         XCTAssertTrue(validEvent.count == 1)
     }

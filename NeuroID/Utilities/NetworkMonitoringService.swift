@@ -19,8 +19,6 @@ internal class NetworkMonitoringService {
     internal private(set) var isConnected: Bool = false
     internal private(set) var connectionType: ConnectionType = .unknown
     
-    internal static var connectionTypeAccessor: ConnectionType = .unknown
-
     enum ConnectionType: String {
         case wifi
         case cellular
@@ -67,8 +65,6 @@ internal class NetworkMonitoringService {
             nidEvent.attrs = [
                 Attrs(n: "connectionType", v: "\(self.connectionType.rawValue)"),
             ]
-
-            NetworkMonitoringService.connectionTypeAccessor = self.connectionType
             
             NeuroID.saveEventToLocalDataStore(nidEvent)
 

@@ -88,7 +88,7 @@ public extension NeuroID {
         nidEvent.rid = requestID
         nidEvent.c = cached
         nidEvent.l = latency
-        nidEvent.ct = NetworkMonitoringService.connectionTypeAccessor.rawValue
+        nidEvent.ct = NeuroID.networkMonitor?.connectionType.rawValue
             
         NeuroID.saveEventToLocalDataStore(nidEvent)
     }
