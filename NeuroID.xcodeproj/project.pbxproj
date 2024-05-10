@@ -33,6 +33,7 @@
 		6F709ED32BC58C7700F18895 /* ConfigServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */; };
 		6F709ED72BC5905A00F18895 /* NIDMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A05C2028B91B4D00509509 /* NIDMetadata.swift */; };
 		6FA07EFD2BBC5D1600020808 /* NIDConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA07EFC2BBC5D1600020808 /* NIDConfigService.swift */; };
+		6FB4F1D42BD849C200975CE2 /* MockDeviceSignalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */; };
 		6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */; };
 		6FE6C96B2BBC97550033B9C2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
 		6FE77FE62937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
@@ -151,6 +152,7 @@
 		6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTextFieldUtils.swift; sourceTree = "<group>"; };
 		6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigServiceTests.swift; sourceTree = "<group>"; };
 		6FA07EFC2BBC5D1600020808 /* NIDConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDConfigService.swift; sourceTree = "<group>"; };
+		6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceSignalService.swift; sourceTree = "<group>"; };
 		6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPerformanceTests.swift; sourceTree = "<group>"; };
 		6FE77FE52937B3F700357284 /* NIDErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDErrors.swift; sourceTree = "<group>"; };
 		6FF06B26271FCA8300F6704C /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
@@ -351,6 +353,7 @@
 			isa = PBXGroup;
 			children = (
 				6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */,
+				6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -734,6 +737,7 @@
 				F27045F02B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift in Sources */,
 				F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */,
 				F2EF2A4D2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift in Sources */,
+				6FB4F1D42BD849C200975CE2 /* MockDeviceSignalService.swift in Sources */,
 				6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */,
 				6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */,
 				6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
