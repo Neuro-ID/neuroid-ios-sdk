@@ -45,11 +45,11 @@ final class MultiAppFlowTests: XCTestCase {
     func test_start_session_configure_adv_true() {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.deviceSignalService = mockService
-        print(NeuroID.isAdvancedDevice)
         _ = NeuroID.startSession("fake_user_session")
         
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
         
+        XCTAssert(NeuroID.isAdvancedDevice)
         XCTAssertTrue(validEvent.count == 1)
     }
     
@@ -57,8 +57,10 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.deviceSignalService = mockService
         _ = NeuroID.startAppFlow(siteID: "form_dream102", userID: "jakeId")
-    
+
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        
+        XCTAssert(NeuroID.isAdvancedDevice)
         XCTAssertTrue(validEvent.count == 1)
     }
     
@@ -66,8 +68,10 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.deviceSignalService = mockService
         _ = NeuroID.start(true)
+    
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
         
+        XCTAssert(!NeuroID.isAdvancedDevice)
         XCTAssertTrue(validEvent.count == 1)
     }
     
@@ -77,6 +81,7 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.start()
            
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        XCTAssert(NeuroID.isAdvancedDevice)
         XCTAssertTrue(validEvent.count == 1)
     }
     
@@ -86,6 +91,7 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.startSession("fake_user_session", true)
         
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        XCTAssert(!NeuroID.isAdvancedDevice)
         XCTAssertTrue(validEvent.count == 1)
     }
 }
