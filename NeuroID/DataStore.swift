@@ -30,13 +30,13 @@ public enum DataStore {
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
         // If we hit a low memory event, drop events and e1arly return.
-        if (NeuroID.lowMemory) {
+        if NeuroID.lowMemory || !NeuroID._isSessionSampled {
             return
         }
         // If queue has more than config event queue size (default 2000), send a queue full event and return
-        if (DataStore.queuedEvents.count + DataStore.events.count > NIDConfigService.nidConfigCache.eventQueueFlushSize) {
-            if (DataStore.events.last?.type != NIDEventName.bufferFull.rawValue && DataStore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue) {
-                let fullEvent = NIDEvent.init(type: NIDEventName.bufferFull)
+        if DataStore.queuedEvents.count + DataStore.events.count > NeuroID.configService.configCache.eventQueueFlushSize {
+            if DataStore.events.last?.type != NIDEventName.bufferFull.rawValue, DataStore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue {
+                let fullEvent = NIDEvent(type: NIDEventName.bufferFull)
                 if storeType == "queue" {
                     DataStore.queuedEvents.append(fullEvent)
                 } else {
@@ -46,7 +46,7 @@ public enum DataStore {
             NIDLog.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
             return
         }
-        
+
         let mutableEvent = event
 
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do

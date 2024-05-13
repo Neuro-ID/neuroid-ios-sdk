@@ -65,6 +65,8 @@ public extension NeuroID {
 
         NeuroID._isSDKStarted = true
 
+        NeuroID.determineIsSessionSampled()
+
         NeuroID.callObserver?.startListeningToCallStatus()
 
         startIntegrationHealthCheck()
@@ -133,8 +135,14 @@ public extension NeuroID {
             return SessionStartResult(false, "")
         }
 
-        // immediately flush events before anything else
-        groupAndPOST(forceSend: true)
+        // if the session is being sampled we should send, else we don't want those events anyways
+        if NeuroID._isSessionSampled {
+            // immediately flush events before anything else
+            groupAndPOST(forceSend: NeuroID._isSessionSampled)
+        } else {
+            // if not sampled clear any events that might have slipped through
+            _ = DataStore.getAndRemoveAllEvents()
+        }
 
         // If not started then start
         var startStatus: SessionStartResult
@@ -153,6 +161,10 @@ public extension NeuroID {
         if !startStatus.started {
             return startStatus
         }
+
+         // TO-DO - update config value
+
+        NeuroID.determineIsSessionSampled()
 
         // add linkedSite var
         NeuroID.linkedSiteID = siteID
@@ -177,6 +189,27 @@ extension NeuroID {
         }
 
         return valid
+    }
+
+    /*
+      Determine if the session/flow should be sampled (i.e. events captured and sent)
+       if not then change the _isSessionSampled var
+       this var will be used in the DataStore.cleanAndStoreEvent method
+       and will drop events if false
+     */
+    static func determineIsSessionSampled() {
+        if NeuroID.configService.configCache.currentSampleRate >= 100 {
+            NeuroID._isSessionSampled = true
+            return
+        }
+
+        let randomValue = Double.random(in: 0 ..< 100)
+        if randomValue < NeuroID.configService.configCache.currentSampleRate {
+            NeuroID._isSessionSampled = true
+            return
+        }
+
+        NeuroID._isSessionSampled = false
     }
 
     static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {

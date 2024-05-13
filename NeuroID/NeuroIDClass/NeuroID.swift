@@ -52,6 +52,7 @@ public enum NeuroID {
         get { _isSDKStarted }
         set {}
     }
+    internal static var _isSessionSampled:Bool = true
     
     internal static var sendCollectionWorkItem: DispatchWorkItem?
 
@@ -76,7 +77,7 @@ public enum NeuroID {
 
     internal static var callObserver: NIDCallStatusObserver?
     
-    internal static var nidConfigService: NIDConfigService?
+    internal static var configService: NIDConfigService = NIDConfigService()
 
     // MARK: - Setup
 
@@ -117,17 +118,19 @@ public enum NeuroID {
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
         
-        _ = NIDConfigService { success in
+        // create the config service and by default make the call
+        //  to get the remote config
+        configService.retrieveConfig { success in
             if success {
-                if (NIDConfigService.nidConfigCache.callInProgress) {
+                if (configService.configCache.callInProgress) {
                     callObserver = NIDCallStatusObserver()
                 }
                 
-                if (NIDConfigService.nidConfigCache.geoLocation) {
+                if (configService.configCache.geoLocation) {
                     locationManager = LocationManager()
                 }
                 
-                if (NIDConfigService.nidConfigCache.gyroAccelCadence) {
+                if (configService.configCache.gyroAccelCadence) {
                     sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
                 }
             }
@@ -148,7 +151,9 @@ public enum NeuroID {
         NeuroID.callObserver?.startListeningToCallStatus()
         
         NeuroID._isSDKStarted = true
-
+        
+        NeuroID.determineIsSessionSampled()
+        
         NeuroID.startIntegrationHealthCheck()
 
         NeuroID.createSession()

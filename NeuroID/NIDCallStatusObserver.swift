@@ -39,7 +39,7 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     
     func startListeningToCallStatus(){
         if(!isRegistered) {
-            if (NIDConfigService.nidConfigCache.callInProgress) {
+            if (NeuroID.configService.configCache.callInProgress) {
                 self.callObserver.setDelegate(self, queue: nil)
                 self.isRegistered = true
             }
