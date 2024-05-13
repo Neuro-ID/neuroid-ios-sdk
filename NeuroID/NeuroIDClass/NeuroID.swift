@@ -18,6 +18,8 @@ import WebKit
 
 public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
+    static var CURRENT_ORIGIN: String?
+    static var CURRENT_ORIGIN_CODE: String?
 
     static var clientKey: String?
     static var siteID: String?
@@ -25,6 +27,8 @@ public class NeuroID: NSObject {
 
     static var locationManager: LocationManager?
     static var networkMonitor: NetworkMonitoringService?
+    static var callObserver: NIDCallStatusObserver?
+    static var configService: NIDConfigService = .init()
 
     static var clientID: String?
     static var userID: String?
@@ -53,10 +57,9 @@ public class NeuroID: NSObject {
         set {}
     }
 
-    static var _isSessionSampled:Bool = true
-    
-    static var sendCollectionWorkItem: DispatchWorkItem?
+    static var _isSessionSampled: Bool = true
 
+    static var sendCollectionWorkItem: DispatchWorkItem?
     static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
 
     static var observingInputs = false
@@ -71,14 +74,7 @@ public class NeuroID: NSObject {
     static var isRN: Bool = false
     static var rnOptions: [RNConfigOptions: Any] = [:]
 
-    static var CURRENT_ORIGIN: String?
-    static var CURRENT_ORIGIN_CODE: String?
-
     static var lowMemory: Bool = false
-
-    static var callObserver: NIDCallStatusObserver?
-
-    static var configService: NIDConfigService = NIDConfigService()
 
     static var isAdvancedDevice: Bool = false
 
@@ -122,7 +118,7 @@ public class NeuroID: NSObject {
 
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-        
+
         // create the config service and by default make the call
         //  to get the remote config
         configService.retrieveConfig {
