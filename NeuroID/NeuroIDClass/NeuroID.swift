@@ -124,22 +124,20 @@ public class NeuroID : NSObject {
         
         // create the config service and by default make the call
         //  to get the remote config
-        configService.retrieveConfig { success in
-            if success {
-                if (configService.configCache.callInProgress) {
-                    callObserver = NIDCallStatusObserver()
-                }
-                
-                if (configService.configCache.geoLocation) {
-                    locationManager = LocationManager()
-                }
-                
-                if (configService.configCache.gyroAccelCadence) {
-                    sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
-                }
+        configService.retrieveConfig {
+            if configService.configCache.callInProgress {
+                callObserver = NIDCallStatusObserver()
+            }
+
+            if configService.configCache.geoLocation {
+                locationManager = LocationManager()
+            }
+
+            if configService.configCache.gyroAccelCadence {
+                sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
             }
         }
-        
+
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
         
@@ -152,15 +150,16 @@ public class NeuroID : NSObject {
             return false
         }
 
-        NeuroID.callObserver?.startListeningToCallStatus()
-        
         NeuroID._isSDKStarted = true
-        
-        NeuroID.determineIsSessionSampled()
-        
+
+        configService.updateConfigOptions {
+            NeuroID.determineIsSessionSampled()
+            checkThenCaptureAdvancedDevice()
+        }
+
+        NeuroID.callObserver?.startListeningToCallStatus()
+
         NeuroID.startIntegrationHealthCheck()
-        
-        checkThenCaptureAdvancedDevice()
 
         NeuroID.createSession()
         swizzle()

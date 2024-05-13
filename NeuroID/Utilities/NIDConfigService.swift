@@ -20,10 +20,10 @@ class NIDConfigService {
         self.networkService = networkService
     }
     
-    func retrieveConfig(completion: @escaping (Bool) -> Void) {
+    func retrieveConfig(completion: @escaping () -> Void) {
         if !NeuroID.verifyClientKeyExists() {
             cacheSetWithRemote = false
-            completion(true)
+            completion()
             return
         }
         
@@ -36,15 +36,15 @@ class NIDConfigService {
             case .success(let responseData):
                 self.setCache(responseData)
                 NIDLog.d("Retrieved remote config")
-                    
+                
                 self.cacheSetWithRemote = true
                 self.cacheCreationTime = .init()
-                completion(true)
+                completion()
             case .failure(let error):
                 NIDLog.e("Failed to retrieve NID Config \(error)")
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
-                completion(true)
+                completion()
             }
         }
     }
@@ -65,7 +65,7 @@ class NIDConfigService {
     
     func retrieveOrRefreshCache(completion: @escaping () -> Void) {
         if expiredCache() {
-            retrieveConfig { _ in
+            retrieveConfig {
                 completion()
             }
         } else {
@@ -73,7 +73,7 @@ class NIDConfigService {
         }
     }
     
-    func updateConfigOptions(siteID: String? = nil) {
+    func updateConfigOptions(siteID: String? = nil, completion: @escaping () -> Void) {
         // check cache time
         retrieveOrRefreshCache {
             // retrieve the site config for the site
@@ -82,6 +82,7 @@ class NIDConfigService {
             // if siteID == nil then assume parent site
             if siteID == nil || siteID ?? "" == self.configCache.siteID ?? "noID" {
                 self.configCache.currentSampleRate = self.configCache.sampleRate ?? NIDConfigService.DEFAULT_SAMPLE_RATE
+                completion()
                 return
             }
             
@@ -92,6 +93,8 @@ class NIDConfigService {
             } else if linkedSiteConfig != nil {
                 self.configCache.currentSampleRate = linkedSiteConfig?.sampleRate ?? NIDConfigService.DEFAULT_SAMPLE_RATE
             }
+            
+            completion()
         }
     }
 }

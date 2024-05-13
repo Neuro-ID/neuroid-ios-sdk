@@ -47,14 +47,12 @@ class ConfigServiceTests: XCTestCase {
         configService.configCache.requestTimeout = 0
         configService.cacheSetWithRemote = true
         
-        configService.retrieveConfig { success in
-            if success {
-                assert(self.configService.configCache.eventQueueFlushInterval != 0)
-                assert(self.configService.configCache.gyroAccelCadenceTime != 0)
-                assert(self.configService.configCache.eventQueueFlushSize != 1999)
-                assert(self.configService.configCache.requestTimeout != 0)
-                assert(!self.configService.cacheSetWithRemote)
-            }
+        configService.retrieveConfig {
+            assert(self.configService.configCache.eventQueueFlushInterval != 0)
+            assert(self.configService.configCache.gyroAccelCadenceTime != 0)
+            assert(self.configService.configCache.eventQueueFlushSize != 1999)
+            assert(self.configService.configCache.requestTimeout != 0)
+            assert(!self.configService.cacheSetWithRemote)
         }
     }
     
@@ -66,11 +64,9 @@ class ConfigServiceTests: XCTestCase {
         configService.configCache.requestTimeout = 0
         configService.cacheSetWithRemote = true
         
-        configService.retrieveConfig { success in
-            if success {
-                assert(self.configService.configCache.requestTimeout == 0)
-                assert(!self.configService.cacheSetWithRemote)
-            }
+        configService.retrieveConfig {
+            assert(self.configService.configCache.requestTimeout == 0)
+            assert(!self.configService.cacheSetWithRemote)
         }
     }
     
@@ -84,13 +80,11 @@ class ConfigServiceTests: XCTestCase {
         configService.configCache.gyroAccelCadenceTime = 0
         configService.configCache.requestTimeout = 0
         
-        configService.retrieveConfig { success in
-            if success {
-                assert(self.configService.configCache.eventQueueFlushInterval != 0)
-                assert(self.configService.configCache.gyroAccelCadenceTime != 0)
-                assert(self.configService.configCache.requestTimeout != 0)
-                assert(self.configService.cacheSetWithRemote)
-            }
+        configService.retrieveConfig {
+            assert(self.configService.configCache.eventQueueFlushInterval != 0)
+            assert(self.configService.configCache.gyroAccelCadenceTime != 0)
+            assert(self.configService.configCache.requestTimeout != 0)
+            assert(self.configService.cacheSetWithRemote)
         }
     }
     

@@ -65,14 +65,10 @@ public extension NeuroID {
 
         NeuroID._isSDKStarted = true
 
-        NeuroID.determineIsSessionSampled()
-
         NeuroID.callObserver?.startListeningToCallStatus()
 
         startIntegrationHealthCheck()
 
-        checkThenCaptureAdvancedDevice()
-        
         createSession()
         swizzle()
 
@@ -90,6 +86,11 @@ public extension NeuroID {
         let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
         for event in queuedEvents {
             DataStore.insertEvent(screen: "", event: event)
+        }
+
+        configService.updateConfigOptions {
+            NeuroID.determineIsSessionSampled()
+            checkThenCaptureAdvancedDevice()
         }
 
         return SessionStartResult(true, finalSessionID)
@@ -157,6 +158,7 @@ public extension NeuroID {
                 startStatus = SessionStartResult(started, "")
             }
         } else {
+            // TO-DO - ADD CREATE_SESSION and METADATA
             startStatus = SessionStartResult(true, NeuroID.getUserID())
             checkThenCaptureAdvancedDevice()
         }
@@ -165,9 +167,10 @@ public extension NeuroID {
             return startStatus
         }
 
-         // TO-DO - update config value
-
-        NeuroID.determineIsSessionSampled()
+        configService.updateConfigOptions(siteID: siteID) {
+            NeuroID.determineIsSessionSampled()
+            checkThenCaptureAdvancedDevice()
+        }
 
         // add linkedSite var
         NeuroID.linkedSiteID = siteID
