@@ -2,11 +2,10 @@
 //  NIDConfigService.swift
 //  NeuroID
 
-import Foundation
 import Alamofire
+import Foundation
 
-internal class NIDConfigService {
-    
+class NIDConfigService {
     struct ResponseData: Decodable {
         var callInProgress: Bool = true
         var geoLocation: Bool = true
@@ -27,15 +26,14 @@ internal class NIDConfigService {
         }
     }
     
-    internal static var cacheSetWithRemote = false
+    static var cacheSetWithRemote = false
     
-    public static var nidConfigCache:ResponseData = ResponseData()
+    public static var nidConfigCache: ResponseData = .init()
         
-    internal static var nidURL = "https://scripts.neuro-id.com/mobile/"
+    static var nidURL = "https://scripts.neuro-id.com/mobile/"
     
     init(completion: @escaping (Bool) -> Void) {
-
-        if (NeuroID.clientKey == nil || NeuroID.clientKey == "") {
+        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
             NIDLog.e("Missing Client Key. Config Service not started")
             completion(true)
             return
@@ -60,5 +58,4 @@ internal class NIDConfigService {
     func setCache(_ responseData: ResponseData) {
         NIDConfigService.nidConfigCache = responseData
     }
-    
 }

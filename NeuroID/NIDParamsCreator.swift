@@ -134,7 +134,7 @@ enum ParamsCreator {
         }
     }
 
-    internal static func generateID() -> String {
+    static func generateID() -> String {
         return UUID().uuidString
     }
 

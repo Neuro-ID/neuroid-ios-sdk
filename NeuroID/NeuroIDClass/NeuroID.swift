@@ -16,69 +16,69 @@ import WebKit
 
 // MARK: - Neuro ID Class
 
-public class NeuroID : NSObject {
-    internal static let SEND_INTERVAL: Double = 5
+public class NeuroID: NSObject {
+    static let SEND_INTERVAL: Double = 5
 
-    internal static var clientKey: String?
-    internal static var siteID: String?
-    internal static var linkedSiteID: String?
+    static var clientKey: String?
+    static var siteID: String?
+    static var linkedSiteID: String?
 
-    internal static var locationManager: LocationManager?
-    internal static var networkMonitor: NetworkMonitoringService?
+    static var locationManager: LocationManager?
+    static var networkMonitor: NetworkMonitoringService?
 
-    internal static var clientID: String?
-    internal static var userID: String?
-    internal static var registeredUserID: String = ""
+    static var clientID: String?
+    static var userID: String?
+    static var registeredUserID: String = ""
 
-    internal static var trackers = [String: NeuroIDTracker]()
+    static var trackers = [String: NeuroIDTracker]()
 
     /// Turn on/off printing the SDK log to your console
     public static var showLogs = true
-    internal static let showDebugLog = false
+    static let showDebugLog = false
 
-    internal static var excludedViewsTestIDs = [String]()
+    static var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
 
-    internal static var environment: String = Constants.environmentTest.rawValue
+    static var environment: String = Constants.environmentTest.rawValue
 
     fileprivate static var _currentScreenName: String?
-    internal static var currentScreenName: String? {
+    static var currentScreenName: String? {
         get { lock.withCriticalSection { _currentScreenName } }
         set { lock.withCriticalSection { _currentScreenName = newValue } }
     }
 
-    internal static var _isSDKStarted: Bool = false
+    static var _isSDKStarted: Bool = false
     public static var isSDKStarted: Bool {
         get { _isSDKStarted }
         set {}
     }
-    
-    internal static var sendCollectionWorkItem: DispatchWorkItem?
 
-    internal static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
+    static var sendCollectionWorkItem: DispatchWorkItem?
 
-    internal static var observingInputs = false
-    internal static var observingKeyboard = false
-    internal static var didSwizzle: Bool = false
+    static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
 
-    internal static var verifyIntegrationHealth: Bool = false
-    internal static var debugIntegrationHealthEvents: [NIDEvent] = []
+    static var observingInputs = false
+    static var observingKeyboard = false
+    static var didSwizzle: Bool = false
+
+    static var verifyIntegrationHealth: Bool = false
+    static var debugIntegrationHealthEvents: [NIDEvent] = []
 
     public static var registeredTargets = [String]()
 
-    internal static var isRN: Bool = false
-    internal static var rnOptions: [RNConfigOptions: Any] = [:]
+    static var isRN: Bool = false
+    static var rnOptions: [RNConfigOptions: Any] = [:]
 
-    internal static var CURRENT_ORIGIN: String?
-    internal static var CURRENT_ORIGIN_CODE: String?
-    
-    internal static var lowMemory: Bool = false
+    static var CURRENT_ORIGIN: String?
+    static var CURRENT_ORIGIN_CODE: String?
 
-    internal static var callObserver: NIDCallStatusObserver?
-    
-    internal static var nidConfigService: NIDConfigService?
-    
-    internal static var isAdvancedDevice: Bool = false
+    static var lowMemory: Bool = false
+
+    static var callObserver: NIDCallStatusObserver?
+
+    static var nidConfigService: NIDConfigService?
+
+    static var isAdvancedDevice: Bool = false
 
     // MARK: - Setup
 
@@ -117,29 +117,29 @@ public class NeuroID : NSObject {
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
-        
+
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-        
+
         _ = NIDConfigService { success in
             if success {
-                if (NIDConfigService.nidConfigCache.callInProgress) {
+                if NIDConfigService.nidConfigCache.callInProgress {
                     callObserver = NIDCallStatusObserver()
                 }
-                
-                if (NIDConfigService.nidConfigCache.geoLocation) {
+
+                if NIDConfigService.nidConfigCache.geoLocation {
                     locationManager = LocationManager()
                 }
-                
-                if (NIDConfigService.nidConfigCache.gyroAccelCadence) {
+
+                if NIDConfigService.nidConfigCache.gyroAccelCadence {
                     sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
                 }
             }
         }
-        
+
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
-        
+
         return true
     }
 
@@ -150,11 +150,11 @@ public class NeuroID : NSObject {
         }
 
         NeuroID.callObserver?.startListeningToCallStatus()
-        
+
         NeuroID._isSDKStarted = true
 
         NeuroID.startIntegrationHealthCheck()
-        
+
         checkThenCaptureAdvancedDevice()
 
         NeuroID.createSession()
@@ -172,7 +172,7 @@ public class NeuroID : NSObject {
         saveIntegrationHealthEvents()
 
         let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        queuedEvents.forEach { event in
+        for event in queuedEvents {
             DataStore.insertEvent(screen: "", event: event)
         }
 
@@ -196,7 +196,7 @@ public class NeuroID : NSObject {
 
         // save captured health events to file
         saveIntegrationHealthEvents()
-        
+
         //  stop listening to changes in call status
         NeuroID.callObserver?.stopListeningToCallStatus()
         return true
@@ -213,8 +213,8 @@ public class NeuroID : NSObject {
             }
         }
     }
-    
-    internal static func checkThenCaptureAdvancedDevice(_ shouldCapture:Bool = NeuroID.isAdvancedDevice) {
+
+    static func checkThenCaptureAdvancedDevice(_ shouldCapture: Bool = NeuroID.isAdvancedDevice) {
         let selectorString = "captureAdvancedDevice:"
         let selector = NSSelectorFromString(selectorString)
 
@@ -225,9 +225,8 @@ public class NeuroID : NSObject {
             NIDLog.d("No advanced library found")
         }
     }
-    
 
-    internal static func swizzle() {
+    static func swizzle() {
         if didSwizzle {
             return
         }
@@ -243,15 +242,14 @@ public class NeuroID : NSObject {
         didSwizzle.toggle()
     }
 
-    internal static func saveEventToLocalDataStore(_ event: NIDEvent) {
+    static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
     }
 
-    internal static func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
+    static func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertQueuedEvent(screen: event.type, event: event)
     }
-    
-    
+
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
     public static func getSDKVersion() -> String {
