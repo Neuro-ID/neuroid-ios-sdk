@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal func getFileURL(_ fileName: String?) throws -> URL {
+func getFileURL(_ fileName: String?) throws -> URL {
     do {
         var fileURL = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
@@ -23,7 +23,7 @@ internal func getFileURL(_ fileName: String?) throws -> URL {
     }
 }
 
-internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) throws {
+func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) throws {
     do {
         let fileURL = try getFileURL(fileName)
 
@@ -36,7 +36,7 @@ internal func writeNIDEventsToJSON(_ fileName: String, items: [NIDEvent]) throws
     }
 }
 
-internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInfo) throws {
+func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealthDeviceInfo) throws {
     do {
         let fileURL = try getFileURL(fileName)
 
@@ -49,7 +49,7 @@ internal func writeDeviceInfoToJSON(_ fileName: String, items: IntegrationHealth
     }
 }
 
-internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundleURL: URL) throws {
+func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundleURL: URL) throws {
     let fileManager = FileManager.default
 
 //    checkAndDeleteItems(fileDirectory: fileDirectory)
@@ -70,7 +70,7 @@ internal func copyResourceBundleFile(fileName: String, fileDirectory: URL, bundl
     }
 }
 
-internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, bundleURL: URL) throws {
+func copyResourceBundleFolder(folderName: String, fileDirectory: URL, bundleURL: URL) throws {
     let fileManager = FileManager.default
 
     checkAndDeleteItems(fileDirectory: fileDirectory)
@@ -95,7 +95,7 @@ internal func copyResourceBundleFolder(folderName: String, fileDirectory: URL, b
     }
 }
 
-internal func checkAndDeleteItems(fileDirectory: URL) {
+func checkAndDeleteItems(fileDirectory: URL) {
     let fileManager = FileManager.default
 
     // Check if the folder exists

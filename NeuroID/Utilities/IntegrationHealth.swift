@@ -86,9 +86,7 @@ func generateIntegrationHealthReport(saveCopy: Bool = false) {
 }
 
 func saveIntegrationHealthResources() {
-    if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle")
-
-    {
+    if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle") {
         let NIDDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(Constants.integrationFilePath.rawValue)
 
         do {
@@ -104,7 +102,7 @@ func saveIntegrationHealthResources() {
     }
 }
 
-internal extension NeuroID {
+extension NeuroID {
     static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
         if verifyIntegrationHealth {
             ifTrueCB()

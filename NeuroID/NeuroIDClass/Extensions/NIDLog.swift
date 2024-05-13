@@ -20,7 +20,7 @@ private enum Log {
     }
 }
 
-internal extension NeuroID {
+extension NeuroID {
     /**
      Enable or disable the NeuroID debug logging
      */
