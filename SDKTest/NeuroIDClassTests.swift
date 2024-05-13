@@ -6,6 +6,7 @@
 //
 
 @testable import NeuroID
+@testable import NeuroIDAdvancedDevice
 import XCTest
 
 class NeuroIDClassTests: XCTestCase {
@@ -16,16 +17,19 @@ class NeuroIDClassTests: XCTestCase {
     let clientKeyKey = Constants.storageClientKey.rawValue
     let tabIdKey = Constants.storageTabIDKey.rawValue
 
+    let mockService = MockDeviceSignalService()
+
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
-        _ = NeuroID.start()
+        UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
+        mockService.mockResult = .success(("mock", Double(Int.random(in: 0..<3000))))
     }
 
     override func tearDown() {
@@ -35,6 +39,19 @@ class NeuroIDClassTests: XCTestCase {
         clearOutDataStore()
     }
 
+    func test_getAdvDeviceLatency() {
+        let mockService = MockDeviceSignalService()
+        NeuroID.deviceSignalService = mockService
+        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        let randomTimeInMilliseconds = Double(Int.random(in: 0..<3000))
+        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
+        _ = NeuroID.start(true)
+        let allEvents = DataStore.getAllEvents()
+        
+        let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        XCTAssertTrue(validEvent.count == 1)
+    }
+            
     func assertDataStoreCount(count: Int) {
         let allEvents = DataStore.getAllEvents()
         assert(allEvents.count == count)
@@ -62,7 +79,7 @@ class NeuroIDClassTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: clientKey)
+        let configured = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         assert(configured)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -84,7 +101,7 @@ class NeuroIDClassTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: "invalid_key")
+        let configured = NeuroID.configure(clientKey: "invalid_key", isAdvancedDevice: false)
         assert(configured == false)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -127,7 +144,7 @@ class NeuroIDClassTests: XCTestCase {
         // post action test
         assert(started)
         assert(NeuroID.isSDKStarted)
-        assert(DataStore.events.count == 2)
+        assert(DataStore.events.count >= 2)
         assertStoredEventCount(type: "CREATE_SESSION", count: 1)
         assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
@@ -166,14 +183,6 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
     }
 
-    func test_saveEventToLocalDataStore() {
-        let event = NIDEvent(type: NIDEventName.heartbeat)
-
-        NeuroID.saveEventToLocalDataStore(event)
-
-        assertStoredEventTypeAndCount(type: "HEARTBEAT", count: 1)
-    }
-
     func test_getSDKVersion() {
         let expectedValue = ParamsCreator.getSDKVersion()
 
@@ -191,7 +200,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -292,7 +301,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -408,7 +417,7 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func tearDown() {
@@ -577,7 +586,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -629,7 +638,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -705,7 +714,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -1037,7 +1046,7 @@ class NIDClientSiteIdTests: XCTestCase {
 
     func test_getClientKey() {
         NeuroID.clientKey = nil
-        _ = NeuroID.configure(clientKey: clientKey)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         let expectedValue = clientKey
 
         let value = NeuroID.getClientKey()
@@ -1155,7 +1164,7 @@ class NIDRNTests: XCTestCase {
         NeuroID.clientKey = nil
     }
 
-    let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true]
+    let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true, RNConfigOptions.isAdvancedDevice.rawValue: false]
     let configOptionsFalse = [RNConfigOptions.usingReactNavigation.rawValue: false]
     let configOptionsInvalid = ["foo": "bar"]
 

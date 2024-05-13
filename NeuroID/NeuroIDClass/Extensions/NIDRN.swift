@@ -13,7 +13,12 @@ public extension NeuroID {
     }
 
     static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
-        let configured = configure(clientKey: clientKey)
+        
+        let isAdvancedDevice = getOptionValueBool(
+            rnOptions: rnOptions,
+            configOptionKey: .isAdvancedDevice
+        )
+        let configured = configure(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice)
 
         if !configured {
             return false
@@ -26,6 +31,8 @@ public extension NeuroID {
             rnOptions: rnOptions,
             configOptionKey: .usingReactNavigation
         )
+        
+
 
         self.rnOptions[.usingReactNavigation] = usingReactNavigation
 
@@ -43,4 +50,5 @@ public extension NeuroID {
 
 public enum RNConfigOptions: String, Hashable {
     case usingReactNavigation
+    case isAdvancedDevice
 }
