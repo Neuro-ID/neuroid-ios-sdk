@@ -8,7 +8,7 @@
 import Foundation
 import Network
 
-internal class NetworkMonitoringService {
+class NetworkMonitoringService {
     private let queue = DispatchQueue.global()
     private let monitor: NWPathMonitor
 
@@ -16,9 +16,9 @@ internal class NetworkMonitoringService {
 
     private var resumeNetworkTask: DispatchWorkItem = DispatchWorkItem {}
 
-    internal private(set) var isConnected: Bool = false
-    internal private(set) var connectionType: ConnectionType = .unknown
-    
+    private(set) var isConnected: Bool = false
+    private(set) var connectionType: ConnectionType = .unknown
+
     enum ConnectionType: String {
         case wifi
         case cellular
@@ -51,7 +51,7 @@ internal class NetworkMonitoringService {
         }
     }
 
-    internal func startMonitoring() {
+    func startMonitoring() {
         monitor.start(queue: queue)
 
         monitor.pathUpdateHandler = { path in
@@ -65,7 +65,7 @@ internal class NetworkMonitoringService {
             nidEvent.attrs = [
                 Attrs(n: "connectionType", v: "\(self.connectionType.rawValue)"),
             ]
-            
+
             NeuroID.saveEventToLocalDataStore(nidEvent)
 
             if connectionStatus != self.isConnected {
@@ -106,7 +106,7 @@ internal class NetworkMonitoringService {
         }
     }
 
-    internal func stopMonitoring() {
+    func stopMonitoring() {
         monitor.cancel()
     }
 

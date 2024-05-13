@@ -25,7 +25,6 @@ public class NeuroIDTracker: NSObject {
         nidClassName = controller?.nidClassName
     }
     
-    
     public func captureEvent(event: NIDEvent) {
         let screenName = screen ?? ParamsCreator.generateID()
         let newEvent = event
@@ -217,7 +216,7 @@ public class NeuroIDTracker: NSObject {
     }
 }
 
-internal extension NeuroIDTracker {
+extension NeuroIDTracker {
     func subscribe(inScreen controller: UIViewController?) {
         // Early exit if we are stopped
         if NeuroID.isStopped() {

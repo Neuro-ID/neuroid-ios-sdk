@@ -8,7 +8,7 @@
 import Alamofire
 import Foundation
 
-internal extension NeuroID {
+extension NeuroID {
     static var networkService: NIDNetworkServiceProtocol = NIDNetworkServiceImpl()
 
     static var collectionURL = Constants.productionURL.rawValue
@@ -56,7 +56,7 @@ internal extension NeuroID {
 
     static func initGyroAccelCollectionTimer() {
         // If gyro cadence not enabled, early return
-        if (!NeuroID.configService.configCache.gyroAccelCadence) {
+        if !NeuroID.configService.configCache.gyroAccelCadence {
             return
         }
         if let workItem = NeuroID.sendGyroAccelCollectionWorkItem {

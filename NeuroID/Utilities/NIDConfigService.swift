@@ -7,7 +7,7 @@ import Foundation
 
 class NIDConfigService {
     static let DEFAULT_SAMPLE_RATE: Double = 100
-    static var NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
+    static var NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/" // TO-DO - Change back to PROD
     
     var networkService: NIDNetworkServiceProtocol
 

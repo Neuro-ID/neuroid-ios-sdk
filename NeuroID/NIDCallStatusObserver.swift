@@ -5,8 +5,8 @@
 //  Created by Priya Xavier on 1/26/24.
 //
 
-import Foundation
 import CallKit
+import Foundation
 
 class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
@@ -15,11 +15,11 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     override init() {
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
-        isRegistered = true
+        self.isRegistered = true
     }
     
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
-        if call.hasEnded{
+        if call.hasEnded {
             UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue)
             NIDLog.d("Call has ended")
         } else if call.isOutgoing {
@@ -37,19 +37,19 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
         }
     }
     
-    func startListeningToCallStatus(){
-        if(!isRegistered) {
-            if (NeuroID.configService.configCache.callInProgress) {
+    func startListeningToCallStatus() {
+        if !self.isRegistered {
+            if NeuroID.configService.configCache.callInProgress {
                 self.callObserver.setDelegate(self, queue: nil)
                 self.isRegistered = true
             }
         }
     }
     
-    func stopListeningToCallStatus(){
-        if(isRegistered){
+    func stopListeningToCallStatus() {
+        if self.isRegistered {
             self.callObserver.setDelegate(nil, queue: nil)
-            isRegistered = false
+            self.isRegistered = false
         }
     }
 }

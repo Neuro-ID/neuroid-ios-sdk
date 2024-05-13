@@ -8,7 +8,6 @@
 import Foundation
 
 public extension NeuroID {
-    
     internal static func validateUserID(_ userId: String) -> Bool {
         // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
         do {
@@ -17,26 +16,24 @@ public extension NeuroID {
             if result.count != 1 {
                 NIDLog.e(NIDError.invalidUserID.rawValue)
                 // If Validation fails send origin event
-                if (CURRENT_ORIGIN == nil)
-                {
+                if CURRENT_ORIGIN == nil {
                     CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
                 }
                 CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
 
-                sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
-                
+                sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
+
                 return false
             }
         } catch {
             NIDLog.e(NIDError.invalidUserID.rawValue)
             // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
-            if (CURRENT_ORIGIN == nil)
-            {
+            if CURRENT_ORIGIN == nil {
                 CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
             }
             CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
 
-            sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
+            sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
             return false
         }
 
@@ -72,7 +69,6 @@ public extension NeuroID {
                 key: "sessionIdCode",
                 v: originCode
             )
-        
 
         let sessionIdSourceEvent =
             NIDEvent(
@@ -80,15 +76,14 @@ public extension NeuroID {
                 key: "sessionIdSource",
                 v: origin
             )
-        
 
         let sessionIdEvent =
-        NIDEvent(
-            sessionEvent: NIDSessionEventName.setVariable,
+            NIDEvent(
+                sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionId",
                 v: originSessionID
             )
-        
+
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(sessionIdCodeEvent)
             saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
@@ -102,8 +97,7 @@ public extension NeuroID {
 
     static func setUserID(_ userId: String) -> Bool {
         // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
-        if (CURRENT_ORIGIN == nil)
-        {
+        if CURRENT_ORIGIN == nil {
             CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
             CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
         }
@@ -111,10 +105,10 @@ public extension NeuroID {
             userId: userId, type: .userID
         ) { success in
             if success {
-                sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
+                sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
                 NeuroID.userID = userId
             }
-            
+
             return success
         }
 
@@ -138,8 +132,8 @@ public extension NeuroID {
             }
             CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
             CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
-            sendOriginEvent(origin:  CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: registeredUserID)
-            
+            sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: registeredUserID)
+
             return success
         }
 
@@ -150,7 +144,7 @@ public extension NeuroID {
         This should be called the moment a user trys to login. Returns true always
         @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
-    static func attemptedLogin(_ attemptedRegisteredUserId:String? = nil) -> Bool{
+    static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
         if NeuroID.validateUserID(attemptedRegisteredUserId ?? "") {
             NeuroID.saveEventToLocalDataStore(NIDEvent(uid: attemptedRegisteredUserId))
         } else {

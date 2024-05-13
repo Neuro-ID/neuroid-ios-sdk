@@ -9,7 +9,6 @@ import Foundation
 import NeuroIDAdvancedDevice
 
 public extension NeuroID {
-    
     internal static var deviceSignalService: DeviceSignalService = NeuroIDADV()
 
     static func start(_ advancedDeviceSignals: Bool) -> Bool {
@@ -84,13 +83,12 @@ public extension NeuroID {
         NeuroID.saveEventToLocalDataStore(nidEvent)
     }
     
-    
     @objc internal static func captureAdvancedDevice(_ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]) {
         if shouldCapture.indices.contains(0), shouldCapture[0] {
-          // call stored value, if expired then clear and get new one, else send existing
-          if !getCachedADV() {
-              getNewADV()
-          }
+            // call stored value, if expired then clear and get new one, else send existing
+            if !getCachedADV() {
+                getNewADV()
+            }
         }
     }
 }
