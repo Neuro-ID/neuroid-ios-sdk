@@ -42,9 +42,17 @@ public extension NeuroID {
         return id
     }
 
-    static func startSession(_ sessionID: String? = nil) -> SessionStartResult {
+    static func startSession(
+        _ sessionID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) -> SessionStartResult {
         if !NeuroID.verifyClientKeyExists() {
-            return SessionStartResult(false, "")
+            let res = SessionStartResult(false, "")
+
+            completion(res)
+
+            // this is now inaccurate but keeping for backwards compatibility
+            return res
         }
 
         // stop existing session if one is open
@@ -60,39 +68,30 @@ public extension NeuroID {
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
         if !setUserID(finalSessionID) {
-            return SessionStartResult(false, "")
+            let res = SessionStartResult(false, "")
+
+            completion(res)
+
+            // this is now inaccurate but keeping for backwards compatibility
+            return res
         }
 
-        NeuroID._isSDKStarted = true
-
-        NeuroID.callObserver?.startListeningToCallStatus()
-
-        startIntegrationHealthCheck()
-
-        createSession()
-        swizzle()
-
-        #if DEBUG
-        if NSClassFromString("XCTest") == nil {
-            resumeCollection()
-        }
-        #else
-        resumeCollection()
-        #endif
-
-        // save captured health events to file
-        saveIntegrationHealthEvents()
-
-        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        for event in queuedEvents {
-            DataStore.insertEvent(screen: "", event: event)
-        }
-
+        // Use config cache or if first time, retrieve from server
         configService.updateConfigOptions {
-            NeuroID.determineIsSessionSampled()
-            checkThenCaptureAdvancedDevice()
+            NeuroID.setupSession {
+                #if DEBUG
+                if NSClassFromString("XCTest") == nil {
+                    resumeCollection()
+                }
+                #else
+                resumeCollection()
+                #endif
+            }
+
+            completion(SessionStartResult(true, finalSessionID))
         }
 
+        // this is now inaccurate but keeping for backwards compatibility
         return SessionStartResult(true, finalSessionID)
     }
 
@@ -133,9 +132,15 @@ public extension NeuroID {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
-    static func startAppFlow(siteID: String, userID: String? = nil) -> SessionStartResult {
+    static func startAppFlow(
+        siteID: String,
+        userID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
-            return SessionStartResult(false, "")
+            let res = SessionStartResult(false, "")
+
+            completion(res)
         }
 
         // if the session is being sampled we should send, else we don't want those events anyways
@@ -147,62 +152,57 @@ public extension NeuroID {
             _ = DataStore.getAndRemoveAllEvents()
         }
 
-        // If not started then start
-        var startStatus: SessionStartResult
-        if !NeuroID._isSDKStarted {
-            // if userID passed then startSession else start
-            if userID != nil {
-                startStatus = NeuroID.startSession(userID)
-            } else {
-                let started = NeuroID.start()
-                startStatus = SessionStartResult(started, "")
-            }
-        } else {
-            // TO-DO - ADD CREATE_SESSION and METADATA
-            startStatus = SessionStartResult(true, NeuroID.getUserID())
-
-            // capture CREATE_SESSION and METADATA events for new flow
-            saveEventToLocalDataStore(createNIDSessionEvent())
-
-            captureMobileMetadata()
-
-            checkThenCaptureAdvancedDevice()
-        }
-
-        if !startStatus.started {
-            return startStatus
-        }
-
+        // // Use config cache or if first time, retrieve from server
         configService.updateConfigOptions(siteID: siteID) {
-            NeuroID.determineIsSessionSampled()
-            checkThenCaptureAdvancedDevice()
+            var startStatus: SessionStartResult
+
+            // The following events have to happen for either
+            //  an existing session that begins a new flow OR
+            //  a new session with a new flow
+            // 1. Determine if flow should be sampled
+            // 2. CREATE_SESSION and MOBILE_METADATA events captured
+            // 3. Capture ADV (based on global config and lib installed)
+
+            if !NeuroID._isSDKStarted {
+                // if userID passed then startSession should be used
+                if userID != nil {
+                    startStatus = NeuroID.startSession(userID)
+                } else {
+                    let started = NeuroID.start()
+                    startStatus = SessionStartResult(started, NeuroID.getUserID())
+                }
+
+                if !startStatus.started {
+                    completion(startStatus)
+                    return
+                }
+
+            } else {
+                NeuroID.determineIsSessionSampled()
+
+                // capture CREATE_SESSION and METADATA events for new flow
+                saveEventToLocalDataStore(createNIDSessionEvent())
+                captureMobileMetadata()
+
+                checkThenCaptureAdvancedDevice()
+
+                startStatus = SessionStartResult(true, NeuroID.getUserID())
+            }
+
+            NeuroID.linkedSiteID = siteID
+
+            // Add the SET_LINKED_SITE event for MIHR purposes
+            //  this event is ignore by the collector service
+            let setLinkedSiteIDEvent = NIDEvent(sessionEvent: NIDSessionEventName.setLinkedSite)
+            setLinkedSiteIDEvent.v = siteID
+            saveEventToLocalDataStore(setLinkedSiteIDEvent)
+
+            completion(startStatus)
         }
-
-        // add linkedSite var
-        NeuroID.linkedSiteID = siteID
-
-        let setLinkedSiteIDEvent = NIDEvent(sessionEvent: NIDSessionEventName.setLinkedSite)
-        setLinkedSiteIDEvent.v = siteID
-        saveEventToLocalDataStore(setLinkedSiteIDEvent)
-
-        return startStatus
     }
 }
 
 extension NeuroID {
-    static func validateSiteID(_ string: String) -> Bool {
-        let regex = #"^form_[a-zA-Z0-9]{5}\d{3}$"#
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
-
-        let valid = predicate.evaluate(with: string)
-
-        if !valid {
-            NIDLog.e("Invalid SiteID/AppID")
-        }
-
-        return valid
-    }
-
     /*
       Determine if the session/flow should be sampled (i.e. events captured and sent)
        if not then change the _isSessionSampled var
@@ -308,5 +308,33 @@ extension NeuroID {
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()
         NeuroID.sendCollectionWorkItem = nil
+    }
+
+    static func setupSession(customFunctionality: () -> Void = {}) {
+        NeuroID.determineIsSessionSampled()
+        NeuroID.createListeners()
+
+        NeuroID._isSDKStarted = true
+
+        NeuroID.callObserver?.startListeningToCallStatus()
+
+        NeuroID.startIntegrationHealthCheck()
+
+        NeuroID.createSession()
+        swizzle()
+
+        // custom functionality = the different timer starts (start vs. startSession)
+        //  this will be refactored once we bring start/startSession in alignment
+        customFunctionality()
+
+        // save beginSession events to MIHR file
+        saveIntegrationHealthEvents()
+
+        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+        for event in queuedEvents {
+            DataStore.insertEvent(screen: "", event: event)
+        }
+
+        checkThenCaptureAdvancedDevice()
     }
 }

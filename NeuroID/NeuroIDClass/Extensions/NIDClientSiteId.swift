@@ -63,4 +63,17 @@ public extension NeuroID {
 
         return validKey
     }
+
+    static func validateSiteID(_ string: String) -> Bool {
+        let regex = #"^form_[a-zA-Z0-9]{5}\d{3}$"#
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+
+        let valid = predicate.evaluate(with: string)
+
+        if !valid {
+            NIDLog.e("Invalid SiteID/AppID")
+        }
+
+        return valid
+    }
 }

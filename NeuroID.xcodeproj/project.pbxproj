@@ -33,7 +33,6 @@
 		6F709ED32BC58C7700F18895 /* ConfigServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */; };
 		6F709ED72BC5905A00F18895 /* NIDMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A05C2028B91B4D00509509 /* NIDMetadata.swift */; };
 		6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */; };
-		6FA07EFD2BBC5D1600020808 /* NIDConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA07EFC2BBC5D1600020808 /* NIDConfigService.swift */; };
 		6FB4F1D42BD849C200975CE2 /* MockDeviceSignalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */; };
 		6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */; };
 		6FE6C96B2BBC97550033B9C2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
@@ -71,6 +70,7 @@
 		F228AA8F2A0180F80004892F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = F228AA8E2A0180F80004892F /* Resources */; };
 		F228AA902A0180F80004892F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = F228AA8E2A0180F80004892F /* Resources */; };
 		F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B75532AC36F8A00A7DF4D /* NIDRN.swift */; };
+		F2420C352BF3A1CD00143928 /* NIDListeners.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2420C342BF3A1CD00143928 /* NIDListeners.swift */; };
 		F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */; };
 		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
 		F2546A6E2B9A121500348BD7 /* NIDTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2546A6D2B9A121500348BD7 /* NIDTesting.swift */; };
@@ -191,6 +191,7 @@
 		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
 		F228AA8E2A0180F80004892F /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		F23B75532AC36F8A00A7DF4D /* NIDRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRN.swift; sourceTree = "<group>"; };
+		F2420C342BF3A1CD00143928 /* NIDListeners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDListeners.swift; sourceTree = "<group>"; };
 		F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDAdvancedDevice.swift; sourceTree = "<group>"; };
 		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		F2546A6D2B9A121500348BD7 /* NIDTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDTesting.swift; sourceTree = "<group>"; };
@@ -458,6 +459,7 @@
 				F23B75532AC36F8A00A7DF4D /* NIDRN.swift */,
 				F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */,
 				F2546A6D2B9A121500348BD7 /* NIDTesting.swift */,
+				F2420C342BF3A1CD00143928 /* NIDListeners.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -727,6 +729,7 @@
 				F2546A6E2B9A121500348BD7 /* NIDTesting.swift in Sources */,
 				F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */,
 				F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */,
+				F2420C352BF3A1CD00143928 /* NIDListeners.swift in Sources */,
 				F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */,
 				F2AEE73D2A27A6AE009690CB /* NIDScreen.swift in Sources */,
 				F2AEE73F2A27A6E9009690CB /* NIDUser.swift in Sources */,

@@ -119,22 +119,6 @@ public class NeuroID: NSObject {
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
 
-        // create the config service and by default make the call
-        //  to get the remote config
-        configService.retrieveConfig {
-            if configService.configCache.callInProgress {
-                callObserver = NIDCallStatusObserver()
-            }
-
-            if configService.configCache.geoLocation {
-                locationManager = LocationManager()
-            }
-
-            if configService.configCache.gyroAccelCadence {
-                sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
-            }
-        }
-
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
 
@@ -142,43 +126,35 @@ public class NeuroID: NSObject {
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
-    public static func start() -> Bool {
+    public static func start(
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) -> Bool {
         if !NeuroID.verifyClientKeyExists() {
+            completion(false)
+
+            // this is now inaccurate but keeping for backwards compatibility
             return false
         }
 
-        NeuroID._isSDKStarted = true
-
+        // Use config cache or if first time, retrieve from server
         configService.updateConfigOptions {
-            NeuroID.determineIsSessionSampled()
-            checkThenCaptureAdvancedDevice()
+            // Setup Session with old start timer logic
+            // TO-DO - Refactor to behave like startSession
+            NeuroID.setupSession {
+                #if DEBUG
+                if NSClassFromString("XCTest") == nil {
+                    initTimer()
+                }
+                #else
+                initTimer()
+                #endif
+                initGyroAccelCollectionTimer()
+            }
+
+            completion(true)
         }
 
-        NeuroID.callObserver?.startListeningToCallStatus()
-
-        NeuroID.startIntegrationHealthCheck()
-
-        NeuroID.createSession()
-        swizzle()
-
-        #if DEBUG
-        if NSClassFromString("XCTest") == nil {
-            initTimer()
-        }
-        #else
-        initTimer()
-        #endif
-
-        // save captured health events to file
-        saveIntegrationHealthEvents()
-
-        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        for event in queuedEvents {
-            DataStore.insertEvent(screen: "", event: event)
-        }
-
-        initGyroAccelCollectionTimer()
-
+        // this is now inaccurate but keeping for backwards compatibility
         return true
     }
 
