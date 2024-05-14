@@ -30,7 +30,7 @@ public enum DataStore {
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
         // If we hit a low memory event, drop events and e1arly return.
-        if NeuroID.lowMemory || !NeuroID._isSessionSampled {
+        if NeuroID.lowMemory || !NeuroID._isSessionFlowSampled {
             return
         }
         // If queue has more than config event queue size (default 2000), send a queue full event and return
