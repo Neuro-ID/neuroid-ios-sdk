@@ -8,7 +8,7 @@ import Foundation
 class NIDConfigService {
     struct ResponseData: Decodable {
         var callInProgress: Bool = true
-        var geoLocation: Bool = true
+        var geoLocation: Bool = false
         var eventQueueFlushInterval: Int = 5
         var eventQueueFlushSize: Int = 2000
         var requestTimeout: Int = 10

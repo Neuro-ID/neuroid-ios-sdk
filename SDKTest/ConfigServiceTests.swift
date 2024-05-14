@@ -51,6 +51,7 @@ class ConfigServiceTests: XCTestCase {
                 assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime != 0)
                 assert(NIDConfigService.nidConfigCache.eventQueueFlushSize != 1999)
                 assert(NIDConfigService.nidConfigCache.requestTimeout != 0)
+                assert(!NIDConfigService.nidConfigCache.geoLocation)
             }
         }
     }
