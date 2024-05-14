@@ -8,7 +8,7 @@
 import Foundation
 
 struct LinkedSiteOption: Decodable {
-    var sampleRate: Double
+    var sampleRate: Int
 
     enum CodingKeys: String, CodingKey {
         case sampleRate = "sample_rate"
@@ -25,10 +25,10 @@ struct ConfigResponseData: Decodable {
     var gyroAccelCadenceTime: Int = 200
 
     // could exist for parent site or could be null meaning 100%
-    var sampleRate: Double? = NIDConfigService.DEFAULT_SAMPLE_RATE
+    var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
 
     // this is where we store the variable to be used. If updateConfigOptions is called then this value will be overritten to use the latest version
-    var currentSampleRate: Double = 100
+    var currentSampleRate: Int = 100
     var siteID: String? = "" // should not be optional but older configs might not have it
     var linkedSiteOptions: [String: LinkedSiteOption]? = [:]
 

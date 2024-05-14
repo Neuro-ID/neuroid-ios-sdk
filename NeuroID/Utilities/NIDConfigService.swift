@@ -6,8 +6,8 @@ import Alamofire
 import Foundation
 
 class NIDConfigService {
-    static let DEFAULT_SAMPLE_RATE: Double = 100
-    static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/" // TO-DO - Change back to PROD
+    static let DEFAULT_SAMPLE_RATE: Int = 100
+    static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
     
     var networkService: NIDNetworkServiceProtocol
 

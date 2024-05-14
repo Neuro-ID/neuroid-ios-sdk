@@ -155,18 +155,19 @@ extension NeuroID {
        and will drop events if false
      */
     static func updateIsSampledStatus() {
-        if NeuroID.configService.configCache.currentSampleRate >= 100 {
-            NeuroID._isSessionSampled = true
+        let maxSampleRate = 100
+        if NeuroID.configService.configCache.currentSampleRate >= maxSampleRate {
+            NeuroID._isSessionFlowSampled = true
             return
         }
 
-        let randomValue = Double.random(in: 0 ..< 100)
+        let randomValue = Int.random(in: 0 ..< maxSampleRate)
         if randomValue < NeuroID.configService.configCache.currentSampleRate {
-            NeuroID._isSessionSampled = true
+            NeuroID._isSessionFlowSampled = true
             return
         }
 
-        NeuroID._isSessionSampled = false
+        NeuroID._isSessionFlowSampled = false
     }
 
     static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
