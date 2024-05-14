@@ -28,12 +28,21 @@ public extension NeuroID {
         }
     }
 
-    internal static func getClientKeyFromLocalStorage() -> String {
+    @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
+    static func setSiteId(siteId: String) {
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
+        self.siteID = siteId
+    }
+}
+
+// Internal Only Functions
+extension NeuroID {
+    static func getClientKeyFromLocalStorage() -> String {
         let key = getUserDefaultKeyString(Constants.storageClientKey.rawValue)
         return key ?? ""
     }
 
-    internal static func getClientKey() -> String {
+    static func getClientKey() -> String {
         guard let key = NeuroID.clientKey else {
             NIDLog.e("ClientKey is not set")
             return ""
@@ -41,13 +50,7 @@ public extension NeuroID {
         return key
     }
 
-    @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
-    static func setSiteId(siteId: String) {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
-        self.siteID = siteId
-    }
-
-    internal static func validateClientKey(_ clientKey: String) -> Bool {
+    static func validateClientKey(_ clientKey: String) -> Bool {
         var validKey = false
 
         let pattern = "key_(live|test)_[A-Za-z0-9]+"
@@ -75,5 +78,19 @@ public extension NeuroID {
         }
 
         return valid
+    }
+
+    static func addLinkedSiteID(_ siteID: String) {
+        if !NeuroID.validateSiteID(siteID) {
+            return
+        }
+
+        NeuroID.linkedSiteID = siteID
+
+        // Add the SET_LINKED_SITE event for MIHR purposes
+        //  this event is ignore by the collector service
+        let setLinkedSiteIDEvent = NIDEvent(sessionEvent: NIDSessionEventName.setLinkedSite)
+        setLinkedSiteIDEvent.v = siteID
+        saveEventToLocalDataStore(setLinkedSiteIDEvent)
     }
 }

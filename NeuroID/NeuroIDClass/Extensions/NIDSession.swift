@@ -46,53 +46,7 @@ public extension NeuroID {
         _ sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) -> SessionStartResult {
-        if !NeuroID.verifyClientKeyExists() {
-            let res = SessionStartResult(false, "")
-
-            completion(res)
-
-            // this is now inaccurate but keeping for backwards compatibility
-            return res
-        }
-
-        // stop existing session if one is open
-        if NeuroID.userID != nil || NeuroID.isSDKStarted {
-            _ = stopSession()
-        }
-
-        // If sessionID is nil, set origin as NID here
-        if sessionID == nil {
-            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
-            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
-        }
-
-        let finalSessionID = sessionID ?? ParamsCreator.generateID()
-        if !setUserID(finalSessionID) {
-            let res = SessionStartResult(false, "")
-
-            completion(res)
-
-            // this is now inaccurate but keeping for backwards compatibility
-            return res
-        }
-
-        // Use config cache or if first time, retrieve from server
-        configService.updateConfigOptions {
-            NeuroID.setupSession {
-                #if DEBUG
-                if NSClassFromString("XCTest") == nil {
-                    resumeCollection()
-                }
-                #else
-                resumeCollection()
-                #endif
-            }
-
-            completion(SessionStartResult(true, finalSessionID))
-        }
-
-        // this is now inaccurate but keeping for backwards compatibility
-        return SessionStartResult(true, finalSessionID)
+        return NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
     }
 
     static func pauseCollection() {
@@ -152,32 +106,16 @@ public extension NeuroID {
             _ = DataStore.getAndRemoveAllEvents()
         }
 
-        // // Use config cache or if first time, retrieve from server
-        configService.updateConfigOptions(siteID: siteID) {
-            var startStatus: SessionStartResult
+        // The following events have to happen for either
+        //  an existing session that begins a new flow OR
+        //  a new session with a new flow
+        // 1. Determine if flow should be sampled
+        // 2. CREATE_SESSION and MOBILE_METADATA events captured
+        // 3. Capture ADV (based on global config and lib installed)
 
-            // The following events have to happen for either
-            //  an existing session that begins a new flow OR
-            //  a new session with a new flow
-            // 1. Determine if flow should be sampled
-            // 2. CREATE_SESSION and MOBILE_METADATA events captured
-            // 3. Capture ADV (based on global config and lib installed)
-
-            if !NeuroID._isSDKStarted {
-                // if userID passed then startSession should be used
-                if userID != nil {
-                    startStatus = NeuroID.startSession(userID)
-                } else {
-                    let started = NeuroID.start()
-                    startStatus = SessionStartResult(started, NeuroID.getUserID())
-                }
-
-                if !startStatus.started {
-                    completion(startStatus)
-                    return
-                }
-
-            } else {
+        // If SDK is already started, update config and continue
+        if NeuroID.isSDKStarted {
+            configService.updateConfigOptions(siteID: siteID) {
                 NeuroID.determineIsSessionSampled()
 
                 // capture CREATE_SESSION and METADATA events for new flow
@@ -186,18 +124,25 @@ public extension NeuroID {
 
                 checkThenCaptureAdvancedDevice()
 
-                startStatus = SessionStartResult(true, NeuroID.getUserID())
+                NeuroID.addLinkedSiteID(siteID)
+                completion(SessionStartResult(true, NeuroID.getUserID()))
             }
+        } else {
+            // If the SDK is not started we have to start it first
+            //  (which will get the config using passed siteID)
 
-            NeuroID.linkedSiteID = siteID
-
-            // Add the SET_LINKED_SITE event for MIHR purposes
-            //  this event is ignore by the collector service
-            let setLinkedSiteIDEvent = NIDEvent(sessionEvent: NIDSessionEventName.setLinkedSite)
-            setLinkedSiteIDEvent.v = siteID
-            saveEventToLocalDataStore(setLinkedSiteIDEvent)
-
-            completion(startStatus)
+            // if userID passed then startSession should be used
+            if userID != nil {
+                _ = NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
+                    NeuroID.addLinkedSiteID(siteID)
+                    completion(startStatus)
+                }
+            } else {
+                _ = NeuroID.start(siteID: siteID) { started in
+                    NeuroID.addLinkedSiteID(siteID)
+                    completion(SessionStartResult(started, NeuroID.getUserID()))
+                }
+            }
         }
     }
 }
@@ -336,5 +281,94 @@ extension NeuroID {
         }
 
         checkThenCaptureAdvancedDevice()
+    }
+
+    // Internal implementation that allows a siteID
+    static func start(
+        siteID: String?,
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) -> Bool {
+        if !NeuroID.verifyClientKeyExists() {
+            completion(false)
+
+            // this is now inaccurate but keeping for backwards compatibility
+            return false
+        }
+
+        // Use config cache or if first time, retrieve from server
+        configService.updateConfigOptions(siteID: siteID) {
+            // Setup Session with old start timer logic
+            // TO-DO - Refactor to behave like startSession
+            NeuroID.setupSession {
+                #if DEBUG
+                if NSClassFromString("XCTest") == nil {
+                    initTimer()
+                }
+                #else
+                initTimer()
+                #endif
+                initGyroAccelCollectionTimer()
+            }
+
+            completion(true)
+        }
+
+        // this is now inaccurate but keeping for backwards compatibilit
+        return true
+    }
+
+    // Internal implementation that allows a siteID
+    static func startSession(
+        siteID: String?,
+        sessionID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) -> SessionStartResult {
+        if !NeuroID.verifyClientKeyExists() {
+            let res = SessionStartResult(false, "")
+
+            completion(res)
+
+            // this is now inaccurate but keeping for backwards compatibility
+            return res
+        }
+
+        // stop existing session if one is open
+        if NeuroID.userID != nil || NeuroID.isSDKStarted {
+            _ = stopSession()
+        }
+
+        // If sessionID is nil, set origin as NID here
+        if sessionID == nil {
+            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
+            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
+        }
+
+        let finalSessionID = sessionID ?? ParamsCreator.generateID()
+        if !setUserID(finalSessionID) {
+            let res = SessionStartResult(false, "")
+
+            completion(res)
+
+            // this is now inaccurate but keeping for backwards compatibility
+            return res
+        }
+
+        // Use config cache or if first time, retrieve from server
+        configService.updateConfigOptions(siteID: siteID) {
+            NeuroID.setupSession {
+                #if DEBUG
+                if NSClassFromString("XCTest") == nil {
+                    resumeCollection()
+                }
+                #else
+                resumeCollection()
+                #endif
+            }
+
+            completion(SessionStartResult(true, finalSessionID))
+        }
+
+        // this is now inaccurate but keeping for backwards compatibility
+        return SessionStartResult(true, finalSessionID)
     }
 }

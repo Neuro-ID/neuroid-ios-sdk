@@ -129,33 +129,7 @@ public class NeuroID: NSObject {
     public static func start(
         completion: @escaping (Bool) -> Void = { _ in }
     ) -> Bool {
-        if !NeuroID.verifyClientKeyExists() {
-            completion(false)
-
-            // this is now inaccurate but keeping for backwards compatibility
-            return false
-        }
-
-        // Use config cache or if first time, retrieve from server
-        configService.updateConfigOptions {
-            // Setup Session with old start timer logic
-            // TO-DO - Refactor to behave like startSession
-            NeuroID.setupSession {
-                #if DEBUG
-                if NSClassFromString("XCTest") == nil {
-                    initTimer()
-                }
-                #else
-                initTimer()
-                #endif
-                initGyroAccelCollectionTimer()
-            }
-
-            completion(true)
-        }
-
-        // this is now inaccurate but keeping for backwards compatibility
-        return true
+        return NeuroID.start(siteID: nil, completion: completion)
     }
 
     public static func stop() -> Bool {
