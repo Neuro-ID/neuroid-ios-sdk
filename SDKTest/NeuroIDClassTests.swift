@@ -45,13 +45,14 @@ class NeuroIDClassTests: XCTestCase {
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let randomTimeInMilliseconds = Double(Int.random(in: 0..<3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
-        _ = NeuroID.start(true)
-        let allEvents = DataStore.getAllEvents()
-        
-        let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-        XCTAssertTrue(validEvent.count == 1)
+        _ = NeuroID.start(true) { _ in
+            let allEvents = DataStore.getAllEvents()
+
+            let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+            XCTAssertTrue(validEvent.count == 1)
+        }
     }
-            
+
     func assertDataStoreCount(count: Int) {
         let allEvents = DataStore.getAllEvents()
         assert(allEvents.count == count)
@@ -139,14 +140,14 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        let started = NeuroID.start()
-
-        // post action test
-        assert(started)
-        assert(NeuroID.isSDKStarted)
-        assert(DataStore.events.count >= 2)
-        assertStoredEventCount(type: "CREATE_SESSION", count: 1)
-        assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
+        _ = NeuroID.start { started in
+            // post action test
+            assert(started)
+            assert(NeuroID.isSDKStarted)
+            assert(DataStore.events.count >= 2)
+            self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
+            self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
+        }
     }
 
     func test_start_success_queuedEvent() {
@@ -161,17 +162,18 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        let started = NeuroID.start()
+        _ = NeuroID.start { started in
 
-        // post action test
-        assert(started)
-        assert(NeuroID.isSDKStarted)
+            // post action test
+            assert(started)
+            assert(NeuroID.isSDKStarted)
 
-        assert(DataStore.events.count == 6)
-        assertStoredEventCount(type: "CREATE_SESSION", count: 1)
-        assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
-        assertStoredEventCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventCount(type: "SET_VARIABLE", count: 3)
+            assert(DataStore.events.count == 6)
+            self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
+            self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
+            self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
+            self.assertStoredEventCount(type: "SET_VARIABLE", count: 3)
+        }
     }
 
     func test_stop() {
@@ -204,7 +206,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 
     override func setUp() {
-        _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -305,7 +307,7 @@ class NIDSessionTests: XCTestCase {
     }
 
     override func setUp() {
-        _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -478,11 +480,11 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        let sessionRes = NeuroID.startSession(expectedValue)
-
-        assertSessionStartedTests(sessionRes)
-        assert(NeuroID.CURRENT_ORIGIN == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
-        assert(expectedValue == sessionRes.sessionID)
+        _ = NeuroID.startSession(expectedValue) { sessionRes in
+            self.assertSessionStartedTests(sessionRes)
+            assert(NeuroID.CURRENT_ORIGIN == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
+            assert(expectedValue == sessionRes.sessionID)
+        }
     }
 
     func test_startSession_success_no_id() {
@@ -490,27 +492,28 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        let sessionRes = NeuroID.startSession()
-
-        assertSessionStartedTests(sessionRes)
-        assert(expectedValue != sessionRes.sessionID)
+        _ = NeuroID.startSession { sessionRes in
+            self.assertSessionStartedTests(sessionRes)
+            assert(expectedValue != sessionRes.sessionID)
+        }
     }
 
     func test_startSession_failure_clientKey() {
         NeuroID.clientKey = nil
         NeuroID.sendCollectionWorkItem = nil
 
-        let sessionRes = NeuroID.startSession()
-
-        assertSessionNotStartedTests(sessionRes)
+        _ = NeuroID.startSession { sessionRes in
+            self.assertSessionNotStartedTests(sessionRes)
+        }
     }
 
     func test_startSession_failure_userID() {
         NeuroID.sendCollectionWorkItem = nil
 
-        let sessionRes = NeuroID.startSession("MY bad -.-. id")
-
-        assertSessionNotStartedTests(sessionRes)
+        _ = NeuroID.startSession("MY bad -.-. id") {
+            sessionRes in
+            self.assertSessionNotStartedTests(sessionRes)
+        }
     }
 
     func test_pauseCollection() {
@@ -553,25 +556,26 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = true
         NeuroID.linkedSiteID = nil
 
-        let stopped = NeuroID.startAppFlow(siteID: mySite)
+        NeuroID.startAppFlow(siteID: mySite) { started in
+            assert(started.started)
+            assert(NeuroID.linkedSiteID == mySite)
 
-        assert(stopped.started)
-        assert(NeuroID.linkedSiteID == mySite)
-
-        NeuroID._isSDKStarted = false
-        NeuroID.linkedSiteID = nil
+            NeuroID._isSDKStarted = false
+            NeuroID.linkedSiteID = nil
+        }
     }
 
     func test_startAppFlow_invalid_site() {
         let mySite = "mySite"
         NeuroID._isSDKStarted = true
         NeuroID.linkedSiteID = nil
-        let stopped = NeuroID.startAppFlow(siteID: mySite)
 
-        assert(!stopped.started)
-        assert(NeuroID.linkedSiteID == nil)
+        NeuroID.startAppFlow(siteID: mySite) { started in
+            assert(!started.started)
+            assert(NeuroID.linkedSiteID == nil)
 
-        NeuroID._isSDKStarted = false
+            NeuroID._isSDKStarted = false
+        }
     }
 }
 
@@ -590,7 +594,7 @@ class NIDFormTests: XCTestCase {
     }
 
     override func setUp() {
-        _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -642,7 +646,7 @@ class NIDScreenTests: XCTestCase {
     }
 
     override func setUp() {
-        _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -718,7 +722,7 @@ class NIDUserTests: XCTestCase {
     }
 
     override func setUp() {
-        _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -1089,6 +1093,24 @@ class NIDClientSiteIdTests: XCTestCase {
 
     func test_validateClientKey_invalid_random() {
         let value = NeuroID.validateClientKey("sdfsdfsdfsdf")
+
+        assert(!value)
+    }
+
+    func test_validateSiteID_valid() {
+        let value = NeuroID.validateSiteID("form_peaks345")
+
+        assert(value)
+    }
+
+    func test_validateSiteID_invalid_bad() {
+        let value = NeuroID.validateSiteID("badSiteID")
+
+        assert(!value)
+    }
+
+    func test_validateSiteID_invalid_short() {
+        let value = NeuroID.validateSiteID("form_abc123")
 
         assert(!value)
     }

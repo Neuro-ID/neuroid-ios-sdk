@@ -26,7 +26,7 @@ class DataStoreTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.stop()
-        let _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
         let _ = DataStore.getAndRemoveAllEvents()
         let _ = DataStore.getAndRemoveAllQueuedEvents()
     }

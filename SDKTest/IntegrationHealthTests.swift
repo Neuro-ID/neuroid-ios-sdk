@@ -20,7 +20,7 @@ class IntegrationHealthTests: XCTestCase {
     }
 
     override func setUp() {
-        let _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
         NeuroID.debugIntegrationHealthEvents = []
         NeuroID.setVerifyIntegrationHealth(false)
     }
