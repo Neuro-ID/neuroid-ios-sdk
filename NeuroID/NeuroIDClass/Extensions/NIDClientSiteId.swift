@@ -80,6 +80,10 @@ extension NeuroID {
         return valid
     }
 
+    static func isCollectionSite(siteID: String?) -> Bool {
+        return siteID == nil || siteID ?? "" == NeuroID.configService.configCache.siteID ?? "noID"
+    }
+
     static func addLinkedSiteID(_ siteID: String) {
         if !NeuroID.validateSiteID(siteID) {
             return

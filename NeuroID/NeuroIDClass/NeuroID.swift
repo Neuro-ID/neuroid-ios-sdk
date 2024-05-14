@@ -57,7 +57,7 @@ public class NeuroID: NSObject {
         set {}
     }
 
-    static var _isSessionSampled: Bool = true
+    static var _isSessionFlowSampled: Bool = true
 
     static var sendCollectionWorkItem: DispatchWorkItem?
     static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?

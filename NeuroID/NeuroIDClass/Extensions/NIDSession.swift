@@ -98,9 +98,9 @@ public extension NeuroID {
         }
 
         // if the session is being sampled we should send, else we don't want those events anyways
-        if NeuroID._isSessionSampled {
+        if NeuroID._isSessionFlowSampled {
             // immediately flush events before anything else
-            groupAndPOST(forceSend: NeuroID._isSessionSampled)
+            groupAndPOST(forceSend: NeuroID._isSessionFlowSampled)
         } else {
             // if not sampled clear any events that might have slipped through
             _ = DataStore.getAndRemoveAllEvents()
@@ -116,7 +116,7 @@ public extension NeuroID {
         // If SDK is already started, update config and continue
         if NeuroID.isSDKStarted {
             configService.updateConfigOptions(siteID: siteID) {
-                NeuroID.determineIsSessionSampled()
+                NeuroID.updateIsSampledStatus()
 
                 // capture CREATE_SESSION and METADATA events for new flow
                 saveEventToLocalDataStore(createNIDSessionEvent())
@@ -150,11 +150,11 @@ public extension NeuroID {
 extension NeuroID {
     /*
       Determine if the session/flow should be sampled (i.e. events captured and sent)
-       if not then change the _isSessionSampled var
+       if not then change the _isSessionFlowSampled var
        this var will be used in the DataStore.cleanAndStoreEvent method
        and will drop events if false
      */
-    static func determineIsSessionSampled() {
+    static func updateIsSampledStatus() {
         if NeuroID.configService.configCache.currentSampleRate >= 100 {
             NeuroID._isSessionSampled = true
             return
@@ -256,7 +256,7 @@ extension NeuroID {
     }
 
     static func setupSession(customFunctionality: () -> Void = {}) {
-        NeuroID.determineIsSessionSampled()
+        NeuroID.updateIsSampledStatus()
         NeuroID.createListeners()
 
         NeuroID._isSDKStarted = true

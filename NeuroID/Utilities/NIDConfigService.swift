@@ -80,7 +80,7 @@ class NIDConfigService {
             
             // if siteID == config.siteID - then use top level value
             // if siteID == nil then assume parent site
-            if siteID == nil || siteID ?? "" == self.configCache.siteID ?? "noID" {
+            if NeuroID.isCollectionSite(siteID: siteID) {
                 self.configCache.currentSampleRate = self.configCache.sampleRate ?? NIDConfigService.DEFAULT_SAMPLE_RATE
                 completion()
                 return
