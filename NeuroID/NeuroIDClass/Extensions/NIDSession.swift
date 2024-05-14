@@ -160,6 +160,12 @@ public extension NeuroID {
         } else {
             // TO-DO - ADD CREATE_SESSION and METADATA
             startStatus = SessionStartResult(true, NeuroID.getUserID())
+
+            // capture CREATE_SESSION and METADATA events for new flow
+            saveEventToLocalDataStore(createNIDSessionEvent())
+
+            captureMobileMetadata()
+
             checkThenCaptureAdvancedDevice()
         }
 
