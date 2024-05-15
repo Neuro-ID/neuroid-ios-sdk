@@ -21,7 +21,6 @@ final class NIDPerformanceTests: XCTestCase {
 
     override func setUp() {
         NeuroID.networkService = NIDNetworkServiceTestImpl()
-        
         _ = NeuroID.start()
     }
 
@@ -33,7 +32,10 @@ final class NIDPerformanceTests: XCTestCase {
         clearOutDataStore()
     }
 
-    func testBufferFull() throws {
+    /**
+     Perforamnce tests are in one test to ensure test is not async with others and to prevent hanging*/
+    func all_performance_tests() throws {
+        // Buffer flow
         for _ in 1...3000 {
             let expectedValue = "myTestUserID"
             _ = NeuroID.setGenericUserID(
@@ -46,9 +48,8 @@ final class NIDPerformanceTests: XCTestCase {
         print("NID Event Size: \(DataStore.events.count)")
         assert(DataStore.events.count <= 2010)
         assert(DataStore.events.last!.type == NIDEventName.bufferFull.rawValue)
-    }
-    
-    func testQueuedEvents() throws {
+        
+        // Test Queued Events
         _ = NeuroID.stop()
         for _ in 1...2100 {
             let expectedValue = "myTestUserID"
@@ -62,9 +63,8 @@ final class NIDPerformanceTests: XCTestCase {
         print("NID Queue Size: \(DataStore.queuedEvents.count)")
         assert(DataStore.queuedEvents.count <= 2010)
         assert(DataStore.queuedEvents.last?.type == NIDEventName.bufferFull.rawValue)
-    }
-    
-    func testLowMemory() throws {
+        
+        // Test low memory
         // Setup a view and invoke observeAppEvents to get listeners attached for the test
         let uiView = UITextView()
         
