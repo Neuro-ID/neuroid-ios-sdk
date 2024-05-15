@@ -97,6 +97,7 @@ public extension NeuroID {
             NeuroID.linkedSiteID = nil
             let logFailedLinkedSite = NIDEvent(type: NIDEventName.log)
             logFailedLinkedSite.m = "Failed to set invalid Linked Site \(siteID)"
+            logFailedLinkedSite.level = "ERROR"
             saveEventToLocalDataStore(logFailedLinkedSite)
 
             completion(res)

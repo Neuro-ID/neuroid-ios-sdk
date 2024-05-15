@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LinkedSiteOption: Decodable {
+struct LinkedSiteOption: Codable {
     var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
 
     enum CodingKeys: String, CodingKey {
@@ -15,7 +15,7 @@ struct LinkedSiteOption: Decodable {
     }
 }
 
-struct ConfigResponseData: Decodable {
+struct ConfigResponseData: Codable {
     var callInProgress: Bool = true
     var geoLocation: Bool = true
     var eventQueueFlushInterval: Int = 5

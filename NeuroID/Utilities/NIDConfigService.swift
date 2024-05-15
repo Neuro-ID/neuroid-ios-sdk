@@ -41,9 +41,10 @@ class NIDConfigService: ConfigServiceProtocol {
             case .success(let responseData):
                 self.setCache(responseData)
                 NIDLog.d("Retrieved remote config")
-                
+                    
                 self.cacheSetWithRemote = true
                 self.cacheCreationTime = .init()
+                self.captureConfigEvent(configData: responseData)
                 completion()
             case .failure(let error):
                 NIDLog.e("Failed to retrieve NID Config \(error)")
@@ -83,6 +84,25 @@ class NIDConfigService: ConfigServiceProtocol {
             }
         } else {
             completion()
+        }
+    }
+    
+    func captureConfigEvent(configData: ConfigResponseData) {
+        let encoder = JSONEncoder()
+        
+        guard let jsonData = try? encoder.encode(configData) else { return }
+          
+        if let jsonString = String(data: jsonData, encoding: .utf8) {
+            // log current config
+            let cachedConfigLog = NIDEvent(sessionEvent: NIDSessionEventName.configCached)
+            cachedConfigLog.v = jsonString
+            NeuroID.saveEventToLocalDataStore(cachedConfigLog)
+
+        } else {
+            let failedCachedConfig = NIDEvent(type: NIDEventName.log)
+            failedCachedConfig.m = "Failed to parse config"
+            failedCachedConfig.level = "ERROR"
+            NeuroID.saveEventToLocalDataStore(failedCachedConfig)
         }
     }
 }
