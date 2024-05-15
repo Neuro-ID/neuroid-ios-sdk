@@ -5,7 +5,12 @@
 import Alamofire
 import Foundation
 
-class NIDConfigService {
+protocol ConfigServiceProtocol {
+    var configCache: ConfigResponseData { get }
+    func retrieveOrRefreshCache(completion: @escaping () -> Void) -> Void
+}
+
+class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
     
@@ -53,47 +58,30 @@ class NIDConfigService {
         configCache = newCache
     }
     
+    /**
+        Determines if the cache is expired.
+        Expired = not loaded from the remote source at all,
+        once the cache has been loaded once, we will not expire - this is subject to change
+        (i.e. a time expiration approach instead)
+     */
     func expiredCache() -> Bool {
         if !cacheSetWithRemote {
             return true
         }
-        // 5 min is the default, can be updated later
-        let TTLTime = Calendar.current.date(byAdding: .minute, value: -5, to: Date())!
         
-        return cacheCreationTime < TTLTime
+        return false
     }
     
+    /**
+     Will check if the cache is available or needs to be refreshed, calls completion handler because the call
+     could be async
+      */
     func retrieveOrRefreshCache(completion: @escaping () -> Void) {
         if expiredCache() {
             retrieveConfig {
                 completion()
             }
         } else {
-            completion()
-        }
-    }
-    
-    func updateConfigOptions(siteID: String? = nil, completion: @escaping () -> Void) {
-        // check cache time
-        retrieveOrRefreshCache {
-            // retrieve the site config for the site
-            
-            // if siteID == config.siteID - then use top level value
-            // if siteID == nil then assume parent site
-            if NeuroID.isCollectionSite(siteID: siteID) {
-                self.configCache.currentSampleRate = self.configCache.sampleRate ?? NIDConfigService.DEFAULT_SAMPLE_RATE
-                completion()
-                return
-            }
-            
-            // get linked site options and override config
-            let linkedSiteConfig = self.configCache.linkedSiteOptions?[siteID ?? ""]
-            if linkedSiteConfig == nil {
-                self.configCache.currentSampleRate = NIDConfigService.DEFAULT_SAMPLE_RATE
-            } else if linkedSiteConfig != nil {
-                self.configCache.currentSampleRate = linkedSiteConfig?.sampleRate ?? NIDConfigService.DEFAULT_SAMPLE_RATE
-            }
-            
             completion()
         }
     }

@@ -18,6 +18,7 @@ final class MultiAppFlowTests: XCTestCase {
     let tabIdKey = Constants.storageTabIDKey.rawValue
 
     let mockService = MockDeviceSignalService()
+    let mockedConfig = MockConfigService()
 
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
@@ -27,6 +28,7 @@ final class MultiAppFlowTests: XCTestCase {
 
     override func setUp() {
         NeuroID.clientKey = nil
+        NeuroID.configService = mockedConfig
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
     }
@@ -44,8 +46,8 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.start(true) { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
-            XCTAssert(!NeuroID.isAdvancedDevice)
-            XCTAssertTrue(validEvent.count == 1)
+            assert(!NeuroID.isAdvancedDevice)
+            assert(validEvent.count == 1)
         }
     }
 
@@ -56,8 +58,8 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.startSession("fake_user_session") { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
-            XCTAssert(NeuroID.isAdvancedDevice)
-            XCTAssertTrue(validEvent.count == 1)
+            assert(NeuroID.isAdvancedDevice)
+            assert(validEvent.count == 1)
         }
     }
 
@@ -68,8 +70,8 @@ final class MultiAppFlowTests: XCTestCase {
         NeuroID.startAppFlow(siteID: "form_dream102", userID: "jakeId") { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
-            XCTAssert(NeuroID.isAdvancedDevice)
-            XCTAssertTrue(validEvent.count == 1)
+            assert(NeuroID.isAdvancedDevice)
+            assert(validEvent.count == 1)
         }
     }
 
@@ -78,8 +80,8 @@ final class MultiAppFlowTests: XCTestCase {
         NeuroID.deviceSignalService = mockService
         _ = NeuroID.start { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-            XCTAssert(NeuroID.isAdvancedDevice)
-            XCTAssertTrue(validEvent.count == 1)
+            assert(NeuroID.isAdvancedDevice)
+            assert(validEvent.count == 1)
         }
     }
 

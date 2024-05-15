@@ -28,7 +28,8 @@ public class NeuroID: NSObject {
     static var locationManager: LocationManager?
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserver?
-    static var configService: NIDConfigService = .init()
+    static var configService: ConfigServiceProtocol = NIDConfigService()
+    static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
 
     static var clientID: String?
     static var userID: String?
@@ -56,8 +57,6 @@ public class NeuroID: NSObject {
         get { _isSDKStarted }
         set {}
     }
-
-    static var _isSessionFlowSampled: Bool = true
 
     static var sendCollectionWorkItem: DispatchWorkItem?
     static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?

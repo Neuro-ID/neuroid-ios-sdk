@@ -419,6 +419,7 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
+        NeuroID.configService = MockConfigService()
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 

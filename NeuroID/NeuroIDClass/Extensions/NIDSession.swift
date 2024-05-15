@@ -94,13 +94,19 @@ public extension NeuroID {
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
+            NeuroID.linkedSiteID = nil
+            let logFailedLinkedSite = NIDEvent(type: NIDEventName.log)
+            logFailedLinkedSite.m = "Failed to set invalid Linked Site \(siteID)"
+            saveEventToLocalDataStore(logFailedLinkedSite)
+
             completion(res)
+            return
         }
 
         // if the session is being sampled we should send, else we don't want those events anyways
-        if NeuroID._isSessionFlowSampled {
+        if NeuroID.samplingService.isSessionFlowSampled {
             // immediately flush events before anything else
-            groupAndPOST(forceSend: NeuroID._isSessionFlowSampled)
+            groupAndPOST(forceSend: NeuroID.samplingService.isSessionFlowSampled)
         } else {
             // if not sampled clear any events that might have slipped through
             _ = DataStore.getAndRemoveAllEvents()
@@ -113,20 +119,19 @@ public extension NeuroID {
         // 2. CREATE_SESSION and MOBILE_METADATA events captured
         // 3. Capture ADV (based on global config and lib installed)
 
-        // If SDK is already started, update config and continue
+        // If SDK is already started, update sampleStatus and continue
         if NeuroID.isSDKStarted {
-            configService.updateConfigOptions(siteID: siteID) {
-                NeuroID.updateIsSampledStatus()
+            NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
 
-                // capture CREATE_SESSION and METADATA events for new flow
-                saveEventToLocalDataStore(createNIDSessionEvent())
-                captureMobileMetadata()
+            // capture CREATE_SESSION and METADATA events for new flow
+            saveEventToLocalDataStore(createNIDSessionEvent())
+            captureMobileMetadata()
 
-                checkThenCaptureAdvancedDevice()
+            checkThenCaptureAdvancedDevice()
 
-                NeuroID.addLinkedSiteID(siteID)
-                completion(SessionStartResult(true, NeuroID.getUserID()))
-            }
+            NeuroID.addLinkedSiteID(siteID)
+            completion(SessionStartResult(true, NeuroID.getUserID()))
+
         } else {
             // If the SDK is not started we have to start it first
             //  (which will get the config using passed siteID)
@@ -148,28 +153,6 @@ public extension NeuroID {
 }
 
 extension NeuroID {
-    /*
-      Determine if the session/flow should be sampled (i.e. events captured and sent)
-       if not then change the _isSessionFlowSampled var
-       this var will be used in the DataStore.cleanAndStoreEvent method
-       and will drop events if false
-     */
-    static func updateIsSampledStatus() {
-        let maxSampleRate = 100
-        if NeuroID.configService.configCache.currentSampleRate >= maxSampleRate {
-            NeuroID._isSessionFlowSampled = true
-            return
-        }
-
-        let randomValue = Int.random(in: 0 ..< maxSampleRate)
-        if randomValue < NeuroID.configService.configCache.currentSampleRate {
-            NeuroID._isSessionFlowSampled = true
-            return
-        }
-
-        NeuroID._isSessionFlowSampled = false
-    }
-
     static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
         return NIDEvent(
             session: sessionEvent,
@@ -256,32 +239,49 @@ extension NeuroID {
         NeuroID.sendCollectionWorkItem = nil
     }
 
-    static func setupSession(customFunctionality: () -> Void = {}) {
-        NeuroID.updateIsSampledStatus()
-        NeuroID.createListeners()
+    /**
+     Function to setup all the required events and listeners for the beginning of a session
+     - Will update sampling status
+     - Wll create and trigger listeners
+     - Will start swizzling
+     - Will move queued events into main queue
+     - Will make call to check/capture ADV event
+     */
+    static func setupSession(
+        siteID: String?,
+        customFunctionality: @escaping () -> Void = {},
+        completion: @escaping () -> Void = {}
+    ) {
+        // Use config cache or if first time, retrieve from server
+        configService.retrieveOrRefreshCache {
+            NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
+            NeuroID.createListeners()
 
-        NeuroID._isSDKStarted = true
+            NeuroID._isSDKStarted = true
 
-        NeuroID.callObserver?.startListeningToCallStatus()
+            NeuroID.callObserver?.startListeningToCallStatus()
 
-        NeuroID.startIntegrationHealthCheck()
+            NeuroID.startIntegrationHealthCheck()
 
-        NeuroID.createSession()
-        swizzle()
+            NeuroID.createSession()
+            swizzle()
 
-        // custom functionality = the different timer starts (start vs. startSession)
-        //  this will be refactored once we bring start/startSession in alignment
-        customFunctionality()
+            // custom functionality = the different timer starts (start vs. startSession)
+            //  this will be refactored once we bring start/startSession in alignment
+            customFunctionality()
 
-        // save beginSession events to MIHR file
-        saveIntegrationHealthEvents()
+            // save beginSession events to MIHR file
+            saveIntegrationHealthEvents()
 
-        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        for event in queuedEvents {
-            DataStore.insertEvent(screen: "", event: event)
+            let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+            for event in queuedEvents {
+                DataStore.insertEvent(screen: "", event: event)
+            }
+
+            checkThenCaptureAdvancedDevice()
+
+            completion()
         }
-
-        checkThenCaptureAdvancedDevice()
     }
 
     // Internal implementation that allows a siteID
@@ -296,21 +296,18 @@ extension NeuroID {
             return false
         }
 
-        // Use config cache or if first time, retrieve from server
-        configService.updateConfigOptions(siteID: siteID) {
-            // Setup Session with old start timer logic
-            // TO-DO - Refactor to behave like startSession
-            NeuroID.setupSession {
-                #if DEBUG
-                if NSClassFromString("XCTest") == nil {
-                    initTimer()
-                }
-                #else
+        // Setup Session with old start timer logic
+        // TO-DO - Refactor to behave like startSession
+        NeuroID.setupSession(siteID: siteID, customFunctionality: {
+            #if DEBUG
+            if NSClassFromString("XCTest") == nil {
                 initTimer()
-                #endif
-                initGyroAccelCollectionTimer()
             }
-
+            #else
+            initTimer()
+            #endif
+            initGyroAccelCollectionTimer()
+        }) {
             completion(true)
         }
 
@@ -354,18 +351,15 @@ extension NeuroID {
             return res
         }
 
-        // Use config cache or if first time, retrieve from server
-        configService.updateConfigOptions(siteID: siteID) {
-            NeuroID.setupSession {
-                #if DEBUG
-                if NSClassFromString("XCTest") == nil {
-                    resumeCollection()
-                }
-                #else
+        NeuroID.setupSession(siteID: siteID, customFunctionality: {
+            #if DEBUG
+            if NSClassFromString("XCTest") == nil {
                 resumeCollection()
-                #endif
             }
-
+            #else
+            resumeCollection()
+            #endif
+        }) {
             completion(SessionStartResult(true, finalSessionID))
         }
 

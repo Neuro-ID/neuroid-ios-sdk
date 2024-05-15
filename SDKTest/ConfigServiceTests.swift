@@ -93,20 +93,6 @@ class ConfigServiceTests: XCTestCase {
     
     func test_expiredCache_true_no_cache() {
         configService.cacheSetWithRemote = false
-        let beginCacheTime = Date() // doesn't matter that time is now, no remote means cache is dead
-        
-        configService.cacheCreationTime = beginCacheTime
-        
-        let expired = configService.expiredCache()
-        
-        assert(expired)
-    }
-    
-    func test_expiredCache_true() {
-        configService.cacheSetWithRemote = true
-        let beginCacheTime = Calendar.current.date(byAdding: .minute, value: -10, to: Date())!
-        
-        configService.cacheCreationTime = beginCacheTime
         
         let expired = configService.expiredCache()
         
@@ -115,9 +101,6 @@ class ConfigServiceTests: XCTestCase {
 
     func test_expiredCache_false() {
         configService.cacheSetWithRemote = true
-        let beginCacheTime = Date()
-        
-        configService.cacheCreationTime = beginCacheTime
         
         let expired = configService.expiredCache()
         
@@ -126,66 +109,4 @@ class ConfigServiceTests: XCTestCase {
     
     // Skipping tests for retrieveOrRefreshCache because it is a wrapper function for
     //  expiredCache and retrieveConfig
-    
-    func test_updateConfigOptions_parent_site() {
-        setupKeyAndMockInternet()
-        
-        // Have Cache be valid
-        configService.cacheSetWithRemote = true
-        
-        // set sample rate to validate
-        configService.configCache.currentSampleRate = 2
-        configService.configCache.sampleRate = 1
-        
-        configService.updateConfigOptions {
-            assert(self.configService.configCache.currentSampleRate == 1)
-        }
-    }
-    
-    func test_updateConfigOptions_parent_site_default() {
-        setupKeyAndMockInternet()
-        
-        // Have Cache be valid
-        configService.cacheSetWithRemote = true
-        
-        // set sample rate to validate
-        configService.configCache.sampleRate = nil
-        configService.configCache.currentSampleRate = 2
-        
-        configService.updateConfigOptions {
-            assert(self.configService.configCache.currentSampleRate == NIDConfigService.DEFAULT_SAMPLE_RATE)
-        }
-    }
-    
-    func test_updateConfigOptions_child_site() {
-        setupKeyAndMockInternet()
-        
-        // Have Cache be valid
-        configService.cacheSetWithRemote = true
-        
-        // set sample rate to validate
-        configService.configCache.linkedSiteOptions?.updateValue(
-            LinkedSiteOption(sampleRate: 1),
-            forKey: "form_peaks123"
-        )
-        configService.configCache.currentSampleRate = 2
-        
-        configService.updateConfigOptions(siteID: "form_peaks123") {
-            assert(self.configService.configCache.currentSampleRate == 1)
-        }
-    }
-    
-    func test_updateConfigOptions_child_site_default() {
-        setupKeyAndMockInternet()
-        
-        // Have Cache be valid
-        configService.cacheSetWithRemote = true
-        
-        // set sample rate to validate
-        configService.configCache.currentSampleRate = 2
-        
-        configService.updateConfigOptions(siteID: "noSite") {
-            assert(self.configService.configCache.currentSampleRate == NIDConfigService.DEFAULT_SAMPLE_RATE)
-        }
-    }
 }
