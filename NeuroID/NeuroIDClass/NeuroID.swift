@@ -127,8 +127,8 @@ public class NeuroID: NSObject {
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(
         completion: @escaping (Bool) -> Void = { _ in }
-    ) -> Bool {
-        return NeuroID.start(siteID: nil, completion: completion)
+    ) {
+        NeuroID.start(siteID: nil, completion: completion)
     }
 
     public static func stop() -> Bool {

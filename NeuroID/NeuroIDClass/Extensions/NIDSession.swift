@@ -45,8 +45,8 @@ public extension NeuroID {
     static func startSession(
         _ sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
-    ) -> SessionStartResult {
-        return NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
+    ) {
+        NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
     }
 
     static func pauseCollection() {
@@ -139,12 +139,12 @@ public extension NeuroID {
 
             // if userID passed then startSession should be used
             if userID != nil {
-                _ = NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
+                NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
                     NeuroID.addLinkedSiteID(siteID)
                     completion(startStatus)
                 }
             } else {
-                _ = NeuroID.start(siteID: siteID) { started in
+                NeuroID.start(siteID: siteID) { started in
                     NeuroID.addLinkedSiteID(siteID)
                     completion(SessionStartResult(started, NeuroID.getUserID()))
                 }
@@ -289,12 +289,10 @@ extension NeuroID {
     static func start(
         siteID: String?,
         completion: @escaping (Bool) -> Void = { _ in }
-    ) -> Bool {
+    ) {
         if !NeuroID.verifyClientKeyExists() {
             completion(false)
-
-            // this is now inaccurate but keeping for backwards compatibility
-            return false
+            return
         }
 
         // Setup Session with old start timer logic
@@ -311,9 +309,6 @@ extension NeuroID {
         }) {
             completion(true)
         }
-
-        // this is now inaccurate but keeping for backwards compatibilit
-        return true
     }
 
     // Internal implementation that allows a siteID
@@ -321,14 +316,12 @@ extension NeuroID {
         siteID: String?,
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
-    ) -> SessionStartResult {
+    ) {
         if !NeuroID.verifyClientKeyExists() {
             let res = SessionStartResult(false, "")
 
             completion(res)
-
-            // this is now inaccurate but keeping for backwards compatibility
-            return res
+            return
         }
 
         // stop existing session if one is open
@@ -347,9 +340,7 @@ extension NeuroID {
             let res = SessionStartResult(false, "")
 
             completion(res)
-
-            // this is now inaccurate but keeping for backwards compatibility
-            return res
+            return
         }
 
         NeuroID.setupSession(siteID: siteID, customFunctionality: {
@@ -363,8 +354,5 @@ extension NeuroID {
         }) {
             completion(SessionStartResult(true, finalSessionID))
         }
-
-        // this is now inaccurate but keeping for backwards compatibility
-        return SessionStartResult(true, finalSessionID)
     }
 }

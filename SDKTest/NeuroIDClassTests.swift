@@ -45,7 +45,7 @@ class NeuroIDClassTests: XCTestCase {
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let randomTimeInMilliseconds = Double(Int.random(in: 0..<3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
-        _ = NeuroID.start(true) { _ in
+        NeuroID.start(true) { _ in
             let allEvents = DataStore.getAllEvents()
 
             let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
@@ -126,10 +126,11 @@ class NeuroIDClassTests: XCTestCase {
         assert(NeuroID.clientKey == nil)
 
         // action
-        let started = NeuroID.start()
-        assert(!started)
-        // post action test
-        assert(!NeuroID.isSDKStarted)
+        NeuroID.start { started in
+            assert(!started)
+            // post action test
+            assert(!NeuroID.isSDKStarted)
+        }
     }
 
     func test_start_success() {
@@ -140,7 +141,7 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        _ = NeuroID.start { started in
+        NeuroID.start { started in
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
@@ -162,7 +163,7 @@ class NeuroIDClassTests: XCTestCase {
         assert(!NeuroID.isSDKStarted)
 
         // action
-        _ = NeuroID.start { started in
+        NeuroID.start { started in
 
             // post action test
             assert(started)
@@ -481,7 +482,7 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        _ = NeuroID.startSession(expectedValue) { sessionRes in
+        NeuroID.startSession(expectedValue) { sessionRes in
             self.assertSessionStartedTests(sessionRes)
             assert(NeuroID.CURRENT_ORIGIN == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
             assert(expectedValue == sessionRes.sessionID)
@@ -493,7 +494,7 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = false
 
         let expectedValue = "mySessionID"
-        _ = NeuroID.startSession { sessionRes in
+        NeuroID.startSession { sessionRes in
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue != sessionRes.sessionID)
         }
@@ -503,7 +504,7 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID.clientKey = nil
         NeuroID.sendCollectionWorkItem = nil
 
-        _ = NeuroID.startSession { sessionRes in
+        NeuroID.startSession { sessionRes in
             self.assertSessionNotStartedTests(sessionRes)
         }
     }
@@ -511,7 +512,7 @@ class NIDNewSessionTests: XCTestCase {
     func test_startSession_failure_userID() {
         NeuroID.sendCollectionWorkItem = nil
 
-        _ = NeuroID.startSession("MY bad -.-. id") {
+        NeuroID.startSession("MY bad -.-. id") {
             sessionRes in
             self.assertSessionNotStartedTests(sessionRes)
         }

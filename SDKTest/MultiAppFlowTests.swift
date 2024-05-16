@@ -43,7 +43,7 @@ final class MultiAppFlowTests: XCTestCase {
     func test_start_adv_true() {
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.deviceSignalService = mockService
-        _ = NeuroID.start(true) { _ in
+        NeuroID.start(true) { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
             assert(!NeuroID.isAdvancedDevice)
@@ -55,7 +55,7 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.deviceSignalService = mockService
 
-        _ = NeuroID.startSession("fake_user_session") { _ in
+        NeuroID.startSession("fake_user_session") { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
             assert(NeuroID.isAdvancedDevice)
@@ -78,7 +78,7 @@ final class MultiAppFlowTests: XCTestCase {
     func test_start_configure_adv_true() {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.deviceSignalService = mockService
-        _ = NeuroID.start { _ in
+        NeuroID.start { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
             assert(NeuroID.isAdvancedDevice)
             assert(validEvent.count == 1)
@@ -86,10 +86,9 @@ final class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_session_adv_true() {
-        
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.deviceSignalService = mockService
-        _ = NeuroID.startSession("fake_user_session", true) { _ in
+        NeuroID.startSession("fake_user_session", true) { _ in
 
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
             XCTAssert(!NeuroID.isAdvancedDevice)

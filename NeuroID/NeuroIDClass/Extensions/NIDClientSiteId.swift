@@ -80,6 +80,11 @@ extension NeuroID {
         return valid
     }
 
+    /**
+     Takes an optional string, if the string is nil or matches the cached config siteID then it
+       is the "collection" site meaning the siteID that belongs to the clientKey given
+       in the `configure` command
+     */
     static func isCollectionSite(siteID: String?) -> Bool {
         return siteID == nil || siteID ?? "" == NeuroID.configService.configCache.siteID ?? "noID"
     }

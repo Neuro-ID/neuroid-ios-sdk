@@ -29,7 +29,9 @@ public enum DataStore {
     }
 
     static func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
-        // If we hit a low memory event, drop events and e1arly return.
+        // If we hit a low memory event, drop events and early return
+        //  OR if we are not sampling the session (i.e. are throttling)
+        //  then drop events
         if NeuroID.lowMemory || !NeuroID.samplingService.isSessionFlowSampled {
             return
         }
