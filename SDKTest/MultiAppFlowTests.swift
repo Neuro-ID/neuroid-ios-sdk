@@ -95,4 +95,39 @@ final class MultiAppFlowTests: XCTestCase {
             XCTAssertTrue(validEvent.count == 1)
         }
     }
+
+    func test_captureAdvancedDevice_throttle() {
+        _ = NeuroID.configure(clientKey: clientKey)
+        NeuroID.deviceSignalService = mockService
+        NeuroID._isSDKStarted = true
+
+        let service = NIDSamplingService()
+        service._isSessionFlowSampled = false
+        NeuroID.samplingService = service // setting to false indicating we are throttling
+
+        NeuroID.captureAdvancedDevice([true]) // passing true to indicate we should capture
+
+        let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        assert(validEvent.count == 0)
+
+        service._isSessionFlowSampled = true
+        NeuroID._isSDKStarted = false
+    }
+
+    func test_captureAdvancedDevice_no_throttle() {
+        _ = NeuroID.configure(clientKey: clientKey)
+        NeuroID.deviceSignalService = mockService
+        NeuroID._isSDKStarted = true
+
+        let service = NIDSamplingService()
+        service._isSessionFlowSampled = true // setting to true indicating we are NOT throttling
+        NeuroID.samplingService = service
+
+        NeuroID.captureAdvancedDevice([true]) // passing true to indicate we should capture
+
+        let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        assert(validEvent.count == 1)
+
+        NeuroID._isSDKStarted = false
+    }
 }
