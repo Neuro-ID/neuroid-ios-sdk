@@ -579,6 +579,37 @@ class NIDNewSessionTests: XCTestCase {
             NeuroID._isSDKStarted = false
         }
     }
+
+    func test_clearSendOldFlowEvents_not_sampled() {
+        DataStore.events.append(NIDEvent(rawType: "test"))
+        let mockSampling = NIDSamplingService()
+        mockSampling._isSessionFlowSampled = false
+        NeuroID.samplingService = mockSampling
+
+        NeuroID.clearSendOldFlowEvents {
+            assert(DataStore.events.count == 0)
+
+            NeuroID._isSDKStarted = false
+        }
+    }
+
+    func test_clearSendOldFlowEvents_sampled() {
+        DataStore.events.append(NIDEvent(rawType: "test"))
+        let mockSampling = NIDSamplingService()
+        mockSampling._isSessionFlowSampled = true
+        NeuroID.samplingService = mockSampling
+
+        let mockNetwork = NIDNetworkServiceTestImpl()
+        NeuroID.networkService = mockNetwork
+
+        NeuroID._isSDKStarted = true
+
+        NeuroID.clearSendOldFlowEvents {
+            assert(DataStore.events.count == 0)
+
+            NeuroID._isSDKStarted = false
+        }
+    }
 }
 
 class NIDFormTests: XCTestCase {

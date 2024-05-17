@@ -102,8 +102,12 @@ extension NeuroID {
     /**
      Publically exposed just for testing. This should not be any reason to call this directly.
      */
-    static func groupAndPOST(forceSend: Bool = false) {
+    static func groupAndPOST(
+        forceSend: Bool = false,
+        completion: @escaping () -> Void = {}
+    ) {
         if NeuroID.isStopped(), !forceSend {
+            completion()
             return
         }
 
@@ -111,6 +115,7 @@ extension NeuroID {
         let dataStoreEvents = DataStore.getAndRemoveAllEvents()
 
         if dataStoreEvents.isEmpty {
+            completion()
             return
         }
 
@@ -132,20 +137,24 @@ extension NeuroID {
 
         post(events: cleanEvents, screen: getScreenName() ?? altScreenName, onSuccess: { _ in
             logInfo(category: "APICall", content: "Sending successfully")
+
+            completion()
             // send success -> delete
         }, onFailure: { error in
             logError(category: "APICall", content: String(describing: error))
+            completion()
         })
     }
 
     /// Direct send to API to create session
     /// Regularly send in loop
-    static func post(events: [NIDEvent],
-                     screen: String,
-                     onSuccess: @escaping (Any) -> Void,
-                     onFailure: @escaping
-                     (Error) -> Void)
-    {
+    static func post(
+        events: [NIDEvent],
+        screen: String,
+        onSuccess: @escaping (Any) -> Void,
+        onFailure: @escaping
+        (Error) -> Void
+    ) {
         guard let url = URL(string: NeuroID.getCollectionEndpointURL()) else {
             logError(content: "NeuroID base URL found")
             return
