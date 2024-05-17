@@ -334,6 +334,12 @@ public class NIDEvent: Codable {
         self.type = rawType
     }
 
+    init(type: NIDEventName = NIDEventName.log, level: String, m: String) {
+        self.type = type.rawValue
+        self.level = level
+        self.m = m
+    }
+
     /**
         Use to initiate a new session
          Element mapping:
