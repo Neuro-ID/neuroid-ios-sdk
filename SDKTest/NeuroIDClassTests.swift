@@ -47,11 +47,11 @@ class NeuroIDClassTests: XCTestCase {
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
         _ = NeuroID.start(true)
         let allEvents = DataStore.getAllEvents()
-        
+
         let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
         XCTAssertTrue(validEvent.count == 1)
     }
-            
+
     func assertDataStoreCount(count: Int) {
         let allEvents = DataStore.getAllEvents()
         assert(allEvents.count == count)
@@ -913,6 +913,8 @@ class NIDUserTests: XCTestCase {
 
         assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
+
+        NeuroID.registeredUserID = ""
     }
 
     func test_setRegisteredUserID_started() {
@@ -930,6 +932,8 @@ class NIDUserTests: XCTestCase {
 
         assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
         assert(DataStore.queuedEvents.count == 0)
+
+        NeuroID.registeredUserID = ""
     }
 
     func test_setRegisteredUserID_pre_start() {
@@ -948,6 +952,47 @@ class NIDUserTests: XCTestCase {
 
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+
+        NeuroID.registeredUserID = ""
+    }
+
+    func test_setRegisteredUserID_already_set() {
+        clearOutDataStore()
+        NeuroID.registeredUserID = "setID"
+
+        let expectedValue = "test_ruid"
+
+        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
+
+        assert(fnSuccess == false)
+        assert(NeuroID.registeredUserID != expectedValue)
+
+        assert(DataStore.events.count == 0)
+        assert(DataStore.queuedEvents.count == 0)
+
+        NeuroID.registeredUserID = ""
+    }
+
+    func test_setRegisteredUserID_same_value() {
+        clearOutDataStore()
+
+        let expectedValue = "test_ruid"
+
+        NeuroID.registeredUserID = expectedValue
+
+        UserDefaults.standard.removeObject(forKey: userIdKey)
+
+        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
+
+        let storedValue = UserDefaults.standard.string(forKey: userIdKey)
+
+        assert(fnSuccess == true)
+        assert(NeuroID.registeredUserID == expectedValue)
+        assert(storedValue == nil)
+
+        assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+
+        NeuroID.registeredUserID = ""
     }
 
     func test_attemptedLoginWthUID() {
