@@ -21,7 +21,7 @@ final class NIDPerformanceTests: XCTestCase {
 
     override func setUp() {
         NeuroID.networkService = NIDNetworkServiceTestImpl()
-        NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
 
     override func tearDown() {
