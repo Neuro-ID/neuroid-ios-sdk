@@ -104,49 +104,43 @@ public extension NeuroID {
             return
         }
 
-        // if the session is being sampled we should send, else we don't want those events anyways
-        if NeuroID.samplingService.isSessionFlowSampled {
-            // immediately flush events before anything else
-            groupAndPOST(forceSend: NeuroID.samplingService.isSessionFlowSampled)
-        } else {
-            // if not sampled clear any events that might have slipped through
-            _ = DataStore.getAndRemoveAllEvents()
-        }
+        // Clear or Send events based on sample rate
+        NeuroID.clearSendOldFlowEvents {
+            // The following events have to happen for either
+            //  an existing session that begins a new flow OR
+            //  a new session with a new flow
+            // 1. Determine if flow should be sampled
+            // 2. CREATE_SESSION and MOBILE_METADATA events captured
+            // 3. Capture ADV (based on global config and lib installed)
 
-        // The following events have to happen for either
-        //  an existing session that begins a new flow OR
-        //  a new session with a new flow
-        // 1. Determine if flow should be sampled
-        // 2. CREATE_SESSION and MOBILE_METADATA events captured
-        // 3. Capture ADV (based on global config and lib installed)
+            // If SDK is already started, update sampleStatus and continue
+            if NeuroID.isSDKStarted {
+                NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
 
-        // If SDK is already started, update sampleStatus and continue
-        if NeuroID.isSDKStarted {
-            NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
+                // capture CREATE_SESSION and METADATA events for new flow
+                saveEventToLocalDataStore(createNIDSessionEvent())
+                captureMobileMetadata()
 
-            // capture CREATE_SESSION and METADATA events for new flow
-            saveEventToLocalDataStore(createNIDSessionEvent())
-            captureMobileMetadata()
+                checkThenCaptureAdvancedDevice()
 
-            checkThenCaptureAdvancedDevice()
+                NeuroID.addLinkedSiteID(siteID)
+                completion(SessionStartResult(true, NeuroID.getUserID()))
 
-            NeuroID.addLinkedSiteID(siteID)
-            completion(SessionStartResult(true, NeuroID.getUserID()))
-
-        } else {
-            // If the SDK is not started we have to start it first
-            //  (which will get the config using passed siteID)
-
-            // if userID passed then startSession should be used
-            if userID != nil {
-                NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
-                    NeuroID.addLinkedSiteID(siteID)
-                    completion(startStatus)
-                }
             } else {
-                NeuroID.start(siteID: siteID) { started in
-                    NeuroID.addLinkedSiteID(siteID)
-                    completion(SessionStartResult(started, NeuroID.getUserID()))
+                // If the SDK is not started we have to start it first
+                //  (which will get the config using passed siteID)
+
+                // if userID passed then startSession should be used
+                if userID != nil {
+                    NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
+                        NeuroID.addLinkedSiteID(siteID)
+                        completion(startStatus)
+                    }
+                } else {
+                    NeuroID.start(siteID: siteID) { started in
+                        NeuroID.addLinkedSiteID(siteID)
+                        completion(SessionStartResult(started, NeuroID.getUserID()))
+                    }
                 }
             }
         }
@@ -353,6 +347,24 @@ extension NeuroID {
             #endif
         }) {
             completion(SessionStartResult(true, finalSessionID))
+        }
+    }
+
+    static func clearSendOldFlowEvents(completion: @escaping () -> Void = {}) {
+        // if the session is being sampled we should send, else we don't want those events anyways
+        if NeuroID.samplingService.isSessionFlowSampled {
+            // immediately flush events before anything else
+            groupAndPOST(forceSend: NeuroID.samplingService.isSessionFlowSampled) {
+                completion()
+            }
+            return
+        } else {
+            // if not sampled clear any events that might have slipped through
+            _ = DataStore.getAndRemoveAllEvents()
+
+            completion()
+
+            return
         }
     }
 }
