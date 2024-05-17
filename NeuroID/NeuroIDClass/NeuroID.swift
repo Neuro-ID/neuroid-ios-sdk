@@ -18,6 +18,8 @@ import WebKit
 
 public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
+    static var CURRENT_ORIGIN: String?
+    static var CURRENT_ORIGIN_CODE: String?
 
     static var clientKey: String?
     static var siteID: String?
@@ -25,6 +27,9 @@ public class NeuroID: NSObject {
 
     static var locationManager: LocationManager?
     static var networkMonitor: NetworkMonitoringService?
+    static var callObserver: NIDCallStatusObserver?
+    static var configService: ConfigServiceProtocol = NIDConfigService()
+    static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
 
     static var clientID: String?
     static var userID: String?
@@ -54,7 +59,6 @@ public class NeuroID: NSObject {
     }
 
     static var sendCollectionWorkItem: DispatchWorkItem?
-
     static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
 
     static var observingInputs = false
@@ -69,14 +73,7 @@ public class NeuroID: NSObject {
     static var isRN: Bool = false
     static var rnOptions: [RNConfigOptions: Any] = [:]
 
-    static var CURRENT_ORIGIN: String?
-    static var CURRENT_ORIGIN_CODE: String?
-
     static var lowMemory: Bool = false
-
-    static var callObserver: NIDCallStatusObserver?
-
-    static var nidConfigService: NIDConfigService?
 
     static var isAdvancedDevice: Bool = false
 
@@ -121,22 +118,6 @@ public class NeuroID: NSObject {
         // Reset tab id on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
 
-        _ = NIDConfigService { success in
-            if success {
-                if NIDConfigService.nidConfigCache.callInProgress {
-                    callObserver = NIDCallStatusObserver()
-                }
-
-                if NIDConfigService.nidConfigCache.geoLocation {
-                    locationManager = LocationManager()
-                }
-
-                if NIDConfigService.nidConfigCache.gyroAccelCadence {
-                    sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
-                }
-            }
-        }
-
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
 
@@ -144,41 +125,10 @@ public class NeuroID: NSObject {
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
-    public static func start() -> Bool {
-        if !NeuroID.verifyClientKeyExists() {
-            return false
-        }
-
-        NeuroID.callObserver?.startListeningToCallStatus()
-
-        NeuroID._isSDKStarted = true
-
-        NeuroID.startIntegrationHealthCheck()
-
-        checkThenCaptureAdvancedDevice()
-
-        NeuroID.createSession()
-        swizzle()
-
-        #if DEBUG
-        if NSClassFromString("XCTest") == nil {
-            initTimer()
-        }
-        #else
-        initTimer()
-        #endif
-
-        // save captured health events to file
-        saveIntegrationHealthEvents()
-
-        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        for event in queuedEvents {
-            DataStore.insertEvent(screen: "", event: event)
-        }
-
-        initGyroAccelCollectionTimer()
-
-        return true
+    public static func start(
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) {
+        NeuroID.start(siteID: nil, completion: completion)
     }
 
     public static func stop() -> Bool {

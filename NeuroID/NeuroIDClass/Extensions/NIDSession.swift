@@ -42,55 +42,11 @@ public extension NeuroID {
         return id
     }
 
-    static func startSession(_ sessionID: String? = nil) -> SessionStartResult {
-        if !NeuroID.verifyClientKeyExists() {
-            return SessionStartResult(false, "")
-        }
-
-        // stop existing session if one is open
-        if NeuroID.userID != nil || NeuroID.isSDKStarted {
-            _ = stopSession()
-        }
-
-        // If sessionID is nil, set origin as NID here
-        if sessionID == nil {
-            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
-            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
-        }
-
-        let finalSessionID = sessionID ?? ParamsCreator.generateID()
-        if !setUserID(finalSessionID) {
-            return SessionStartResult(false, "")
-        }
-
-        NeuroID._isSDKStarted = true
-
-        NeuroID.callObserver?.startListeningToCallStatus()
-
-        startIntegrationHealthCheck()
-
-        checkThenCaptureAdvancedDevice()
-
-        createSession()
-        swizzle()
-
-        #if DEBUG
-        if NSClassFromString("XCTest") == nil {
-            resumeCollection()
-        }
-        #else
-        resumeCollection()
-        #endif
-
-        // save captured health events to file
-        saveIntegrationHealthEvents()
-
-        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        for event in queuedEvents {
-            DataStore.insertEvent(screen: "", event: event)
-        }
-
-        return SessionStartResult(true, finalSessionID)
+    static func startSession(
+        _ sessionID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
+        NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
     }
 
     static func pauseCollection() {
@@ -130,64 +86,74 @@ public extension NeuroID {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
-    static func startAppFlow(siteID: String, userID: String? = nil) -> SessionStartResult {
+    static func startAppFlow(
+        siteID: String,
+        userID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
-            return SessionStartResult(false, "")
+            let res = SessionStartResult(false, "")
+
+            NeuroID.linkedSiteID = nil
+            let logFailedLinkedSite = NIDEvent(type: NIDEventName.log)
+            logFailedLinkedSite.m = "Failed to set invalid Linked Site \(siteID)"
+            logFailedLinkedSite.level = "ERROR"
+            saveEventToLocalDataStore(logFailedLinkedSite)
+
+            completion(res)
+            return
         }
 
-        // immediately flush events before anything else
-        groupAndPOST(forceSend: true)
-
-        // If not started then start
-        var startStatus: SessionStartResult
-        if !NeuroID._isSDKStarted {
-            // if userID passed then startSession else start
-            if userID != nil {
-                startStatus = NeuroID.startSession(userID)
-            } else {
-                let started = NeuroID.start()
-                startStatus = SessionStartResult(started, "")
-            }
+        // if the session is being sampled we should send, else we don't want those events anyways
+        if NeuroID.samplingService.isSessionFlowSampled {
+            // immediately flush events before anything else
+            groupAndPOST(forceSend: NeuroID.samplingService.isSessionFlowSampled)
         } else {
-            startStatus = SessionStartResult(true, NeuroID.getUserID())
+            // if not sampled clear any events that might have slipped through
+            _ = DataStore.getAndRemoveAllEvents()
+        }
+
+        // The following events have to happen for either
+        //  an existing session that begins a new flow OR
+        //  a new session with a new flow
+        // 1. Determine if flow should be sampled
+        // 2. CREATE_SESSION and MOBILE_METADATA events captured
+        // 3. Capture ADV (based on global config and lib installed)
+
+        // If SDK is already started, update sampleStatus and continue
+        if NeuroID.isSDKStarted {
+            NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
 
             // capture CREATE_SESSION and METADATA events for new flow
             saveEventToLocalDataStore(createNIDSessionEvent())
-
             captureMobileMetadata()
 
             checkThenCaptureAdvancedDevice()
+
+            NeuroID.addLinkedSiteID(siteID)
+            completion(SessionStartResult(true, NeuroID.getUserID()))
+
+        } else {
+            // If the SDK is not started we have to start it first
+            //  (which will get the config using passed siteID)
+
+            // if userID passed then startSession should be used
+            if userID != nil {
+                NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
+                    NeuroID.addLinkedSiteID(siteID)
+                    completion(startStatus)
+                }
+            } else {
+                NeuroID.start(siteID: siteID) { started in
+                    NeuroID.addLinkedSiteID(siteID)
+                    completion(SessionStartResult(started, NeuroID.getUserID()))
+                }
+            }
         }
-
-        if !startStatus.started {
-            return startStatus
-        }
-
-        // add linkedSite var
-        NeuroID.linkedSiteID = siteID
-
-        let setLinkedSiteIDEvent = NIDEvent(sessionEvent: NIDSessionEventName.setLinkedSite)
-        setLinkedSiteIDEvent.v = siteID
-        saveEventToLocalDataStore(setLinkedSiteIDEvent)
-
-        return startStatus
     }
 }
 
 extension NeuroID {
-    static func validateSiteID(_ string: String) -> Bool {
-        let regex = #"^form_[a-zA-Z0-9]{5}\d{3}$"#
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
-
-        let valid = predicate.evaluate(with: string)
-
-        if !valid {
-            NIDLog.e("Invalid SiteID/AppID")
-        }
-
-        return valid
-    }
-
     static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
         return NIDEvent(
             session: sessionEvent,
@@ -272,5 +238,121 @@ extension NeuroID {
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()
         NeuroID.sendCollectionWorkItem = nil
+    }
+
+    /**
+     Function to setup all the required events and listeners for the beginning of a session
+     - Will update sampling status
+     - Wll create and trigger listeners
+     - Will start swizzling
+     - Will move queued events into main queue
+     - Will make call to check/capture ADV event
+     */
+    static func setupSession(
+        siteID: String?,
+        customFunctionality: @escaping () -> Void = {},
+        completion: @escaping () -> Void = {}
+    ) {
+        // Use config cache or if first time, retrieve from server
+        configService.retrieveOrRefreshCache {
+            NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
+            NeuroID.createListeners()
+
+            NeuroID._isSDKStarted = true
+
+            NeuroID.callObserver?.startListeningToCallStatus()
+
+            NeuroID.startIntegrationHealthCheck()
+
+            NeuroID.createSession()
+            swizzle()
+
+            // custom functionality = the different timer starts (start vs. startSession)
+            //  this will be refactored once we bring start/startSession in alignment
+            customFunctionality()
+
+            // save beginSession events to MIHR file
+            saveIntegrationHealthEvents()
+
+            let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+            for event in queuedEvents {
+                DataStore.insertEvent(screen: "", event: event)
+            }
+
+            checkThenCaptureAdvancedDevice()
+
+            completion()
+        }
+    }
+
+    // Internal implementation that allows a siteID
+    static func start(
+        siteID: String?,
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) {
+        if !NeuroID.verifyClientKeyExists() {
+            completion(false)
+            return
+        }
+
+        // Setup Session with old start timer logic
+        // TO-DO - Refactor to behave like startSession
+        NeuroID.setupSession(siteID: siteID, customFunctionality: {
+            #if DEBUG
+            if NSClassFromString("XCTest") == nil {
+                initTimer()
+            }
+            #else
+            initTimer()
+            #endif
+            initGyroAccelCollectionTimer()
+        }) {
+            completion(true)
+        }
+    }
+
+    // Internal implementation that allows a siteID
+    static func startSession(
+        siteID: String?,
+        sessionID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
+        if !NeuroID.verifyClientKeyExists() {
+            let res = SessionStartResult(false, "")
+
+            completion(res)
+            return
+        }
+
+        // stop existing session if one is open
+        if NeuroID.userID != nil || NeuroID.isSDKStarted {
+            _ = stopSession()
+        }
+
+        // If sessionID is nil, set origin as NID here
+        if sessionID == nil {
+            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
+            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
+        }
+
+        let finalSessionID = sessionID ?? ParamsCreator.generateID()
+        if !setUserID(finalSessionID) {
+            let res = SessionStartResult(false, "")
+
+            completion(res)
+            return
+        }
+
+        NeuroID.setupSession(siteID: siteID, customFunctionality: {
+            #if DEBUG
+            if NSClassFromString("XCTest") == nil {
+                resumeCollection()
+            }
+            #else
+            resumeCollection()
+            #endif
+        }) {
+            completion(SessionStartResult(true, finalSessionID))
+        }
     }
 }

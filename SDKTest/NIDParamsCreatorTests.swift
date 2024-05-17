@@ -114,7 +114,7 @@ class NIDParamsCreatorTests: XCTestCase {
     func assertExpectedStringDictValues(expected: [String: String], value: [String: String]) {
         assertDictCount(value: value, count: expected.count)
 
-        expected.forEach { (key: String, evTarget: String) in
+        for (key, evTarget) in expected {
             assertStringDictValue(v: value[key] ?? "", ev: evTarget)
         }
     }
@@ -130,7 +130,7 @@ class NIDParamsCreatorTests: XCTestCase {
     func assertExpectedTVDictValues(expected: [String: TargetValue], value: [String: TargetValue]) {
         assertDictCount(value: value, count: expected.count)
 
-        expected.forEach { (key: String, evTarget: TargetValue) in
+        for (key, evTarget) in expected {
             if key == "\(tgsKey)" || key == "\(etnKey)" {
                 assertTVDictValueContains(v: value[key] ?? defaultTargetValue, ev: evTarget)
             } else {
@@ -140,8 +140,7 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     func assertSpecificTVDictKeyValues(keyList: [String], expectedDict: [String: TargetValue], value: [String: TargetValue]) {
-        keyList.forEach { key in
-
+        for key in keyList {
             if key == "\(tgsKey)" || key == "\(etnKey)" {
                 assertTVDictValueContains(v: value[key] ?? defaultTargetValue, ev: expectedDict[key] ?? defaultTargetValue)
             } else {

@@ -20,7 +20,7 @@ class NeuroIDTrackerTests: XCTestCase {
     }
     
     override func setUp() {
-          _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
     }
     
     override func tearDown() {
@@ -202,6 +202,7 @@ class NeuroIDTrackerTests: XCTestCase {
     
     func test_subscribe() {
         NeuroID.observingInputs = false
+        NeuroID._isSDKStarted = true
         
         let uiControllerBasic = UIViewController()
         let input = UITextField()

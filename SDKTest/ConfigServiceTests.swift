@@ -8,71 +8,105 @@
 import XCTest
 
 class ConfigServiceTests: XCTestCase {
+    var configService = NIDConfigService()
     
     override func setUpWithError() throws {
-        NIDConfigService.nidURL = "https://scripts.neuro-dev.com/mobile/"
-    }
-    override func tearDown() {
-        _ = NeuroID.stop()
-
-        // Clear out the DataStore Events after each test
-        clearOutDataStore()
+        NIDConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
+        configService = NIDConfigService()
     }
     
     func clearOutDataStore() {
         DataStore.removeSentEvents()
     }
     
-    func testCacheWillInitWithKey() throws {
+    func setupKeyAndMockInternet() {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        _ = NIDConfigService { success in
-            if success {
-                assert(NIDConfigService.cacheSetWithRemote)
-            }
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        mockedNetwork.mockFailedResponse()
+        
+        configService = NIDConfigService(networkService: mockedNetwork)
+    }
+    
+    func test_retrieveConfig_withKeyAndNoInternet() throws {
+        setupKeyAndMockInternet()
+        
+        configService.configCache.eventQueueFlushInterval = 0
+        configService.configCache.callInProgress = false
+        configService.configCache.geoLocation = false
+        configService.configCache.eventQueueFlushSize = 1999
+        configService.configCache.gyroAccelCadence = true
+        configService.configCache.gyroAccelCadenceTime = 0
+        configService.configCache.requestTimeout = 0
+        configService.cacheSetWithRemote = true
+        
+        configService.retrieveConfig {
+            assert(self.configService.configCache.eventQueueFlushInterval != 0)
+            assert(self.configService.configCache.gyroAccelCadenceTime != 0)
+            assert(self.configService.configCache.eventQueueFlushSize != 1999)
+            assert(self.configService.configCache.requestTimeout != 0)
+            assert(!self.configService.cacheSetWithRemote)
         }
     }
     
-    func testCacheWillInitWithDefaultIfNoInternet() throws {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        
-        NIDConfigService.nidConfigCache.eventQueueFlushInterval = 0
-        NIDConfigService.nidConfigCache.callInProgress = false
-        NIDConfigService.nidConfigCache.geoLocation = false
-        NIDConfigService.nidConfigCache.eventQueueFlushSize = 1999
-        NIDConfigService.nidConfigCache.gyroAccelCadence = true
-        NIDConfigService.nidConfigCache.gyroAccelCadenceTime = 0
-        NIDConfigService.nidConfigCache.requestTimeout = 0
+    func test_retrieveConfig_withNoKey() throws {
+        NeuroID.clientKey = ""
         
         NeuroID.networkService = NIDNetworkServiceTestImpl()
         
-        _ = NIDConfigService { success in
-            if success {
-                assert(NIDConfigService.nidConfigCache.eventQueueFlushInterval != 0)
-                assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime != 0)
-                assert(NIDConfigService.nidConfigCache.eventQueueFlushSize != 1999)
-                assert(NIDConfigService.nidConfigCache.requestTimeout != 0)
-            }
-        }
-    }
-    
-    
-    func testWillSetCacheWithRemoteValues() throws {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-
-        NIDConfigService.nidConfigCache.eventQueueFlushInterval = 0
-        NIDConfigService.nidConfigCache.callInProgress = false
-        NIDConfigService.nidConfigCache.geoLocation = false
-        NIDConfigService.nidConfigCache.gyroAccelCadence = true
-        NIDConfigService.nidConfigCache.gyroAccelCadenceTime = 0
-        NIDConfigService.nidConfigCache.requestTimeout = 0
+        configService.configCache.requestTimeout = 0
+        configService.cacheSetWithRemote = true
         
-        _ = NIDConfigService { success in
-            if success {
-                assert(NIDConfigService.nidConfigCache.eventQueueFlushInterval != 0)
-                assert(NIDConfigService.nidConfigCache.gyroAccelCadenceTime != 0)
-                assert(NIDConfigService.nidConfigCache.requestTimeout != 0)
-                assert(NIDConfigService.cacheSetWithRemote)
-            }
+        configService.retrieveConfig {
+            assert(self.configService.configCache.requestTimeout == 0)
+            assert(!self.configService.cacheSetWithRemote)
         }
     }
+    
+    func test_retrieveConfig_withKeyAndInternet() throws {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        configService.configCache.eventQueueFlushInterval = 0
+        configService.configCache.callInProgress = false
+        configService.configCache.geoLocation = false
+        configService.configCache.gyroAccelCadence = true
+        configService.configCache.gyroAccelCadenceTime = 0
+        configService.configCache.requestTimeout = 0
+        
+        configService.retrieveConfig {
+            assert(self.configService.configCache.eventQueueFlushInterval != 0)
+            assert(self.configService.configCache.gyroAccelCadenceTime != 0)
+            assert(self.configService.configCache.requestTimeout != 0)
+            assert(self.configService.cacheSetWithRemote)
+        }
+    }
+    
+    func test_setCache() {
+        configService.configCache.callInProgress = false
+        
+        let newConfig = ConfigResponseData()
+        
+        configService.setCache(newConfig)
+        
+        assert(configService.configCache.callInProgress)
+    }
+    
+    func test_expiredCache_true_no_cache() {
+        configService.cacheSetWithRemote = false
+        
+        let expired = configService.expiredCache()
+        
+        assert(expired)
+    }
+
+    func test_expiredCache_false() {
+        configService.cacheSetWithRemote = true
+        
+        let expired = configService.expiredCache()
+        
+        assert(!expired)
+    }
+    
+    // Skipping tests for retrieveOrRefreshCache because it is a wrapper function for
+    //  expiredCache and retrieveConfig
 }
