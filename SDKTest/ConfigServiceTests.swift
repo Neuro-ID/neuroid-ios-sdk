@@ -60,6 +60,7 @@ class ConfigServiceTests: XCTestCase {
         configService.retrieveConfig {
             assert(self.configService.configCache.requestTimeout == 0)
             assert(!self.configService.cacheSetWithRemote)
+            assert(!self.configService.configCache.geoLocation)
         }
     }
     
