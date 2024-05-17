@@ -20,7 +20,7 @@ class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int = 0, completion: @escaping (AFDataResponse<Data>) -> Void) {
         let maxRetryCount = 3
 
-        configuration.timeoutIntervalForRequest = Double(NIDConfigService.nidConfigCache.requestTimeout)
+        configuration.timeoutIntervalForRequest = Double(NeuroID.configService.configCache.requestTimeout)
 
         afCustomSession.request(
             url,
@@ -36,5 +36,21 @@ class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
                 completion(response)
             }
         }
+    }
+
+    func getRequest<T: Decodable>(
+        url: URL,
+        responseDecodableType: T.Type,
+        completion: @escaping (DataResponse<T, AFError>) -> Void
+    ) {
+        afCustomSession
+            .request(
+                url,
+                method: .get
+            )
+            .validate()
+            .responseDecodable(of: responseDecodableType.self) { response in
+                completion(response)
+            }
     }
 }

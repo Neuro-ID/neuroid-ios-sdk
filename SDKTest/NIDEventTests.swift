@@ -67,7 +67,7 @@ class NIDEventTests: XCTestCase {
     }
     
     func testFullPayload() {
-        let _ = NeuroID.start()
+        NeuroID._isSDKStarted = true
         var tracker: NeuroIDTracker?
         /// Create a textfield
         lazy var textfield: UITextField = {

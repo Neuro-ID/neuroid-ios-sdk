@@ -11,28 +11,33 @@ import NeuroIDAdvancedDevice
 public extension NeuroID {
     internal static var deviceSignalService: DeviceSignalService = NeuroIDADV()
 
-    static func start(_ advancedDeviceSignals: Bool) -> Bool {
-        let started = NeuroID.start()
-        
-        if !started {
-            return started
+    static func start(
+        _ advancedDeviceSignals: Bool,
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) {
+        NeuroID.start { started in
+            if !started {
+                completion(started)
+                return
+            }
+                   
+            checkThenCaptureAdvancedDevice(advancedDeviceSignals)
         }
-               
-        checkThenCaptureAdvancedDevice(advancedDeviceSignals)
-        
-        return started
     }
     
-    static func startSession(_ sessionID: String? = nil, _ advancedDeviceSignals: Bool) -> SessionStartResult {
-        let sessionRes = NeuroID.startSession(sessionID)
-        
-        if !sessionRes.started {
-            return sessionRes
+    static func startSession(
+        _ sessionID: String? = nil,
+        _ advancedDeviceSignals: Bool,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
+        NeuroID.startSession(sessionID) { sessionRes in
+            if !sessionRes.started {
+                completion(sessionRes)
+                return
+            }
+                   
+            checkThenCaptureAdvancedDevice(advancedDeviceSignals)
         }
-               
-        checkThenCaptureAdvancedDevice(advancedDeviceSignals)
-        
-        return sessionRes
     }
     
     internal static func getCachedADV() -> Bool {

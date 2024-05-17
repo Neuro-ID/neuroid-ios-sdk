@@ -14,6 +14,7 @@ enum NIDSessionEventName: String {
     case setLinkedSite = "SET_LINKED_SITE"
 
     case mobileMetadataIOS = "MOBILE_METADATA_IOS"
+    case configCached = "CONFIG_CACHED"
 }
 
 public enum NIDEventName: String {
