@@ -135,15 +135,17 @@ extension NeuroID {
             return newEvent
         }
 
-        post(events: cleanEvents, screen: getScreenName() ?? altScreenName, onSuccess: { _ in
-            logInfo(category: "APICall", content: "Sending successfully")
-
-            completion()
-            // send success -> delete
-        }, onFailure: { error in
-            logError(category: "APICall", content: String(describing: error))
-            completion()
-        })
+        post(
+            events: cleanEvents,
+            screen: getScreenName() ?? altScreenName,
+            onSuccess: {
+                logInfo(category: "APICall", content: "Sending successfully")
+                completion()
+            }, onFailure: { error in
+                logError(category: "APICall", content: String(describing: error))
+                completion()
+            }
+        )
     }
 
     /// Direct send to API to create session
@@ -151,7 +153,7 @@ extension NeuroID {
     static func post(
         events: [NIDEvent],
         screen: String,
-        onSuccess: @escaping (Any) -> Void,
+        onSuccess: @escaping () -> Void,
         onFailure: @escaping
         (Error) -> Void
     ) {
@@ -202,9 +204,11 @@ extension NeuroID {
             switch response.result {
             case .success:
                 NIDLog.i("NeuroID post to API Successful")
+                onSuccess()
             case let .failure(error):
                 NIDLog.e("NeuroID FAIL to post API")
                 logError(content: "Neuro-ID post Error: \(error)")
+                onFailure(error)
             }
         }
 
