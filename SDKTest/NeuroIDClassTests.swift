@@ -958,6 +958,7 @@ class NIDUserTests: XCTestCase {
 
     func test_setRegisteredUserID_already_set() {
         clearOutDataStore()
+        NeuroID._isSDKStarted = true
         NeuroID.registeredUserID = "setID"
 
         let expectedValue = "test_ruid"
@@ -967,7 +968,7 @@ class NIDUserTests: XCTestCase {
         assert(fnSuccess == false)
         assert(NeuroID.registeredUserID != expectedValue)
 
-        assert(DataStore.events.count == 0)
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
         assert(DataStore.queuedEvents.count == 0)
 
         NeuroID.registeredUserID = ""
