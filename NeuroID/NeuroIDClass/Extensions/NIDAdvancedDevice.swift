@@ -38,7 +38,7 @@ public extension NeuroID {
             }
                    
             checkThenCaptureAdvancedDevice(advancedDeviceSignals)
-            completion(started)
+            completion(sessionRes)
         }
     }
     
