@@ -88,8 +88,24 @@ public extension NeuroID {
         NeuroID.saveEventToLocalDataStore(nidEvent)
     }
     
-    @objc internal static func captureAdvancedDevice(_ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]) {
-        if shouldCapture.indices.contains(0), shouldCapture[0] {
+    /**
+     Based on the parameter passed in AND the sampling flag, this function will make a call to the ADV library or not,
+     Default is to use the global settings from the NeuroID class but can be overridden (see `start`
+     or `startSession` in the `NIDAdvancedDevice.swift` file.
+     
+     Marked as `@objc` because this method can be called with reflection if the ADV library is not installed.
+     Because of the reflection we use an array with a boolean instead of just boolean
+     */
+    @objc internal static func captureAdvancedDevice(
+        _ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]
+    ) {
+        // Verify the command is called with a true value (want to capture) AND that the session
+        //  is NOT being restricted/throttled prior to calling for an ADV event
+        
+        if shouldCapture.indices.contains(0),
+           shouldCapture[0],
+           NeuroID.samplingService.isSessionFlowSampled
+        {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {
                 getNewADV()
