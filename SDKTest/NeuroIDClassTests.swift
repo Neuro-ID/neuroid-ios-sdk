@@ -919,6 +919,8 @@ class NIDUserTests: XCTestCase {
 
         assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
+
+        NeuroID.registeredUserID = ""
     }
 
     func test_setRegisteredUserID_started() {
@@ -936,6 +938,8 @@ class NIDUserTests: XCTestCase {
 
         assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
         assert(DataStore.queuedEvents.count == 0)
+
+        NeuroID.registeredUserID = ""
     }
 
     func test_setRegisteredUserID_pre_start() {
@@ -954,6 +958,48 @@ class NIDUserTests: XCTestCase {
 
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+
+        NeuroID.registeredUserID = ""
+    }
+
+    func test_setRegisteredUserID_already_set() {
+        clearOutDataStore()
+        NeuroID._isSDKStarted = true
+        NeuroID.registeredUserID = "setID"
+
+        let expectedValue = "test_ruid"
+
+        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
+
+        assert(fnSuccess == false)
+        assert(NeuroID.registeredUserID != expectedValue)
+
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
+        assert(DataStore.queuedEvents.count == 0)
+
+        NeuroID.registeredUserID = ""
+    }
+
+    func test_setRegisteredUserID_same_value() {
+        clearOutDataStore()
+
+        let expectedValue = "test_ruid"
+
+        NeuroID.registeredUserID = expectedValue
+
+        UserDefaults.standard.removeObject(forKey: userIdKey)
+
+        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
+
+        let storedValue = UserDefaults.standard.string(forKey: userIdKey)
+
+        assert(fnSuccess == true)
+        assert(NeuroID.registeredUserID == expectedValue)
+        assert(storedValue == nil)
+
+        assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+
+        NeuroID.registeredUserID = ""
     }
 
     func test_attemptedLoginWthUID() {
