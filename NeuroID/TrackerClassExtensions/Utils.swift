@@ -46,7 +46,7 @@ internal enum UtilFunctions {
         for ctrls in filtered {
             let screenName = ctrls.nidClassName
             NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
-            guard let view = ctrls.view else {
+            guard let view = ctrls.viewIfLoaded else {
                 return
             }
             let guid = ParamsCreator.generateID()
