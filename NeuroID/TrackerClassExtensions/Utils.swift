@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-internal enum UtilFunctions {
+enum UtilFunctions {
     static func getFutureTimeStamp(_ hoursToAdd: Int) -> Int {
         // Get the current time
         let currentTime = Date()
@@ -46,13 +46,13 @@ internal enum UtilFunctions {
         for ctrls in filtered {
             let screenName = ctrls.nidClassName
             NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
-            guard let view = ctrls.view else {
+            guard let view = ctrls.viewIfLoaded else {
                 return
             }
             let guid = ParamsCreator.generateID()
 
             NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
-            let childViews = ctrls.view.subviewsRecursive()
+            let childViews = view.subviewsRecursive()
             for _view in childViews {
                 NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
                 NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
@@ -213,12 +213,12 @@ internal enum UtilFunctions {
 
         // URL capture?
     }
-    
+
     static func captureCallStatusEvent(
         eventType: NIDEventName,
         status: String
     ) {
-        let event = NIDEvent( type: eventType )
+        let event = NIDEvent(type: eventType)
         event.cp = status
         NeuroID.saveEventToLocalDataStore(event)
     }

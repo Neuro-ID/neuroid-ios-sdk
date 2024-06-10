@@ -223,7 +223,7 @@ extension NeuroIDTracker {
             return
         }
 
-        if let views = controller?.view.subviews {
+        if let views = controller?.viewIfLoaded?.subviews {
             observeViews(views)
         }
 
