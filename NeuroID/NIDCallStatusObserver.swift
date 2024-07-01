@@ -19,22 +19,31 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     }
     
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
-        if call.hasEnded {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue)
-            NIDLog.d("Call has ended")
-        } else if call.isOutgoing {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue)
-            NIDLog.d("Ongoing call observed")
-        } else if call.hasConnected {
-            // Event not captured
-            NIDLog.d("Call connected")
-        } else if call.isOnHold {
-            // Event not captured
-            NIDLog.d("Call on hold")
-        } else {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue)
-            NIDLog.d("Incoming Call observed")
-        }
+        //        Outgoing call answered
+        if(call.isOutgoing && call.hasConnected && !call.hasEnded){
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue, metadata: CallInProgressMetaData.OUTGOING_ANSWERED.rawValue)
+            NIDLog.d("Outgoing call (answered) observed /could be voice mail")}
+        //        Outgoing call ringing
+        else if(call.isOutgoing && !call.hasConnected && !call.hasEnded){
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue, metadata: CallInProgressMetaData.OUTGOING_RINGING.rawValue)
+            NIDLog.d("Outgoing call (ringing) observed")}
+        //        Outgoing call ended
+        else if(call.isOutgoing && call.hasEnded){
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue, metadata: CallInProgressMetaData.OUTGOING_ENDED.rawValue)
+            NIDLog.d("Outgoing call ended")}
+        //        Incoming call ringing
+        else if(!call.isOutgoing && !call.hasConnected && !call.hasEnded){
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue, metadata: CallInProgressMetaData.INCOMING_RINGING.rawValue)
+            NIDLog.d("Incoming call (ringing) in progress is observed")}
+        //        Incoming call answered
+        else if(!call.isOutgoing && call.hasConnected && !call.hasEnded){
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue, metadata: CallInProgressMetaData.INCOMING_ANSWERED.rawValue)
+            NIDLog.d("Incoming call (answered)/voicemail in progress is observed")}
+        //        Incoming call ended
+        else if(!call.isOutgoing && call.hasEnded){
+            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue, metadata: CallInProgressMetaData.INCOMING_ENDED.rawValue)
+            NIDLog.d("Incoming call ended ")}
+ 
     }
     
     func startListeningToCallStatus() {
