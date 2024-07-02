@@ -87,4 +87,7 @@ enum CallInProgressMetaData: String {
     case INCOMING_RINGING = "incoming ringing"
     case INCOMING_ANSWERED = "incoming answered"
     case INCOMING_ENDED = "incoming ended"
+    case INCOMING_ONHOLD = "incoming on hold"
+    case OUTGOING_ONHOLD = "outgoing on hold"
+
 }
