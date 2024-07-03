@@ -856,7 +856,7 @@ class NIDUserTests: XCTestCase {
         }
 
         assert(result == true)
-        assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assert(DataStore.queuedEvents.count == 0)
     }
 
@@ -874,7 +874,7 @@ class NIDUserTests: XCTestCase {
 
         assert(result == true)
         assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+        assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
     }
 
     func test_setUserID_started() {
@@ -967,7 +967,7 @@ class NIDUserTests: XCTestCase {
         assert(NeuroID.registeredUserID == expectedValue)
         assert(storedValue == nil)
 
-        assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assert(DataStore.queuedEvents.count == 0)
 
         NeuroID.registeredUserID = ""
@@ -988,7 +988,7 @@ class NIDUserTests: XCTestCase {
         assert(storedValue == nil)
 
         assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+        assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
 
         NeuroID.registeredUserID = ""
     }
@@ -1028,7 +1028,7 @@ class NIDUserTests: XCTestCase {
         assert(NeuroID.registeredUserID == expectedValue)
         assert(storedValue == nil)
 
-        assertStoredEventTypeAndCount(type: "REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
 
         NeuroID.registeredUserID = ""
     }
