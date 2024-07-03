@@ -5,7 +5,7 @@ enum NIDSessionEventName: String {
     case closeSession = "CLOSE_SESSION"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
-    case setRegisteredUserId = "REGISTERED_USER_ID"
+    case setRegisteredUserId = "SET_REGISTERED_USER_ID"
     case setVariable = "SET_VARIABLE"
     case tag = "TAG"
     case setCheckPoint = "SET_CHECKPOINT"
