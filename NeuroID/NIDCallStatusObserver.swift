@@ -20,30 +20,32 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         var status: String
-        var attrs: Attrs
+        var attrs: [Attrs] = []
+        var progress: String
+        
+        // Add call type
+        attrs.append(Attrs(n:"type",v:call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue))
         
         if call.hasEnded {
             status = CallInProgress.INACTIVE.rawValue
-            attrs = Attrs(n: call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue,
-                          v: CallInProgressMetaData.ENDED.rawValue)
+            progress = CallInProgressMetaData.ENDED.rawValue
             
         } else if call.isOnHold {
             status = CallInProgress.ACTIVE.rawValue
-            attrs = Attrs(n: call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue,
-                          v: CallInProgressMetaData.ONHOLD.rawValue)
+            progress = CallInProgressMetaData.ONHOLD.rawValue
             
         } else if call.hasConnected {
             status = CallInProgress.ACTIVE.rawValue
-            attrs = Attrs(n: call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue,
-                          v: CallInProgressMetaData.ANSWERED.rawValue)
+            progress =  CallInProgressMetaData.ANSWERED.rawValue
             
         } else {
             status = CallInProgress.INACTIVE.rawValue
-            attrs = Attrs(n: call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue,
-                          v: CallInProgressMetaData.RINGING.rawValue)
+            progress =  CallInProgressMetaData.RINGING.rawValue
             
         }
         
+        // Add call progress
+        attrs.append(Attrs(n: "progress", v: progress ))
         UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: status, attrs: attrs)
     }
     

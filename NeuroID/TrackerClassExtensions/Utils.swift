@@ -217,11 +217,11 @@ enum UtilFunctions {
     static func captureCallStatusEvent(
         eventType: NIDEventName,
         status: String,
-        attrs: Attrs
+        attrs: [Attrs]
     ) {
         let event = NIDEvent(type: eventType)
         event.cp = status
-        event.attrs = [attrs]
+        event.attrs = attrs
         NeuroID.saveEventToLocalDataStore(event)
     }
 
