@@ -289,6 +289,18 @@ class NIDRegistrationTests: XCTestCase {
         let event = NeuroID.setCustomVariable(key: "t", v: "v")
 
         XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
+        XCTAssertTrue(event.key == "t")
+        XCTAssertTrue(event.v == "v")
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
+    }
+
+    func test_setVariable() {
+        clearOutDataStore()
+        let event = NeuroID.setVariable(key: "t", value: "v")
+
+        XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
+        XCTAssertTrue(event.key == "t")
+        XCTAssertTrue(event.v == "v")
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
     }
 }
