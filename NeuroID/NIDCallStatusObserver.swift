@@ -19,22 +19,34 @@ class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
     }
     
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
+        var status: String
+        var attrs: [Attrs] = []
+        var progress: String
+        
+        // Add call type
+        attrs.append(Attrs(n:"type",v:call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue))
+        
         if call.hasEnded {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.INACTIVE.rawValue)
-            NIDLog.d("Call has ended")
-        } else if call.isOutgoing {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue)
-            NIDLog.d("Ongoing call observed")
-        } else if call.hasConnected {
-            // Event not captured
-            NIDLog.d("Call connected")
+            status = CallInProgress.INACTIVE.rawValue
+            progress = CallInProgressMetaData.ENDED.rawValue
+            
         } else if call.isOnHold {
-            // Event not captured
-            NIDLog.d("Call on hold")
+            status = CallInProgress.ACTIVE.rawValue
+            progress = CallInProgressMetaData.ONHOLD.rawValue
+            
+        } else if call.hasConnected {
+            status = CallInProgress.ACTIVE.rawValue
+            progress =  CallInProgressMetaData.ANSWERED.rawValue
+            
         } else {
-            UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: CallInProgress.ACTIVE.rawValue)
-            NIDLog.d("Incoming Call observed")
+            status = CallInProgress.INACTIVE.rawValue
+            progress =  CallInProgressMetaData.RINGING.rawValue
+            
         }
+        
+        // Add call progress
+        attrs.append(Attrs(n: "progress", v: progress ))
+        UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: status, attrs: attrs)
     }
     
     func startListeningToCallStatus() {

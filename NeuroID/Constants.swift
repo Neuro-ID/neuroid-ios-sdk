@@ -79,3 +79,13 @@ enum CallInProgress: String {
     case INACTIVE = "false"
     case UNAUTHORIZED = "unauthorized"
 }
+
+enum CallInProgressMetaData: String {
+    case OUTGOING = "outgoing"
+    case INCOMING = "incoming"
+    case ANSWERED = "answered"
+    case ENDED = "ended"
+    case ONHOLD = "onhold"
+    case RINGING = "ringing"
+    
+}
