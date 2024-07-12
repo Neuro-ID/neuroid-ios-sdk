@@ -23,6 +23,7 @@ struct ConfigResponseData: Codable {
     var requestTimeout: Int = 10
     var gyroAccelCadence: Bool = false
     var gyroAccelCadenceTime: Int = 200
+    var lowMemoryBackOff: Double? = NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
 
     // could exist for parent site or could be null meaning 100%
     var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
@@ -41,5 +42,6 @@ struct ConfigResponseData: Codable {
         case sampleRate = "sample_rate"
         case siteID = "site_id"
         case linkedSiteOptions = "linked_site_options"
+        case lowMemoryBackOff = "low_memory_back_off"
     }
 }
