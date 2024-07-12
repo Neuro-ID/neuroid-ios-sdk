@@ -13,6 +13,11 @@ extension NeuroID {
 
     static var collectionURL = Constants.productionURL.rawValue
 
+    private (set) var packetNumber : Int32 = 0
+    func incrementPacketNumber () {
+        OSAtomicIncrement32(&packetNumber)
+    }
+    
     static func getCollectionEndpointURL() -> String {
         return collectionURL
     }
@@ -140,6 +145,7 @@ extension NeuroID {
             screen: getScreenName() ?? altScreenName,
             onSuccess: {
                 logInfo(category: "APICall", content: "Sending successfully")
+                NeuroID.incrementPacket()
                 completion()
             }, onFailure: { error in
                 logError(category: "APICall", content: String(describing: error))
@@ -182,7 +188,8 @@ extension NeuroID {
             jsonEvents: events,
             tabID: "\(tabId)",
             pageID: "\(pageid)",
-            url: "ios://\(NeuroID.getScreenName() ?? "")"
+            url: "ios://\(NeuroID.getScreenName() ?? "")",
+            packetNumber: packetNumber
         )
 
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
