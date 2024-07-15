@@ -9,6 +9,65 @@
 import XCTest
 
 final class NIDPerformanceTests: XCTestCase {
+    
+    var sampleService: NIDSamplingService = .init()
+    let mockedConfigService = MockConfigService()
+    
+    let childSiteID = "form_weeee"
+
+    override func setUpWithError() throws {
+        mockedConfigService.configCache = ConfigResponseData()
+        sampleService = NIDSamplingService(configService: mockedConfigService)
+        NeuroID.configService = mockedConfigService
+        
+    }
+    
+    func test_remote_backoff_overrides_default() {
+        mockedConfigService.configCache.lowMemoryBackOff = 0
+        assert(mockedConfigService.configCache.lowMemoryBackOff != NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF)
+    }
+    
+    func testLowMemoryFlagChangesAfterDefaultConfigSeconds() {
+        NeuroID.lowMemory = false
+        let expectation = self.expectation(description: "LowMemory flag should be true and then false after 5 seconds")
+        
+        let neuroIDTracker = NeuroIDTracker(screen: "test", controller: UIViewController())
+        neuroIDTracker.appLowMemoryWarning()
+        
+        // Check if lowMemory is set to true after a low memory event
+        XCTAssertTrue(NeuroID.lowMemory)
+        
+        // Wait for 5 seconds and check if the flag is set to false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.1) {
+            XCTAssertFalse(NeuroID.lowMemory)
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 6.0, handler: nil)
+    }
+    
+    func testLowMemoryFlagChangesAfterDefaultOverrideToZeroSeconds() {
+        NeuroID.lowMemory = false
+        
+        mockedConfigService.configCache.lowMemoryBackOff = 0
+        
+        let expectation = self.expectation(description: "LowMemory flag should be true and then false after 0 seconds")
+        
+        let neuroIDTracker = NeuroIDTracker(screen: "test", controller: UIViewController())
+        
+        neuroIDTracker.appLowMemoryWarning()
+        
+        // Check if lowMemory is set to true after a low memory event
+        XCTAssertTrue(NeuroID.lowMemory)
+        
+        // Ensure lowMemory flag was immediately toggled back so we dont drop events
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            XCTAssertFalse(NeuroID.lowMemory)
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 6.0, handler: nil)
+    }
 //    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 //    
 //    func clearOutDataStore() {
