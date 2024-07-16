@@ -124,8 +124,9 @@ public extension NeuroID {
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
+        
         if !NeuroID.registeredUserID.isEmpty, registeredUserID != NeuroID.registeredUserID {
-            NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts"))
+            NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts id was: " + registeredUserID))
             NIDLog.e("Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session")
             return false
         }

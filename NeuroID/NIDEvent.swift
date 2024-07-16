@@ -140,6 +140,7 @@ public struct NeuroHTTPRequest: Codable {
     var url: String
     var jsVersion: String = "5.0.0"
     var linkedSiteId: String?
+    var packetNumber: Int32
 
     public init(
         clientID: String,
@@ -154,7 +155,8 @@ public struct NeuroHTTPRequest: Codable {
         jsonEvents: [NIDEvent],
         tabID: String,
         pageID: String,
-        url: String
+        url: String,
+        packetNumber: Int32
     ) {
         self.clientId = clientID
         self.environment = environment
@@ -169,6 +171,7 @@ public struct NeuroHTTPRequest: Codable {
         self.tabId = tabID
         self.pageId = pageID
         self.url = url
+        self.packetNumber = packetNumber
     }
 }
 
