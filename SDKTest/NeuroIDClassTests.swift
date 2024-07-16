@@ -375,7 +375,7 @@ class NIDSessionTests: XCTestCase {
         let value = NeuroID.getSessionID()
 
         assert(value != "")
-        assert(value.count == 36)
+        assert(value.count == 40)
     }
 
     func test_createSession() {
