@@ -312,8 +312,9 @@ class NIDParamsCreatorTests: XCTestCase {
         let expectedValue = 40
 
         let value = ParamsCreator.generateID()
-
+        
         assert(value.count == expectedValue)
+        assert(value.hasPrefix("nid-"))
     }
 
     let dntKey = Constants.storageDntKey.rawValue
