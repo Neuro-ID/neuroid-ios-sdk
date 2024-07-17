@@ -135,7 +135,8 @@ enum ParamsCreator {
     }
 
     static func generateID() -> String {
-        return UUID().uuidString
+//        ENG-8301 Add nid prefix for easier debugging
+        return "nid-" + UUID().uuidString
     }
 
     static func getDnt() -> Bool {
