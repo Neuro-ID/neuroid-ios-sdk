@@ -6,8 +6,15 @@
 //
 
 import Foundation
-
 public extension NeuroID {
+    
+    struct SessionIDOriginalResult{
+        let origin: String
+        let originCode: String
+        let idValue: String
+        let idType: UserIDTypes
+    }
+    
     internal static func validateUserID(_ userId: String) -> Bool {
         // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
         do {
@@ -15,75 +22,62 @@ public extension NeuroID {
             let result = expression.matches(in: userId, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, userId.count))
             if result.count != 1 {
                 NIDLog.e(NIDError.invalidUserID.rawValue)
-                // If Validation fails send origin event
-                if CURRENT_ORIGIN == nil {
-                    CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
-                }
-                CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
-
-                sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
-
                 return false
             }
         } catch {
             NIDLog.e(NIDError.invalidUserID.rawValue)
-            // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
-            if CURRENT_ORIGIN == nil {
-                CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
-            }
-            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
-
-            sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
             return false
         }
-
         return true
     }
-
-    internal static func setGenericUserID(userId: String, type: UserIDTypes, completion: (Bool) -> Bool) -> Bool {
-        let validID = NeuroID.validateUserID(userId)
-        if !validID { return completion(validID) }
-
-        NIDLog.d(tag: "\(type)", "\(userId)")
-
+    
+    internal static func setGenericUserID(type: UserIDTypes, genericUserID: String, userGenerated: Bool = true ) -> Bool{
+        let validID = validateUserID(genericUserID)
+        
+        let originRes = getOriginResult(idValue: genericUserID, validID: validID, userGenerated: userGenerated, idType: type)
+        sendOriginEvent(originResult: originRes)
+        
+        if(!validID){return false}
+        
+        NIDLog.d(tag: "\(type)", "\(genericUserID)")
+        //    Queue user id event to be sent
         let setUserEvent = NIDEvent(
             sessionEvent: type == .userID ?
-                NIDSessionEventName.setUserId : NIDSessionEventName.setRegisteredUserId
+            NIDSessionEventName.setUserId : NIDSessionEventName.setRegisteredUserId
         )
-
-        setUserEvent.uid = userId
-
+        
+        setUserEvent.uid = genericUserID
+        
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(setUserEvent)
         } else {
             saveEventToLocalDataStore(setUserEvent)
         }
-
-        return completion(true)
+        return true
     }
-
-    internal static func sendOriginEvent(origin: String, originCode: String, originSessionID: String) {
+    
+    internal static func sendOriginEvent(originResult: SessionIDOriginalResult){
         let sessionIdCodeEvent =
-            NIDEvent(
-                sessionEvent: NIDSessionEventName.setVariable,
-                key: "sessionIdCode",
-                v: originCode
-            )
-
+        NIDEvent(
+            sessionEvent: NIDSessionEventName.setVariable,
+            key: "sessionIdCode",
+            v: originResult.originCode
+        )
+        
         let sessionIdSourceEvent =
-            NIDEvent(
-                sessionEvent: NIDSessionEventName.setVariable,
-                key: "sessionIdSource",
-                v: origin
-            )
-
+        NIDEvent(
+            sessionEvent: NIDSessionEventName.setVariable,
+            key: "sessionIdSource",
+            v: originResult.origin
+        )
+        
         let sessionIdEvent =
-            NIDEvent(
-                sessionEvent: NIDSessionEventName.setVariable,
-                key: "sessionId",
-                v: originSessionID
-            )
-
+        NIDEvent(
+            sessionEvent: NIDSessionEventName.setVariable,
+            key: "sessionId",
+            v: originResult.idValue
+        )
+        
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(sessionIdCodeEvent)
             saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
@@ -94,61 +88,59 @@ public extension NeuroID {
             saveEventToLocalDataStore(sessionIdEvent)
         }
     }
-
-    static func setUserID(_ userId: String) -> Bool {
-        // Redundant check to ensure CURRENT_ORIGIN is never unsafely accessed
-        if CURRENT_ORIGIN == nil {
-            CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
-            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
+    
+    internal static func getOriginResult(idValue: String,
+                                         validID: Bool,
+                                         userGenerated: Bool,
+                                         idType: UserIDTypes) -> SessionIDOriginalResult{
+        let origin = userGenerated ? SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue : SessionOrigin.NID_ORIGIN_NID_SET.rawValue
+        var originCode = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
+        if validID {
+            originCode =  userGenerated ? SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue : SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
         }
-        let res = setGenericUserID(
-            userId: userId, type: .userID
-        ) { success in
-            if success {
-                sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: userId)
-                NeuroID.userID = userId
-            }
-
-            return success
-        }
-
-        return res
+        return SessionIDOriginalResult(origin: origin,originCode: originCode,idValue: idValue,idType: idType)
     }
-
+    
+    static func setUserID(_ userId: String, _ userGenerated: Bool? = true)-> Bool{
+        let validID =  setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated ?? true)
+        
+        if(!validID){
+            return false
+        }
+        
+        NeuroID.userID = userId
+        return true
+    }
+    
     static func getUserID() -> String {
         return NeuroID.userID ?? ""
     }
-
+    
+    
     static func getRegisteredUserID() -> String {
         return NeuroID.registeredUserID
     }
-
+    
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
         if !NeuroID.registeredUserID.isEmpty, registeredUserID != NeuroID.registeredUserID {
             NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts"))
             NIDLog.e("Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session")
             return false
         }
-
-        let res = setGenericUserID(
-            userId: registeredUserID, type: .registeredUserID
-        ) { success in
-            if success {
-                NeuroID.registeredUserID = registeredUserID
-            }
-            CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
-            CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
-            sendOriginEvent(origin: CURRENT_ORIGIN!, originCode: CURRENT_ORIGIN_CODE!, originSessionID: registeredUserID)
-
-            return success
+        
+        let validID = setGenericUserID(type: .registeredUserID, genericUserID: registeredUserID)
+        
+        if(!validID){
+            return false
         }
-
-        return res
+        
+        NeuroID.registeredUserID = registeredUserID
+        return true
     }
-
+    
     /**
-        This should be called the moment a user trys to login. Returns true always
-        @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
+     This should be called the moment a user trys to login. Returns true always
+     @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
         if NeuroID.validateUserID(attemptedRegisteredUserId ?? "") {

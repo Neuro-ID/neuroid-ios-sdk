@@ -324,13 +324,10 @@ extension NeuroID {
         }
 
         // If sessionID is nil, set origin as NID here
-        if sessionID == nil {
-            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
-            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
-        }
-
+        let userGenerated = (sessionID == nil) ? false : true
+        
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
-        if !setUserID(finalSessionID) {
+        if !setUserID(finalSessionID, userGenerated) {
             let res = SessionStartResult(false, "")
 
             completion(res)
