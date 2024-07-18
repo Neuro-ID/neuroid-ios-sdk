@@ -529,6 +529,10 @@ class NIDNewSessionTests: XCTestCase {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue == sessionRes.sessionID)
         }
+        // TODO-How are events showing up in Datastore and not Queue
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
     }
     
     func test_startSession_success_no_id() {
@@ -540,10 +544,10 @@ class NIDNewSessionTests: XCTestCase {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue != sessionRes.sessionID)
         }
-        //        TODO-Queue events not showing
-        //        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        //        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        //        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        // TODO-How are events showing up in Datastore and not Queue
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
     }
     
     func test_startSession_success_no_id_sdk_started() {
@@ -940,7 +944,7 @@ class NIDUserTests: XCTestCase {
         assert(result == true)
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
     }
     
     func test_setGenericUserID_valid_registered_id_started() {
@@ -965,7 +969,7 @@ class NIDUserTests: XCTestCase {
         assert(result == true)
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
     }
     
     func test_setGenericUserID_invalid_id_started() {

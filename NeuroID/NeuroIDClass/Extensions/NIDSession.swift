@@ -217,8 +217,6 @@ extension NeuroID {
     static func clearSessionVariables() {
         NeuroID.userID = nil
         NeuroID.registeredUserID = ""
-        CURRENT_ORIGIN = nil
-        CURRENT_ORIGIN_CODE = nil
 
         NeuroID.linkedSiteID = nil
     }
