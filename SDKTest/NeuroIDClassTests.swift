@@ -459,6 +459,46 @@ class NIDNewSessionTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
     
+    func assertQueuedEventCount(type: String, count: Int) {
+        let allEvents = DataStore.queuedEvents
+        let validEvent = allEvents.filter { $0.type == type }
+        
+        assert(validEvent.count == count)
+    }
+    
+    func assertStoredEventCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+        
+        assert(validEvent.count == count)
+    }
+    
+    func assertStoredEventOrigin(type: String, origin: String, originCode: String) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvents = allEvents.filter { $0.type == type }
+        
+        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
+        assert(originEvent.count == 1)
+        assert(originEvent[0].v == origin)
+        
+        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
+        assert(originCodeEvent.count == 1)
+        assert(originCodeEvent[0].v == originCode)
+    }
+    
+    func assertQueuedEventOrigin(type: String, origin: String, originCode: String) {
+        let allEvents = DataStore.queuedEvents
+        let validEvents = allEvents.filter { $0.type == type }
+        
+        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
+        assert(originEvent.count == 1)
+        assert(originEvent[0].v == origin)
+        
+        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
+        assert(originCodeEvent.count == 1)
+        assert(originCodeEvent[0].v == originCode)
+    }
+    
     func assertSessionStartedTests(_ sessionRes: SessionStartResult) {
         assert(sessionRes.started)
         assert(NeuroID._isSDKStarted)
@@ -510,6 +550,38 @@ class NIDNewSessionTests: XCTestCase {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue != sessionRes.sessionID)
         }
+        //        TODO-Queue events not showing
+        //        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        //        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        //        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+    }
+    
+    func test_startSession_success_no_id_sdk_started() {
+        NeuroID.userID = nil
+        NeuroID._isSDKStarted = true
+        
+        let expectedValue = "mySessionID"
+        NeuroID.startSession { sessionRes in
+            self.assertSessionStartedTests(sessionRes)
+            assert(expectedValue != sessionRes.sessionID)
+        }
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
+    }
+    
+    func test_startSession_success_id_sdk_started() {
+        NeuroID.userID = nil
+        NeuroID._isSDKStarted = true
+        
+        let expectedValue = "mySessionID"
+        NeuroID.startSession(expectedValue) { sessionRes in
+            self.assertSessionStartedTests(sessionRes)
+            assert(expectedValue == sessionRes.sessionID)
+        }
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
     }
     
     func test_startSession_failure_clientKey() {
