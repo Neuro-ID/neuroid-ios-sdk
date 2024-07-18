@@ -785,12 +785,52 @@ class NIDUserTests: XCTestCase {
         assert(validEvent[0].type == type)
     }
     
+    func assertQueuedEventCount(type: String, count: Int) {
+        let allEvents = DataStore.queuedEvents
+        let validEvent = allEvents.filter { $0.type == type }
+        
+        assert(validEvent.count == count)
+    }
+    
+    func assertStoredEventCount(type: String, count: Int) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvent = allEvents.filter { $0.type == type }
+        
+        assert(validEvent.count == count)
+    }
+    
     func assertQueuedEventTypeAndCount(type: String, count: Int) {
         let allEvents = DataStore.queuedEvents
         let validEvent = allEvents.filter { $0.type == type }
         
         assert(validEvent.count == count)
         assert(validEvent[0].type == type)
+    }
+    
+    func assertStoredEventOrigin(type: String, origin: String, originCode: String) {
+        let allEvents = DataStore.getAllEvents()
+        let validEvents = allEvents.filter { $0.type == type }
+        
+        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
+        assert(originEvent.count == 1)
+        assert(originEvent[0].v == origin)
+        
+        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
+        assert(originCodeEvent.count == 1)
+        assert(originCodeEvent[0].v == originCode)
+    }
+    
+    func assertQueuedEventOrigin(type: String, origin: String, originCode: String) {
+        let allEvents = DataStore.queuedEvents
+        let validEvents = allEvents.filter { $0.type == type }
+        
+        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
+        assert(originEvent.count == 1)
+        assert(originEvent[0].v == origin)
+        
+        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
+        assert(originCodeEvent.count == 1)
+        assert(originCodeEvent[0].v == originCode)
     }
     
     func test_validatedUserID_valid_id() {
@@ -831,6 +871,7 @@ class NIDUserTests: XCTestCase {
         
         assert(result == true)
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
         assert(DataStore.queuedEvents.count == 0)
     }
     
@@ -844,6 +885,7 @@ class NIDUserTests: XCTestCase {
         assert(result == true)
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
     }
     
     func test_setGenericUserID_valid_registered_id_started() {
@@ -854,6 +896,7 @@ class NIDUserTests: XCTestCase {
         
         assert(result == true)
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
         assert(DataStore.queuedEvents.count == 0)
     }
     
@@ -867,9 +910,36 @@ class NIDUserTests: XCTestCase {
         assert(result == true)
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
     }
     
-    func test_setUserID_started() {
+    func test_setGenericUserID_invalid_id_started() {
+        NeuroID._isSDKStarted = true
+        clearOutDataStore()
+        let expectedValue = "$!&*"
+        let result = NeuroID.setGenericUserID(type: .userID, genericUserID: expectedValue, userGenerated: true)
+        
+        assert(result == false)
+        assertStoredEventCount(type: "SET_USER_ID", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue)
+    }
+    
+    func test_setGenericUserID_invalid_id_queued() {
+        NeuroID._isSDKStarted = false
+        clearOutDataStore()
+        
+        let expectedValue = "$!&*"
+        let result = NeuroID.setGenericUserID(type: .userID, genericUserID: expectedValue, userGenerated: true)
+        
+        assert(result == false)
+        assert(DataStore.events.count == 0)
+        assertQueuedEventCount(type: "SET_USER_ID", count: 0)
+        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue)
+    }
+    
+    func test_setUserID_started_customer_origin() {
         UserDefaults.standard.removeObject(forKey: userIdKey)
         
         let expectedValue = "test_uid"
@@ -884,11 +954,12 @@ class NIDUserTests: XCTestCase {
         
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        //        assert(NeuroID.CURRENT_ORIGIN == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        
         assert(DataStore.queuedEvents.count == 0)
     }
     
-    func test_setUserID_pre_start() {
+    func test_setUserID_pre_start_customer_origin() {
         _ = NeuroID.stop()
         UserDefaults.standard.removeObject(forKey: userIdKey)
         
@@ -902,9 +973,50 @@ class NIDUserTests: XCTestCase {
         assert(NeuroID.userID == expectedValue)
         assert(storedValue == nil)
         
+        //        assert(DataStore.events.count == 0) "NETWORK_STATE" event present
+        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+    }
+    
+    func test_setUserID_started_nid_origin() {
+        UserDefaults.standard.removeObject(forKey: userIdKey)
+        
+        let expectedValue = "test_uid"
+        
+        let fnSuccess = NeuroID.setUserID(expectedValue, false)
+        
+        let storedValue = UserDefaults.standard.string(forKey: userIdKey)
+        
+        assert(fnSuccess)
+        assert(NeuroID.userID == expectedValue)
+        assert(storedValue == nil)
+        
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
+        
+        assert(DataStore.queuedEvents.count == 0)
+    }
+    
+    func test_setUserID_pre_start_nid_origin() {
+        _ = NeuroID.stop()
+        UserDefaults.standard.removeObject(forKey: userIdKey)
+        
+        let expectedValue = "test_uid"
+        
+        let fnSuccess = NeuroID.setUserID(expectedValue, false)
+        
+        let storedValue = UserDefaults.standard.string(forKey: userIdKey)
+        
+        assert(fnSuccess == true)
+        assert(NeuroID.userID == expectedValue)
+        assert(storedValue == nil)
+        
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
     }
     
     func test_getUserID_objectLevel() {
@@ -961,6 +1073,8 @@ class NIDUserTests: XCTestCase {
         assert(storedValue == nil)
         
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
         assert(DataStore.queuedEvents.count == 0)
         
         NeuroID.registeredUserID = ""
@@ -982,7 +1096,8 @@ class NIDUserTests: XCTestCase {
         
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        
+        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
+        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
         NeuroID.registeredUserID = ""
     }
     
@@ -1190,7 +1305,7 @@ class NIDClientSiteIdTests: XCTestCase {
 
 class NIDSendTests: XCTestCase {
     func test_getCollectionEndpointURL() {
-        let expectedValue = "https://receiver.neuroid.cloud/c"
+        let expectedValue = "https://receiver.neuro-dev.com/c"
         
         let value = NeuroID.getCollectionEndpointURL()
         assert(value == expectedValue)
