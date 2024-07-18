@@ -49,7 +49,7 @@ class PayloadTest: XCTestCase {
                 tabID: "",
                 pageID: "",
                 url: "",
-                packetNumber: 1
+                packetNumber: 3
             )
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(neuroHTTPRequest)
