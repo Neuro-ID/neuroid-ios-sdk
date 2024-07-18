@@ -463,21 +463,9 @@ class NIDNewSessionTests: XCTestCase {
         }
     }
     
-    func assertStoredEventOrigin(type: String, origin: String, originCode: String) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvents = allEvents.filter { $0.type == type }
+    func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
         
-        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
-        assert(originEvent.count == 1)
-        assert(originEvent[0].v == origin)
-        
-        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
-        assert(originCodeEvent.count == 1)
-        assert(originCodeEvent[0].v == originCode)
-    }
-    
-    func assertQueuedEventOrigin(type: String, origin: String, originCode: String) {
-        let allEvents = DataStore.queuedEvents
+        let allEvents = queued ? DataStore.queuedEvents : DataStore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == type }
         
         let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
@@ -532,7 +520,7 @@ class NIDNewSessionTests: XCTestCase {
         // TODO-How are events showing up in Datastore and not Queue
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
     }
     
     func test_startSession_success_no_id() {
@@ -547,7 +535,7 @@ class NIDNewSessionTests: XCTestCase {
         // TODO-How are events showing up in Datastore and not Queue
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
     }
     
     func test_startSession_success_no_id_sdk_started() {
@@ -561,7 +549,7 @@ class NIDNewSessionTests: XCTestCase {
         }
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
     }
     
     func test_startSession_success_id_sdk_started() {
@@ -575,7 +563,7 @@ class NIDNewSessionTests: XCTestCase {
         }
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
     }
     
     func test_startSession_failure_clientKey() {
@@ -595,7 +583,7 @@ class NIDNewSessionTests: XCTestCase {
         }
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
     }
     
     func test_pauseCollection() {
@@ -866,21 +854,9 @@ class NIDUserTests: XCTestCase {
         }
     }
     
-    func assertStoredEventOrigin(type: String, origin: String, originCode: String) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvents = allEvents.filter { $0.type == type }
+    func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
         
-        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
-        assert(originEvent.count == 1)
-        assert(originEvent[0].v == origin)
-        
-        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
-        assert(originCodeEvent.count == 1)
-        assert(originCodeEvent[0].v == originCode)
-    }
-    
-    func assertQueuedEventOrigin(type: String, origin: String, originCode: String) {
-        let allEvents = DataStore.queuedEvents
+        let allEvents = queued ? DataStore.queuedEvents : DataStore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == type }
         
         let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
@@ -981,7 +957,7 @@ class NIDUserTests: XCTestCase {
         assert(result == false)
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: false)
     }
     
     func test_setGenericUserID_invalid_id_queued() {
@@ -995,7 +971,7 @@ class NIDUserTests: XCTestCase {
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
     }
     
     func test_setUserID_started_customer_origin() {
@@ -1013,7 +989,7 @@ class NIDUserTests: XCTestCase {
         
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
         
         assert(DataStore.queuedEvents.count == 0)
     }
@@ -1035,7 +1011,7 @@ class NIDUserTests: XCTestCase {
         //        assert(DataStore.events.count == 0) "NETWORK_STATE" event present
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
     }
     
     func test_setUserID_started_nid_origin() {
@@ -1053,7 +1029,7 @@ class NIDUserTests: XCTestCase {
         
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
         
         assert(DataStore.queuedEvents.count == 0)
     }
@@ -1075,7 +1051,7 @@ class NIDUserTests: XCTestCase {
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
     }
     
     func test_getUserID_objectLevel() {
@@ -1133,7 +1109,7 @@ class NIDUserTests: XCTestCase {
         
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertStoredEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
         assert(DataStore.queuedEvents.count == 0)
         
         NeuroID.registeredUserID = ""
@@ -1156,7 +1132,7 @@ class NIDUserTests: XCTestCase {
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 3)
-        assertQueuedEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
+        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
         NeuroID.registeredUserID = ""
     }
     
