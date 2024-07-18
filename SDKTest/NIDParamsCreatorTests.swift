@@ -309,11 +309,12 @@ class NIDParamsCreatorTests: XCTestCase {
 
     // Private Access Level
     func test_generateID() {
-        let expectedValue = 36
+        let expectedValue = 40
 
         let value = ParamsCreator.generateID()
-
+        
         assert(value.count == expectedValue)
+        assert(value.hasPrefix("nid-"))
     }
 
     let dntKey = Constants.storageDntKey.rawValue
