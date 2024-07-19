@@ -75,17 +75,25 @@ public extension NeuroID {
         NIDEvent(
             sessionEvent: NIDSessionEventName.setVariable,
             key: "sessionId",
-            v: originResult.idValue
+            v:"\(originResult.idValue)"
         )
         
+        let sessionIdTypeEvent =
+        NIDEvent(
+            sessionEvent: NIDSessionEventName.setVariable,
+            key: "sessionIdType",
+            v: originResult.idType.rawValue
+        )
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(sessionIdCodeEvent)
             saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
             saveQueuedEventToLocalDataStore(sessionIdEvent)
+            saveQueuedEventToLocalDataStore(sessionIdTypeEvent)
         } else {
             saveEventToLocalDataStore(sessionIdCodeEvent)
             saveEventToLocalDataStore(sessionIdSourceEvent)
             saveEventToLocalDataStore(sessionIdEvent)
+            saveEventToLocalDataStore(sessionIdTypeEvent)
         }
     }
     
@@ -101,8 +109,12 @@ public extension NeuroID {
         return SessionIDOriginalResult(origin: origin,originCode: originCode,idValue: idValue,idType: idType)
     }
     
-    static func setUserID(_ userId: String, _ userGenerated: Bool? = true)-> Bool{
-        let validID =  setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated ?? true)
+    static func setUserID(_ userId: String)->Bool{
+        return setUserID(userId, true)
+    }
+    
+    internal static func setUserID(_ userId: String, _ userGenerated: Bool)-> Bool{
+        let validID =  setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated)
         
         if(!validID){
             return false
@@ -143,10 +155,10 @@ public extension NeuroID {
      @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
-        if NeuroID.validateUserID(attemptedRegisteredUserId ?? "") {
-            NeuroID.saveEventToLocalDataStore(NIDEvent(uid: attemptedRegisteredUserId))
-        } else {
-            NeuroID.saveEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
+        let captured = setGenericUserID(type: .registeredUserID, genericUserID: !NeuroID.validateUserID(attemptedRegisteredUserId ?? "" ) ? "scrubbed-id-failed-validation" : attemptedRegisteredUserId!, userGenerated: attemptedRegisteredUserId != nil)
+        
+        if(!captured){
+            saveEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation" ))
         }
         return true
     }
