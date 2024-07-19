@@ -140,6 +140,7 @@ extension NeuroID {
             screen: getScreenName() ?? altScreenName,
             onSuccess: {
                 logInfo(category: "APICall", content: "Sending successfully")
+                NeuroID.incrementPacketNumber()
                 completion()
             }, onFailure: { error in
                 logError(category: "APICall", content: String(describing: error))
@@ -182,7 +183,8 @@ extension NeuroID {
             jsonEvents: events,
             tabID: "\(tabId)",
             pageID: "\(pageid)",
-            url: "ios://\(NeuroID.getScreenName() ?? "")"
+            url: "ios://\(NeuroID.getScreenName() ?? "")",
+            packetNumber: NeuroID.getPacketNumber()
         )
 
         if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {

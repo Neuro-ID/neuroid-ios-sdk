@@ -48,7 +48,8 @@ class PayloadTest: XCTestCase {
                 jsonEvents: [entity],
                 tabID: "",
                 pageID: "",
-                url: ""
+                url: "",
+                packetNumber: 3
             )
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(neuroHTTPRequest)
@@ -87,7 +88,8 @@ class PayloadTest: XCTestCase {
                 jsonEvents: [entity],
                 tabID: "",
                 pageID: "",
-                url: ""
+                url: "",
+                packetNumber: 1
             )
             let jsonEncoder = JSONEncoder()
             let data = try jsonEncoder.encode(neuroHTTPRequest)

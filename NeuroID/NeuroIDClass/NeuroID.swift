@@ -76,6 +76,9 @@ public class NeuroID: NSObject {
     static var lowMemory: Bool = false
 
     static var isAdvancedDevice: Bool = false
+    
+    static var packetNumber : Int32 = 0
+    
 
     // MARK: - Setup
 
@@ -115,8 +118,9 @@ public class NeuroID: NSObject {
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
-        // Reset tab id on configure
+        // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+        packetNumber = 0
 
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()

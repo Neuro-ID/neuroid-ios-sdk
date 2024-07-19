@@ -165,7 +165,8 @@ class NIDEventTests: XCTestCase {
             jsonEvents: events,
             tabID: "\(tabId)",
             pageID: "\(pageid)",
-            url: "ios://\(NeuroID.getScreenName() ?? "")")
+            url: "ios://\(NeuroID.getScreenName() ?? "")",
+            packetNumber: 0)
         /// Transform event into json
         ///
         do {
