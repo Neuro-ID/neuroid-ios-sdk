@@ -184,12 +184,12 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "latong=\(mutableEvent.metadata?.gpsCoordinates.latitude ?? -1), \(mutableEvent.metadata?.gpsCoordinates.longitude ?? -1)"
         case NIDEventName.cadenceReadingAccel.rawValue:
             contextString = "accel=\(mutableEvent.accel?.description ?? "") gyro=\(mutableEvent.gyro?.description ?? "")"
-            
+
         default:
             contextString = ""
     }
 
-    NIDLog.d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDLog.d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
 }
 
 class NIDLog {

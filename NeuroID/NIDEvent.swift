@@ -317,6 +317,113 @@ public class NIDEvent: Codable {
     var iswifi: Bool?
     var isconnected: Bool?
 
+    // Generic Event Init instead of one off inits
+    init(
+        type: NIDEventName,
+        tg: [String: TargetValue]? = nil,
+        tgs: String? = nil,
+        key: String? = nil,
+        ct: String? = nil,
+        v: String? = nil,
+        hv: String? = nil,
+        en: String? = nil,
+        etn: String? = nil,
+        et: String? = nil,
+        ec: String? = nil,
+        eid: String? = nil,
+        x: CGFloat? = nil,
+        y: CGFloat? = nil,
+        h: CGFloat? = nil,
+        w: CGFloat? = nil,
+        f: String? = nil,
+        l: Double? = nil,
+        lsid: String? = nil,
+        sid: String? = nil,
+        cid: String? = nil,
+        did: String? = nil,
+        rid: String? = nil,
+        loc: String? = nil,
+        ua: String? = nil,
+        tzo: Int? = nil,
+        lng: String? = nil,
+        p: String? = nil,
+        dnt: Bool? = nil,
+        tch: Bool? = nil,
+        url: String? = nil,
+        ns: String? = nil,
+        jsl: [String]? = nil,
+        jsv: String? = nil,
+        uid: String? = nil,
+        sm: Double? = nil,
+        pd: Double? = nil,
+        attrs: [Attrs]? = nil,
+        gyro: NIDSensorData? = nil,
+        accel: NIDSensorData? = nil,
+        touches: [NIDTouches]? = nil,
+        metadata: NIDMetadata? = nil,
+        sh: CGFloat? = nil,
+        sw: CGFloat? = nil,
+        rts: String? = nil,
+        c: Bool? = nil,
+        cp: String? = nil,
+        m: String? = nil,
+        level: String? = nil,
+        iswifi: Bool? = nil,
+        isconnected: Bool? = nil
+    ) {
+        self.type = type.rawValue
+        self.tg = tg
+        self.tgs = tgs
+        self.key = key
+        self.ct = ct
+        self.v = v
+        self.hv = hv
+        self.en = en
+        self.etn = etn
+        self.et = et
+        self.ec = ec
+        self.eid = eid
+        self.x = x
+        self.y = y
+        self.h = h
+        self.w = w
+        self.f = f
+        self.l = l
+        self.lsid = lsid
+        self.sid = sid
+        self.cid = cid
+        self.did = did
+        self.rid = rid
+        self.loc = loc
+        self.ua = ua
+        self.tzo = tzo
+        self.lng = lng
+        self.p = p
+        self.dnt = dnt
+        self.tch = tch
+        self.url = url
+        self.ns = ns
+        self.jsl = jsl
+        self.jsv = jsv
+        self.uid = uid
+        self.sm = sm
+        self.pd = pd
+        self.attrs = attrs
+        self.gyro = gyro
+        self.accel = accel
+        self.touches = touches
+        self.metadata = metadata
+        self.sh = sh
+        self.sw = sw
+        self.rts = rts
+        self.c = c
+        self.cp = cp
+        self.m = m
+        self.level = level
+        self.iswifi = iswifi
+        self.isconnected = isconnected
+    }
+
     /** Register Target
        {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
          ET - Submit, Blank, Hidden

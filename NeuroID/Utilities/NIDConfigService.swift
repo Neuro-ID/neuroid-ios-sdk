@@ -7,28 +7,33 @@ import Foundation
 
 protocol ConfigServiceProtocol {
     var configCache: ConfigResponseData { get }
-    func retrieveOrRefreshCache(completion: @escaping () -> Void) -> Void
+    func retrieveOrRefreshCache() -> Void
 }
 
 class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
     
-    var networkService: NIDNetworkServiceProtocol
+    let networkService: NIDNetworkServiceProtocol
+    let configRetrievalCallback: () -> Void
 
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
 
     public var configCache: ConfigResponseData = .init()
     
-    init(networkService: NIDNetworkServiceProtocol = NeuroID.networkService) {
+    init(
+        networkService: NIDNetworkServiceProtocol = NeuroID.networkService,
+        configRetrievalCallback: @escaping () -> Void = {}
+    ) {
         self.networkService = networkService
+        self.configRetrievalCallback = configRetrievalCallback
     }
     
-    func retrieveConfig(completion: @escaping () -> Void) {
+    func retrieveConfig() {
         if !NeuroID.verifyClientKeyExists() {
             cacheSetWithRemote = false
-            completion()
+            configRetrievalCallback()
             return
         }
         
@@ -45,12 +50,12 @@ class NIDConfigService: ConfigServiceProtocol {
                 self.cacheSetWithRemote = true
                 self.cacheCreationTime = .init()
                 self.captureConfigEvent(configData: responseData)
-                completion()
+                self.configRetrievalCallback()
             case .failure(let error):
                 NIDLog.e("Failed to retrieve NID Config \(error)")
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
-                completion()
+                self.configRetrievalCallback()
             }
         }
     }
@@ -74,16 +79,11 @@ class NIDConfigService: ConfigServiceProtocol {
     }
     
     /**
-     Will check if the cache is available or needs to be refreshed, calls completion handler because the call
-     could be async
+     Will check if the cache is available or needs to be refreshed,
       */
-    func retrieveOrRefreshCache(completion: @escaping () -> Void) {
+    func retrieveOrRefreshCache() {
         if expiredCache() {
-            retrieveConfig {
-                completion()
-            }
-        } else {
-            completion()
+            retrieveConfig()
         }
     }
     
