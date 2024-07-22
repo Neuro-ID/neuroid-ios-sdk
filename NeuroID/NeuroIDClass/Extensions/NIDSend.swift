@@ -202,7 +202,22 @@ extension NeuroID {
 
         networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: 0) { response in
             NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
-            NIDLog.i("NeuroID Payload: \(neuroHTTPRequest)")
+            NIDLog.d(
+                tag: "Payload",
+                """
+                \nPayload Summary
+                 ClientID: \(neuroHTTPRequest.clientId)
+                 UserID: \(neuroHTTPRequest.userId ?? "")
+                 RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
+                 LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
+                 TabID: \(neuroHTTPRequest.tabId)
+                 Packet Number: \(neuroHTTPRequest.packetNumber)
+                 SDK Version: \(neuroHTTPRequest.sdkVersion)
+                 Screen Name: \(NeuroID.getScreenName() ?? "")
+                 Event Count: \(neuroHTTPRequest.jsonEvents.count)
+                """
+            )
+
             switch response.result {
             case .success:
                 NIDLog.i("NeuroID post to API Successful")
@@ -219,7 +234,7 @@ extension NeuroID {
             do {
                 let data = try JSONEncoder().encode(neuroHTTPRequest)
                 let str = String(data: data, encoding: .utf8)
-                NIDLog.i(str as Any)
+                NIDLog.i(str ?? "")
             } catch {}
         }
     }

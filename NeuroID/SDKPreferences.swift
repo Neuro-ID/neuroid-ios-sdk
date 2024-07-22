@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class SDKPreferences {
+class SDKPreferences {
     static func fetch() -> [[String: String]] {
         guard let path = Bundle.main.path(forResource: "Info", ofType: "plist") else { return [] }
 
@@ -17,7 +17,7 @@ public class SDKPreferences {
 
         guard let plist = try! PropertyListSerialization.propertyList(from: data, options: .mutableContainers, format: nil) as? [[String: String]] else { return [] }
 
-        NIDLog.log(plist)
+        NIDLog.log("\(plist)")
         return plist
     }
 }
