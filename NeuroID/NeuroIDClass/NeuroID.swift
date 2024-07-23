@@ -79,6 +79,8 @@ public class NeuroID: NSObject {
     
     static var packetNumber : Int32 = 0
     
+    static var isAdvancedDeviceLib = false
+    
 
     // MARK: - Setup
 
@@ -175,8 +177,10 @@ public class NeuroID: NSObject {
         // Check if the runtime environemnt has adv libs installed
         if NeuroID.responds(to: selector) {
             NeuroID.perform(selector, with: [shouldCapture])
+            isAdvancedDeviceLib = true
         } else {
             NIDLog.d("No advanced library found")
+            isAdvancedDeviceLib = false
         }
     }
 
