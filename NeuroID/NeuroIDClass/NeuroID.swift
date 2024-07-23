@@ -157,14 +157,6 @@ public class NeuroID: NSObject {
         return _isSDKStarted != true
     }
 
-    public static func registerPageTargets() {
-        if let viewController = UIApplication.shared.keyWindow?.rootViewController {
-            DispatchQueue.main.async {
-                viewController.registerPageTargets()
-            }
-        }
-    }
-
     static func checkThenCaptureAdvancedDevice(_ shouldCapture: Bool = NeuroID.isAdvancedDevice) {
         let selectorString = "captureAdvancedDevice:"
         let selector = NSSelectorFromString(selectorString)

@@ -44,21 +44,13 @@ final class UtilFunctionsTests: XCTestCase {
         assert(rEvents.count == expectedCount)
     }
 
-    func test_getFullViewlURLPath_no_view() {
-        let expectedValue = screenNameValue
-
-        let value = UtilFunctions.getFullViewlURLPath(currView: nil, screenName: expectedValue)
-
-        assert(value == expectedValue)
-    }
-
-    func test_getFullViewlURLPath_no_parent() {
+    func test_getFullViewlURLPath() {
         let expectedValue = screenNameValue
         let uiView = UIView()
 
-        let value = UtilFunctions.getFullViewlURLPath(currView: uiView, screenName: expectedValue)
+        let value = UtilFunctions.getFullViewlURLPath(currView: uiView)
 
-        assert(value == expectedValue)
+        assert(value == "/\(uiView.nidClassName)")
     }
 
     func test_registerField() {

@@ -477,10 +477,9 @@ public class NIDEvent: Codable {
 
         self.type = type.rawValue
         self.ts = ParamsCreator.getTimeStamp()
-        self.url = UtilFunctions.getFullViewlURLPath(
-            currView: view,
-            screenName: NeuroID.getScreenName() ?? view?.nidClassName ?? ""
-        )
+        self.url = view != nil ? UtilFunctions.getFullViewlURLPath(
+            currView: view!
+        ) : NeuroID.getScreenName() ?? view?.nidClassName ?? ""
 
         self.tgs = viewId.toString()
         self.tg = newTg

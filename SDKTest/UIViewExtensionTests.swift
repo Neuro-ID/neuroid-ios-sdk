@@ -112,7 +112,7 @@ class UIViewExtensionTests: XCTestCase {
 
         runThroughBasicUIViewTests(uiView: uiView, className: className)
 
-        assertViewIdEqualsWithHash(uiView, expectedClass: className, hash: "\(uiView.hash)")
+        assertViewIdEqualsWithHash(uiView, expectedClass: className, hash: "-\(uiView.hash)")
     }
 
     func test_uiview_id_UISlider() {

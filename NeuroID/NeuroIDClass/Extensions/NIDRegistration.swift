@@ -18,23 +18,47 @@ public extension NeuroID {
         NeuroID.excludeViewByTestID(excludedView)
     }
 
+    /**
+        Specifically available for the React Native SDK to call and register all page targets due to lifecycle event delays
+     */
+    static func registerPageTargets() {
+        if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+            DispatchQueue.main.async {
+                viewController.registerPageTargets()
+            }
+        }
+    }
+
+    @available(*, deprecated, message: "manuallyRegisterTarget is deprecated and no longer used")
     /** Public API for manually registering a target. This should only be used when automatic fails. */
     static func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
         let guid = ParamsCreator.generateID()
         NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view: \(screenName)")
-        NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
+        NeuroIDTracker.registerSingleView(
+            v: view,
+            screenName: screenName,
+            guid: guid,
+            topDownHierarchyPath: ""
+        )
         let childViews = view.subviewsRecursive()
+
         for _view in childViews {
             NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering subview Parent: \(screenName) Child: \(_view)")
-            NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
+            NeuroIDTracker.registerSingleView(
+                v: _view,
+                screenName: screenName,
+                guid: guid,
+                topDownHierarchyPath: ""
+            )
         }
     }
 
-    /** React Native API for manual registration */
+    @available(*, deprecated, message: "manuallyRegisterRNTarget is deprecated and no longer used")
+    /** React Native API for manual registration - DEPRECATED */
     static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
         let guid = ParamsCreator.generateID()
-        let fullViewString = UtilFunctions.getFullViewlURLPath(currView: nil, screenName: screenName)
+        let fullViewString = screenName
 
         let nidEvent = NIDEvent(type: .registerTarget)
         nidEvent.tgs = id
