@@ -184,7 +184,9 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "latong=\(mutableEvent.metadata?.gpsCoordinates.latitude ?? -1), \(mutableEvent.metadata?.gpsCoordinates.longitude ?? -1)"
         case NIDEventName.cadenceReadingAccel.rawValue:
             contextString = "accel=\(mutableEvent.accel?.description ?? "") gyro=\(mutableEvent.gyro?.description ?? "")"
-            
+        case NIDEventName.applicationMetaData.rawValue:
+            contextString = "attrs=[\(attrsString)]"
+
         default:
             contextString = ""
     }

@@ -76,9 +76,8 @@ public class NeuroID: NSObject {
     static var lowMemory: Bool = false
 
     static var isAdvancedDevice: Bool = false
-    
-    static var packetNumber : Int32 = 0
-    
+
+    static var packetNumber: Int32 = 0
 
     // MARK: - Setup
 
@@ -124,6 +123,8 @@ public class NeuroID: NSObject {
 
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
+
+        captureApplicationMetaData()
 
         return true
     }
@@ -208,5 +209,33 @@ public class NeuroID: NSObject {
     /// - Returns: String with the version format
     public static func getSDKVersion() -> String {
         return ParamsCreator.getSDKVersion()
+    }
+
+    static func captureApplicationMetaData() {
+        let appMetaData = getAppMetaData()
+
+        let event = NIDEvent(type: .applicationMetaData)
+        event.attrs = [
+            Attrs(n: "versionName", v: appMetaData?.versionName ?? "N/A"),
+            Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
+            Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
+            Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
+        ]
+    }
+
+    static func getAppMetaData() -> ApplicationMetaData? {
+        if let infoDictionary = Bundle.main.infoDictionary {
+            let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
+            let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
+            let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
+
+            return ApplicationMetaData(
+                versionName: versionName,
+                versionNumber: versionNumber,
+                packageName: packageName,
+                applicationName: packageName
+            )
+        }
+        return nil
     }
 }
