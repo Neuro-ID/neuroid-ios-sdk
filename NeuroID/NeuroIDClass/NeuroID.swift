@@ -74,9 +74,8 @@ public class NeuroID: NSObject {
     static var lowMemory: Bool = false
 
     static var isAdvancedDevice: Bool = false
-    
-    static var packetNumber : Int32 = 0
-    
+
+    static var packetNumber: Int32 = 0
 
     // MARK: - Setup
 

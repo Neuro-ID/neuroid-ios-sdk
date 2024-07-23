@@ -323,7 +323,7 @@ extension NeuroID {
 
         // If sessionID is nil, set origin as NID here
         let userGenerated = sessionID != nil
-        
+
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
         if !setUserID(finalSessionID, userGenerated) {
             let res = SessionStartResult(false, "")

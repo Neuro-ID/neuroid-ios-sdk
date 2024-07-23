@@ -88,5 +88,4 @@ enum CallInProgressMetaData: String {
     case ENDED = "ended"
     case ONHOLD = "onhold"
     case RINGING = "ringing"
-    
 }

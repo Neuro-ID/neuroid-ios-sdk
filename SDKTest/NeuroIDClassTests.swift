@@ -448,7 +448,7 @@ class NIDNewSessionTests: XCTestCase {
         let validEvent = allEvents.filter { $0.type == type }
         
         assert(validEvent.count == count)
-        if(!skipType!){
+        if !skipType! {
             assert(validEvent[0].type == type)
         }
     }
@@ -458,21 +458,20 @@ class NIDNewSessionTests: XCTestCase {
         let validEvent = allEvents.filter { $0.type == type }
         
         assert(validEvent.count == count)
-        if(!skipType!){
+        if !skipType! {
             assert(validEvent[0].type == type)
         }
     }
     
     func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
-        
         let allEvents = queued ? DataStore.queuedEvents : DataStore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == type }
         
-        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
+        let originEvent = validEvents.filter { $0.key == "sessionIdSource" }
         assert(originEvent.count == 1)
         assert(originEvent[0].v == origin)
         
-        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
+        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode" }
         assert(originCodeEvent.count == 1)
         assert(originCodeEvent[0].v == originCode)
     }
@@ -838,10 +837,9 @@ class NIDUserTests: XCTestCase {
         let validEvent = allEvents.filter { $0.type == type }
         
         assert(validEvent.count == count)
-        if(!skipType!){
+        if !skipType! {
             assert(validEvent[0].type == type)
         }
-        
     }
     
     func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
@@ -849,21 +847,20 @@ class NIDUserTests: XCTestCase {
         let validEvent = allEvents.filter { $0.type == type }
         
         assert(validEvent.count == count)
-        if(!skipType!){
+        if !skipType! {
             assert(validEvent[0].type == type)
         }
     }
     
     func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
-        
         let allEvents = queued ? DataStore.queuedEvents : DataStore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == type }
         
-        let originEvent = validEvents.filter { $0.key == "sessionIdSource"}
+        let originEvent = validEvents.filter { $0.key == "sessionIdSource" }
         assert(originEvent.count == 1)
         assert(originEvent[0].v == origin)
         
-        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode"}
+        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode" }
         assert(originCodeEvent.count == 1)
         assert(originCodeEvent[0].v == originCode)
     }
