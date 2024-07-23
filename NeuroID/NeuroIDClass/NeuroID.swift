@@ -195,6 +195,17 @@ public class NeuroID: NSObject {
         didSwizzle.toggle()
     }
 
+    /**
+        Save and event to the datastore (logic of queue or not contained in this function)
+     */
+    static func saveEventToDataStore(_ event: NIDEvent) {
+        if !NeuroID.isSDKStarted {
+            saveQueuedEventToLocalDataStore(event)
+        } else {
+            saveEventToLocalDataStore(event)
+        }
+    }
+
     static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
     }
@@ -219,6 +230,8 @@ public class NeuroID: NSObject {
             Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
             Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
         ]
+
+        saveEventToDataStore(event)
     }
 
     static func getAppMetaData() -> ApplicationMetaData? {
