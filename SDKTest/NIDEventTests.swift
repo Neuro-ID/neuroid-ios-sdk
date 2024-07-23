@@ -173,12 +173,12 @@ class NIDEventTests: XCTestCase {
             let encoder = JSONEncoder()
             let values = try encoder.encode(neuroHTTPRequest)
             let str = String(data: values, encoding: .utf8)
-            NIDLog.log(str as Any)
+            NIDLog.log("\(str)")
             let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
             NIDLog.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
         } catch {
-            NIDLog.e(error)
+            NIDLog.e("\(error.localizedDescription)")
         }
         assert(neuroHTTPRequest != nil)
     }
