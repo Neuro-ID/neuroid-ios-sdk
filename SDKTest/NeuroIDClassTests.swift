@@ -157,9 +157,7 @@ class NeuroIDClassTests: XCTestCase {
     func test_start_success_queuedEvent() {
         _ = NeuroID.stop()
         let setUserIDRes = NeuroID.setUserID("test_uid")
-
         assert(setUserIDRes)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1, queued: true)
         NeuroID._isSDKStarted = false
 
         // pre tests
@@ -171,12 +169,12 @@ class NeuroIDClassTests: XCTestCase {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-
             assert(DataStore.events.count == 8)
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
             self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
             self.assertStoredEventCount(type: "SET_VARIABLE", count: 4)
+            self.assertStoredEventCount(type: "LOG", count: 1)
         }
     }
 
