@@ -98,6 +98,7 @@ public class NeuroID: NSObject {
 
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
+            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Invalid Client Key \(clientKey)"))
             return false
         }
 

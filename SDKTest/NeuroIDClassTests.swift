@@ -113,6 +113,10 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
+        let allEvents = DataStore.getAndRemoveAllQueuedEvents()
+        let logEvent = allEvents.filter { $0.type == "LOG" }
+        XCTAssertTrue(logEvent.count == 1)
+
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
     }
 
@@ -895,6 +899,27 @@ class NIDUserTests: XCTestCase {
         }
     }
 
+    func test_scrubEmailId() {
+        let id = "tt@test.com"
+        let expectedId = "**@test.com"
+        let scrubbedId = NeuroID.scrubIdentifier(identifier: id)
+        XCTAssertEqual(scrubbedId, expectedId)
+    }
+
+    func test_unScrubbedID() {
+        let id = "123_testing123"
+        let expectedId = "123_testing123"
+        let unscrubbedId = NeuroID.scrubIdentifier(identifier: id)
+        XCTAssertEqual(unscrubbedId, expectedId)
+    }
+
+    func test_scrubSSN() {
+        let id = "123-23-4568"
+        let expectedId = "***-**-****"
+        let scrubbedId = NeuroID.scrubIdentifier(identifier: id)
+        XCTAssertEqual(scrubbedId, expectedId)
+    }
+
     func test_setGenericUserID_valid_id_started() {
         NeuroID._isSDKStarted = true
 
@@ -1176,6 +1201,7 @@ class NIDUserTests: XCTestCase {
     func test_attemptedLoginWthUID() {
         let validID = NeuroID.attemptedLogin("valid_user_id")
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
@@ -1189,6 +1215,7 @@ class NIDUserTests: XCTestCase {
         NeuroID._isSDKStarted = false
         let validID = NeuroID.attemptedLogin("valid_user_id")
         assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
+        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
         let allEvents = DataStore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
@@ -1205,12 +1232,14 @@ class NIDUserTests: XCTestCase {
         XCTAssert(event.count == 1)
         XCTAssertTrue(invalidID)
         XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: false)
     }
 
     func test_attemptedLoginWithInvalidIDQueued() {
         NeuroID._isSDKStarted = false
         let invalidID = NeuroID.attemptedLogin("🤣")
+        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
         let allEvents = DataStore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
@@ -1222,6 +1251,7 @@ class NIDUserTests: XCTestCase {
     func test_attemptedLoginWithNoUID() {
         _ = NeuroID.attemptedLogin()
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
         let allEvents = DataStore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
@@ -1232,6 +1262,7 @@ class NIDUserTests: XCTestCase {
         NeuroID._isSDKStarted = false
         _ = NeuroID.attemptedLogin()
         assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
+        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
         let allEvents = DataStore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
@@ -1242,6 +1273,7 @@ class NIDUserTests: XCTestCase {
         _ = NeuroID.attemptedLogin()
         _ = NeuroID.attemptedLogin()
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 2)
+        assertStoredEventTypeAndCount(type: "LOG", count: 2)
     }
 }
 
