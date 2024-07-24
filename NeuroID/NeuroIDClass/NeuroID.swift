@@ -139,6 +139,12 @@ public class NeuroID: NSObject {
             _ = try closeSession(skipStop: true)
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
+            let stopFailedLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to Stop because \(error)")
+            if !NeuroID.isSDKStarted {
+                saveQueuedEventToLocalDataStore(stopFailedLogEvent)
+            } else {
+                saveEventToLocalDataStore(stopFailedLogEvent)
+            }
             return false
         }
 

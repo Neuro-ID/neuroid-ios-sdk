@@ -169,12 +169,12 @@ class NeuroIDClassTests: XCTestCase {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count == 8)
+            assert(DataStore.events.count == 12)
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
             self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
             self.assertStoredEventCount(type: "SET_VARIABLE", count: 4)
-            self.assertStoredEventCount(type: "LOG", count: 1)
+            self.assertStoredEventCount(type: "LOG", count: 5)
         }
     }
 
