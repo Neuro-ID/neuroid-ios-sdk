@@ -122,6 +122,8 @@ public class NeuroID: NSObject {
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
 
+        captureApplicationMetaData()
+
         return true
     }
 
@@ -193,6 +195,17 @@ public class NeuroID: NSObject {
         didSwizzle.toggle()
     }
 
+    /**
+        Save and event to the datastore (logic of queue or not contained in this function)
+     */
+    static func saveEventToDataStore(_ event: NIDEvent) {
+        if !NeuroID.isSDKStarted {
+            saveQueuedEventToLocalDataStore(event)
+        } else {
+            saveEventToLocalDataStore(event)
+        }
+    }
+
     static func saveEventToLocalDataStore(_ event: NIDEvent) {
         DataStore.insertEvent(screen: event.type, event: event)
     }
@@ -205,5 +218,35 @@ public class NeuroID: NSObject {
     /// - Returns: String with the version format
     public static func getSDKVersion() -> String {
         return ParamsCreator.getSDKVersion()
+    }
+
+    static func captureApplicationMetaData() {
+        let appMetaData = getAppMetaData()
+
+        let event = NIDEvent(type: .applicationMetaData)
+        event.attrs = [
+            Attrs(n: "versionName", v: appMetaData?.versionName ?? "N/A"),
+            Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
+            Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
+            Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
+        ]
+
+        saveEventToDataStore(event)
+    }
+
+    static func getAppMetaData() -> ApplicationMetaData? {
+        if let infoDictionary = Bundle.main.infoDictionary {
+            let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
+            let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
+            let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
+
+            return ApplicationMetaData(
+                versionName: versionName,
+                versionNumber: versionNumber,
+                packageName: packageName,
+                applicationName: packageName
+            )
+        }
+        return nil
     }
 }
