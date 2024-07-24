@@ -55,7 +55,9 @@ extension NeuroIDTracker {
             NeuroID.lowMemory = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        var lowMembackOffTime = NeuroID.configService.configCache.lowMemoryBackOff ?? NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + lowMembackOffTime) {
             NeuroID.lowMemory = false
         }
     }
