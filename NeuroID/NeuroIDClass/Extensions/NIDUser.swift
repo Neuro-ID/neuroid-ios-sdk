@@ -115,7 +115,7 @@ public extension NeuroID {
     
     internal static func setUserID(_ userId: String, _ userGenerated: Bool) -> Bool {
 //        Save log event
-        let setUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Set User Id Attempt: \(scrubIdentifier(identifier: userId))")
+        let setUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Set User Id Attempt: \(scrubIdentifier(identifier: userId))")
         saveEventToDataStore(setUserIdLogEvent)
         
         let validID = setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated)
@@ -138,7 +138,7 @@ public extension NeuroID {
     
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
 //        Save log event
-        let setRegisteredUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Set Registered User Id Attempt: \(scrubIdentifier(identifier: registeredUserID))")
+        let setRegisteredUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Set Registered User Id Attempt: \(scrubIdentifier(identifier: registeredUserID))")
         saveEventToDataStore(setRegisteredUserIdLogEvent)
        
         if !NeuroID.registeredUserID.isEmpty, registeredUserID != NeuroID.registeredUserID {
@@ -163,7 +163,7 @@ public extension NeuroID {
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
 //        Save log event
-        let attemptedLoginAttemptLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "attempted login with attemptedRegisteredUserId: \(scrubIdentifier(identifier: attemptedRegisteredUserId ?? "null"))")
+        let attemptedLoginAttemptLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "attempted login with attemptedRegisteredUserId: \(scrubIdentifier(identifier: attemptedRegisteredUserId ?? "null"))")
         saveEventToDataStore(attemptedLoginAttemptLogEvent)
 
         let captured = setGenericUserID(type: .attemptedLogin, genericUserID: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation", userGenerated: attemptedRegisteredUserId != nil)

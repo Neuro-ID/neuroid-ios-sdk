@@ -118,7 +118,7 @@ public class NeuroID: NSObject {
 
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-        saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "info", m: "Reset Tab Id"))
+        saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "INFO", m: "Reset Tab Id"))
         packetNumber = 0
 
         networkMonitor = NetworkMonitoringService()
