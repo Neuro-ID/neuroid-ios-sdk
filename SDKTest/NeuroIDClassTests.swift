@@ -114,7 +114,7 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        assertStoredEventTypeAndCount(type: "LOG", count: 1, queued: true)
+        assertStoredEventTypeAndCount(type: "LOG", count: 2, queued: true)
 
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
     }
@@ -587,7 +587,7 @@ class NIDNewSessionTests: XCTestCase {
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-        assertQueuedEventTypeAndCount(type: "LOG", count: 3)
+        assertQueuedEventTypeAndCount(type: "LOG", count: 4)
     }
 
     func test_pauseCollection() {
@@ -1070,7 +1070,6 @@ class NIDUserTests: XCTestCase {
         assert(fnSuccess == true)
         assert(NeuroID.userID == expectedValue)
         assert(storedValue == nil)
-
         assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)

@@ -118,6 +118,7 @@ public class NeuroID: NSObject {
 
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+        saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "info", m: "Reset Tab Id"))
         packetNumber = 0
 
         networkMonitor = NetworkMonitoringService()
@@ -142,11 +143,7 @@ public class NeuroID: NSObject {
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
             let stopFailedLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to Stop because \(error)")
-            if !NeuroID.isSDKStarted {
-                saveQueuedEventToLocalDataStore(stopFailedLogEvent)
-            } else {
-                saveEventToLocalDataStore(stopFailedLogEvent)
-            }
+           saveEventToDataStore(stopFailedLogEvent)
             return false
         }
 

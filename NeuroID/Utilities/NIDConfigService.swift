@@ -51,11 +51,7 @@ class NIDConfigService: ConfigServiceProtocol {
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
                 let failedRetrievalConfig = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to retrieve NID config: \(error). Default values will be used.")
-                if !NeuroID.isSDKStarted {
-                    NeuroID.saveQueuedEventToLocalDataStore(failedRetrievalConfig)
-                } else {
-                    NeuroID.saveEventToLocalDataStore(failedRetrievalConfig)
-                }
+                NeuroID.saveEventToDataStore(failedRetrievalConfig)
                 completion()
             }
         }

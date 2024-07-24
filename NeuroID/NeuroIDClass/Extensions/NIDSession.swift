@@ -94,14 +94,8 @@ public extension NeuroID {
         userID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        let scrubbedId = (userID != nil) ? scrubIdentifier(identifier: userID!) : "null"
-        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "StartAppFlow attempt with siteID: \(siteID), userID: \(scrubbedId))")
-
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(startSessionLogEvent)
-        } else {
-            saveEventToLocalDataStore(startSessionLogEvent)
-        }
+        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "StartAppFlow attempt with siteID: \(siteID), userID: \(scrubIdentifier(identifier: userID ?? "null")))")
+        saveEventToDataStore(startSessionLogEvent)
 
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
@@ -201,20 +195,16 @@ extension NeuroID {
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         let closeSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Close session attempt")
-
+        saveEventToDataStore(closeSessionLogEvent)
+        
         if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(closeSessionLogEvent)
-        } else {
-            saveEventToLocalDataStore(closeSessionLogEvent)
-        }
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started"))
+            saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started"))
             throw NIDError.sdkNotStarted
         }
 
         let closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
-        saveEventToLocalDataStore(closeEvent)
+        saveEventToDataStore(closeEvent)
 
         if skipStop {
             return closeEvent
@@ -305,12 +295,7 @@ extension NeuroID {
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
         let startLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Start attempt with siteID: \(siteID ?? ""))")
-
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(startLogEvent)
-        } else {
-            saveEventToLocalDataStore(startLogEvent)
-        }
+        saveEventToDataStore(startLogEvent)
 
         if !NeuroID.verifyClientKeyExists() {
             completion(false)
@@ -339,14 +324,6 @@ extension NeuroID {
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Start session attempt with siteID: \(siteID ?? ""))")
-
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(startSessionLogEvent)
-        } else {
-            saveEventToLocalDataStore(startSessionLogEvent)
-        }
-
         if !NeuroID.verifyClientKeyExists() {
             let res = SessionStartResult(false, "")
 
@@ -363,6 +340,10 @@ extension NeuroID {
         let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
+        
+        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(identifier: finalSessionID))")
+        saveEventToDataStore(startSessionLogEvent)
+
         if !setUserID(finalSessionID, userGenerated) {
             let res = SessionStartResult(false, "")
 

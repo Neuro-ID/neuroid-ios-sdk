@@ -38,12 +38,8 @@ public extension NeuroID {
         sendOriginEvent(originResult: originRes)
             
         if !validID {
-            let saveIdFailureEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to save genericUserID event:\(genericUserID)")
-            if !NeuroID.isSDKStarted {
-                saveQueuedEventToLocalDataStore(saveIdFailureEvent)
-            } else {
-                saveEventToLocalDataStore(saveIdFailureEvent)
-            }
+            let saveIdFailureEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to save genericUserID event:\(scrubIdentifier(identifier: genericUserID))")
+            saveEventToDataStore(saveIdFailureEvent)
             return false
         }
             
@@ -120,12 +116,7 @@ public extension NeuroID {
     internal static func setUserID(_ userId: String, _ userGenerated: Bool) -> Bool {
 //        Save log event
         let setUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Set User Id Attempt: \(scrubIdentifier(identifier: userId))")
-        
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(setUserIdLogEvent)
-        } else {
-            saveEventToLocalDataStore(setUserIdLogEvent)
-        }
+        saveEventToDataStore(setUserIdLogEvent)
         
         let validID = setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated)
         
@@ -148,13 +139,8 @@ public extension NeuroID {
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
 //        Save log event
         let setRegisteredUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Set Registered User Id Attempt: \(scrubIdentifier(identifier: registeredUserID))")
-        
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(setRegisteredUserIdLogEvent)
-        } else {
-            saveEventToLocalDataStore(setRegisteredUserIdLogEvent)
-        }
-        
+        saveEventToDataStore(setRegisteredUserIdLogEvent)
+       
         if !NeuroID.registeredUserID.isEmpty, registeredUserID != NeuroID.registeredUserID {
             NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts : \(scrubIdentifier(identifier: registeredUserID))"))
             NIDLog.e("Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session")
@@ -177,23 +163,13 @@ public extension NeuroID {
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
 //        Save log event
-        let scrubbedId = (attemptedRegisteredUserId != nil) ? scrubIdentifier(identifier: attemptedRegisteredUserId!) : "null"
-        let attemptedLoginAttemptLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "attempted login with attemptedRegisteredUserId: \(scrubbedId)")
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(attemptedLoginAttemptLogEvent)
-        } else {
-            saveEventToLocalDataStore(attemptedLoginAttemptLogEvent)
-        }
-        
-//
+        let attemptedLoginAttemptLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "attempted login with attemptedRegisteredUserId: \(scrubIdentifier(identifier: attemptedRegisteredUserId ?? "null"))")
+        saveEventToDataStore(attemptedLoginAttemptLogEvent)
+
         let captured = setGenericUserID(type: .attemptedLogin, genericUserID: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation", userGenerated: attemptedRegisteredUserId != nil)
         
         if !captured {
-            if !NeuroID.isSDKStarted {
-                saveQueuedEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
-            } else {
-                saveEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
-            }
+            saveEventToDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
         }
         return true
     }
