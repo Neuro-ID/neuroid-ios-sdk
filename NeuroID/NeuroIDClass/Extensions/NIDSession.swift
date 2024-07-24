@@ -69,7 +69,7 @@ public extension NeuroID {
         let closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
-        
+
         let stopSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Stop session attempt")
         saveEventToLocalDataStore(stopSessionLogEvent)
 
@@ -196,15 +196,15 @@ extension NeuroID {
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         let closeSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Close session attempt")
         saveEventToDataStore(closeSessionLogEvent)
-        
+
         if !NeuroID.isSDKStarted {
-            saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started"))
+            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started"))
             throw NIDError.sdkNotStarted
         }
 
         let closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
-        saveEventToDataStore(closeEvent)
+        saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
             return closeEvent
@@ -340,7 +340,7 @@ extension NeuroID {
         let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
-        
+
         let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(identifier: finalSessionID))")
         saveEventToDataStore(startSessionLogEvent)
 
