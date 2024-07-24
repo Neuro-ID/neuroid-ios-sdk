@@ -207,7 +207,7 @@ class NeuroIDClassTests: XCTestCase {
         
         NeuroID.isRN = false
         let resultRNFalse = NeuroID.getSDKVersion()
-        assert(!resultAdvFalse.contains("-rn"))
+        assert(!resultRNFalse.contains("-rn"))
     }
 }
 
