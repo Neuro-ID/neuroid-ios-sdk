@@ -184,6 +184,8 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "latong=\(mutableEvent.metadata?.gpsCoordinates.latitude ?? -1), \(mutableEvent.metadata?.gpsCoordinates.longitude ?? -1)"
         case NIDEventName.cadenceReadingAccel.rawValue:
             contextString = "accel=\(mutableEvent.accel?.description ?? "") gyro=\(mutableEvent.gyro?.description ?? "")"
+        case NIDEventName.applicationMetaData.rawValue:
+            contextString = "attrs=[\(attrsString)]"
 
         default:
             contextString = ""
@@ -195,27 +197,27 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
 class NIDLog {
     init() {}
 
-    static func log(tag: String = "", _ strings: Any...) {
+    static func log(tag: String = "", _ strings: String) {
         if NeuroID._isSDKStarted, NeuroID.showLogs {
-            Swift.print("(NeuroID) \(tag) \(strings)")
+            Swift.print("(NeuroID) \(tag) ", strings)
         }
     }
 
-    static func d(tag: String = "", _ strings: Any...) {
+    static func d(tag: String = "", _ strings: String) {
         if NeuroID._isSDKStarted, NeuroID.showLogs {
-            Swift.print("(NeuroID Debug) \(tag) \(strings)")
+            Swift.print("(NeuroID Debug) \(tag) ", strings)
         }
     }
 
-    static func i(tag: String = "", _ strings: Any...) {
+    static func i(tag: String = "", _ strings: String) {
         if NeuroID.showLogs {
-            Swift.print("(NeuroID Info) \(tag) \(strings)")
+            Swift.print("(NeuroID Info) \(tag) ", strings)
         }
     }
 
-    static func e(tag: String = "", _ strings: Any...) {
+    static func e(tag: String = "", _ strings: String) {
         if NeuroID.showLogs {
-            Swift.print("****** NEUROID ERROR: ******\n\(tag) \(strings)")
+            Swift.print("****** NEUROID ERROR: ******\n\(tag) ", strings)
         }
     }
 }

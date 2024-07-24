@@ -64,6 +64,7 @@ enum Constants: String {
 enum UserIDTypes: String {
     case userID
     case registeredUserID
+    case attemptedLogin
 }
 
 enum SessionOrigin: String {
@@ -87,5 +88,4 @@ enum CallInProgressMetaData: String {
     case ENDED = "ended"
     case ONHOLD = "onhold"
     case RINGING = "ringing"
-    
 }

@@ -13,13 +13,14 @@ protocol ConfigServiceProtocol {
 class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
+    static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     
     let networkService: NIDNetworkServiceProtocol
     let configRetrievalCallback: () -> Void
 
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
-
+    
     public var configCache: ConfigResponseData = .init()
     
     init(
@@ -96,13 +97,12 @@ class NIDConfigService: ConfigServiceProtocol {
             // log current config
             let cachedConfigLog = NIDEvent(sessionEvent: NIDSessionEventName.configCached)
             cachedConfigLog.v = jsonString
-            NeuroID.saveQueuedEventToLocalDataStore(cachedConfigLog)
-
+            NeuroID.saveEventToDataStore(cachedConfigLog)
         } else {
             let failedCachedConfig = NIDEvent(type: NIDEventName.log)
             failedCachedConfig.m = "Failed to parse config"
             failedCachedConfig.level = "ERROR"
-            NeuroID.saveQueuedEventToLocalDataStore(failedCachedConfig)
+            NeuroID.saveEventToDataStore(failedCachedConfig)
         }
     }
 }

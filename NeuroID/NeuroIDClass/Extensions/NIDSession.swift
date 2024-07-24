@@ -38,7 +38,7 @@ public extension NeuroID {
         let id = ParamsCreator.generateID()
         setUserDefaultKey(sidKeyName, value: id)
 
-        NIDLog.i("\(Constants.sessionTag.rawValue)", id)
+        NIDLog.i("\(Constants.sessionTag.rawValue) \(id)")
         return id
     }
 
@@ -212,13 +212,13 @@ extension NeuroID {
             Attrs(n: "isRN", v: "\(isRN)"),
         ]
         saveEventToLocalDataStore(event)
+
+        captureApplicationMetaData()
     }
 
     static func clearSessionVariables() {
         NeuroID.userID = nil
         NeuroID.registeredUserID = ""
-        CURRENT_ORIGIN = nil
-        CURRENT_ORIGIN_CODE = nil
 
         NeuroID.linkedSiteID = nil
     }
@@ -323,13 +323,10 @@ extension NeuroID {
         }
 
         // If sessionID is nil, set origin as NID here
-        if sessionID == nil {
-            NeuroID.CURRENT_ORIGIN = SessionOrigin.NID_ORIGIN_NID_SET.rawValue
-            NeuroID.CURRENT_ORIGIN_CODE = SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
-        }
+        let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
-        if !setUserID(finalSessionID) {
+        if !setUserID(finalSessionID, userGenerated) {
             let res = SessionStartResult(false, "")
 
             completion(res)
