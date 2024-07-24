@@ -185,7 +185,7 @@ enum ParamsCreator {
         if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle") {
             version = Bundle(url: bundleURL)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         }
-        return "5.ios-\(version ?? "?")\(NeuroID.isRN ? "-rn" : "")\(NeuroID.isAdvancedDeviceLib ? "-adv" : "")"
+        return "5.ios\(NeuroID.isRN ? "-rn" : "")\(NeuroID.isAdvancedDeviceLib ? "-adv" : "")-\(version ?? "?")"
     }
 
     static func getCommandQueueNamespace() -> String {

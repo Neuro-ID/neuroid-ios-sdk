@@ -128,6 +128,11 @@ public class NeuroID: NSObject {
         networkMonitor?.startMonitoring()
 
         captureApplicationMetaData()
+        
+        let logEvent = NIDEvent(type: .log)
+        logEvent.m = "isAdvancedDevice setting: \(isAdvancedDevice)"
+        logEvent.level = "INFO"
+        NeuroID.saveEventToDataStore(logEvent)
 
         return true
     }

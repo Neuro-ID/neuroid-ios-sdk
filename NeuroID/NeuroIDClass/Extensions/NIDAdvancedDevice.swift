@@ -90,14 +90,6 @@ public extension NeuroID {
         NeuroID.saveEventToLocalDataStore(nidEvent)
     }
     
-    internal static func captureLOGEvent(_ message: String, level: String) {
-        let logEvent = NIDEvent(type: .log)
-        logEvent.m = message
-        logEvent.level = level
-        
-        NeuroID.saveEventToLocalDataStore(logEvent)
-    }
-    
     /**
      Based on the parameter passed in AND the sampling flag, this function will make a call to the ADV library or not,
      Default is to use the global settings from the NeuroID class but can be overridden (see `start`
@@ -110,7 +102,11 @@ public extension NeuroID {
     @objc internal static func captureAdvancedDevice(
         _ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]
     ) {
-        captureLOGEvent("isAdvancedDevice setting: \(shouldCapture)", level: "INFO")
+        let logEvent = NIDEvent(type: .log)
+        logEvent.m = "shouldCapture setting: \(shouldCapture)"
+        logEvent.level = "INFO"
+        
+        NeuroID.saveEventToDataStore(logEvent)
         
         // Verify the command is called with a true value (want to capture) AND that the session
         //  is NOT being restricted/throttled prior to calling for an ADV event
