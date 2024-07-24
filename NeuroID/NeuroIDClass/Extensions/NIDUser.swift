@@ -52,11 +52,8 @@ public extension NeuroID {
             setUserEvent.uid = genericUserID
         }
         
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(setUserEvent)
-        } else {
-            saveEventToLocalDataStore(setUserEvent)
-        }
+        saveEventToDataStore(setUserEvent)
+        
         return true
     }
     
@@ -88,17 +85,11 @@ public extension NeuroID {
                 key: "sessionIdType",
                 v: originResult.idType.rawValue
             )
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(sessionIdCodeEvent)
-            saveQueuedEventToLocalDataStore(sessionIdSourceEvent)
-            saveQueuedEventToLocalDataStore(sessionIdEvent)
-            saveQueuedEventToLocalDataStore(sessionIdTypeEvent)
-        } else {
-            saveEventToLocalDataStore(sessionIdCodeEvent)
-            saveEventToLocalDataStore(sessionIdSourceEvent)
-            saveEventToLocalDataStore(sessionIdEvent)
-            saveEventToLocalDataStore(sessionIdTypeEvent)
-        }
+        
+        saveEventToDataStore(sessionIdCodeEvent)
+        saveEventToDataStore(sessionIdSourceEvent)
+        saveEventToDataStore(sessionIdEvent)
+        saveEventToDataStore(sessionIdTypeEvent)
     }
     
     internal static func getOriginResult(idValue: String,
