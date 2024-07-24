@@ -96,6 +96,7 @@
 		F2AEE7432A27A7B5009690CB /* NIDClientSiteId.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */; };
 		F2AEE7452A27A814009690CB /* NIDRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7442A27A814009690CB /* NIDRegistration.swift */; };
 		F2AEE7472A27A84B009690CB /* NIDSend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7462A27A84B009690CB /* NIDSend.swift */; };
+		F2EB87282C500FB7000362C5 /* ApplicationMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */; };
 		F2EF2A4D2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */; };
 		F2F0A3F029F6C8390083D43C /* IntegrationHealthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */; };
 		F2F0A3F329FB051D0083D43C /* FileCreationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */; };
@@ -221,6 +222,7 @@
 		F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDClientSiteId.swift; sourceTree = "<group>"; };
 		F2AEE7442A27A814009690CB /* NIDRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRegistration.swift; sourceTree = "<group>"; };
 		F2AEE7462A27A84B009690CB /* NIDSend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSend.swift; sourceTree = "<group>"; };
+		F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMetaData.swift; sourceTree = "<group>"; };
 		F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClassExtensionTests.swift; sourceTree = "<group>"; };
 		F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealthTests.swift; sourceTree = "<group>"; };
 		F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCreationUtils.swift; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 			isa = PBXGroup;
 			children = (
 				F25908DE2BEE62EF00B7A73D /* ConfigModels.swift */,
+				F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -708,6 +711,7 @@
 				F217029C29D4C79F00133A1C /* AppEvents.swift in Sources */,
 				F2AEE7452A27A814009690CB /* NIDRegistration.swift in Sources */,
 				26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */,
+				F2EB87282C500FB7000362C5 /* ApplicationMetaData.swift in Sources */,
 				076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */,
 				F21702D029D5E9D800133A1C /* Utils.swift in Sources */,
 				F21702C229D4CECD00133A1C /* NeuroID.swift in Sources */,

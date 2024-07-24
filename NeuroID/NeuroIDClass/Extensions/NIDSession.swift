@@ -232,6 +232,8 @@ extension NeuroID {
             Attrs(n: "isRN", v: "\(isRN)"),
         ]
         saveEventToLocalDataStore(event)
+
+        captureApplicationMetaData()
     }
 
     static func clearSessionVariables() {

@@ -102,13 +102,12 @@ class NIDConfigService: ConfigServiceProtocol {
             // log current config
             let cachedConfigLog = NIDEvent(sessionEvent: NIDSessionEventName.configCached)
             cachedConfigLog.v = jsonString
-            NeuroID.saveQueuedEventToLocalDataStore(cachedConfigLog)
-
+            NeuroID.saveEventToDataStore(cachedConfigLog)
         } else {
             let failedCachedConfig = NIDEvent(type: NIDEventName.log)
             failedCachedConfig.m = "Failed to parse config"
             failedCachedConfig.level = "ERROR"
-            NeuroID.saveQueuedEventToLocalDataStore(failedCachedConfig)
+            NeuroID.saveEventToDataStore(failedCachedConfig)
         }
     }
 }
