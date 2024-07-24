@@ -387,12 +387,41 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     func test_getSDKVersion() {
+        NeuroID.isRN = false
+        NeuroID.isAdvancedDeviceLib = false
         let version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let expectedValue = "5.ios-\(version ?? "?")"
 
         let value = ParamsCreator.getSDKVersion()
 
         assert(value == expectedValue)
+        
+        NeuroID.isRN = true
+        NeuroID.isAdvancedDeviceLib = false
+        let versionRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let expectedValueRN = "5.ios-\(version ?? "?")-rn"
+
+        let valueRN = ParamsCreator.getSDKVersion()
+
+        assert(valueRN == expectedValueRN)
+        
+        NeuroID.isRN = false
+        NeuroID.isAdvancedDeviceLib = true
+        let versionADV = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let expectedValueADV = "5.ios-\(version ?? "?")-adv"
+
+        let valueADV = ParamsCreator.getSDKVersion()
+
+        assert(valueADV == expectedValueADV)
+        
+        NeuroID.isRN = true
+        NeuroID.isAdvancedDeviceLib = true
+        let versionADVRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let expectedValueADVRN = "5.ios-\(version ?? "?")-rn-adv"
+
+        let valueADVRN = ParamsCreator.getSDKVersion()
+
+        assert(valueADVRN == expectedValueADVRN)
     }
 
     func test_getCommandQueueNamespace() {
