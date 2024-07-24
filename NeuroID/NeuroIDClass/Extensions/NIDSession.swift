@@ -69,8 +69,8 @@ public extension NeuroID {
         let closeEvent = NIDEvent(type: NIDEventName.closeSession)
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
+        
         let stopSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "info", m: "Stop session attempt")
-
         saveEventToLocalDataStore(stopSessionLogEvent)
 
         pauseCollection()

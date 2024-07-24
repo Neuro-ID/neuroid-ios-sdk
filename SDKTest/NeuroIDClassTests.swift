@@ -902,7 +902,7 @@ class NIDUserTests: XCTestCase {
 
     func test_scrubEmailId() {
         let id = "tt@test.com"
-        let expectedId = "**@test.com"
+        let expectedId = "t*@test.com"
         let scrubbedId = NeuroID.scrubIdentifier(identifier: id)
         XCTAssertEqual(scrubbedId, expectedId)
     }

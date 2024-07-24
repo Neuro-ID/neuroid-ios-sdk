@@ -33,7 +33,7 @@ public extension NeuroID {
     
     internal static func setGenericUserID(type: UserIDTypes, genericUserID: String, userGenerated: Bool = true) -> Bool {
         let validID = validateUserID(genericUserID)
-            
+        
         let originRes = getOriginResult(idValue: genericUserID, validID: validID, userGenerated: userGenerated, idType: type)
         sendOriginEvent(originResult: originRes)
             
@@ -180,9 +180,9 @@ public extension NeuroID {
             let ssnRegex = try NSRegularExpression(pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")
             var result = emailRegex.matches(in: identifier, range: NSMakeRange(0, identifier.count))
             if !result.isEmpty {
-                let atIndex = identifier.firstIndex(of: "@") ?? identifier.index(before: identifier.endIndex)
+                let atIndex = identifier.firstIndex(of: "@") ?? identifier.endIndex
                 let idLength = identifier.distance(from: identifier.startIndex, to: atIndex)
-                let scrubbedEmailId = String(repeating: "*", count: idLength) + identifier[atIndex...]
+                let scrubbedEmailId = String(identifier.prefix(1)) + String(repeating: "*", count: idLength - 1) + identifier[atIndex...]
                 return scrubbedEmailId
             }
             result = ssnRegex.matches(in: identifier, range: NSMakeRange(0, identifier.count))
