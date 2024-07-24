@@ -103,6 +103,8 @@ public class NeuroID: NSObject {
             NIDLog.e("Invalid Client Key")
             return false
         }
+        
+        updateBuildTypeFlag()
 
         NeuroID.isAdvancedDevice = isAdvancedDevice
 
@@ -124,7 +126,7 @@ public class NeuroID: NSObject {
 
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
-
+        
         return true
     }
 
@@ -169,16 +171,33 @@ public class NeuroID: NSObject {
     }
 
     static func checkThenCaptureAdvancedDevice(_ shouldCapture: Bool = NeuroID.isAdvancedDevice) {
-        let selectorString = "captureAdvancedDevice:"
-        let selector = NSSelectorFromString(selectorString)
-
-        // Check if the runtime environemnt has adv libs installed
-        if NeuroID.responds(to: selector) {
-            NeuroID.perform(selector, with: [shouldCapture])
-            isAdvancedDeviceLib = true
+        let result = checkBuildType()
+        if (result.0) {
+            NeuroID.perform(result.1, with: [shouldCapture])
         } else {
             NIDLog.d("No advanced library found")
+        }
+    }
+    
+    static func updateBuildTypeFlag() {
+        let result = checkBuildType()
+        if (result.0) {
+            isAdvancedDeviceLib = true
+        } else {
             isAdvancedDeviceLib = false
+        }
+    }
+    
+    /**
+     check for existance of the advanced lib method captureAdvancedDevice()
+     */
+    static func checkBuildType() -> (Bool, Selector) {
+        let selectorString = "captureAdvancedDevice:"
+        let selector = NSSelectorFromString(selectorString)
+        if NeuroID.responds(to: selector) {
+            return (true, selector)
+        } else {
+            return (false, selector)
         }
     }
 
