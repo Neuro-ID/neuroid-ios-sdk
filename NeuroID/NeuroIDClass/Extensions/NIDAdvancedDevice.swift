@@ -102,10 +102,7 @@ public extension NeuroID {
     @objc internal static func captureAdvancedDevice(
         _ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]
     ) {
-        let logEvent = NIDEvent(type: .log)
-        logEvent.m = "shouldCapture setting: \(shouldCapture)"
-        logEvent.level = "INFO"
-        
+        let logEvent = NIDEvent(type: .log, level: "INFO", m: "shouldCapture setting: \(shouldCapture)")
         NeuroID.saveEventToDataStore(logEvent)
         
         // Verify the command is called with a true value (want to capture) AND that the session

@@ -399,7 +399,7 @@ class NIDParamsCreatorTests: XCTestCase {
         NeuroID.isRN = true
         NeuroID.isAdvancedDeviceLib = false
         let versionRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValueRN = "5.ios-\(version ?? "?")-rn"
+        let expectedValueRN = "5.ios-rn-\(version ?? "?")"
 
         let valueRN = ParamsCreator.getSDKVersion()
 
@@ -408,7 +408,7 @@ class NIDParamsCreatorTests: XCTestCase {
         NeuroID.isRN = false
         NeuroID.isAdvancedDeviceLib = true
         let versionADV = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValueADV = "5.ios-\(version ?? "?")-adv"
+        let expectedValueADV = "5.ios-adv-\(version ?? "?")"
 
         let valueADV = ParamsCreator.getSDKVersion()
 
@@ -417,7 +417,7 @@ class NIDParamsCreatorTests: XCTestCase {
         NeuroID.isRN = true
         NeuroID.isAdvancedDeviceLib = true
         let versionADVRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValueADVRN = "5.ios-\(version ?? "?")-rn-adv"
+        let expectedValueADVRN = "5.ios-rn-adv-\(version ?? "?")"
 
         let valueADVRN = ParamsCreator.getSDKVersion()
 

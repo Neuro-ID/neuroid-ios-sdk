@@ -129,9 +129,7 @@ public class NeuroID: NSObject {
 
         captureApplicationMetaData()
         
-        let logEvent = NIDEvent(type: .log)
-        logEvent.m = "isAdvancedDevice setting: \(isAdvancedDevice)"
-        logEvent.level = "INFO"
+        let logEvent = NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
         NeuroID.saveEventToDataStore(logEvent)
 
         return true
