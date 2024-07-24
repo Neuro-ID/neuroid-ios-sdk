@@ -13,12 +13,13 @@ protocol ConfigServiceProtocol {
 class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
+    static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     
     var networkService: NIDNetworkServiceProtocol
 
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
-
+    
     public var configCache: ConfigResponseData = .init()
     
     init(networkService: NIDNetworkServiceProtocol = NeuroID.networkService) {
