@@ -41,7 +41,9 @@ jobs:
         run: echo "Updating version with release type ${{ inputs.version_update }}"
 
       - name: Branch Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
@@ -80,6 +82,15 @@ jobs:
           PACKAGE_VERSION=$(bundle exec fastlane get_project_version | grep -o "SDK Version:.*" | sed "s/SDK Version: //" )
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
+
+      - name: Get previous release tag
+        run: echo TAG="$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
+
+      - name: Get current commit hash
+        run: echo HASH="$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Create comparison URL
+        run: echo URL="https://github.com/Neuro-ID/neuroid-ios-sdk/compare/${{ env.TAG }}...${{ env.HASH }}" >> $GITHUB_ENV
 
       - name: Commit version changes
         run: |
