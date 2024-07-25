@@ -70,6 +70,9 @@ public extension NeuroID {
         closeEvent.ct = "SDK_EVENT"
         saveEventToLocalDataStore(closeEvent)
 
+        let stopSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Stop session attempt")
+        saveEventToLocalDataStore(stopSessionLogEvent)
+
         pauseCollection()
 
         clearSessionVariables()
@@ -91,6 +94,9 @@ public extension NeuroID {
         userID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
+        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "StartAppFlow attempt with siteID: \(siteID), userID: \(scrubIdentifier(identifier: userID ?? "null")))")
+        saveEventToDataStore(startSessionLogEvent)
+
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
@@ -188,7 +194,11 @@ extension NeuroID {
     }
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
+        let closeSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Close session attempt")
+        saveEventToDataStore(closeSessionLogEvent)
+
         if !NeuroID.isSDKStarted {
+            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started"))
             throw NIDError.sdkNotStarted
         }
 
@@ -283,6 +293,9 @@ extension NeuroID {
         siteID: String?,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
+        let startLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
+        saveEventToDataStore(startLogEvent)
+
         if !NeuroID.verifyClientKeyExists() {
             completion(false)
             return
@@ -326,6 +339,10 @@ extension NeuroID {
         let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
+
+        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(identifier: finalSessionID))")
+        saveEventToDataStore(startSessionLogEvent)
+
         if !setUserID(finalSessionID, userGenerated) {
             let res = SessionStartResult(false, "")
 
