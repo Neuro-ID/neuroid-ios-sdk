@@ -33,21 +33,31 @@ public class NeuroIDTracker: NSObject {
         DataStore.insertEvent(screen: screenName, event: newEvent)
     }
     
-    public static func registerSingleView(v: Any, screenName: String, guid: String, rts: Bool? = false) {
+    public static func registerSingleView(
+        v: Any,
+        screenName: String,
+        guid: String,
+        rts: Bool? = false,
+        topDownHierarchyPath: String
+    ) {
         let currView = v as? UIView
         
         // constants
         let screenName = NeuroID.getScreenName() ?? screenName
-        let fullViewString = UtilFunctions.getFullViewlURLPath(currView: currView, screenName: screenName)
+        let bottomUpHierarchyPath = UtilFunctions.getFullViewlURLPath(currView: currView ?? UIView())
+        
         let baseAttrs = [
             Attrs(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
-            Attrs(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString),
+            Attrs(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: bottomUpHierarchyPath),
+            Attrs(n: "top-\(Constants.attrScreenHierarchyKey.rawValue)", v: topDownHierarchyPath),
         ]
+        
         let tg = [
             "\(Constants.attrKey.rawValue)": TargetValue.attr(
                 [
-                    Attr(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString),
+                    Attr(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: bottomUpHierarchyPath),
                     Attr(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
+                    Attr(n: "top-\(Constants.attrScreenHierarchyKey.rawValue)", v: topDownHierarchyPath),
                 ]
             ),
         ]
@@ -168,10 +178,10 @@ public class NeuroIDTracker: NSObject {
             case is UITableViewCell:
                 // swiftUI list
                 let element = v as! UITableViewCell
-                NIDLog.d(tag: "NeuroID FE:", "TABLE View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
+                NIDLog.d(tag: "NeuroID FE:", "Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
             case is UIScrollView:
                 let element = v as! UIScrollView
-                NIDLog.d(tag: "NeuroID FE:", "SCROLL View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
+                NIDLog.d(tag: "NeuroID FE:", "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
                 
             default:
                 if !found {
@@ -209,7 +219,14 @@ public class NeuroIDTracker: NSObject {
         if !NeuroID.registeredTargets.contains(view.id) {
             NeuroID.registeredTargets.append(view.id)
             let guid = ParamsCreator.generateID()
-            NeuroIDTracker.registerSingleView(v: view, screenName: NeuroID.getScreenName() ?? view.nidClassName, guid: guid, rts: true)
+            
+            NeuroIDTracker.registerSingleView(
+                v: view,
+                screenName: NeuroID.getScreenName() ?? view.nidClassName,
+                guid: guid,
+                rts: true,
+                topDownHierarchyPath: ""
+            )
             return true
         }
         return false

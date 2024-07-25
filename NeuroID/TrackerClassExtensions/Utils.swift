@@ -24,38 +24,104 @@ enum UtilFunctions {
         }
     }
 
-    static func getFullViewlURLPath(currView: UIView?, screenName: String) -> String {
-        if currView == nil {
-            return screenName
+    static func getParentRecursively(viewController: UIViewController) -> [String] {
+        if let parent = viewController.parent {
+            return [parent.nidClassName] + getParentRecursively(viewController: parent)
+        } else {
+            return []
         }
-        let parentView = currView!.superview?.nidClassName
-        let grandParentView = currView!.superview?.superview?.nidClassName
-        var fullViewString = ""
-        if grandParentView != nil {
-            fullViewString += "\(grandParentView ?? "")/"
-            fullViewString += "\(parentView ?? "")/"
-        } else if parentView != nil {
-            fullViewString = "\(parentView ?? "")/"
-        }
-        fullViewString += screenName
-        return fullViewString
     }
 
-    static func registerSubViewsTargets(subViewControllers: [UIViewController]) {
-        let filtered = subViewControllers.filter { !$0.ignoreLists.contains($0.nidClassName) }
-        for ctrls in filtered {
-            let screenName = ctrls.nidClassName
-            NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering view controllers \(screenName)")
-            guard let view = ctrls.viewIfLoaded else {
-                return
+    /**
+        This method will take the UIView and navigate back through its entire ancestory tree to produce
+        a path from the highest UIViewController down to the element.
+     */
+    static func getFullViewlURLPath(currView: UIView) -> String {
+        let viewControllerParent = currView.viewController
+
+        var viewControllerAncestors: [String] = []
+        if let parent = viewControllerParent {
+            viewControllerAncestors.append(parent.nidClassName)
+            viewControllerAncestors = viewControllerAncestors + getParentRecursively(viewController: parent)
+        }
+        viewControllerAncestors.reverse()
+
+        var finalPath = ""
+        for vc in viewControllerAncestors {
+            finalPath += "/\(vc)"
+        }
+
+        return "\(finalPath)/\(currView.nidClassName)"
+    }
+
+    static func registerRecursiveUIViewController(controller: UIViewController, parentTag: String) -> [(UIViewController, String)] {
+        var list: [(UIViewController, String)] = []
+
+        let shouldIgnore = controller.ignoreLists.contains(controller.nidClassName)
+
+        if controller.children.isEmpty {
+            list.append(
+                (
+                    controller,
+                    "\(controller.nidClassName)"
+                )
+            )
+        }
+
+        for c in controller.children {
+            // Append the current element in the list
+            list.append(
+                (
+                    c,
+                    "\(parentTag)/\(c.nidClassName)"
+                )
+            )
+
+            // If the current element is a UIViewController then get all its children
+            if !c.children.isEmpty {
+                list = list + registerRecursiveUIViewController(controller: c, parentTag: "\(parentTag)/\(c.nidClassName)")
             }
+        }
+
+        return list
+    }
+
+    static func registerSubViewsTargets(controller: UIViewController) {
+        // self
+        NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering Top Level UIViewController \(controller.nidClassName)")
+
+        let allChildren = registerRecursiveUIViewController(controller: controller, parentTag: controller.nidClassName)
+
+        for childController in allChildren {
+            // uiNav1 and uiNav2
+
+            // NOTE: This will ignore the controller but its children will still be allowed to be registered
+            let shouldIgnore = childController.0.ignoreLists.contains(childController.0.nidClassName)
+
+            if shouldIgnore {
+                continue
+            }
+
+            NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "    Registering Child UIViewController \(childController.1) - \(childController.0.nidClassName)")
+
+            guard let view = childController.0.viewIfLoaded else {
+                continue
+            }
+            let screenName = childController.0.nidClassName
             let guid = ParamsCreator.generateID()
 
-            NeuroIDTracker.registerSingleView(v: view, screenName: screenName, guid: guid)
-            let childViews = view.subviewsRecursive()
-            for _view in childViews {
-                NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view.")
-                NeuroIDTracker.registerSingleView(v: _view, screenName: screenName, guid: guid)
+            let subViewChildren = view.subviewsRecursive()
+
+            for _view in subViewChildren {
+                let v = _view as! UIView
+                NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "         Registering Single View \(childController.1)/\(v.nidClassName)")
+
+                NeuroIDTracker.registerSingleView(
+                    v: _view,
+                    screenName: screenName,
+                    guid: guid,
+                    topDownHierarchyPath: "\(childController.1)/\(v.nidClassName)"
+                )
             }
         }
     }
@@ -93,7 +159,7 @@ enum UtilFunctions {
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
 
-        NIDLog.d("Registered View: \(className) - \(id)")
+        NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "            Registered View: \(className) - \(id)")
     }
 
     static func captureContextMenuAction(

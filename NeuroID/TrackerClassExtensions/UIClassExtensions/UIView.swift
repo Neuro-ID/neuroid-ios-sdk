@@ -16,6 +16,20 @@ import UIKit
  */
 
 extension UIView {
+    /**
+        This attribute will navigate up the elements responder tree until a UIViewController that is responsible for the UIView is found.
+     */
+    var viewController: UIViewController? {
+        var responder: UIResponder? = self
+        while let currentResponder = responder {
+            responder = currentResponder.next
+            if let viewController = currentResponder as? UIViewController {
+                return viewController
+            }
+        }
+        return nil
+    }
+
     func subviewsRecursive() -> [Any] {
         return subviews + subviews.flatMap { $0.subviewsRecursive() }
     }
@@ -48,7 +62,7 @@ public extension UIView {
             } else if let textControl = self as? UIDatePicker {
                 backupName = "\(textControl.hash)"
             } else if let textControl = self as? UIButton {
-                backupName = "\(textControl.hash)"
+                backupName = "\(textControl.titleLabel?.text ?? "")-\(textControl.hash)"
             } else if let textControl = self as? UISlider {
                 backupName = "\(textControl.hash)"
             } else if let textControl = self as? UISegmentedControl {

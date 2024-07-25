@@ -113,7 +113,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UITextField() {
         let uiView = UITextField()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -121,7 +121,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UITextView() {
         let uiView = UITextView()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -129,7 +129,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UIButton() {
         let uiView = UIButton()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -137,7 +137,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UISlider() {
         let uiView = UISlider()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -145,7 +145,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UISwitch() {
         let uiView = UISwitch()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -153,7 +153,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UIDatePicker() {
         let uiView = UIDatePicker()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -161,7 +161,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UIStepper() {
         let uiView = UIStepper()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
         
@@ -171,7 +171,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_UISegmentedControl() {
         let uiView = UISegmentedControl()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -179,7 +179,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_NOT_UIPickerView() {
         let uiView = UIPickerView()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewNOTRegistered(v: uiView)
     }
@@ -187,7 +187,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_NOT_UITableViewCell() {
         let uiView = UITableViewCell()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewNOTRegistered(v: uiView)
     }
@@ -195,7 +195,7 @@ class NeuroIDTrackerTests: XCTestCase {
     func test_registerSingleView_NOT_UIScrollView() {
         let uiView = UIScrollView()
         
-        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewNOTRegistered(v: uiView)
     }
