@@ -40,13 +40,13 @@ class ConfigServiceTests: XCTestCase {
         configService.configCache.requestTimeout = 0
         configService.cacheSetWithRemote = true
         
-        configService.retrieveConfig {
-            assert(self.configService.configCache.eventQueueFlushInterval != 0)
-            assert(self.configService.configCache.gyroAccelCadenceTime != 0)
-            assert(self.configService.configCache.eventQueueFlushSize != 1999)
-            assert(self.configService.configCache.requestTimeout != 0)
-            assert(!self.configService.cacheSetWithRemote)
-        }
+        configService.retrieveConfig()
+        
+        assert(configService.configCache.eventQueueFlushInterval != 0)
+        assert(configService.configCache.gyroAccelCadenceTime != 0)
+        assert(configService.configCache.eventQueueFlushSize != 1999)
+        assert(configService.configCache.requestTimeout != 0)
+        assert(!configService.cacheSetWithRemote)
     }
     
     func test_retrieveConfig_withNoKey() throws {
@@ -57,15 +57,22 @@ class ConfigServiceTests: XCTestCase {
         configService.configCache.requestTimeout = 0
         configService.cacheSetWithRemote = true
         
-        configService.retrieveConfig {
-            assert(self.configService.configCache.requestTimeout == 0)
-            assert(!self.configService.cacheSetWithRemote)
-            assert(!self.configService.configCache.geoLocation)
-        }
+        configService.retrieveConfig()
+        
+        assert(configService.configCache.requestTimeout == 0)
+        assert(!configService.cacheSetWithRemote)
+        assert(!configService.configCache.geoLocation)
     }
     
     func test_retrieveConfig_withKeyAndInternet() throws {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        NeuroID.networkService = NIDNetworkServiceTestImpl()
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        mockedNetwork.mockFailedResponse()
+
+        configService = NIDConfigService(networkService: mockedNetwork, configRetrievalCallback: {})
         
         configService.configCache.eventQueueFlushInterval = 0
         configService.configCache.callInProgress = false
@@ -74,12 +81,12 @@ class ConfigServiceTests: XCTestCase {
         configService.configCache.gyroAccelCadenceTime = 0
         configService.configCache.requestTimeout = 0
         
-        configService.retrieveConfig {
-            assert(self.configService.configCache.eventQueueFlushInterval != 0)
-            assert(self.configService.configCache.gyroAccelCadenceTime != 0)
-            assert(self.configService.configCache.requestTimeout != 0)
-            assert(self.configService.cacheSetWithRemote)
-        }
+        configService.retrieveConfig()
+        
+        assert(configService.configCache.eventQueueFlushInterval != 0)
+        assert(configService.configCache.gyroAccelCadenceTime != 0)
+        assert(configService.configCache.requestTimeout != 0)
+        assert(!configService.cacheSetWithRemote)
     }
     
     func test_setCache() {

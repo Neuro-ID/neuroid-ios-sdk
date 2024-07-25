@@ -248,35 +248,34 @@ extension NeuroID {
         completion: @escaping () -> Void = {}
     ) {
         // Use config cache or if first time, retrieve from server
-        configService.retrieveOrRefreshCache {
-            NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
-            NeuroID.createListeners()
+       configService.retrieveOrRefreshCache()
 
-            NeuroID._isSDKStarted = true
+        NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
 
-            NeuroID.callObserver?.startListeningToCallStatus()
+        NeuroID._isSDKStarted = true
 
-            NeuroID.startIntegrationHealthCheck()
+        NeuroID.setupListeners()
 
-            NeuroID.createSession()
-            swizzle()
+        NeuroID.startIntegrationHealthCheck()
 
-            // custom functionality = the different timer starts (start vs. startSession)
-            //  this will be refactored once we bring start/startSession in alignment
-            customFunctionality()
+        NeuroID.createSession()
+        swizzle()
 
-            // save beginSession events to MIHR file
-            saveIntegrationHealthEvents()
+        // custom functionality = the different timer starts (start vs. startSession)
+        //  this will be refactored once we bring start/startSession in alignment
+        customFunctionality()
 
-            let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-            for event in queuedEvents {
-                DataStore.insertEvent(screen: "", event: event)
-            }
+        // save beginSession events to MIHR file
+        saveIntegrationHealthEvents()
 
-            checkThenCaptureAdvancedDevice()
-
-            completion()
+        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
+        for event in queuedEvents {
+            DataStore.insertEvent(screen: "", event: event)
         }
+
+        checkThenCaptureAdvancedDevice()
+
+        completion()
     }
 
     // Internal implementation that allows a siteID

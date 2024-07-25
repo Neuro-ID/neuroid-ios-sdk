@@ -8,17 +8,25 @@
 import Foundation
 
 extension NeuroID {
-    static func createListeners() {
+    static func setupListeners() {
         if configService.configCache.callInProgress {
             callObserver = NIDCallStatusObserver()
+            callObserver?.startListeningToCallStatus()
+        } else {
+            callObserver = nil
         }
 
         if configService.configCache.geoLocation {
             locationManager = LocationManager()
+        } else {
+            locationManager = nil
         }
 
         if configService.configCache.gyroAccelCadence {
             sendGyroAccelCollectionWorkItem = createGyroAccelCollectionWorkItem()
+        } else {
+            sendGyroAccelCollectionWorkItem?.cancel()
+            sendGyroAccelCollectionWorkItem = nil
         }
     }
 }
