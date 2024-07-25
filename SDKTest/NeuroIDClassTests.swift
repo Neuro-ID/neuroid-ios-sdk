@@ -114,7 +114,7 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        assertStoredEventTypeAndCount(type: "LOG", count: 2, queued: true)
+        assertStoredEventTypeAndCount(type: "LOG", count: 1, queued: true)
 
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
     }
@@ -169,7 +169,7 @@ class NeuroIDClassTests: XCTestCase {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count == 12)
+            assert(DataStore.events.count == 13)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
