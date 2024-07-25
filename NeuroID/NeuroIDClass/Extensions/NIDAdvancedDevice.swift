@@ -58,7 +58,11 @@ public extension NeuroID {
     }
     
     internal static func getNewADV() {
-        deviceSignalService.getAdvancedDeviceSignal(NeuroID.clientKey ?? "") { request in
+        deviceSignalService.getAdvancedDeviceSignal(
+            NeuroID.clientKey ?? "",
+            clientID: NeuroID.clientID,
+            linkedSiteID: NeuroID.linkedSiteID
+        ) { request in
             switch request {
             case .success((let requestID, let duration)):
 
@@ -70,24 +74,24 @@ public extension NeuroID {
                             "key": requestID] as [String: Any]
                 )
             case .failure(let error):
-                let nidEvent = NIDEvent(type: .log)
-                nidEvent.m = error.localizedDescription
-                nidEvent.level = "ERROR"
-                    
-                NeuroID.saveEventToLocalDataStore(nidEvent)
+                NeuroID.saveEventToLocalDataStore(
+                    NIDEvent(type: .log, level: "ERROR", m: error.localizedDescription)
+                )
                 return
             }
         }
     }
     
     internal static func captureADVEvent(_ requestID: String, cached: Bool, latency: Double) {
-        let nidEvent = NIDEvent(type: .advancedDevice)
-        nidEvent.rid = requestID
-        nidEvent.c = cached
-        nidEvent.l = latency
-        nidEvent.ct = NeuroID.networkMonitor?.connectionType.rawValue
-            
-        NeuroID.saveEventToLocalDataStore(nidEvent)
+        NeuroID.saveEventToLocalDataStore(
+            NIDEvent(
+                type: .advancedDevice,
+                ct: NeuroID.networkMonitor?.connectionType.rawValue,
+                l: latency,
+                rid: requestID,
+                c: cached
+            )
+        )
     }
     
     /**
