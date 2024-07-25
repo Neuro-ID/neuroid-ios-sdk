@@ -54,6 +54,10 @@ class NetworkMonitoringService {
     func startMonitoring() {
         monitor.start(queue: queue)
 
+        NeuroID.saveEventToLocalDataStore(
+            NIDEvent(type: .log, level: "info", m: "Network Monitoring Started with starting status of connectionType:\(connectionType) connected:\(isConnected)")
+        )
+
         monitor.pathUpdateHandler = { path in
             let connectionStatus = path.status == .satisfied
 

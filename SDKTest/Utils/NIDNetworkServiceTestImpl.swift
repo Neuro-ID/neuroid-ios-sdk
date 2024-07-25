@@ -46,8 +46,7 @@ class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
         return mockResponse
     }
 
-    func mockFailedResponse(
-    ) {
+    func mockFailedResponse() {
         shouldMockFalse = true
     }
 

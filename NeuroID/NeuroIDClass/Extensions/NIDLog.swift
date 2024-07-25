@@ -191,7 +191,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = ""
     }
 
-    NIDLog.d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDLog.d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
 }
 
 class NIDLog {

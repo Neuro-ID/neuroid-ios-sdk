@@ -139,6 +139,15 @@ public class NeuroID: NSObject {
         return true
     }
 
+    static func configSetupCompletion() {
+        saveEventToLocalDataStore(
+            NIDEvent(type: .log, level: "info", m: "Remote Config Retrieval Attempt Completed")
+        )
+        NIDLog.i("Remote Config Retrieval Attempt Completed")
+
+        setupListeners()
+    }
+
     // When start is called, enable swizzling, as well as dispatch queue to send to API
     public static func start(
         completion: @escaping (Bool) -> Void = { _ in }
