@@ -140,11 +140,10 @@ public extension NeuroID {
 //        Save log event
         let setRegisteredUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Set Registered User Id Attempt: \(scrubIdentifier(identifier: registeredUserID))")
         saveEventToDataStore(setRegisteredUserIdLogEvent)
-       
         if !NeuroID.registeredUserID.isEmpty, registeredUserID != NeuroID.registeredUserID {
-            NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts : \(scrubIdentifier(identifier: registeredUserID))"))
+            NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id - existing : \(scrubIdentifier(identifier: registeredUserID))"))
+        
             NIDLog.e("Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session")
-            return false
         }
         
         let validID = setGenericUserID(type: .registeredUserID, genericUserID: registeredUserID)
