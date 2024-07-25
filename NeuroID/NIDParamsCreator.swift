@@ -111,11 +111,11 @@ enum ParamsCreator {
         let tabIdName = Constants.storageTabIDKey.rawValue
         let tid = getUserDefaultKeyString(tabIdName)
 
-        if tid != nil && !tid!.contains("-") {
+        if tid != nil {
             return tid!
         } else {
-            let randString = generateID()
-            let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
+//          ENG-8380 - matching tabID with Android
+            let tid = "mobile-" + generateID()
             setUserDefaultKey(tabIdName, value: tid)
             return "\(tid)"
         }
@@ -181,13 +181,11 @@ enum ParamsCreator {
     static func getSDKVersion() -> String {
         // Version MUST start with 4. in order to be processed correctly
         var version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-
         // Get Version number from bundled info.plist file if included
         if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle") {
             version = Bundle(url: bundleURL)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         }
-
-        return "5.ios-\(version ?? "?")\(NeuroID.isRN ? "-rn" : "")"
+        return "5.ios\(NeuroID.isRN ? "-rn" : "")\(NeuroID.isAdvancedDeviceLib ? "-adv" : "")-\(version ?? "?")"
     }
 
     static func getCommandQueueNamespace() -> String {
