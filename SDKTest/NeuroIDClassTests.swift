@@ -169,14 +169,14 @@ class NeuroIDClassTests: XCTestCase {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count == 13)
+            assert(DataStore.events.count == 14)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
             self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
             self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 1)
             self.assertStoredEventCount(type: "SET_VARIABLE", count: 4)
-            self.assertStoredEventCount(type: "LOG", count: 5)
+            self.assertStoredEventCount(type: "LOG", count: 6)
         }
     }
 
@@ -539,7 +539,7 @@ class NIDNewSessionTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
+        assertStoredEventTypeAndCount(type: "LOG", count: 3)
     }
 
     func test_startSession_success_no_id() {
@@ -603,7 +603,7 @@ class NIDNewSessionTests: XCTestCase {
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-        assertQueuedEventTypeAndCount(type: "LOG", count: 4)
+        assertQueuedEventTypeAndCount(type: "LOG", count: 5)
     }
 
     func test_pauseCollection() {
