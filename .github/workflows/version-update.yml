@@ -112,8 +112,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const title = 'Release Version: ${{ env.PACKAGE_VERSION }}';
-            const body = 'Once merged, this PR will trigger an action to release version: ${{ env.PACKAGE_VERSION }}. 
-            Please review detailed release changes: ${{ env.URL }}';
+            const body = 'Once merged, this PR will trigger an action to release version: ${{ env.PACKAGE_VERSION }}.Please review detailed release changes: ${{ env.URL }}';
             const headBranch = '${{ env.BRANCH_NAME }}';
             const baseBranch = 'main';
 
