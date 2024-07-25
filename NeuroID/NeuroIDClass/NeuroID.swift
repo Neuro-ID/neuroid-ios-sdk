@@ -101,7 +101,9 @@ public class NeuroID: NSObject {
 
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
+            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Invalid Client Key \(clientKey)"))
             setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key")
+
             return false
         }
         
@@ -123,6 +125,7 @@ public class NeuroID: NSObject {
 
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
+        saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "INFO", m: "Reset Tab Id"))
         packetNumber = 0
 
         networkMonitor = NetworkMonitoringService()
@@ -158,6 +161,8 @@ public class NeuroID: NSObject {
             _ = try closeSession(skipStop: true)
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
+            let stopFailedLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to Stop because \(error)")
+           saveEventToDataStore(stopFailedLogEvent)
             return false
         }
 

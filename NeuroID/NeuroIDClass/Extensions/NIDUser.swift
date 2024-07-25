@@ -36,9 +36,13 @@ public extension NeuroID {
         
         let originRes = getOriginResult(idValue: genericUserID, validID: validID, userGenerated: userGenerated, idType: type)
         sendOriginEvent(originResult: originRes)
-        
-        if !validID { return false }
-        
+            
+        if !validID {
+            let saveIdFailureEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to save genericUserID event:\(scrubIdentifier(identifier: genericUserID))")
+            saveEventToDataStore(saveIdFailureEvent)
+            return false
+        }
+            
         NIDLog.d(tag: "\(type)", "\(genericUserID)")
         //    Queue user id event to be sent
         var setUserEvent: NIDEvent
@@ -110,6 +114,10 @@ public extension NeuroID {
     }
     
     internal static func setUserID(_ userId: String, _ userGenerated: Bool) -> Bool {
+//        Save log event
+        let setUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Set User Id Attempt: \(scrubIdentifier(identifier: userId))")
+        saveEventToDataStore(setUserIdLogEvent)
+        
         let validID = setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated)
         
         if !validID {
@@ -129,8 +137,12 @@ public extension NeuroID {
     }
     
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
+//        Save log event
+        let setRegisteredUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Set Registered User Id Attempt: \(scrubIdentifier(identifier: registeredUserID))")
+        saveEventToDataStore(setRegisteredUserIdLogEvent)
+       
         if !NeuroID.registeredUserID.isEmpty, registeredUserID != NeuroID.registeredUserID {
-            NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts"))
+            NeuroID.saveEventToLocalDataStore(NIDEvent(level: "warn", m: "Multiple Registered User Id Attempts : \(scrubIdentifier(identifier: registeredUserID))"))
             NIDLog.e("Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session")
             return false
         }
@@ -150,15 +162,37 @@ public extension NeuroID {
      @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
+//        Save log event
+        let attemptedLoginAttemptLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "attempted login with attemptedRegisteredUserId: \(scrubIdentifier(identifier: attemptedRegisteredUserId ?? "null"))")
+        saveEventToDataStore(attemptedLoginAttemptLogEvent)
+
         let captured = setGenericUserID(type: .attemptedLogin, genericUserID: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation", userGenerated: attemptedRegisteredUserId != nil)
         
         if !captured {
-            if !NeuroID.isSDKStarted {
-                saveQueuedEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
-            } else {
-                saveEventToLocalDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
-            }
+            saveEventToDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
         }
         return true
+    }
+    
+    internal static func scrubIdentifier(identifier: String) -> String {
+        do {
+            let emailRegex = try NSRegularExpression(pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            let ssnRegex = try NSRegularExpression(pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")
+            var result = emailRegex.matches(in: identifier, range: NSMakeRange(0, identifier.count))
+            if !result.isEmpty {
+                let atIndex = identifier.firstIndex(of: "@") ?? identifier.endIndex
+                let idLength = identifier.distance(from: identifier.startIndex, to: atIndex)
+                let scrubbedEmailId = String(identifier.prefix(1)) + String(repeating: "*", count: idLength - 1) + identifier[atIndex...]
+                return scrubbedEmailId
+            }
+            result = ssnRegex.matches(in: identifier, range: NSMakeRange(0, identifier.count))
+            if !result.isEmpty {
+                return "***-**-****"
+            }
+            return identifier
+        } catch let error as NSError {
+            NIDLog.e("Invalid pattern: \(error.localizedDescription)")
+            return identifier
+        }
     }
 }
