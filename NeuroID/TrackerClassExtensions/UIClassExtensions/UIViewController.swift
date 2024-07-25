@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-internal func uiViewSwizzling(
+func uiViewSwizzling(
     viewController: UIViewController.Type,
     originalSelector: Selector,
     swizzledSelector: Selector
@@ -93,7 +93,7 @@ extension UIViewController {
     }
 }
 
-internal extension UIViewController {
+extension UIViewController {
     private var registerViews: [String]? {
         get {
             return UserDefaults(suiteName: "ViewHierarchy")?.object(forKey: "registerViews") as? [String]
@@ -159,7 +159,6 @@ internal extension UIViewController {
     }
 
     @objc func registerPageTargets() {
-
         if ignoreLists.contains(nidClassName) { return }
 
         // check if its RN, using the React Navigation Package, and Matching the ClassName
@@ -172,9 +171,7 @@ internal extension UIViewController {
         // We need to init the tracker on the views.
         tracker
 
-        var allViewControllers = children.filter { !ignoreLists.contains($0.nidClassName) }
-        allViewControllers.append(self)
-        UtilFunctions.registerSubViewsTargets(subViewControllers: allViewControllers)
+        UtilFunctions.registerSubViewsTargets(controller: self)
         registerViews = view.subviewsDescriptions
 
         NeuroID.registerKeyboardListener(className: nidClassName, view: self)

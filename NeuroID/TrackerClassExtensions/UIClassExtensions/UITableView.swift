@@ -22,7 +22,7 @@ private func tableViewSwizzling(element: UITableView.Type,
     }
 }
 
-internal extension UITableView {
+extension UITableView {
     static func tableviewSwizzle() {
         let table = UITableView.self
         tableViewSwizzling(element: table, originalSelector: #selector(table.reloadData), swizzledSelector: #selector(table.neuroIDReloadData))
@@ -43,7 +43,11 @@ internal extension UITableView {
             let childViews = cell.contentView.subviewsRecursive()
             for _view in childViews {
                 NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view for cell.")
-                NeuroIDTracker.registerSingleView(v: _view, screenName: cellName, guid: guid)
+                NeuroIDTracker.registerSingleView(
+                    v: _view,
+                    screenName: cellName,
+                    guid: guid,
+                    topDownHierarchyPath: "\(nidClassName)/\(cellName)")
             }
         }
     }

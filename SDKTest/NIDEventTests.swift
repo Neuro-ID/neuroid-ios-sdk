@@ -33,8 +33,13 @@ class NIDEventTests: XCTestCase {
         touchesNil: Bool = true)
     {
         assert(nidEvent.type == eventType.rawValue)
+        
+        if (nidEvent.url?.hasPrefix("/")) == true {
+            assert(nidEvent.url == "/\(screenName)")
+        } else {
+            assert(nidEvent.url == screenName)
+        }
 
-        assert(nidEvent.url == screenName)
         assert(nidEvent.tgs == tgs)
         
         assert(nidEvent.tg != nil)
@@ -314,7 +319,7 @@ class NIDEventTests: XCTestCase {
     }
     
     func test_init_6_2_1() {
-        let screenName = "myTestScreenName"
+        let screenName = "UIView"
         NeuroID.currentScreenName = screenName
         
         let uiId = "testUIViewId"
