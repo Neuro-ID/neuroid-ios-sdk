@@ -11,7 +11,5 @@ import Foundation
 class MockConfigService: ConfigServiceProtocol {
     var configCache: ConfigResponseData = .init()
 
-    func retrieveOrRefreshCache(completion: @escaping () -> Void) {
-        completion()
-    }
+    func retrieveOrRefreshCache() {}
 }
