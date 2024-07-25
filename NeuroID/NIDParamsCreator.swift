@@ -111,11 +111,11 @@ enum ParamsCreator {
         let tabIdName = Constants.storageTabIDKey.rawValue
         let tid = getUserDefaultKeyString(tabIdName)
 
-        if tid != nil && !tid!.contains("-") {
+        if tid != nil {
             return tid!
         } else {
-            let randString = generateID()
-            let tid = randString.replacingOccurrences(of: "-", with: "").prefix(12)
+//          ENG-8380 - matching tabID with Android
+            let tid = "mobile-" + generateID()
             setUserDefaultKey(tabIdName, value: tid)
             return "\(tid)"
         }
