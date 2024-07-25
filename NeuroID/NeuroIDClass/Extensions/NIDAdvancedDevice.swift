@@ -96,11 +96,15 @@ public extension NeuroID {
      or `startSession` in the `NIDAdvancedDevice.swift` file.
      
      Marked as `@objc` because this method can be called with reflection if the ADV library is not installed.
-     Because of the reflection we use an array with a boolean instead of just boolean
+     Because of the reflection we use an array with a boolean instead of just boolean. Log the shouldCapture flag
+     in a LOG event (isAdvancedDevice setting: <true/false>.
      */
     @objc internal static func captureAdvancedDevice(
         _ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]
     ) {
+        let logEvent = NIDEvent(type: .log, level: "INFO", m: "shouldCapture setting: \(shouldCapture)")
+        NeuroID.saveEventToDataStore(logEvent)
+        
         // Verify the command is called with a true value (want to capture) AND that the session
         //  is NOT being restricted/throttled prior to calling for an ADV event
         

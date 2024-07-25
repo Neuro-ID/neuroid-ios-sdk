@@ -169,12 +169,13 @@ class NeuroIDClassTests: XCTestCase {
             assert(started)
             assert(NeuroID.isSDKStarted)
 
-            assert(DataStore.events.count == 8)
+            assert(DataStore.events.count == 9)
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
             self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
             self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 1)
             self.assertStoredEventCount(type: "SET_VARIABLE", count: 4)
+            self.assertStoredEventCount(type: "LOG", count: 1)
         }
     }
 
@@ -193,6 +194,22 @@ class NeuroIDClassTests: XCTestCase {
         let value = NeuroID.getSDKVersion()
 
         assert(value == expectedValue)
+         
+        NeuroID.isAdvancedDeviceLib = true
+        let resultAdvTrue = NeuroID.getSDKVersion()
+        assert(resultAdvTrue.contains("-adv"))
+        
+        NeuroID.isAdvancedDeviceLib = false
+        let resultAdvFalse = NeuroID.getSDKVersion()
+        assert(!resultAdvFalse.contains("-adv"))
+        
+        NeuroID.isRN = true
+        let resultRNTrue = NeuroID.getSDKVersion()
+        assert(resultRNTrue.contains("-rn"))
+        
+        NeuroID.isRN = false
+        let resultRNFalse = NeuroID.getSDKVersion()
+        assert(!resultRNFalse.contains("-rn"))
     }
 }
 
@@ -1375,6 +1392,7 @@ class NIDClientSiteIdTests: XCTestCase {
 
 class NIDSendTests: XCTestCase {
     func test_getCollectionEndpointURL() {
+        NeuroID.setDevTestingURL()
         let expectedValue = "https://receiver.neuro-dev.com/c"
 
         let value = NeuroID.getCollectionEndpointURL()
