@@ -101,6 +101,7 @@ public class NeuroID: NSObject {
 
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
+            setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key")
             return false
         }
         
