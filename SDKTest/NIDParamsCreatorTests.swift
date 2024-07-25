@@ -277,6 +277,7 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     func test_getTabId_random() {
+        UserDefaults.standard.set(nil, forKey: tidKey)
         let value = ParamsCreator.getTabId()
         assert(value.prefix(11) == "mobile-nid-")
     }

@@ -109,7 +109,7 @@ class NeuroIDClassTests: XCTestCase {
         assert(clientKeyValue == nil)
 
         let tabIdValue = UserDefaults.standard.string(forKey: tabIdKey)
-        assert(tabIdValue == "testTabId")
+        assert(tabIdValue == "testTabId-invalid-client-key")
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
