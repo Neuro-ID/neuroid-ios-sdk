@@ -3,7 +3,7 @@ PODS:
   - DSJSONSchemaValidation (2.0.7)
   - FingerprintPro (2.2.0)
   - JSONSchema (0.5.0)
-  - NeuroIDAdvancedDevice (1.0.1):
+  - NeuroIDAdvancedDevice (1.0.2):
     - FingerprintPro (~> 2.0)
 
 DEPENDENCIES:
@@ -25,8 +25,8 @@ SPEC CHECKSUMS:
   DSJSONSchemaValidation: 46e30ccfa9908c49d184f453d556f55aa0aac1ff
   FingerprintPro: 72e35dc0315b75ba36eafaaed996dbb2f35f7326
   JSONSchema: 52453ed2f570370b5e3ccd1c943afdfa5ea70db5
-  NeuroIDAdvancedDevice: 3974c46107a2e066e629e093e47ec40115f7a206
+  NeuroIDAdvancedDevice: 8c3da2679da4eca7cb499e111f7e725977be66bd
 
 PODFILE CHECKSUM: 090790257a48acef9caa8a475c7fb3aa58f17f20
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3
