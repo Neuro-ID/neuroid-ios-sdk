@@ -102,6 +102,8 @@ public class NeuroID: NSObject {
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
             saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Invalid Client Key \(clientKey)"))
+            setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key")
+
             return false
         }
         
