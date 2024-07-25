@@ -277,6 +277,13 @@ public class NeuroID: NSObject {
     }
 
     static func getAppMetaData() -> ApplicationMetaData? {
+        let bundleID: String
+        if let bundleIdentifier = Bundle.main.bundleIdentifier {
+            bundleID = bundleIdentifier
+        } else {
+            bundleID = ""
+        }
+
         if let infoDictionary = Bundle.main.infoDictionary {
             let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
             let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
@@ -285,7 +292,7 @@ public class NeuroID: NSObject {
             return ApplicationMetaData(
                 versionName: versionName,
                 versionNumber: versionNumber,
-                packageName: packageName,
+                packageName: bundleID.isEmpty ? packageName : bundleID,
                 applicationName: packageName
             )
         }
