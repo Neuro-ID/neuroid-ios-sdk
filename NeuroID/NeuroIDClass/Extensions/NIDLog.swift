@@ -138,9 +138,8 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "xy=\(touchesString) tg=\(tgString)"
         case NIDEventName.closeSession.rawValue:
             contextString = ""
-//            case NIDEventName.setVariable.rawValue:
-//                contextString = mutableEvent.v ?? ""
-
+        case NIDSessionEventName.setVariable.rawValue:
+            contextString = "key=\(mutableEvent.key ?? "Missing Key") v=\(mutableEvent.v ?? "Missing Value")"
         case NIDEventName.customTap.rawValue:
             contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
         case NIDEventName.customDoubleTap.rawValue:
