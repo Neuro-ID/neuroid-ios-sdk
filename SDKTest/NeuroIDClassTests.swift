@@ -115,8 +115,8 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        // Application Metadata + 3 Log events should be in queue
-        assertStoredEventTypeAndCount(type: "LOG", count: 3, queued: true)
+        // 1 Log event should be in queue if the key fails validation
+        assertStoredEventTypeAndCount(type: "LOG", count: 1, queued: true)
 
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
     }
@@ -197,19 +197,19 @@ class NeuroIDClassTests: XCTestCase {
         let value = NeuroID.getSDKVersion()
 
         assert(value == expectedValue)
-         
+
         NeuroID.isAdvancedDeviceLib = true
         let resultAdvTrue = NeuroID.getSDKVersion()
         assert(resultAdvTrue.contains("-adv"))
-        
+
         NeuroID.isAdvancedDeviceLib = false
         let resultAdvFalse = NeuroID.getSDKVersion()
         assert(!resultAdvFalse.contains("-adv"))
-        
+
         NeuroID.isRN = true
         let resultRNTrue = NeuroID.getSDKVersion()
         assert(resultRNTrue.contains("-rn"))
-        
+
         NeuroID.isRN = false
         let resultRNFalse = NeuroID.getSDKVersion()
         assert(!resultRNFalse.contains("-rn"))

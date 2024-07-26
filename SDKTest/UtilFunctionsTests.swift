@@ -109,6 +109,7 @@ final class UtilFunctionsTests: XCTestCase {
     }
 
     func test_captureTextEvents_blur() {
+        NeuroID.isSDKStarted = true
         let expectedValue = 1
         let uiView = UIView()
 
