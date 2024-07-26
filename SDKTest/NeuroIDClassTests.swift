@@ -114,6 +114,7 @@ class NeuroIDClassTests: XCTestCase {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
+        // Application Metadata + 3 Log events should be in queue
         assertStoredEventTypeAndCount(type: "LOG", count: 3, queued: true)
 
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
@@ -1030,7 +1031,14 @@ class NIDUserTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
 
-        assert(DataStore.queuedEvents.count == 3)
+        /* The following events are in the DataStore now.*/
+        // Log
+        // Set Variable (sessionIdCode)
+        // Set Variable (sessionIdSource)
+        // Set Variable (sessionId)
+        // Set Variable (sessionIdType)
+        // SET_USER_ID
+        assert(DataStore.events.count == 6)
     }
 
     func test_setUserID_pre_start_customer_origin() {
@@ -1070,7 +1078,14 @@ class NIDUserTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
 
-        assert(DataStore.queuedEvents.count == 3)
+        /* The following events are in the DataStore now.*/
+        // Log
+        // Set Variable (sessionIdCode)
+        // Set Variable (sessionIdSource)
+        // Set Variable (sessionId)
+        // Set Variable (sessionIdType)
+        // SET_USER_ID
+        assert(DataStore.events.count == 6)
     }
 
     func test_setUserID_pre_start_nid_origin() {
