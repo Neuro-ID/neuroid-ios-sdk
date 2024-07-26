@@ -8,7 +8,7 @@ s.name = "NeuroID"
 s.module_name = "NeuroID"
 s.summary = "NeuroID's official SDK for the iOS platform"
 s.requires_arc = true
-s.version = "3.3.1"
+s.version = "3.3.2"
 s.author = { "NeuroID" => "NeuroID" }
 s.homepage = "https://neuro-id.com/"
 
