@@ -96,6 +96,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 
     func test_configure_invalidKey() {
+        NeuroID.setDevTestingURL()
         clearOutDataStore()
         // remove things configured in setup
         NeuroID.environment = Constants.environmentTest.rawValue
