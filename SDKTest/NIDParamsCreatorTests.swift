@@ -279,7 +279,7 @@ class NIDParamsCreatorTests: XCTestCase {
     func test_getTabId_random() {
         UserDefaults.standard.set(nil, forKey: tidKey)
         let value = ParamsCreator.getTabId()
-        assert(value.prefix(11) == "mobile-nid-")
+        assert(value.prefix(7) == "mobile-")
     }
 
     let didKey = Constants.storageDeviceIDKey.rawValue
@@ -305,12 +305,11 @@ class NIDParamsCreatorTests: XCTestCase {
 
     // Private Access Level
     func test_generateID() {
-        let expectedValue = 40
+        let expectedValue = 36
 
         let value = ParamsCreator.generateID()
 
         assert(value.count == expectedValue)
-        assert(value.hasPrefix("nid-"))
     }
 
     let dntKey = Constants.storageDntKey.rawValue

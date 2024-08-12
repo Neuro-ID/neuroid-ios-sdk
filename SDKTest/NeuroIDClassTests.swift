@@ -1368,6 +1368,7 @@ class NIDClientSiteIdTests: XCTestCase {
         let value = NeuroID.getClientID()
 
         assert(value != expectedValue)
+        assert(value.prefix(3) != "nid")
     }
 
     func test_getClientKey() {
