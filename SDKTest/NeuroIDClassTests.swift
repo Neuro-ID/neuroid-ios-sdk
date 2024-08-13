@@ -1368,6 +1368,7 @@ class NIDClientSiteIdTests: XCTestCase {
         let value = NeuroID.getClientID()
 
         assert(value != expectedValue)
+        // ENG-8455 nid prefix should only exist for session id
         assert(value.prefix(3) != "nid")
     }
 

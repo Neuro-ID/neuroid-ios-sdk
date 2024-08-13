@@ -34,7 +34,7 @@ public extension NeuroID {
         if let sidValue = sid {
             return sidValue
         }
-
+        // ENG-8455 nid prefix to session id for easier debugging
         let id = "nid-" + ParamsCreator.generateID()
         setUserDefaultKey(sidKeyName, value: id)
 
