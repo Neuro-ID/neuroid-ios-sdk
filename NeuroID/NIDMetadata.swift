@@ -108,7 +108,7 @@ final class NIDMetadata: Codable {
 
 extension NIDMetadata {
     static func getDeviceName() -> String {
-        return UIDevice.current.name
+        return ""
     }
 
     static func getDeviceModel() -> String {
