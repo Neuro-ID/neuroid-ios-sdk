@@ -22,30 +22,28 @@ private func textFieldSwizzling(element: UITextField.Type,
     }
 }
 
-internal extension UITextField {
+extension UITextField {
     func addTapGesture() {
         // Add a single-tap gesture recognizer
         let singleTapGesture = CustomTapGestureRecognizer(target: self, action: #selector(self.handleSingleTap))
         singleTapGesture.accessibilityLabel = self.id
-        if (!containsGestureRecognizer(recognizers: self.gestureRecognizers, find: singleTapGesture)){
+        if !containsGestureRecognizer(recognizers: self.gestureRecognizers, find: singleTapGesture) {
             self.addGestureRecognizer(singleTapGesture)
         }
-        
-    
+
         // Add a double-tap gesture recognizer
         let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
         doubleTapGesture.accessibilityLabel = self.id
-        if (!containsGestureRecognizer(recognizers: self.gestureRecognizers, find: doubleTapGesture)){
+        if !containsGestureRecognizer(recognizers: self.gestureRecognizers, find: doubleTapGesture) {
             self.addGestureRecognizer(doubleTapGesture)
         }
-        
 
         // Add a long-press gesture recognizer
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress))
         longPressGesture.accessibilityLabel = self.id
-        
-        if (!containsGestureRecognizer(recognizers: self.gestureRecognizers, find: longPressGesture)){
+
+        if !containsGestureRecognizer(recognizers: self.gestureRecognizers, find: longPressGesture) {
             self.addGestureRecognizer(longPressGesture)
         }
 
@@ -57,37 +55,30 @@ internal extension UITextField {
     }
 
     @objc func handleSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        let location = gestureRecognizer.location(in: self)
         captureTouchEvent(
             type: NIDEventName.customTap,
-            view: gestureRecognizer.view,
-            location: location)
+            gestureRecognizer: gestureRecognizer)
         self.becomeFirstResponder()
     }
 
     @objc func handleDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        let location = gestureRecognizer.location(in: self)
         captureTouchEvent(
             type: NIDEventName.customDoubleTap,
-            view: gestureRecognizer.view,
-            location: location)
+            gestureRecognizer: gestureRecognizer)
         self.becomeFirstResponder()
     }
 
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        let location = gestureRecognizer.location(in: self)
         if gestureRecognizer.state == .began {
             captureTouchEvent(
                 type: NIDEventName.customLongPress,
-                view: gestureRecognizer.view,
-                location: location,
+                gestureRecognizer: gestureRecognizer,
                 extraAttr: ["type": "start"])
 
         } else if gestureRecognizer.state == .ended {
             captureTouchEvent(
                 type: NIDEventName.customLongPress,
-                view: gestureRecognizer.view,
-                location: location,
+                gestureRecognizer: gestureRecognizer,
                 extraAttr: ["type": "end"])
         }
         self.becomeFirstResponder()
@@ -107,6 +98,18 @@ internal extension UITextField {
         textFieldSwizzling(element: textField,
                            originalSelector: #selector(textField.paste(_:)),
                            swizzledSelector: #selector(textField.neuroIDPaste))
+
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.touchesBegan(_:with:)),
+                           swizzledSelector: #selector(textField.neuroIDTouchStart))
+
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.touchesEnded(_:with:)),
+                           swizzledSelector: #selector(textField.neuroIDTouchEnd))
+
+        textFieldSwizzling(element: textField,
+                           originalSelector: #selector(textField.touchesMoved(_:with:)),
+                           swizzledSelector: #selector(textField.neuroIDTouchMoved))
     }
 
     @objc func neuroIDCut(caller: UIResponder) {
@@ -123,15 +126,45 @@ internal extension UITextField {
         self.neuroIDPaste(caller: caller)
         UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: nidClassName)
     }
+
+    @objc func neuroIDTouchStart(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.neuroIDTouchStart(touches, with: event)
+        self.touchEvent(sender: self, eventName: .touchStart, touches: touches)
+    }
+
+    @objc func neuroIDTouchEnd(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.neuroIDTouchEnd(touches, with: event)
+        self.touchEvent(sender: self, eventName: .touchEnd, touches: touches)
+    }
+
+    @objc func neuroIDTouchMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.neuroIDTouchMoved(touches, with: event)
+        self.touchEvent(sender: self, eventName: .touchMove, touches: touches)
+    }
+
+    func touchEvent(sender: UIView, eventName: NIDEventName, touches: Set<UITouch>) {
+        let touchArray = UtilFunctions.extractTouchInfoFromTouchArray(touches)
+        let tg = ParamsCreator.getTgParams(
+            view: sender,
+            extraParams: [
+                "sender": TargetValue.string(sender.nidClassName),
+                "location": TargetValue.string("UITextFieldSwizzle"),
+            ])
+
+        let event = NIDEvent(type: eventName, tg: tg, view: sender)
+        event.touches = touchArray
+
+        NeuroID.saveEventToDataStore(event)
+    }
 }
 
 func containsGestureRecognizer(recognizers: [UIGestureRecognizer]?, find: UIGestureRecognizer) -> Bool {
-   if let recognizers = recognizers {
-       for gr in recognizers {
-           if gr.accessibilityLabel == find.accessibilityLabel {
-               return true
-           }
-       }
-   }
-   return false
+    if let recognizers = recognizers {
+        for gr in recognizers {
+            if gr.accessibilityLabel == find.accessibilityLabel {
+                return true
+            }
+        }
+    }
+    return false
 }

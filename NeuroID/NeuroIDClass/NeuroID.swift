@@ -74,12 +74,11 @@ public class NeuroID: NSObject {
     static var lowMemory: Bool = false
 
     static var isAdvancedDevice: Bool = false
-    
-    static var packetNumber : Int32 = 0
-    
+
+    static var packetNumber: Int32 = 0
+
     static var isAdvancedDeviceLib = false
-    
-    
+
     // MARK: - Setup
 
     static func verifyClientKeyExists() -> Bool {
@@ -106,7 +105,7 @@ public class NeuroID: NSObject {
 
             return false
         }
-        
+
         updateBuildTypeFlag()
 
         NeuroID.isAdvancedDevice = isAdvancedDevice
@@ -132,7 +131,7 @@ public class NeuroID: NSObject {
         networkMonitor?.startMonitoring()
 
         captureApplicationMetaData()
-        
+
         let logEvent = NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
         NeuroID.saveEventToDataStore(logEvent)
 
@@ -162,7 +161,7 @@ public class NeuroID: NSObject {
         } catch {
             NIDLog.e("Failed to Stop because \(error)")
             let stopFailedLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to Stop because \(error)")
-           saveEventToDataStore(stopFailedLogEvent)
+            saveEventToDataStore(stopFailedLogEvent)
             return false
         }
 
@@ -184,22 +183,22 @@ public class NeuroID: NSObject {
 
     static func checkThenCaptureAdvancedDevice(_ shouldCapture: Bool = NeuroID.isAdvancedDevice) {
         let result = checkBuildType()
-        if (result.0) {
+        if result.0 {
             NeuroID.perform(result.1, with: [shouldCapture])
         } else {
             NIDLog.d("No advanced library found")
         }
     }
-    
+
     static func updateBuildTypeFlag() {
         let result = checkBuildType()
-        if (result.0) {
+        if result.0 {
             isAdvancedDeviceLib = true
         } else {
             isAdvancedDeviceLib = false
         }
     }
-    
+
     /**
      check for existance of the advanced lib method captureAdvancedDevice()
      */
