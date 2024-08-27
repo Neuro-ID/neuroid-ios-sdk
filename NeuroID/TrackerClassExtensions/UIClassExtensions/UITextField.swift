@@ -99,17 +99,17 @@ extension UITextField {
                            originalSelector: #selector(textField.paste(_:)),
                            swizzledSelector: #selector(textField.neuroIDPaste))
 
-        textFieldSwizzling(element: textField,
-                           originalSelector: #selector(textField.touchesBegan(_:with:)),
-                           swizzledSelector: #selector(textField.neuroIDTouchStart))
-
-        textFieldSwizzling(element: textField,
-                           originalSelector: #selector(textField.touchesEnded(_:with:)),
-                           swizzledSelector: #selector(textField.neuroIDTouchEnd))
-
-        textFieldSwizzling(element: textField,
-                           originalSelector: #selector(textField.touchesMoved(_:with:)),
-                           swizzledSelector: #selector(textField.neuroIDTouchMoved))
+//        textFieldSwizzling(element: textField,
+//                           originalSelector: #selector(textField.touchesBegan(_:with:)),
+//                           swizzledSelector: #selector(textField.neuroIDTouchStart))
+//
+//        textFieldSwizzling(element: textField,
+//                           originalSelector: #selector(textField.touchesEnded(_:with:)),
+//                           swizzledSelector: #selector(textField.neuroIDTouchEnd))
+//
+//        textFieldSwizzling(element: textField,
+//                           originalSelector: #selector(textField.touchesMoved(_:with:)),
+//                           swizzledSelector: #selector(textField.neuroIDTouchMoved))
     }
 
     @objc func neuroIDCut(caller: UIResponder) {

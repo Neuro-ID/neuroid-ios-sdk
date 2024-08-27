@@ -92,17 +92,17 @@ extension UITextView {
                           originalSelector: #selector(textField.paste(_:)),
                           swizzledSelector: #selector(textField.neuroIDPaste))
 
-        textViewSwizzling(element: textField,
-                          originalSelector: #selector(textField.touchesBegan(_:with:)),
-                          swizzledSelector: #selector(textField.neuroIDTouchStart))
-
-        textViewSwizzling(element: textField,
-                          originalSelector: #selector(textField.touchesEnded(_:with:)),
-                          swizzledSelector: #selector(textField.neuroIDTouchEnd))
-
-        textViewSwizzling(element: textField,
-                          originalSelector: #selector(textField.touchesMoved(_:with:)),
-                          swizzledSelector: #selector(textField.neuroIDTouchMoved))
+//        textViewSwizzling(element: textField,
+//                          originalSelector: #selector(textField.touchesBegan(_:with:)),
+//                          swizzledSelector: #selector(textField.neuroIDTouchStart))
+//
+//        textViewSwizzling(element: textField,
+//                          originalSelector: #selector(textField.touchesEnded(_:with:)),
+//                          swizzledSelector: #selector(textField.neuroIDTouchEnd))
+//
+//        textViewSwizzling(element: textField,
+//                          originalSelector: #selector(textField.touchesMoved(_:with:)),
+//                          swizzledSelector: #selector(textField.neuroIDTouchMoved))
     }
 
     @objc func neuroIDCut(caller: UIResponder) {
