@@ -53,13 +53,20 @@ class TouchEventTests: XCTestCase {
         captureTouchInfo(
             gesture: gesture,
             touches: mockTouches,
-            type: .touchStart)
+            type: .touchStart
+        )
 
         assertEventTypeCount(type: NIDEventName.touchStart.rawValue, expectedCount: 1)
     }
 
     func test_captureTouchEvent() {
-        captureTouchEvent(type: .touchStart, view: UIView(), location: CGPoint(x: 0.0, y: 1.1))
+        let view = UITextView()
+        let gesture = UITapGestureRecognizer(target: view, action: #selector(view.handleDoubleTap))
+
+        captureTouchEvent(
+            type: .touchStart,
+            gestureRecognizer: gesture
+        )
 
         assertEventTypeCount(type: NIDEventName.touchStart.rawValue, expectedCount: 1)
     }

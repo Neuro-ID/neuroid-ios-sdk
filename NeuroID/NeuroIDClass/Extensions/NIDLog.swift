@@ -91,7 +91,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
     } ?? [""]).joined(separator: ", ")
 
     let touchesString = (mutableEvent.touches?.map { item in
-        "x=\(String("\(item.x ?? 0)")), y=\(String("\(item.y ?? 0)")), tid=\(String("\(item.tid ?? 0)"))"
+        "(x=\(String("\(item.x ?? 0)")), y=\(String("\(item.y ?? 0)")), tid=\(String("\(item.tid ?? 0)")))"
     } ?? [""]).joined(separator: ", ")
 
     let attrsString = (mutableEvent.attrs?.map { item in
@@ -131,26 +131,26 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
 //            case NIDEventName.deregisterTarget.rawValue:
 //                contextString = ""
         case NIDEventName.touchStart.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString)"
+            contextString = "xy=[\(touchesString)] tg=\(tgString)"
         case NIDEventName.touchEnd.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString)"
+            contextString = "xy=[\(touchesString)] tg=\(tgString)"
         case NIDEventName.touchMove.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString)"
+            contextString = "xy=[\(touchesString)] tg=\(tgString)"
         case NIDEventName.closeSession.rawValue:
             contextString = ""
         case NIDSessionEventName.setVariable.rawValue:
             contextString = "key=\(mutableEvent.key ?? "Missing Key") v=\(mutableEvent.v ?? "Missing Value")"
         case NIDEventName.customTap.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+            contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
         case NIDEventName.customDoubleTap.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+            contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
         case NIDEventName.customLongPress.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+            contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
 
         case NIDEventName.customTouchStart.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+            contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
         case NIDEventName.customTouchEnd.rawValue:
-            contextString = "xy=\(touchesString) tg=\(tgString) attrs=[\(attrsString)]"
+            contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
 
         case NIDEventName.cut.rawValue:
             contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"

@@ -312,4 +312,58 @@ enum UtilFunctions {
 
         // URL capture?
     }
+
+    static func extractTouchesFromEvent(uiView: UIView, event: UIEvent) -> [NIDTouches] {
+        if let touches = event.allTouches {
+            return extractTouchInfoFromTouchArray(touches)
+        } else {
+            return []
+        }
+    }
+
+    static func extractTouchInfoFromTouchArray(_ touches: Set<UITouch>) -> [NIDTouches] {
+        var touchArray: [NIDTouches] = []
+
+        // Loop through each view in the array
+        for (index, touch) in touches.enumerated() {
+            let touchCor = touch.location(in: nil)
+            touchArray.append(
+                NIDTouches(
+                    x: touchCor.x,
+                    y: touchCor.y,
+                    tid: index,
+                    force: touch.force,
+                    majorRadius: touch.majorRadius,
+                    phase: touch.phase.rawValue,
+                    majorRadiusTolerance: touch.majorRadiusTolerance,
+                    tapCount: touch.tapCount,
+                    type: touch.type.rawValue,
+                    preciseLocation: touch.preciseLocation(in: nil)
+                )
+            )
+        }
+        return touchArray
+    }
+
+    static func extractTouchesFromGestureRecognizer(
+        gestureRecognizer: UIGestureRecognizer
+    ) -> [NIDTouches] {
+        let touchCount = gestureRecognizer.numberOfTouches
+
+        var touchArray: [NIDTouches] = []
+        var uiTouchArray: [NIDTouches] = []
+
+        if touchCount >= 1 {
+            for touchIndex in 0 ... touchCount - 1 {
+                let touchCor = gestureRecognizer.location(ofTouch: touchIndex, in: nil)
+
+                let uiTouchCor = gestureRecognizer.location(ofTouch: touchIndex, in: gestureRecognizer.view)
+
+                touchArray.append(NIDTouches(x: touchCor.x, y: touchCor.y, tid: touchIndex))
+                uiTouchArray.append(NIDTouches(x: uiTouchCor.x, y: uiTouchCor.y, tid: touchIndex))
+            }
+        }
+
+        return touchArray
+    }
 }
