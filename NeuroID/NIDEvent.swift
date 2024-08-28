@@ -124,6 +124,31 @@ public struct NIDTouches: Codable, Equatable {
     var x: CGFloat?
     var y: CGFloat?
     var tid: Int?
+
+    var force: CGFloat?
+    var majorRadius: CGFloat?
+    var phase: Int?
+    var majorRadiusTolerance: CGFloat?
+    var tapCount: Int?
+    var type: Int?
+    var preciseLocation: CGPoint?
+
+    func toAttrs() -> [Attrs] {
+        return [
+            Attrs(n: "x", v: "\(self.x ?? 0)"),
+            Attrs(n: "y", v: "\(self.y ?? 0)"),
+            Attrs(n: "tid", v: "\(self.tid ?? 0)"),
+
+            Attrs(n: "force", v: "\(self.force ?? 0)"),
+            Attrs(n: "majorRadius", v: "\(self.majorRadius ?? 0)"),
+            Attrs(n: "phase", v: "\(self.phase ?? -1)"),
+            Attrs(n: "majorRadiusTolerance", v: "\(self.majorRadiusTolerance ?? 0)"),
+            Attrs(n: "tapCount", v: "\(self.tapCount ?? 0)"),
+            Attrs(n: "type", v: "\(self.type ?? -1)"),
+            Attrs(n: "preciseLocationX", v: "\(self.preciseLocation?.x ?? 0)"),
+            Attrs(n: "preciseLocationY", v: "\(self.preciseLocation?.y ?? 0)"),
+        ]
+    }
 }
 
 public struct NeuroHTTPRequest: Codable {
@@ -597,7 +622,7 @@ public class NIDEvent: Codable {
             let touch = NIDTouches(
                 x: view?.frame.origin.x,
                 y: view?.frame.origin.y,
-                tid: Int.random(in: 0 ... 10000)
+                tid: -1
             )
             self.touches = [touch]
         default:

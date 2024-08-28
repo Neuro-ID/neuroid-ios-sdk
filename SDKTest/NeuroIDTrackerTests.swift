@@ -274,21 +274,21 @@ class NeuroIDTrackerTests: XCTestCase {
             target: button,
             actionParent: tracker,
             actionType: .touchDown,
-            actionName: "controlTouchStartWithSender:"
+            actionName: "controlTouchStartWithSender:forEvent:"
         )
         
         assertActionExists(
             target: button,
             actionParent: tracker,
             actionType: .touchUpInside,
-            actionName: "controlTouchEndWithSender:"
+            actionName: "controlTouchEndWithSender:forEvent:"
         )
         
         assertActionExists(
             target: button,
             actionParent: tracker,
             actionType: .touchUpOutside,
-            actionName: "controlTouchMoveWithSender:"
+            actionName: "controlTouchMoveWithSender:forEvent:"
         )
         
         assertActionExists(

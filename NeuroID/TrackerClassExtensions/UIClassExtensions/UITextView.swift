@@ -22,7 +22,7 @@ private func textViewSwizzling(element: UITextView.Type,
     }
 }
 
-internal extension UITextView {
+extension UITextView {
     func addTapGesture() {
         // Add a single-tap gesture recognizer
         let singleTapGesture = CustomTapGestureRecognizer(target: self, action: #selector(self.handleSingleTap))
@@ -48,8 +48,7 @@ internal extension UITextView {
         let location = gestureRecognizer.location(in: self)
         captureTouchEvent(
             type: NIDEventName.customTap,
-            view: gestureRecognizer.view,
-            location: location)
+            gestureRecognizer: gestureRecognizer)
         self.becomeFirstResponder()
     }
 
@@ -57,8 +56,7 @@ internal extension UITextView {
         let location = gestureRecognizer.location(in: self)
         captureTouchEvent(
             type: NIDEventName.customDoubleTap,
-            view: gestureRecognizer.view,
-            location: location)
+            gestureRecognizer: gestureRecognizer)
         self.becomeFirstResponder()
     }
 
@@ -67,15 +65,13 @@ internal extension UITextView {
         if gestureRecognizer.state == .began {
             captureTouchEvent(
                 type: NIDEventName.customLongPress,
-                view: gestureRecognizer.view,
-                location: location,
+                gestureRecognizer: gestureRecognizer,
                 extraAttr: ["type": "start"])
 
         } else if gestureRecognizer.state == .ended {
             captureTouchEvent(
                 type: NIDEventName.customLongPress,
-                view: gestureRecognizer.view,
-                location: location,
+                gestureRecognizer: gestureRecognizer,
                 extraAttr: ["type": "end"])
         }
         self.becomeFirstResponder()
@@ -95,6 +91,18 @@ internal extension UITextView {
         textViewSwizzling(element: textField,
                           originalSelector: #selector(textField.paste(_:)),
                           swizzledSelector: #selector(textField.neuroIDPaste))
+
+//        textViewSwizzling(element: textField,
+//                          originalSelector: #selector(textField.touchesBegan(_:with:)),
+//                          swizzledSelector: #selector(textField.neuroIDTouchStart))
+//
+//        textViewSwizzling(element: textField,
+//                          originalSelector: #selector(textField.touchesEnded(_:with:)),
+//                          swizzledSelector: #selector(textField.neuroIDTouchEnd))
+//
+//        textViewSwizzling(element: textField,
+//                          originalSelector: #selector(textField.touchesMoved(_:with:)),
+//                          swizzledSelector: #selector(textField.neuroIDTouchMoved))
     }
 
     @objc func neuroIDCut(caller: UIResponder) {
@@ -110,5 +118,35 @@ internal extension UITextView {
     @objc func neuroIDPaste(caller: UIResponder) {
         self.neuroIDPaste(caller: caller)
         UtilFunctions.captureContextMenuAction(type: NIDEventName.paste, view: self, text: text, className: nidClassName)
+    }
+
+    @objc func neuroIDTouchStart(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.neuroIDTouchStart(touches, with: event)
+        self.touchEvent(sender: self, eventName: .touchStart, touches: touches)
+    }
+
+    @objc func neuroIDTouchEnd(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.neuroIDTouchEnd(touches, with: event)
+        self.touchEvent(sender: self, eventName: .touchEnd, touches: touches)
+    }
+
+    @objc func neuroIDTouchMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.neuroIDTouchMoved(touches, with: event)
+        self.touchEvent(sender: self, eventName: .touchMove, touches: touches)
+    }
+
+    func touchEvent(sender: UIView, eventName: NIDEventName, touches: Set<UITouch>) {
+        let touchArray = UtilFunctions.extractTouchInfoFromTouchArray(touches)
+        let tg = ParamsCreator.getTgParams(
+            view: sender,
+            extraParams: [
+                "sender": TargetValue.string(sender.nidClassName),
+                "location": TargetValue.string("UITextViewSwizzle"),
+            ])
+
+        let event = NIDEvent(type: eventName, tg: tg, view: sender)
+        event.touches = touchArray
+
+        NeuroID.saveEventToDataStore(event)
     }
 }

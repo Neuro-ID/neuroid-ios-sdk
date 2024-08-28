@@ -10,31 +10,40 @@ import UIKit
 
 // MARK: - Touch events
 
-internal extension NeuroIDTracker {
+extension NeuroIDTracker {
     func observeTouchEvents(_ sender: UIControl) {
         sender.addTarget(self, action: #selector(controlTouchStart), for: .touchDown)
         sender.addTarget(self, action: #selector(controlTouchEnd), for: .touchUpInside)
         sender.addTarget(self, action: #selector(controlTouchMove), for: .touchUpOutside)
     }
 
-    @objc func controlTouchStart(sender: UIView) {
-        touchEvent(sender: sender, eventName: .touchStart)
+    @objc func controlTouchStart(sender: UIView, forEvent event: UIEvent) {
+        touchEvent(sender: sender, eventName: .touchStart, event: event)
     }
 
-    @objc func controlTouchEnd(sender: UIView) {
-        touchEvent(sender: sender, eventName: .touchEnd)
+    @objc func controlTouchEnd(sender: UIView, forEvent event: UIEvent) {
+        touchEvent(sender: sender, eventName: .touchEnd, event: event)
     }
 
-    @objc func controlTouchMove(sender: UIView) {
-        touchEvent(sender: sender, eventName: .touchMove)
+    @objc func controlTouchMove(sender: UIView, forEvent event: UIEvent) {
+        touchEvent(sender: sender, eventName: .touchMove, event: event)
     }
 
-    func touchEvent(sender: UIView, eventName: NIDEventName) {
+    func touchEvent(sender: UIView, eventName: NIDEventName, event: UIEvent) {
+        let touchArray = UtilFunctions.extractTouchesFromEvent(uiView: sender, event: event)
+
         let tg = ParamsCreator.getTgParams(
             view: sender,
-            extraParams: ["sender": TargetValue.string(sender.nidClassName)])
+            extraParams: [
+                "sender": TargetValue.string(sender.nidClassName),
+                "location": TargetValue.string("UIControlSwizzle"),
+            ]
+        )
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
+        let nidEvent = NIDEvent(type: eventName, tg: tg, view: sender)
+        nidEvent.touches = touchArray
+
+        captureEvent(event: nidEvent)
     }
 }
 
@@ -53,8 +62,6 @@ class CustomTapGestureRecognizer: UITapGestureRecognizer {
 }
 
 func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, type: NIDEventName) {
-    let location = gesture.location(in: gesture.view)
-
     var size: CGFloat = 0.0
     var force: CGFloat = 0.0
     if let touch = touches.first {
@@ -65,29 +72,36 @@ func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, ty
         size = touch.majorRadius
     }
 
-    captureTouchEvent(type: type, view: gesture.view, location: location, extraAttr: ["size": "\(size)", "force": "\(force)"])
+    captureTouchEvent(
+        type: type,
+        gestureRecognizer: gesture,
+        extraAttr: ["size": "\(size)", "force": "\(force)"]
+    )
 }
 
-func captureTouchEvent(type: NIDEventName, view: UIView?, location: CGPoint, extraAttr: [String: String] = [:]) {
-    let viewName = view?.id ?? "NO_TARGET"
-    let viewClass = view?.nidClassName ?? "NO_TARGET_CLASS"
-
-    let xCoordinate = location.x
-    let yCoordinate = location.y
-
+func captureTouchEvent(
+    type: NIDEventName,
+    gestureRecognizer: UIGestureRecognizer,
+    extraAttr: [String: String] = [:]
+) {
     if NeuroID.isStopped() {
         return
     }
 
+    let viewName = gestureRecognizer.view?.id ?? "NO_TARGET"
+    let viewClass = gestureRecognizer.view?.nidClassName ?? "NO_TARGET_CLASS"
+
+    let touchArray = UtilFunctions.extractTouchesFromGestureRecognizer(
+        gestureRecognizer: gestureRecognizer
+    )
+
     let tg: [String: TargetValue] = [
         "\(Constants.tgsKey.rawValue)": TargetValue.string(viewName),
         "\(Constants.etnKey.rawValue)": TargetValue.string(viewClass),
+        "location": TargetValue.string("gestureRecognizer"),
     ]
 
-    var attrs: [Attrs] = [
-        Attrs(n: "x", v: "\(xCoordinate)"),
-        Attrs(n: "y", v: "\(yCoordinate)"),
-    ]
+    var attrs: [Attrs] = []
 
     for (key, value) in extraAttr {
         attrs.append(Attrs(n: key, v: value))
@@ -96,9 +110,7 @@ func captureTouchEvent(type: NIDEventName, view: UIView?, location: CGPoint, ext
     let newEvent = NIDEvent(type: type, tg: tg)
     newEvent.tgs = viewName
     newEvent.attrs = attrs
-    newEvent.touches = [
-        NIDTouches(x: xCoordinate, y: yCoordinate),
-    ]
+    newEvent.touches = touchArray
     // Make sure we have a valid url set
     newEvent.url = NeuroID.getScreenName()
     DataStore.insertEvent(screen: viewClass, event: newEvent)
