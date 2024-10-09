@@ -6,7 +6,6 @@
 //
 
 @testable import NeuroID
-@testable import NeuroIDAdvancedDevice
 import XCTest
 
 class NeuroIDClassTests: XCTestCase {

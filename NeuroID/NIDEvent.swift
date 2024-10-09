@@ -91,6 +91,7 @@ public enum NIDEventName: String {
     case cadenceReadingAccel = "CADENCE_READING_ACCEL"
     case networkState = "NETWORK_STATE"
     case applicationMetaData = "APPLICATION_METADATA"
+    case advancedDeviceRequestFailed = "ADVANCED_DEVICE_REQUEST_FAILED"
 
     // Memory and queue events
     case bufferFull = "FULL_BUFFER"
