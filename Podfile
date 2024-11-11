@@ -1,14 +1,14 @@
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/Alamofire/Alamofire.git'
 # Uncomment the next line to define a global platform for your project
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 target 'NeuroID' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
 
-  pod 'FingerprintPro', '~> 2.0'
+  pod 'FingerprintPro', '2.7.0'
   pod 'Alamofire'
 end
 target 'SDKTest' do
