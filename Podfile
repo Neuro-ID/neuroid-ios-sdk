@@ -8,7 +8,7 @@ target 'NeuroID' do
   use_frameworks!
 
 
-  pod 'FingerprintPro', '2.6.0'
+  pod 'FingerprintPro', '2.7.0'
   pod 'Alamofire'
 end
 target 'SDKTest' do
