@@ -31,7 +31,7 @@ end
 s.subspec 'AdvancedDevice' do |advanced|
     advanced.ios.deployment_target = '12.0'
     advanced.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
-    advanced.dependency 'FingerprintPro', '~> 2.0'
+    advanced.dependency 'FingerprintPro', '2.7.0'
 end
 
 s.license = { :type => "MIT", :text => <<-LICENSE
