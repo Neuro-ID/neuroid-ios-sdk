@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 s.platform = :ios
-s.ios.deployment_target = '12.0'
+s.ios.deployment_target = '13.0'
 s.swift_version = '5.0'
 
 s.name = "NeuroID"
@@ -29,7 +29,7 @@ s.subspec 'Core' do |core|
 end
 
 s.subspec 'AdvancedDevice' do |advanced|
-    advanced.ios.deployment_target = '12.0'
+    advanced.ios.deployment_target = '13.0'
     advanced.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
     advanced.dependency 'FingerprintPro', '2.7.0'
 end
