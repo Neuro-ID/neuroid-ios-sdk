@@ -232,7 +232,7 @@ class NeuroIDADV: NSObject, DeviceSignalService {
         _ apiKey: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        if #available(iOS 12.0, *) {
+        if #available(iOS 13.0, *) {
             let region: Region = .custom(domain: "https://advanced.neuro-id.com")
             let configuration = Configuration(apiKey: apiKey, region: region)
             let client = FingerprintProFactory.getInstance(configuration)
