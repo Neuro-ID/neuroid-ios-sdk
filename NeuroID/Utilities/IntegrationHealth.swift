@@ -8,28 +8,6 @@
 import Foundation
 import UIKit
 
-struct IntegrationHealthDeviceInfo: Codable {
-    var name: String
-    var systemName: String
-    var systemVersion: String
-    var isSimulator: Bool
-    var Orientation: DeviceOrientation // different type
-
-    var model: String
-    var type: String
-    var customDeviceType: String
-
-    var nidSDKVersion: String
-}
-
-struct DeviceOrientation: Codable {
-    var rawValue: Int
-    var isFlat: Bool
-    var isPortrait: Bool
-    var isLandscape: Bool
-    var isValid: Bool
-}
-
 func formatDate(date: Date, dashSeparator: Bool = false) -> String {
     let df = DateFormatter()
     let timeFormat = dashSeparator ? "hh-mm-ss" : "hh:mm:ss"
@@ -68,23 +46,6 @@ func generateIntegrationHealthDeviceReport(_ device: UIDevice) {
     }
 }
 
-func generateIntegrationHealthReport(saveCopy: Bool = false) {
-    let events = NeuroID.getIntegrationHealthEvents()
-
-    // save to directory where Health Report is HTML is stored
-    do {
-        try? writeNIDEventsToJSON("\(Constants.integrationFilePath.rawValue)/\(Constants.integrationHealthFile.rawValue)", items: events)
-    }
-
-    // Save a backup copy that won't be overwritten on next health check
-    if saveCopy {
-        let fileName = "\(formatDate(date: Date(), dashSeparator: true))-\(Constants.integrationHealthFile.rawValue)"
-        do {
-            try? writeNIDEventsToJSON("\(fileName)", items: events)
-        }
-    }
-}
-
 func saveIntegrationHealthResources() {
     if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: Constants.integrationHealthResourceBundle.rawValue, withExtension: "bundle") {
         let NIDDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(Constants.integrationFilePath.rawValue)
@@ -102,14 +63,18 @@ func saveIntegrationHealthResources() {
     }
 }
 
-extension NeuroID {
-    static func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
+class IntegrationHealthService: IntegrationHealthProtocol {
+     var verifyIntegrationHealth: Bool = false
+     var debugIntegrationHealthEvents: [NIDEvent] = []
+    
+    
+     func shouldDebugIntegrationHealth(_ ifTrueCB: () -> ()) {
         if verifyIntegrationHealth {
             ifTrueCB()
         }
     }
 
-    static func startIntegrationHealthCheck() {
+     func startIntegrationHealthCheck() {
         shouldDebugIntegrationHealth {
             debugIntegrationHealthEvents = []
             generateIntegrationHealthDeviceReport(UIDevice.current)
@@ -117,32 +82,45 @@ extension NeuroID {
         }
     }
 
-    static func captureIntegrationHealthEvent(_ event: NIDEvent) {
+     func captureIntegrationHealthEvent(_ event: NIDEvent) {
         shouldDebugIntegrationHealth {
             NIDLog.d(tag: "\(Constants.integrationHealthTag.rawValue)", "Adding NeuroID Health Event \(event.type)")
             debugIntegrationHealthEvents.append(event)
         }
     }
 
-    static func getIntegrationHealthEvents() -> [NIDEvent] {
+     func getIntegrationHealthEvents() -> [NIDEvent] {
         return debugIntegrationHealthEvents
     }
 
-    static func saveIntegrationHealthEvents() {
+     func saveIntegrationHealthEvents() {
         shouldDebugIntegrationHealth {
             generateNIDIntegrationHealthReport()
         }
     }
 
-    static func generateNIDIntegrationHealthReport(saveIntegrationHealthReport: Bool = false) {
+     func generateNIDIntegrationHealthReport(saveIntegrationHealthReport: Bool = false) {
         shouldDebugIntegrationHealth {
-            generateIntegrationHealthReport(saveCopy: saveIntegrationHealthReport)
+            let events = self.getIntegrationHealthEvents()
+
+            // save to directory where Health Report is HTML is stored
+            do {
+                try? writeNIDEventsToJSON("\(Constants.integrationFilePath.rawValue)/\(Constants.integrationHealthFile.rawValue)", items: events)
+            }
+
+            // Save a backup copy that won't be overwritten on next health check
+            if saveIntegrationHealthReport {
+                let fileName = "\(formatDate(date: Date(), dashSeparator: true))-\(Constants.integrationHealthFile.rawValue)"
+                do {
+                    try? writeNIDEventsToJSON("\(fileName)", items: events)
+                }
+            }
+            
         }
     }
-}
-
-public extension NeuroID {
-    static func printIntegrationHealthInstruction() {
+    
+    // Public Commands called
+     func printIntegrationHealthInstruction() {
         var instructions = ""
 
         shouldDebugIntegrationHealth {
@@ -158,17 +136,29 @@ public extension NeuroID {
                    \n   **************************************************************
                     \n\n
                 """
-                NIDLog.log(instructions)
+                NIDLog.i(instructions)
             } catch {}
             saveIntegrationHealthResources()
             startIntegrationHealthCheck()
         }
     }
 
-    static func setVerifyIntegrationHealth(_ verify: Bool) {
+     func setVerifyIntegrationHealth(_ verify: Bool) {
         verifyIntegrationHealth = verify
         if verify {
             printIntegrationHealthInstruction()
         }
+    }
+    
+    
+    
+}
+
+extension NeuroID {
+    /**
+        Method used for reflection to determine class is included
+     */
+    @objc internal static func configureIntegrationHealthService(){
+        integrationHealthService = IntegrationHealthService()
     }
 }
