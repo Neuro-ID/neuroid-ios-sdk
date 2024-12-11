@@ -101,6 +101,7 @@
 		F2F0A3F029F6C8390083D43C /* IntegrationHealthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */; };
 		F2F0A3F329FB051D0083D43C /* FileCreationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */; };
 		F2F0A3F529FB05A90083D43C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F429FB05A90083D43C /* Constants.swift */; };
+		FF48CA292D09063600BD5F41 /* NIDIntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF48CA282D09063600BD5F41 /* NIDIntegrationHealth.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -227,6 +228,7 @@
 		F2F0A3EF29F6C8390083D43C /* IntegrationHealthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationHealthTests.swift; sourceTree = "<group>"; };
 		F2F0A3F229FB051D0083D43C /* FileCreationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCreationUtils.swift; sourceTree = "<group>"; };
 		F2F0A3F429FB05A90083D43C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FF48CA282D09063600BD5F41 /* NIDIntegrationHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDIntegrationHealth.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -474,6 +476,7 @@
 				F2546A6D2B9A121500348BD7 /* NIDTesting.swift */,
 				F2420C342BF3A1CD00143928 /* NIDListeners.swift */,
 				1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */,
+				FF48CA282D09063600BD5F41 /* NIDIntegrationHealth.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -753,6 +756,7 @@
 				F2AEE73F2A27A6E9009690CB /* NIDUser.swift in Sources */,
 				F21702AE29D4CC5500133A1C /* UINavigationController.swift in Sources */,
 				F2AEE7392A27A64E009690CB /* NIDSession.swift in Sources */,
+				FF48CA292D09063600BD5F41 /* NIDIntegrationHealth.swift in Sources */,
 				F2AEE7412A27A719009690CB /* NIDEnv.swift in Sources */,
 				4B0AA7F92B646D50001F26B3 /* NIDCallStatusObserver.swift in Sources */,
 				F21702B629D4CDB300133A1C /* String.swift in Sources */,

@@ -63,8 +63,7 @@ public class NeuroID: NSObject {
     static var observingKeyboard = false
     static var didSwizzle: Bool = false
 
-    static var verifyIntegrationHealth: Bool = false
-    static var debugIntegrationHealthEvents: [NIDEvent] = []
+    static var integrationHealthService:IntegrationHealthProtocol?
 
     public static var registeredTargets = [String]()
 
@@ -87,6 +86,15 @@ public class NeuroID: NSObject {
             return false
         }
         return true
+    }
+    
+    static func verifyDebugModuleExists() -> Void {
+        let result = checkBuildType("configureIntegrationHealthService")
+        if result.0 {
+            NeuroID.perform(result.1)
+        } else {
+            NIDLog.i("No Debug Module found")
+        }
     }
 
     /// 1. Configure the SDK
@@ -134,6 +142,8 @@ public class NeuroID: NSObject {
 
         let logEvent = NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
         NeuroID.saveEventToDataStore(logEvent)
+        
+        verifyDebugModuleExists()
 
         return true
     }
@@ -170,7 +180,7 @@ public class NeuroID: NSObject {
         NeuroID.linkedSiteID = nil
 
         // save captured health events to file
-        saveIntegrationHealthEvents()
+        integrationHealthService?.saveIntegrationHealthEvents()
 
         //  stop listening to changes in call status
         NeuroID.callObserver?.stopListeningToCallStatus()
@@ -182,16 +192,16 @@ public class NeuroID: NSObject {
     }
 
     static func checkThenCaptureAdvancedDevice(_ shouldCapture: Bool = NeuroID.isAdvancedDevice) {
-        let result = checkBuildType()
+        let result = checkBuildType("captureAdvancedDevice:")
         if result.0 {
             NeuroID.perform(result.1, with: [shouldCapture])
         } else {
-            NIDLog.d("No advanced library found")
+            NIDLog.d("No Advanced Module found")
         }
     }
 
     static func updateBuildTypeFlag() {
-        let result = checkBuildType()
+        let result = checkBuildType("captureAdvancedDevice:")
         if result.0 {
             isAdvancedDeviceLib = true
         } else {
@@ -202,8 +212,7 @@ public class NeuroID: NSObject {
     /**
      check for existance of the advanced lib method captureAdvancedDevice()
      */
-    static func checkBuildType() -> (Bool, Selector) {
-        let selectorString = "captureAdvancedDevice:"
+    static func checkBuildType(_ selectorString:String = "captureAdvancedDevice:") -> (Bool, Selector) {
         let selector = NSSelectorFromString(selectorString)
         if NeuroID.responds(to: selector) {
             return (true, selector)

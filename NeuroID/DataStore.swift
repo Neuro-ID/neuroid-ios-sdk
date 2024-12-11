@@ -90,7 +90,7 @@ public enum DataStore {
                 DataStore.queuedEvents.append(event)
             }
         } else {
-            NeuroID.captureIntegrationHealthEvent(event.copy())
+            NeuroID.integrationHealthService?.captureIntegrationHealthEvent(event.copy())
             NIDPrintEvent(event)
             DispatchQueue.global(qos: .utility).sync {
                 DataStore.events.append(event)
