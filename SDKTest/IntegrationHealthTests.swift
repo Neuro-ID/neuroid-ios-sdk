@@ -9,31 +9,22 @@
 import XCTest
 
 class IntegrationHealthTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+    
+    var integrationHealthService: IntegrationHealthService = IntegrationHealthService()
 
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-    }
-
-    override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-    }
 
     override func setUp() {
-        NeuroID._isSDKStarted = true
-        NeuroID.debugIntegrationHealthEvents = []
-        NeuroID.setVerifyIntegrationHealth(false)
+        
+        integrationHealthService = IntegrationHealthService()
+        
     }
 
     override func tearDown() {
-        _ = NeuroID.stop()
-
-        // Clear out the DataStore Events after each test
-        clearOutDataStore()
+      
     }
 
     func allowIH() {
-        NeuroID.setVerifyIntegrationHealth(true)
+        integrationHealthService.setVerifyIntegrationHealth(true)
     }
 
     func generateTestEvent(_ target: UIView = UITextField(), _ eventType: NIDEventName = NIDEventName.textChange) -> NIDEvent {
@@ -75,44 +66,45 @@ class IntegrationHealthTests: XCTestCase {
 //    }
 
     func test_shouldDebugIntegrationHealth() {
-        NeuroID.setVerifyIntegrationHealth(true)
-        NeuroID.shouldDebugIntegrationHealth {
+        integrationHealthService.setVerifyIntegrationHealth(true)
+        integrationHealthService.shouldDebugIntegrationHealth {
             assert(true)
         }
+        
 
         // set NID verify Health to false
-        NeuroID.setVerifyIntegrationHealth(false)
-        NeuroID.shouldDebugIntegrationHealth {
+        integrationHealthService.setVerifyIntegrationHealth(false)
+        integrationHealthService.shouldDebugIntegrationHealth {
             XCTFail("Ran when VIH was FALSE")
         }
     }
 
     func test_startIntegrationHealthCheck() {
         allowIH()
-        NeuroID.debugIntegrationHealthEvents = [generateTestEvent()]
+        integrationHealthService.debugIntegrationHealthEvents = [generateTestEvent()]
 
-        NeuroID.startIntegrationHealthCheck()
+        integrationHealthService.startIntegrationHealthCheck()
 
-        assert(NeuroID.debugIntegrationHealthEvents.count == 0)
+        assert(integrationHealthService.debugIntegrationHealthEvents.count == 0)
     }
 
     func test_captureIntegrationHealthEvent() {
         allowIH()
         let event = generateTestEvent()
 
-        NeuroID.captureIntegrationHealthEvent(event)
-        assert(NeuroID.debugIntegrationHealthEvents.count == 1)
+        integrationHealthService.captureIntegrationHealthEvent(event)
+        assert(integrationHealthService.debugIntegrationHealthEvents.count == 1)
     }
 
     func test_getIntegrationHealthEvents() {
         allowIH()
 
-        let events = NeuroID.getIntegrationHealthEvents()
+        let events = integrationHealthService.getIntegrationHealthEvents()
         assert(events.count == 0)
 
-        NeuroID.debugIntegrationHealthEvents = [generateTestEvent()]
+        integrationHealthService.debugIntegrationHealthEvents = [generateTestEvent()]
 
-        let events2 = NeuroID.getIntegrationHealthEvents()
+        let events2 = integrationHealthService.getIntegrationHealthEvents()
         assert(events2.count == 1)
     }
 
@@ -127,9 +119,9 @@ class IntegrationHealthTests: XCTestCase {
 //    }
 //
     func test_setVerifyIntegrationHealth() {
-        assert(NeuroID.verifyIntegrationHealth == false)
+        assert(integrationHealthService.verifyIntegrationHealth == false)
 
-        NeuroID.setVerifyIntegrationHealth(true)
-        assert(NeuroID.verifyIntegrationHealth == true)
+        integrationHealthService.setVerifyIntegrationHealth(true)
+        assert(integrationHealthService.verifyIntegrationHealth == true)
     }
 }

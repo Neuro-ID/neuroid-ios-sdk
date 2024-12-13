@@ -266,7 +266,7 @@ extension NeuroID {
 
         NeuroID.setupListeners()
 
-        NeuroID.startIntegrationHealthCheck()
+        NeuroID.integrationHealthService?.startIntegrationHealthCheck()
 
         NeuroID.createSession()
         swizzle()
@@ -276,7 +276,7 @@ extension NeuroID {
         customFunctionality()
 
         // save beginSession events to MIHR file
-        saveIntegrationHealthEvents()
+        NeuroID.integrationHealthService?.saveIntegrationHealthEvents()
 
         let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
         for event in queuedEvents {

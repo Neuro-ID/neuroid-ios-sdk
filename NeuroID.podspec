@@ -14,25 +14,41 @@ s.homepage = "https://neuro-id.com/"
 
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
 s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
-s.resource_bundles = {
-    'Resources' => ['NeuroID/Resources/**/*', 'Info.plist'],
-    'NeuroID' => ['NeuroID/PrivacyInfo.xcprivacy']
-}
-s.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
+
+s.exclude_files = [
+    'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift',
+    'NeuroID/Utilities/IntegrationHealth.swift'
+]
 
 s.dependency 'Alamofire'
 
 s.default_subspecs = 'Core'
 s.subspec 'Core' do |core|
     core.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
-    core.exclude_files = 'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift'
+    core.exclude_files = [
+        'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift', 
+        'NeuroID/Utilities/IntegrationHealth.swift'
+    ]
+
+    core.resource_bundles = {
+        'NeuroID' => ['NeuroID/PrivacyInfo.xcprivacy', "Info.plist"]
+    }
 end
 
 s.subspec 'AdvancedDevice' do |advanced|
-    advanced.ios.deployment_target = '13.0'
-    advanced.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+    advanced.source_files = ['NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift']
+    
     advanced.dependency 'FingerprintPro', '2.7.0'
 end
+
+s.subspec 'Debug' do |debug|
+    debug.source_files = ['NeuroID/Utilities/IntegrationHealth.swift' ]
+
+    debug.resource_bundles = {
+        'Resources' => ['NeuroID/Resources/**/*'],
+    }
+end
+
 
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>
