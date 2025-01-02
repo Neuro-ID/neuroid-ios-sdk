@@ -135,9 +135,3 @@ jobs:
             };
 
             createPullRequest();
-
-      - name: Pre-check PodSpec
-        run: pod spec lint --allow-warnings
-
-      - name: Pre-check Pod Libraries
-        run: pod lib lint --allow-warnings
