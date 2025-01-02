@@ -3,7 +3,7 @@
 # or a PR goes into main from a branch that has a prefix of `releases/`
 # ******************************************************************
 
-name: Release SDK Version
+name: Release SDK Version Post PR
 
 on:
   pull_request_target:
