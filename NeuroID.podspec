@@ -39,6 +39,7 @@ s.subspec 'AdvancedDevice' do |advanced|
     advanced.source_files = ['NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift']
     
     advanced.dependency 'FingerprintPro', '2.7.0'
+    advanced.dependency "#{s.name}/Core"
 end
 
 s.subspec 'Debug' do |debug|
@@ -47,6 +48,8 @@ s.subspec 'Debug' do |debug|
     debug.resource_bundles = {
         'Resources' => ['NeuroID/Resources/**/*'],
     }
+
+    debug.dependency "#{s.name}/Core"
 end
 
 

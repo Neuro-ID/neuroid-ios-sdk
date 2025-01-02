@@ -12,7 +12,7 @@
 #   Choose if the change affects only the react-native platform.
 # ******************************************************************
 
-name: Pre-Release SDK PR
+name: SDK Version Update PR
 
 on:
   workflow_dispatch:
@@ -129,3 +129,9 @@ jobs:
             };
 
             createPullRequest();
+
+      - name: Pre-check PodSpec
+        run: pod spec lint --allow-warnings
+
+      - name: Pre-check Pod Libraries
+        run: pod lib lint --allow-warnings
