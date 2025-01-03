@@ -30,7 +30,7 @@ public class NeuroID: NSObject {
     static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
 
     static var clientID: String?
-    static var userID: String?
+    static var sessionID: String? // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static var registeredUserID: String = ""
 
     static var trackers = [String: NeuroIDTracker]()
@@ -124,8 +124,7 @@ public class NeuroID: NSObject {
             environment = Constants.environmentTest.rawValue
         }
 
-        clearStoredSessionID()
-        NeuroID.linkedSiteID = nil
+        NeuroID.clearSessionVariables()
 
         NeuroID.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
@@ -140,8 +139,9 @@ public class NeuroID: NSObject {
 
         captureApplicationMetaData()
 
-        let logEvent = NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
-        NeuroID.saveEventToDataStore(logEvent)
+        NeuroID.saveEventToDataStore(
+            NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
+        )
         
         verifyDebugModuleExists()
 

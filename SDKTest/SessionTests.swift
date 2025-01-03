@@ -13,10 +13,10 @@ class SessionTests: XCTestCase {
 
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-        NeuroID.clearStoredSessionID()
+   
         NeuroID._isSDKStarted = true
         DataStore.removeSentEvents()
-        UserDefaults.standard.removeObject(forKey: Constants.storageSessionIDKey.rawValue)
+
 
         NeuroID.collectionURL = Constants.productionURL.rawValue
     }

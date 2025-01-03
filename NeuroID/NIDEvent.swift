@@ -159,7 +159,7 @@ public struct NeuroHTTPRequest: Codable {
     var pageTag: String
     var responseId: String
     var siteId: String
-    var userId: String?
+    var userId: String? // this is the only reference where userId stays but really means sessionID in the context of mobile sdk
     var registeredUserId: String?
     var jsonEvents: [NIDEvent]
     var tabId: String
@@ -176,8 +176,8 @@ public struct NeuroHTTPRequest: Codable {
         pageTag: String,
         responseID: String,
         siteID: String,
-        linkedSiteId: String?,
-        userID: String?,
+        linkedSiteID: String?,
+        sessionID: String?,
         registeredUserID: String?,
         jsonEvents: [NIDEvent],
         tabID: String,
@@ -191,8 +191,8 @@ public struct NeuroHTTPRequest: Codable {
         self.pageTag = pageTag
         self.responseId = responseID
         self.siteId = siteID
-        self.linkedSiteId = linkedSiteId
-        self.userId = userID
+        self.linkedSiteId = linkedSiteID
+        self.userId = sessionID
         self.registeredUserId = registeredUserID
         self.jsonEvents = jsonEvents
         self.tabId = tabID

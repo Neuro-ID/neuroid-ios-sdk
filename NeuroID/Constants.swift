@@ -26,8 +26,6 @@ enum Constants: String {
     case storageClientKey = "nid_key"
     case storageClientIDKey = "nid_cid"
     case storageTabIDKey = "nid_tid"
-    case storageSessionIDKey = "nid_sid"
-    case storageUserIDKey = "nid_user_id"
     case storageDeviceIDKey = "nid_did"
     case storageDntKey = "nid_dnt"
     case storageSessionExpiredKey = "nid_sid_expires"

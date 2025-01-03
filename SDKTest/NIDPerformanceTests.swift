@@ -97,7 +97,7 @@ final class NIDPerformanceTests: XCTestCase {
 //        // Buffer flow
 //        for _ in 1...3000 {
 //            let expectedValue = "myTestUserID"
-//            _ = NeuroID.setGenericUserID(
+//            _ = NeuroID.setGenericIdentifier(
 //                userId: expectedValue,
 //                type: .registeredUserID
 //            ) { res in
@@ -112,7 +112,7 @@ final class NIDPerformanceTests: XCTestCase {
 //        _ = NeuroID.stop()
 //        for _ in 1...2100 {
 //            let expectedValue = "myTestUserID"
-//            _ = NeuroID.setGenericUserID(
+//            _ = NeuroID.setGenericIdentifier(
 //                userId: expectedValue,
 //                type: .registeredUserID
 //            ) { res in
@@ -142,7 +142,7 @@ final class NIDPerformanceTests: XCTestCase {
 //        
 //        for _ in 1...100 {
 //            let expectedValue = "myTestUserID"
-//            _ = NeuroID.setGenericUserID(
+//            _ = NeuroID.setGenericIdentifier(
 //                userId: expectedValue,
 //                type: .registeredUserID
 //            ) { res in
