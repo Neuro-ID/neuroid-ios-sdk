@@ -23,9 +23,9 @@ public class NeuroID: NSObject {
     static var siteID: String?
     static var linkedSiteID: String?
 
-    static var locationManager: LocationManager?
+    static var locationManager: LocationManagerService?
     static var networkMonitor: NetworkMonitoringService?
-    static var callObserver: NIDCallStatusObserver?
+    static var callObserver: NIDCallStatusObserverService?
     static var configService: ConfigServiceProtocol = NIDConfigService()
     static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
 

@@ -8,7 +8,7 @@
 import CallKit
 import Foundation
 
-class NIDCallStatusObserver: NSObject, CXCallObserverDelegate {
+class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
     

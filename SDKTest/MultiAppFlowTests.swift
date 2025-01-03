@@ -66,7 +66,7 @@ final class MultiAppFlowTests: XCTestCase {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.deviceSignalService = mockService
 
-        NeuroID.startAppFlow(siteID: "form_dream102", userID: "jakeId") { _ in
+        NeuroID.startAppFlow(siteID: "form_dream102", sessionID: "jakeId") { _ in
             let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
             assert(NeuroID.isAdvancedDevice)
