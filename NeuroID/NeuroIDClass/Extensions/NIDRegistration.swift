@@ -103,7 +103,7 @@ public extension NeuroID {
     static func setVariable(key: String, value: String) -> NIDEvent {
         let variableEvent = NIDEvent(sessionEvent: NIDSessionEventName.setVariable)
         variableEvent.key = key
-        variableEvent.v = scrubIdentifier(value)
+        variableEvent.v = NeuroID.identifierService.scrubIdentifier(value)
 
         let myKeys: [String] = trackers.map { String($0.key) }
 

@@ -102,6 +102,8 @@
 		F2F0A3F529FB05A90083D43C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F429FB05A90083D43C /* Constants.swift */; };
 		FF48CA292D09063600BD5F41 /* NIDIntegrationHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF48CA282D09063600BD5F41 /* NIDIntegrationHealth.swift */; };
 		FFD6967F2D28988E003928EF /* LocationManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD6967E2D28988B003928EF /* LocationManagerService.swift */; };
+		FFD696812D2899E9003928EF /* IdentifierService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD696802D2899E9003928EF /* IdentifierService.swift */; };
+		FFD696832D2C425A003928EF /* IdentifierServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD696822D2C425A003928EF /* IdentifierServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -229,6 +231,8 @@
 		F2F0A3F429FB05A90083D43C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FF48CA282D09063600BD5F41 /* NIDIntegrationHealth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDIntegrationHealth.swift; sourceTree = "<group>"; };
 		FFD6967E2D28988B003928EF /* LocationManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerService.swift; sourceTree = "<group>"; };
+		FFD696802D2899E9003928EF /* IdentifierService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierService.swift; sourceTree = "<group>"; };
+		FFD696822D2C425A003928EF /* IdentifierServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,6 +380,7 @@
 				6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */,
 				6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */,
 				F24BAE7B2BF52B8700A3605D /* MockConfigService.swift */,
+				FFD696822D2C425A003928EF /* IdentifierServiceTests.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -499,6 +504,7 @@
 				F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */,
 				F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */,
 				4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */,
+				FFD696802D2899E9003928EF /* IdentifierService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -737,6 +743,7 @@
 				F216C4082A71BE19001DDABB /* Date.swift in Sources */,
 				F21702C829D5D5D000133A1C /* TextControlEvents.swift in Sources */,
 				6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
+				FFD696812D2899E9003928EF /* IdentifierService.swift in Sources */,
 				F25F4C7729F185D000E31B32 /* IntegrationHealth.swift in Sources */,
 				F21702A829D4CAD300133A1C /* UIButton.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
@@ -803,6 +810,7 @@
 				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
 				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
 				6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */,
+				FFD696832D2C425A003928EF /* IdentifierServiceTests.swift in Sources */,
 				6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -18,26 +18,20 @@ public struct SessionStartResult {
     }
 }
 
-public extension NeuroID {
-
-    // This command replaces `getUserID`
-    // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    static func getSessionID() -> String {
-        return NeuroID.sessionID ?? ""
-    }
-
-    static func startSession(
+extension NeuroID {
+    public static func startSession(
         _ sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
+        NeuroID.startSession(
+            siteID: nil, sessionID: sessionID, completion: completion)
     }
 
-    static func pauseCollection() {
+    public static func pauseCollection() {
         pauseCollection(flushEventQueue: true)
     }
 
-    static func resumeCollection() {
+    public static func resumeCollection() {
         // Don't allow resume to be called if SDK has not been started
         if NeuroID.sessionID.isEmptyOrNil, !NeuroID.isSDKStarted {
             return
@@ -49,15 +43,17 @@ public extension NeuroID {
         initGyroAccelCollectionTimer()
     }
 
-    static func stopSession() -> Bool {
+    public static func stopSession() -> Bool {
         saveEventToLocalDataStore(
-            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Stop session attempt")
+            NIDEvent(
+                type: NIDEventName.log, level: "INFO", m: "Stop session attempt"
+            )
         )
-        
+
         saveEventToLocalDataStore(
             NIDEvent(type: NIDEventName.closeSession, ct: "SDK_EVENT")
         )
-        
+
         pauseCollection()
 
         clearSessionVariables()
@@ -74,24 +70,21 @@ public extension NeuroID {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
-    static func startAppFlow(
+    public static func startAppFlow(
         siteID: String,
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        saveEventToDataStore(
-            NIDEvent(
-                type: NIDEventName.log,
-                level: "INFO",
-                m: "StartAppFlow attempt with siteID: \(siteID), sessionID: \(scrubIdentifier(sessionID ?? "null")))"
-            )
+        _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
+            identifier: sessionID ?? "null",
+            message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
         )
 
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
             NeuroID.linkedSiteID = nil
-            
+
             saveEventToLocalDataStore(
                 NIDEvent(
                     type: NIDEventName.log,
@@ -134,7 +127,8 @@ public extension NeuroID {
 
                 // if userID passed then startSession should be used
                 if sessionID != nil {
-                    NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
+                    NeuroID.startSession(siteID: siteID, sessionID: sessionID) {
+                        startStatus in
                         NeuroID.addLinkedSiteID(siteID)
                         completion(startStatus)
                     }
@@ -152,7 +146,9 @@ public extension NeuroID {
 }
 
 extension NeuroID {
-    static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
+    static func createNIDSessionEvent(
+        sessionEvent: NIDSessionEventName = .createSession
+    ) -> NIDEvent {
         return NIDEvent(
             session: sessionEvent,
             f: NeuroID.getClientKey(),
@@ -184,17 +180,22 @@ extension NeuroID {
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         saveEventToDataStore(
-            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Close session attempt")
+            NIDEvent(
+                type: NIDEventName.log, level: "INFO",
+                m: "Close session attempt")
         )
 
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(
-                NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started")
+                NIDEvent(
+                    type: NIDEventName.log, level: "ERROR",
+                    m: "Close attempt failed since SDK is not started")
             )
             throw NIDError.sdkNotStarted
         }
 
-        let closeEvent = NIDEvent(type: NIDEventName.closeSession, ct: "SDK_EVENT")
+        let closeEvent = NIDEvent(
+            type: NIDEventName.closeSession, ct: "SDK_EVENT")
         saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
@@ -249,7 +250,7 @@ extension NeuroID {
         completion: @escaping () -> Void = {}
     ) {
         // Use config cache or if first time, retrieve from server
-       configService.retrieveOrRefreshCache()
+        configService.retrieveOrRefreshCache()
 
         NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
 
@@ -285,7 +286,9 @@ extension NeuroID {
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
         saveEventToDataStore(
-            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
+            NIDEvent(
+                type: NIDEventName.log, level: "INFO",
+                m: "Start attempt with siteID: \(siteID ?? ""))")
         )
 
         if !NeuroID.verifyClientKeyExists() {
@@ -295,16 +298,19 @@ extension NeuroID {
 
         // Setup Session with old start timer logic
         // TO-DO - Refactor to behave like startSession
-        NeuroID.setupSession(siteID: siteID, customFunctionality: {
-            #if DEBUG
-            if NSClassFromString("XCTest") == nil {
-                initTimer()
+        NeuroID.setupSession(
+            siteID: siteID,
+            customFunctionality: {
+                #if DEBUG
+                    if NSClassFromString("XCTest") == nil {
+                        initTimer()
+                    }
+                #else
+                    initTimer()
+                #endif
+                initGyroAccelCollectionTimer()
             }
-            #else
-            initTimer()
-            #endif
-            initGyroAccelCollectionTimer()
-        }) {
+        ) {
             completion(true)
         }
     }
@@ -331,31 +337,38 @@ extension NeuroID {
         let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
-
-        saveEventToDataStore(
-            NIDEvent(
-                type: NIDEventName.log,
-                level: "INFO",
-                m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(finalSessionID))"
-            )
+        
+        
+        _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
+            identifier: finalSessionID,
+            message: "Start session attempt with siteID: \(siteID ?? ""), sessionID:"
+        )
+        
+        let validSessionID = NeuroID.identifierService.setSessionID(
+            finalSessionID,
+            userGenerated
         )
 
-        if !setSessionID(finalSessionID, userGenerated) {
+
+        if !validSessionID {
             let res = SessionStartResult(false, "")
 
             completion(res)
             return
         }
 
-        NeuroID.setupSession(siteID: siteID, customFunctionality: {
-            #if DEBUG
-            if NSClassFromString("XCTest") == nil {
-                resumeCollection()
+        NeuroID.setupSession(
+            siteID: siteID,
+            customFunctionality: {
+                #if DEBUG
+                    if NSClassFromString("XCTest") == nil {
+                        resumeCollection()
+                    }
+                #else
+                    resumeCollection()
+                #endif
             }
-            #else
-            resumeCollection()
-            #endif
-        }) {
+        ) {
             completion(SessionStartResult(true, finalSessionID))
         }
     }
@@ -364,7 +377,9 @@ extension NeuroID {
         // if the session is being sampled we should send, else we don't want those events anyways
         if NeuroID.samplingService.isSessionFlowSampled {
             // immediately flush events before anything else
-            groupAndPOST(forceSend: NeuroID.samplingService.isSessionFlowSampled) {
+            groupAndPOST(
+                forceSend: NeuroID.samplingService.isSessionFlowSampled
+            ) {
                 completion()
             }
             return

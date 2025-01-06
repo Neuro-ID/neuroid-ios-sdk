@@ -470,6 +470,11 @@ public class NIDEvent: Codable {
     init(rawType: String) {
         self.type = rawType
     }
+    
+    init(rawEventType: String, uid:String? = nil) {
+        self.type = rawEventType
+        self.uid = uid
+    }
 
     init(type: NIDEventName = NIDEventName.log, level: String, m: String) {
         self.type = type.rawValue
