@@ -20,6 +20,7 @@ class NeuroIDClassTests: XCTestCase {
 
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
+        let _ = DataStore.getAndRemoveAllQueuedEvents()
     }
 
     override func setUpWithError() throws {
@@ -161,21 +162,20 @@ class NeuroIDClassTests: XCTestCase {
 
         // pre tests
         assert(!NeuroID.isSDKStarted)
+        
+        clearOutDataStore()
 
         // action
         NeuroID.start { started in
-
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count == 14)
+            assert(DataStore.events.count == 5)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
-            self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
             self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 1)
-            self.assertStoredEventCount(type: "SET_VARIABLE", count: 4)
-            self.assertStoredEventCount(type: "LOG", count: 6)
+            self.assertStoredEventCount(type: "LOG", count: 2)
         }
     }
 
