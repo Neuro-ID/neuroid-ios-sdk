@@ -856,7 +856,6 @@ class NIDUserTests: XCTestCase {
         assert(originCodeEvent[0].v == originCode)
     }
 
-
     func test_getSessionID_objectLevel() {
 
         let expectedValue = "test_uid"
@@ -892,7 +891,6 @@ class NIDUserTests: XCTestCase {
 
         NeuroID.registeredUserID = ""
     }
-
 
     func test_attemptedLoginWthUID() {
         let validID = NeuroID.attemptedLogin("valid_user_id")

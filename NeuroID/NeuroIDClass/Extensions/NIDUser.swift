@@ -49,5 +49,4 @@ extension NeuroID {
         }
         return true
     }
-
 }
