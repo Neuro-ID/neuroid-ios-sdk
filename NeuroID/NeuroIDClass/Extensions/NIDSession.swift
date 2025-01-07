@@ -132,7 +132,7 @@ public extension NeuroID {
                 // If the SDK is not started we have to start it first
                 //  (which will get the config using passed siteID)
 
-                // if userID passed then startSession should be used
+                // if sessionID passed then startSession should be used
                 if sessionID != nil {
                     NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
                         NeuroID.addLinkedSiteID(siteID)

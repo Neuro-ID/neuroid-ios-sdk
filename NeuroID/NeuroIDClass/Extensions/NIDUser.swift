@@ -15,11 +15,11 @@ public extension NeuroID {
         let idType: UserIDTypes
     }
     
-    internal static func validateIdentifier(_ identitier: String) -> Bool {
+    internal static func validateIdentifier(_ identifier: String) -> Bool {
         // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
         do {
             let expression = try NSRegularExpression(pattern: "^[a-zA-Z0-9-_.]{3,100}$", options: NSRegularExpression.Options(rawValue: 0))
-            let result = expression.matches(in: identitier, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, identitier.count))
+            let result = expression.matches(in: identifier, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, identifier.count))
             if result.count != 1 {
                 NIDLog.e(NIDError.invalidUserID.rawValue)
                 return false
