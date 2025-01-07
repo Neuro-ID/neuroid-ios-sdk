@@ -19,27 +19,11 @@ public struct SessionStartResult {
 }
 
 public extension NeuroID {
-    // Sessions are created under conditions:
-    // Launch of application
-    // If user idles for > 30 min
+
+    // This command replaces `getUserID`
+    // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static func getSessionID() -> String {
-        // We don't do anything with this?
-        let _ = Constants.storageSessionExpiredKey.rawValue
-
-        let sidKeyName = Constants.storageSessionIDKey.rawValue
-
-        let sid = getUserDefaultKeyString(sidKeyName)
-
-        // TODO: Expire sesions
-        if let sidValue = sid {
-            return sidValue
-        }
-        // ENG-8455 nid prefix to session id for easier debugging
-        let id = "nid-" + ParamsCreator.generateID()
-        setUserDefaultKey(sidKeyName, value: id)
-
-        NIDLog.i("\(Constants.sessionTag.rawValue) \(id)")
-        return id
+        return NeuroID.sessionID ?? ""
     }
 
     static func startSession(
@@ -55,7 +39,7 @@ public extension NeuroID {
 
     static func resumeCollection() {
         // Don't allow resume to be called if SDK has not been started
-        if NeuroID.userID.isEmptyOrNil, !NeuroID.isSDKStarted {
+        if NeuroID.sessionID.isEmptyOrNil, !NeuroID.isSDKStarted {
             return
         }
         NeuroID._isSDKStarted = true
@@ -66,13 +50,14 @@ public extension NeuroID {
     }
 
     static func stopSession() -> Bool {
-        let closeEvent = NIDEvent(type: NIDEventName.closeSession)
-        closeEvent.ct = "SDK_EVENT"
-        saveEventToLocalDataStore(closeEvent)
-
-        let stopSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Stop session attempt")
-        saveEventToLocalDataStore(stopSessionLogEvent)
-
+        saveEventToLocalDataStore(
+            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Stop session attempt")
+        )
+        
+        saveEventToLocalDataStore(
+            NIDEvent(type: NIDEventName.closeSession, ct: "SDK_EVENT")
+        )
+        
         pauseCollection()
 
         clearSessionVariables()
@@ -91,20 +76,29 @@ public extension NeuroID {
      */
     static func startAppFlow(
         siteID: String,
-        userID: String? = nil,
+        sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "StartAppFlow attempt with siteID: \(siteID), userID: \(scrubIdentifier(identifier: userID ?? "null")))")
-        saveEventToDataStore(startSessionLogEvent)
+        saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.log,
+                level: "INFO",
+                m: "StartAppFlow attempt with siteID: \(siteID), sessionID: \(scrubIdentifier(sessionID ?? "null")))"
+            )
+        )
 
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
             NeuroID.linkedSiteID = nil
-            let logFailedLinkedSite = NIDEvent(type: NIDEventName.log)
-            logFailedLinkedSite.m = "Failed to set invalid Linked Site \(siteID)"
-            logFailedLinkedSite.level = "ERROR"
-            saveEventToLocalDataStore(logFailedLinkedSite)
+            
+            saveEventToLocalDataStore(
+                NIDEvent(
+                    type: NIDEventName.log,
+                    level: "ERROR",
+                    m: "Failed to set invalid Linked Site \(siteID)"
+                )
+            )
 
             completion(res)
             return
@@ -130,22 +124,26 @@ public extension NeuroID {
                 checkThenCaptureAdvancedDevice()
 
                 NeuroID.addLinkedSiteID(siteID)
-                completion(SessionStartResult(true, NeuroID.getUserID()))
+                completion(
+                    SessionStartResult(true, NeuroID.getSessionID())
+                )
 
             } else {
                 // If the SDK is not started we have to start it first
                 //  (which will get the config using passed siteID)
 
-                // if userID passed then startSession should be used
-                if userID != nil {
-                    NeuroID.startSession(siteID: siteID, sessionID: userID) { startStatus in
+                // if sessionID passed then startSession should be used
+                if sessionID != nil {
+                    NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
                         NeuroID.addLinkedSiteID(siteID)
                         completion(startStatus)
                     }
                 } else {
                     NeuroID.start(siteID: siteID) { started in
                         NeuroID.addLinkedSiteID(siteID)
-                        completion(SessionStartResult(started, NeuroID.getUserID()))
+                        completion(
+                            SessionStartResult(started, NeuroID.getSessionID())
+                        )
                     }
                 }
             }
@@ -158,8 +156,6 @@ extension NeuroID {
         return NIDEvent(
             session: sessionEvent,
             f: NeuroID.getClientKey(),
-            sid: NeuroID.getSessionID(),
-            lsid: nil,
             cid: NeuroID.getClientID(),
             did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
@@ -178,32 +174,27 @@ extension NeuroID {
         )
     }
 
-    static func clearStoredSessionID() {
-        setUserDefaultKey(Constants.storageSessionIDKey.rawValue, value: nil)
-    }
-
     static func createSession() {
-        // Since we are creating a new session, clear any existing session ID
-        clearStoredSessionID()
-
-        // TODO, return session if already exists
-        let event = createNIDSessionEvent()
-        saveEventToLocalDataStore(event)
+        saveEventToLocalDataStore(
+            createNIDSessionEvent()
+        )
 
         captureMobileMetadata()
     }
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
-        let closeSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Close session attempt")
-        saveEventToDataStore(closeSessionLogEvent)
+        saveEventToDataStore(
+            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Close session attempt")
+        )
 
         if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started"))
+            saveQueuedEventToLocalDataStore(
+                NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started")
+            )
             throw NIDError.sdkNotStarted
         }
 
-        let closeEvent = NIDEvent(type: NIDEventName.closeSession)
-        closeEvent.ct = "SDK_EVENT"
+        let closeEvent = NIDEvent(type: NIDEventName.closeSession, ct: "SDK_EVENT")
         saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
@@ -227,7 +218,7 @@ extension NeuroID {
     }
 
     static func clearSessionVariables() {
-        NeuroID.userID = nil
+        NeuroID.sessionID = nil
         NeuroID.registeredUserID = ""
 
         NeuroID.linkedSiteID = nil
@@ -293,8 +284,9 @@ extension NeuroID {
         siteID: String?,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
-        let startLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
-        saveEventToDataStore(startLogEvent)
+        saveEventToDataStore(
+            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
+        )
 
         if !NeuroID.verifyClientKeyExists() {
             completion(false)
@@ -331,7 +323,7 @@ extension NeuroID {
         }
 
         // stop existing session if one is open
-        if NeuroID.userID != nil || NeuroID.isSDKStarted {
+        if NeuroID.sessionID != nil || NeuroID.isSDKStarted {
             _ = stopSession()
         }
 
@@ -340,10 +332,15 @@ extension NeuroID {
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
 
-        let startSessionLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(identifier: finalSessionID))")
-        saveEventToDataStore(startSessionLogEvent)
+        saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.log,
+                level: "INFO",
+                m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(finalSessionID))"
+            )
+        )
 
-        if !setUserID(finalSessionID, userGenerated) {
+        if !setSessionID(finalSessionID, userGenerated) {
             let res = SessionStartResult(false, "")
 
             completion(res)

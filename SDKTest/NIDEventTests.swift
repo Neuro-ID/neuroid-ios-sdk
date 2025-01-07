@@ -164,8 +164,8 @@ class NIDEventTests: XCTestCase {
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: "_",
-            linkedSiteId: nil,
-            userID: NeuroID.getUserID(),
+            linkedSiteID: nil,
+            sessionID: NeuroID.getSessionID(),
             registeredUserID: NeuroID.getRegisteredUserID(),
             jsonEvents: events,
             tabID: "\(tabId)",
@@ -178,7 +178,7 @@ class NIDEventTests: XCTestCase {
             let encoder = JSONEncoder()
             let values = try encoder.encode(neuroHTTPRequest)
             let str = String(data: values, encoding: .utf8)
-            NIDLog.log("\(str)")
+            NIDLog.log("\(String(describing: str))")
             let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
             NIDLog.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)

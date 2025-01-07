@@ -15,11 +15,11 @@ public extension NeuroID {
         let idType: UserIDTypes
     }
     
-    internal static func validateUserID(_ userId: String) -> Bool {
+    internal static func validateIdentifier(_ identifier: String) -> Bool {
         // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
         do {
             let expression = try NSRegularExpression(pattern: "^[a-zA-Z0-9-_.]{3,100}$", options: NSRegularExpression.Options(rawValue: 0))
-            let result = expression.matches(in: userId, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, userId.count))
+            let result = expression.matches(in: identifier, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, identifier.count))
             if result.count != 1 {
                 NIDLog.e(NIDError.invalidUserID.rawValue)
                 return false
@@ -31,76 +31,84 @@ public extension NeuroID {
         return true
     }
     
-    internal static func setGenericUserID(type: UserIDTypes, genericUserID: String, userGenerated: Bool = true) -> Bool {
-        let validID = validateUserID(genericUserID)
+    internal static func setGenericIdentifier(type: UserIDTypes, genericIdentifier: String, userGenerated: Bool = true) -> Bool {
+        let validID = validateIdentifier(genericIdentifier)
         
-        let originRes = getOriginResult(idValue: genericUserID, validID: validID, userGenerated: userGenerated, idType: type)
-        sendOriginEvent(originResult: originRes)
+        sendOriginEvent(
+            getOriginResult(
+                idValue: genericIdentifier,
+                validID: validID,
+                userGenerated: userGenerated,
+                idType: type
+            )
+        )
             
         if !validID {
-            let saveIdFailureEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to save genericUserID event:\(scrubIdentifier(identifier: genericUserID))")
-            saveEventToDataStore(saveIdFailureEvent)
+            saveEventToDataStore(
+                NIDEvent(
+                    type: NIDEventName.log,
+                    level: "ERROR",
+                    m: "Failed to save genericIdentifier of \(type.rawValue) event:\(scrubIdentifier(genericIdentifier))"
+                )
+            )
             return false
         }
             
-        NIDLog.d(tag: "\(type)", "\(genericUserID)")
+        NIDLog.d(tag: "\(type)", "\(genericIdentifier)")
         //    Queue user id event to be sent
-        var setUserEvent: NIDEvent
+        var setIdentifierEvent: NIDEvent
         if type == .attemptedLogin {
-            setUserEvent = NIDEvent(uid: genericUserID)
+            setIdentifierEvent = NIDEvent(uid: genericIdentifier)
         } else {
-            setUserEvent = NIDEvent(
+            setIdentifierEvent = NIDEvent(
                 sessionEvent: type == .userID ?
                     NIDSessionEventName.setUserId : NIDSessionEventName.setRegisteredUserId
             )
-            setUserEvent.uid = genericUserID
+            setIdentifierEvent.uid = genericIdentifier
         }
         
-        saveEventToDataStore(setUserEvent)
+        saveEventToDataStore(setIdentifierEvent)
         
         return true
     }
     
-    internal static func sendOriginEvent(originResult: SessionIDOriginalResult) {
-        let sessionIdCodeEvent =
+    internal static func sendOriginEvent(_ originResult: SessionIDOriginalResult) {
+        saveEventToDataStore(
             NIDEvent(
                 sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionIdCode",
                 v: originResult.originCode
             )
-        
-        let sessionIdSourceEvent =
+        )
+        saveEventToDataStore(
             NIDEvent(
                 sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionIdSource",
                 v: originResult.origin
             )
-        
-        let sessionIdEvent =
+        )
+        saveEventToDataStore(
             NIDEvent(
                 sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionId",
                 v: "\(originResult.idValue)"
             )
-        
-        let sessionIdTypeEvent =
+        )
+        saveEventToDataStore(
             NIDEvent(
                 sessionEvent: NIDSessionEventName.setVariable,
                 key: "sessionIdType",
                 v: originResult.idType.rawValue
             )
-        
-        saveEventToDataStore(sessionIdCodeEvent)
-        saveEventToDataStore(sessionIdSourceEvent)
-        saveEventToDataStore(sessionIdEvent)
-        saveEventToDataStore(sessionIdTypeEvent)
+        )
     }
     
-    internal static func getOriginResult(idValue: String,
-                                         validID: Bool,
-                                         userGenerated: Bool,
-                                         idType: UserIDTypes) -> SessionIDOriginalResult
-    {
+    internal static func getOriginResult(
+        idValue: String,
+        validID: Bool,
+        userGenerated: Bool,
+        idType: UserIDTypes
+    ) -> SessionIDOriginalResult {
         let origin = userGenerated ? SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue : SessionOrigin.NID_ORIGIN_NID_SET.rawValue
         var originCode = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
         if validID {
@@ -109,27 +117,31 @@ public extension NeuroID {
         return SessionIDOriginalResult(origin: origin, originCode: originCode, idValue: idValue, idType: idType)
     }
     
-    static func setUserID(_ userId: String) -> Bool {
-        return setUserID(userId, true)
+    // This command replaces `setUserID`
+    // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    static func identify(_ sessionID: String) -> Bool {
+        return setSessionID(sessionID, true)
     }
     
-    internal static func setUserID(_ userId: String, _ userGenerated: Bool) -> Bool {
-//        Save log event
-        let setUserIdLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "Set User Id Attempt: \(scrubIdentifier(identifier: userId))")
-        saveEventToDataStore(setUserIdLogEvent)
+    // This command replaces `setUserID` (internal version)
+    // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    internal static func setSessionID(_ sessionID: String, _ userGenerated: Bool) -> Bool {
+        saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.log,
+                level: "INFO",
+                m: "Set UserID/SessionID Attempt: \(scrubIdentifier(sessionID))"
+            )
+        )
         
-        let validID = setGenericUserID(type: .userID, genericUserID: userId, userGenerated: userGenerated)
+        let validID = setGenericIdentifier(type: .userID, genericIdentifier: sessionID, userGenerated: userGenerated)
         
         if !validID {
             return false
         }
         
-        NeuroID.userID = userId
+        NeuroID.sessionID = sessionID
         return true
-    }
-    
-    static func getUserID() -> String {
-        return NeuroID.userID ?? ""
     }
     
     static func getRegisteredUserID() -> String {
@@ -141,7 +153,7 @@ public extension NeuroID {
             NIDEvent(
                 type: NIDEventName.log,
                 level: "INFO",
-                m: "Set Registered UserID Attempt: \(scrubIdentifier(identifier: registeredUserID))"
+                m: "Set Registered UserID Attempt: \(scrubIdentifier(registeredUserID))"
             )
         )
         
@@ -149,14 +161,14 @@ public extension NeuroID {
             NeuroID.saveEventToLocalDataStore(
                 NIDEvent(
                     level: "WARN",
-                    m: "Multiple Registered UserID Attempt - existing:\(NeuroID.registeredUserID) new:\(scrubIdentifier(identifier: registeredUserID))"
+                    m: "Multiple Registered UserID Attempt - existing:\(NeuroID.registeredUserID) new:\(scrubIdentifier(registeredUserID))"
                 )
             )
         
             NIDLog.e("Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session")
         }
         
-        let validID = setGenericUserID(type: .registeredUserID, genericUserID: registeredUserID)
+        let validID = setGenericIdentifier(type: .registeredUserID, genericIdentifier: registeredUserID)
         
         if !validID {
             return false
@@ -171,11 +183,19 @@ public extension NeuroID {
      @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
-//        Save log event
-        let attemptedLoginAttemptLogEvent = NIDEvent(type: NIDEventName.log, level: "INFO", m: "attempted login with attemptedRegisteredUserId: \(scrubIdentifier(identifier: attemptedRegisteredUserId ?? "null"))")
-        saveEventToDataStore(attemptedLoginAttemptLogEvent)
+        saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.log,
+                level: "INFO",
+                m: "Attempted login with attemptedRegisteredUserId: \(scrubIdentifier(attemptedRegisteredUserId ?? "null"))"
+            )
+        )
 
-        let captured = setGenericUserID(type: .attemptedLogin, genericUserID: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation", userGenerated: attemptedRegisteredUserId != nil)
+        let captured = setGenericIdentifier(
+            type: .attemptedLogin,
+            genericIdentifier: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation",
+            userGenerated: attemptedRegisteredUserId != nil
+        )
         
         if !captured {
             saveEventToDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
@@ -183,7 +203,7 @@ public extension NeuroID {
         return true
     }
     
-    internal static func scrubIdentifier(identifier: String) -> String {
+    internal static func scrubIdentifier(_ identifier: String) -> String {
         do {
             let emailRegex = try NSRegularExpression(pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
             let ssnRegex = try NSRegularExpression(pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")

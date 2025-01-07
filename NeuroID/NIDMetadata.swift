@@ -5,58 +5,13 @@
 //  Created by jose perez on 26/08/22.
 //
 
-import AVFoundation
-import CoreLocation
-import CoreTelephony
+
 import Foundation
 import Network
 import SwiftUI
 import UIKit
+import CoreTelephony
 
-class LocationManager: NSObject, CLLocationManagerDelegate {
-    let manager = CLLocationManager()
-    var latitude: Double?
-    var longitude: Double?
-    var authorizationStatus: String = "unknown"
-
-    override init() {
-        super.init()
-        self.manager.delegate = self
-        self.manager.desiredAccuracy = kCLLocationAccuracyBest
-    }
-
-    func checkLocationAuthorization() {
-        let status: CLAuthorizationStatus
-        if #available(iOS 14.0, *) {
-            status = manager.authorizationStatus
-        } else {
-            status = CLLocationManager.authorizationStatus()
-        }
-
-        switch status {
-            case .notDetermined:
-                self.authorizationStatus = "notDetermined"
-            case .restricted, .denied:
-                self.authorizationStatus = status == .restricted ? "restricted" : "denied"
-            case .authorizedWhenInUse, .authorizedAlways:
-                self.authorizationStatus = status == .authorizedWhenInUse ? "authorizedWhenInUse" : "authorizedAlways"
-                self.manager.startUpdatingLocation()
-            @unknown default:
-                break
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            self.latitude = location.coordinate.latitude
-            self.longitude = location.coordinate.longitude
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.checkLocationAuthorization()
-    }
-}
 
 struct NIDLocation: Codable {
     var latitude: Double?

@@ -167,7 +167,7 @@ extension NeuroID {
         }
 
         let tabId = ParamsCreator.getTabId()
-        let userID = NeuroID.getUserID()
+        let sessionID = NeuroID.getSessionID()
         let registeredUserID = NeuroID.getRegisteredUserID()
 
         let randomString = ParamsCreator.generateID()
@@ -180,8 +180,8 @@ extension NeuroID {
             pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: NeuroID.siteID ?? "",
-            linkedSiteId: NeuroID.linkedSiteID,
-            userID: userID == "" ? nil : userID,
+            linkedSiteID: NeuroID.linkedSiteID,
+            sessionID: sessionID == "" ? nil : sessionID,
             registeredUserID: registeredUserID == "" ? nil : registeredUserID,
             jsonEvents: events,
             tabID: "\(tabId)",
@@ -203,14 +203,19 @@ extension NeuroID {
             "authority": "receiver.neuroid.cloud",
         ]
 
-        networkService.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: 0) { response in
+        networkService.retryableRequest(
+            url: url,
+            neuroHTTPRequest: neuroHTTPRequest,
+            headers: headers,
+            retryCount: 0
+        ) { response in
             NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
             NIDLog.d(
                 tag: "Payload",
                 """
                 \nPayload Summary
                  ClientID: \(neuroHTTPRequest.clientId)
-                 UserID: \(neuroHTTPRequest.userId ?? "")
+                 SessionID: \(neuroHTTPRequest.userId ?? "")
                  RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
                  LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
                  TabID: \(neuroHTTPRequest.tabId)

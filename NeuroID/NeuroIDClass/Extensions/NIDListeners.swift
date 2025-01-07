@@ -10,14 +10,14 @@ import Foundation
 extension NeuroID {
     static func setupListeners() {
         if configService.configCache.callInProgress {
-            callObserver = NIDCallStatusObserver()
+            callObserver = NIDCallStatusObserverService()
             callObserver?.startListeningToCallStatus()
         } else {
             callObserver = nil
         }
 
         if configService.configCache.geoLocation {
-            locationManager = LocationManager()
+            locationManager = LocationManagerService()
         } else {
             locationManager = nil
         }
