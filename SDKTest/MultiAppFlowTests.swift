@@ -104,7 +104,7 @@ final class MultiAppFlowTests: XCTestCase {
         service._isSessionFlowSampled = false
         NeuroID.samplingService = service // setting to false indicating we are throttling
 
-        NeuroID.captureAdvancedDevice([true]) // passing true to indicate we should capture
+        NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
 
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
         assert(validEvent.count == 0)
@@ -122,7 +122,7 @@ final class MultiAppFlowTests: XCTestCase {
         service._isSessionFlowSampled = true // setting to true indicating we are NOT throttling
         NeuroID.samplingService = service
 
-        NeuroID.captureAdvancedDevice([true]) // passing true to indicate we should capture
+        NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
 
         let validEvent = DataStore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
         assert(validEvent.count == 1)

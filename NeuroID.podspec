@@ -16,30 +16,22 @@ s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => 
 s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
 s.exclude_files = [
-    'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift',
     'NeuroID/Utilities/IntegrationHealth.swift'
 ]
 
 s.dependency 'Alamofire'
+s.dependency 'FingerprintPro', '2.7.0'
 
 s.default_subspecs = 'Core'
 s.subspec 'Core' do |core|
     core.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
     core.exclude_files = [
-        'NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift', 
         'NeuroID/Utilities/IntegrationHealth.swift'
     ]
 
     core.resource_bundles = {
         'NeuroID' => ['NeuroID/PrivacyInfo.xcprivacy', "Info.plist"]
     }
-end
-
-s.subspec 'AdvancedDevice' do |advanced|
-    advanced.source_files = ['NeuroID/NeuroIDClass/Extensions/NIDAdvancedDevice.swift']
-    
-    advanced.dependency 'FingerprintPro', '2.7.0'
-    advanced.dependency "#{s.name}/Core"
 end
 
 s.subspec 'Debug' do |debug|

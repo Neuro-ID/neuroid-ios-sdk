@@ -76,8 +76,6 @@ public class NeuroID: NSObject {
 
     static var packetNumber: Int32 = 0
 
-    static var isAdvancedDeviceLib = false
-
     // MARK: - Setup
 
     static func verifyClientKeyExists() -> Bool {
@@ -113,8 +111,6 @@ public class NeuroID: NSObject {
 
             return false
         }
-
-        updateBuildTypeFlag()
 
         NeuroID.isAdvancedDevice = isAdvancedDevice
 
@@ -191,28 +187,10 @@ public class NeuroID: NSObject {
         return _isSDKStarted != true
     }
 
-    static func checkThenCaptureAdvancedDevice(_ shouldCapture: Bool = NeuroID.isAdvancedDevice) {
-        let result = checkBuildType("captureAdvancedDevice:")
-        if result.0 {
-            NeuroID.perform(result.1, with: [shouldCapture])
-        } else {
-            NIDLog.d("No Advanced Module found")
-        }
-    }
-
-    static func updateBuildTypeFlag() {
-        let result = checkBuildType("captureAdvancedDevice:")
-        if result.0 {
-            isAdvancedDeviceLib = true
-        } else {
-            isAdvancedDeviceLib = false
-        }
-    }
-
     /**
-     check for existance of the advanced lib method captureAdvancedDevice()
+     check for existance of the a method in an additional package that may or may not be included
      */
-    static func checkBuildType(_ selectorString:String = "captureAdvancedDevice:") -> (Bool, Selector) {
+    static func checkBuildType(_ selectorString:String) -> (Bool, Selector) {
         let selector = NSSelectorFromString(selectorString)
         if NeuroID.responds(to: selector) {
             return (true, selector)

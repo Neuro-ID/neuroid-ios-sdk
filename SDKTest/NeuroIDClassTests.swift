@@ -197,13 +197,8 @@ class NeuroIDClassTests: XCTestCase {
 
         assert(value == expectedValue)
 
-        NeuroID.isAdvancedDeviceLib = true
         let resultAdvTrue = NeuroID.getSDKVersion()
         assert(resultAdvTrue.contains("-adv"))
-
-        NeuroID.isAdvancedDeviceLib = false
-        let resultAdvFalse = NeuroID.getSDKVersion()
-        assert(!resultAdvFalse.contains("-adv"))
 
         NeuroID.isRN = true
         let resultRNTrue = NeuroID.getSDKVersion()
