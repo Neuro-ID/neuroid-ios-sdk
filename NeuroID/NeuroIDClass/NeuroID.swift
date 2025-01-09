@@ -252,13 +252,13 @@ public class NeuroID: NSObject {
     
     // ENG-9193 - Will remove on next breaking release
     @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
-    static func printIntegrationHealthInstruction() {
+    public static func printIntegrationHealthInstruction() {
         NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     // ENG-9193 - Will remove on next breaking release
     @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
-    static func setVerifyIntegrationHealth(_ verify: Bool) {
+    public static func setVerifyIntegrationHealth(_ verify: Bool) {
         NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }
