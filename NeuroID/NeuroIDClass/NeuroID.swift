@@ -63,8 +63,6 @@ public class NeuroID: NSObject {
     static var observingKeyboard = false
     static var didSwizzle: Bool = false
 
-    static var integrationHealthService:IntegrationHealthProtocol?
-
     public static var registeredTargets = [String]()
 
     static var isRN: Bool = false
@@ -84,15 +82,6 @@ public class NeuroID: NSObject {
             return false
         }
         return true
-    }
-    
-    static func verifyDebugModuleExists() -> Void {
-        let result = checkBuildType("configureIntegrationHealthService")
-        if result.0 {
-            NeuroID.perform(result.1)
-        } else {
-            NIDLog.i("No Debug Module found")
-        }
     }
 
     /// 1. Configure the SDK
@@ -138,8 +127,6 @@ public class NeuroID: NSObject {
         NeuroID.saveEventToDataStore(
             NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
         )
-        
-        verifyDebugModuleExists()
 
         return true
     }
@@ -175,9 +162,6 @@ public class NeuroID: NSObject {
         NeuroID._isSDKStarted = false
         NeuroID.linkedSiteID = nil
 
-        // save captured health events to file
-        integrationHealthService?.saveIntegrationHealthEvents()
-
         //  stop listening to changes in call status
         NeuroID.callObserver?.stopListeningToCallStatus()
         return true
@@ -185,18 +169,6 @@ public class NeuroID: NSObject {
 
     public static func isStopped() -> Bool {
         return _isSDKStarted != true
-    }
-
-    /**
-     check for existance of the a method in an additional package that may or may not be included
-     */
-    static func checkBuildType(_ selectorString:String) -> (Bool, Selector) {
-        let selector = NSSelectorFromString(selectorString)
-        if NeuroID.responds(to: selector) {
-            return (true, selector)
-        } else {
-            return (false, selector)
-        }
     }
 
     static func swizzle() {
@@ -275,5 +247,18 @@ public class NeuroID: NSObject {
             )
         }
         return nil
+    }
+    
+    
+    // ENG-9193 - Will remove on next breaking release
+    @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
+    static func printIntegrationHealthInstruction() {
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
+
+    // ENG-9193 - Will remove on next breaking release
+    @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
+    static func setVerifyIntegrationHealth(_ verify: Bool) {
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }

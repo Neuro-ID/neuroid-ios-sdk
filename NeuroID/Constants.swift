@@ -8,11 +8,6 @@
 import Foundation
 
 enum Constants: String {
-    case integrationFilePath = "nid"
-    case integrationHealthFile = "integrationHealthEvents.json"
-    case integrationDeviceInfoFile = "integrationHealthDetails.json"
-    case integrationHealthResourceBundle = "Resources"
-
     case environmentTest = "TEST"
     case environmentLive = "LIVE"
 
@@ -51,7 +46,6 @@ enum Constants: String {
 
     // Tags
     case debugTag = "NeuroID Debug:"
-    case integrationHealthTag = "NeuroID IH:"
     case extraInfoTag = "NeuroID Extra:"
     case registrationTag = "NeuroID Registration:"
     case sessionTag = "NeuroID SessionId:"

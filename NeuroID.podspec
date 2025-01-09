@@ -15,35 +15,17 @@ s.homepage = "https://neuro-id.com/"
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
 s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
-s.exclude_files = [
-    'NeuroID/Utilities/IntegrationHealth.swift'
-]
-
 s.dependency 'Alamofire'
 s.dependency 'FingerprintPro', '2.7.0'
 
 s.default_subspecs = 'Core'
 s.subspec 'Core' do |core|
     core.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
-    core.exclude_files = [
-        'NeuroID/Utilities/IntegrationHealth.swift'
-    ]
 
     core.resource_bundles = {
         'NeuroID' => ['NeuroID/PrivacyInfo.xcprivacy', "Info.plist"]
     }
 end
-
-s.subspec 'Debug' do |debug|
-    debug.source_files = ['NeuroID/Utilities/IntegrationHealth.swift' ]
-
-    debug.resource_bundles = {
-        'Resources' => ['NeuroID/Resources/**/*'],
-    }
-
-    debug.dependency "#{s.name}/Core"
-end
-
 
 s.license = { :type => "MIT", :text => <<-LICENSE
 Copyright (c) 2021 Neuro-ID <product@neuro-id.com>
