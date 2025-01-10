@@ -8,10 +8,10 @@
 import FingerprintPro
 import Foundation
 
-public extension NeuroID {
+extension NeuroID {
     internal static var deviceSignalService: DeviceSignalService = NeuroIDADV()
 
-    static func start(
+    public static func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
@@ -21,12 +21,12 @@ public extension NeuroID {
                 return
             }
 
-            checkThenCaptureAdvancedDevice(advancedDeviceSignals)
+            captureAdvancedDevice(advancedDeviceSignals)
             completion(started)
         }
     }
 
-    static func startSession(
+    public static func startSession(
         _ sessionID: String? = nil,
         _ advancedDeviceSignals: Bool,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
@@ -37,14 +37,18 @@ public extension NeuroID {
                 return
             }
 
-            checkThenCaptureAdvancedDevice(advancedDeviceSignals)
+            captureAdvancedDevice(advancedDeviceSignals)
             completion(sessionRes)
         }
     }
 
     internal static func getCachedADV() -> Bool {
-        if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
-            if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
+        if let storedADVKey = getUserDefaultKeyDict(
+            Constants.storageAdvancedDeviceKey.rawValue)
+        {
+            if let exp = storedADVKey["exp"] as? Double,
+                let requestID = storedADVKey["key"] as? String
+            {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
                 if currentTimeEpoch < exp {
@@ -70,22 +74,32 @@ public extension NeuroID {
 
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
-                    value: ["exp": UtilFunctions.getFutureTimeStamp(24),
-                            "key": requestID] as [String: Any]
+                    value: [
+                        "exp": UtilFunctions.getFutureTimeStamp(24),
+                        "key": requestID,
+                    ] as [String: Any]
                 )
             case .failure(let error):
                 NeuroID.saveEventToLocalDataStore(
-                    NIDEvent(type: .log, level: "ERROR", m: error.localizedDescription)
+                    NIDEvent(
+                        type: .log, level: "ERROR",
+                        m: error.localizedDescription
+                    )
                 )
                 NeuroID.saveEventToDataStore(
-                    NIDEvent(type: .advancedDeviceRequestFailed, m: error.localizedDescription)
+                    NIDEvent(
+                        type: .advancedDeviceRequestFailed,
+                        m: error.localizedDescription
+                    )
                 )
                 return
             }
         }
     }
 
-    internal static func captureADVEvent(_ requestID: String, cached: Bool, latency: Double) {
+    internal static func captureADVEvent(
+        _ requestID: String, cached: Bool, latency: Double
+    ) {
         NeuroID.saveEventToLocalDataStore(
             NIDEvent(
                 type: .advancedDevice,
@@ -107,17 +121,21 @@ public extension NeuroID {
      in a LOG event (isAdvancedDevice setting: <true/false>.
      */
     @objc internal static func captureAdvancedDevice(
-        _ shouldCapture: [Bool] = [NeuroID.isAdvancedDevice]
+        _ shouldCapture: Bool = NeuroID.isAdvancedDevice
     ) {
-        let logEvent = NIDEvent(type: .log, level: "INFO", m: "shouldCapture setting: \(shouldCapture)")
-        NeuroID.saveEventToDataStore(logEvent)
+        NeuroID.saveEventToDataStore(
+            NIDEvent(
+                type: .log,
+                level: "INFO",
+                m: "shouldCapture setting: \(shouldCapture)"
+            )
+        )
 
         // Verify the command is called with a true value (want to capture) AND that the session
         //  is NOT being restricted/throttled prior to calling for an ADV event
 
-        if shouldCapture.indices.contains(0),
-           shouldCapture[0],
-           NeuroID.samplingService.isSessionFlowSampled
+        if shouldCapture,
+            NeuroID.samplingService.isSessionFlowSampled
         {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {
@@ -134,17 +152,26 @@ struct NIDADVKeyResponse: Codable {
 }
 
 protocol DeviceSignalService {
-    func getAdvancedDeviceSignal(_ apiKey: String, clientID: String?, linkedSiteID: String?, completion: @escaping (Result<(String, Double), Error>) -> Void)
+    func getAdvancedDeviceSignal(
+        _ apiKey: String, clientID: String?, linkedSiteID: String?,
+        completion: @escaping (Result<(String, Double), Error>) -> Void)
 }
 
 class NeuroIDADV: NSObject, DeviceSignalService {
-    public func getAdvancedDeviceSignal(_ apiKey: String, clientID: String?, linkedSiteID: String?, completion: @escaping (Result<(String, Double), Error>) -> Void) {
+    public func getAdvancedDeviceSignal(
+        _ apiKey: String, clientID: String?, linkedSiteID: String?,
+        completion: @escaping (Result<(String, Double), Error>) -> Void
+    ) {
         // Retrieve Key from NID Server for Request
-        NeuroIDADV.getAPIKey(apiKey, clientID: clientID, linkedSiteID: linkedSiteID) { result in
+        NeuroIDADV.getAPIKey(
+            apiKey, clientID: clientID, linkedSiteID: linkedSiteID
+        ) { result in
             switch result {
             case .success(let fAPiKey):
                 // Retrieve ADV Data using Request Key
-                NeuroIDADV.retryAPICall(apiKey: fAPiKey, maxRetries: 3, delay: 2) { result in
+                NeuroIDADV.retryAPICall(
+                    apiKey: fAPiKey, maxRetries: 3, delay: 2
+                ) { result in
                     switch result {
                     case .success(let (value, duration)):
                         completion(.success((value, duration)))
@@ -164,8 +191,12 @@ class NeuroIDADV: NSObject, DeviceSignalService {
         linkedSiteID: String? = "",
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let apiURL = URL(string: "https://receiver.neuroid.cloud/a/\(apiKey)?clientId=\(clientID ?? "")&linkedSiteId=\(linkedSiteID ?? "")")!
-        let task = URLSession.shared.dataTask(with: apiURL) { data, response, error in
+        let apiURL = URL(
+            string:
+                "https://receiver.neuroid.cloud/a/\(apiKey)?clientId=\(clientID ?? "")&linkedSiteId=\(linkedSiteID ?? "")"
+        )!
+        let task = URLSession.shared.dataTask(with: apiURL) {
+            data, response, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -194,7 +225,10 @@ class NeuroIDADV: NSObject, DeviceSignalService {
             guard let data = data else {
                 completion(
                     .failure(
-                        createError(code: 2, description: "NeuroID API Error: No Data Received")
+                        createError(
+                            code: 2,
+                            description: "NeuroID API Error: No Data Received"
+                        )
                     )
                 )
                 return
@@ -202,7 +236,8 @@ class NeuroIDADV: NSObject, DeviceSignalService {
 
             do {
                 let decoder = JSONDecoder()
-                let myResponse = try decoder.decode(NIDADVKeyResponse.self, from: data)
+                let myResponse = try decoder.decode(
+                    NIDADVKeyResponse.self, from: data)
 
                 if let data = Data(base64Encoded: myResponse.key) {
                     if let string = String(data: data, encoding: .utf8) {
@@ -210,14 +245,22 @@ class NeuroIDADV: NSObject, DeviceSignalService {
                     } else {
                         completion(
                             .failure(
-                                createError(code: 3, description: "NeuroID API Error: Unable to convert to string")
+                                createError(
+                                    code: 3,
+                                    description:
+                                        "NeuroID API Error: Unable to convert to string"
+                                )
                             )
                         )
                     }
                 } else {
                     completion(
                         .failure(
-                            createError(code: 4, description: "NeuroID API Error: Error Retrieving Data")
+                            createError(
+                                code: 4,
+                                description:
+                                    "NeuroID API Error: Error Retrieving Data"
+                            )
                         )
                     )
                 }
@@ -233,7 +276,9 @@ class NeuroIDADV: NSObject, DeviceSignalService {
         completion: @escaping (Result<String, Error>) -> Void
     ) {
         if #available(iOS 13.0, *) {
-            let region: Region = .custom(domain: "https://advanced.neuro-id.com")
+            let region: Region = .custom(
+                    domain: "https://advanced.neuro-id.com"
+                )
             let configuration = Configuration(apiKey: apiKey, region: region)
             let client = FingerprintProFactory.getInstance(configuration)
             client.getVisitorIdResponse { result in
@@ -243,7 +288,11 @@ class NeuroIDADV: NSObject, DeviceSignalService {
                 case .failure(let error):
                     completion(
                         .failure(
-                            createError(code: 6, description: "Fingerprint Response Failure (code 6): \(error.localizedDescription)")
+                            createError(
+                                code: 6,
+                                description:
+                                    "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
+                            )
                         )
                     )
                 }
@@ -251,7 +300,11 @@ class NeuroIDADV: NSObject, DeviceSignalService {
         } else {
             completion(
                 .failure(
-                    createError(code: 7, description: "Fingerprint Response Failure (code 7): Method Not Available")
+                    createError(
+                        code: 7,
+                        description:
+                            "Fingerprint Response Failure (code 7): Method Not Available"
+                    )
                 )
             )
         }
@@ -270,11 +323,15 @@ class NeuroIDADV: NSObject, DeviceSignalService {
 
             getRequestID(apiKey) { result in
                 if case .failure(let error) = result {
-                    if error.localizedDescription.contains("Method not available") {
+                    if error.localizedDescription.contains(
+                        "Method not available")
+                    {
                         completion(.failure(error))
                     } else if currentRetry < maxRetries {
                         currentRetry += 1
-                        DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                        DispatchQueue.global().asyncAfter(
+                            deadline: .now() + delay
+                        ) {
                             attemptAPICall()
                         }
                     } else {
@@ -295,7 +352,7 @@ class NeuroIDADV: NSObject, DeviceSignalService {
             domain: "NeuroIDAdvancedDevice",
             code: code,
             userInfo: [
-                NSLocalizedDescriptionKey: description,
+                NSLocalizedDescriptionKey: description
             ]
         )
     }

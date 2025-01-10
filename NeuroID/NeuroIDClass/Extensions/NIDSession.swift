@@ -121,7 +121,7 @@ public extension NeuroID {
                 saveEventToLocalDataStore(createNIDSessionEvent())
                 captureMobileMetadata()
 
-                checkThenCaptureAdvancedDevice()
+                captureAdvancedDevice()
 
                 NeuroID.addLinkedSiteID(siteID)
                 completion(
@@ -274,7 +274,7 @@ extension NeuroID {
             DataStore.insertEvent(screen: "", event: event)
         }
 
-        checkThenCaptureAdvancedDevice()
+        captureAdvancedDevice()
 
         completion()
     }
