@@ -119,9 +119,6 @@ extension NeuroID {
             return
         }
 
-        // save captured health events to file
-        NeuroID.integrationHealthService?.saveIntegrationHealthEvents()
-
         // capture first event url as backup screen name
         let altScreenName = dataStoreEvents.first?.url ?? "unnamed_screen"
 

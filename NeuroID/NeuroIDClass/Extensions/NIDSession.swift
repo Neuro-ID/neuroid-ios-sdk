@@ -257,17 +257,12 @@ extension NeuroID {
 
         NeuroID.setupListeners()
 
-        NeuroID.integrationHealthService?.startIntegrationHealthCheck()
-
         NeuroID.createSession()
         swizzle()
 
         // custom functionality = the different timer starts (start vs. startSession)
         //  this will be refactored once we bring start/startSession in alignment
         customFunctionality()
-
-        // save beginSession events to MIHR file
-        NeuroID.integrationHealthService?.saveIntegrationHealthEvents()
 
         let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
         for event in queuedEvents {
