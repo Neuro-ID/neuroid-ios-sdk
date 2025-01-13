@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+          "version": "5.10.2"
+        }
+      },
+      {
+        "package": "FingerprintPro",
+        "repositoryURL": "https://github.com/fingerprintjs/fingerprintjs-pro-ios",
+        "state": {
+          "branch": null,
+          "revision": "51df49f935af022ceafbee34855500a37e0f35d3",
+          "version": "2.7.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
