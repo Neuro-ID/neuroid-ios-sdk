@@ -18,7 +18,7 @@ class PayloadTest: XCTestCase {
         do {
             /// This path may point to your on file system
             var url = URL(fileURLWithPath: #file).deletingLastPathComponent().deletingLastPathComponent()
-            url.appendPathComponent("/NeuroID/schema.json")
+            url.appendPathComponent("/Source/NeuroID/schema.json")
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
             self.data = data
             let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
@@ -27,7 +27,7 @@ class PayloadTest: XCTestCase {
             }
 
         } catch {
-            print("Not Found")
+            print("**** Schema Not Found ****")
             self.data = Data()
         }
     }
