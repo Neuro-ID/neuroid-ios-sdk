@@ -117,6 +117,16 @@ public extension NeuroID {
         return SessionIDOriginalResult(origin: origin, originCode: originCode, idValue: idValue, idType: idType)
     }
     
+    // Temporarily keeping this function for backwards compatibility
+    static func setUserID(_ userID: String) -> Bool {
+        return identify(userID)
+    }
+
+    // Temporarily keeping this function for backwards compatibility
+    static func getUserID() -> String {
+        return NeuroID.getSessionID()
+    }
+
     // This command replaces `setUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static func identify(_ sessionID: String) -> Bool {
