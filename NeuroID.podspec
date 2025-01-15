@@ -13,17 +13,17 @@ s.author = { "NeuroID" => "NeuroID" }
 s.homepage = "https://neuro-id.com/"
 
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
-s.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+s.source_files = "Source/NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
 s.dependency 'Alamofire'
 s.dependency 'FingerprintPro', '2.7.0'
 
 s.default_subspecs = 'Core'
 s.subspec 'Core' do |core|
-    core.source_files = "NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
+    core.source_files = "Source/NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
     core.resource_bundles = {
-        'NeuroID' => ['NeuroID/PrivacyInfo.xcprivacy', "Info.plist"]
+        'NeuroID' => ['Source/NeuroID/PrivacyInfo.xcprivacy', "Source/Info.plist"]
     }
 end
 
