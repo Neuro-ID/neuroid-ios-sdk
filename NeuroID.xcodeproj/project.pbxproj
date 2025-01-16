@@ -95,6 +95,8 @@
 		FFAC96BF2D358AC1004C2A25 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BE2D358AC1004C2A25 /* UINavigationController.swift */; };
 		FFAC96C12D358ACC004C2A25 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C02D358ACC004C2A25 /* UIButton.swift */; };
 		FFAC96C22D358B3D004C2A25 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
+		FFAC96C42D36D7EE004C2A25 /* IdentifierService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */; };
+		FFAC96C62D36DFF4004C2A25 /* IdentifierServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C52D36DFF4004C2A25 /* IdentifierServiceTests.swift */; };
 		FFD6967F2D28988E003928EF /* LocationManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD6967E2D28988B003928EF /* LocationManagerService.swift */; };
 /* End PBXBuildFile section */
 
@@ -218,6 +220,8 @@
 		FFAC96BC2D358AB5004C2A25 /* UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableView.swift; sourceTree = "<group>"; };
 		FFAC96BE2D358AC1004C2A25 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		FFAC96C02D358ACC004C2A25 /* UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
+		FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierService.swift; sourceTree = "<group>"; };
+		FFAC96C52D36DFF4004C2A25 /* IdentifierServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierServiceTests.swift; sourceTree = "<group>"; };
 		FFD6967E2D28988B003928EF /* LocationManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -342,6 +346,7 @@
 				6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */,
 				6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */,
 				F24BAE792BF52A0000A3605D /* SampleServiceTests.swift */,
+				FFAC96C52D36DFF4004C2A25 /* IdentifierServiceTests.swift */,
 			);
 			path = SDKTest;
 			sourceTree = "<group>";
@@ -479,6 +484,7 @@
 		FFD6967D2D28948F003928EF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */,
 				FFD6967E2D28988B003928EF /* LocationManagerService.swift */,
 				F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */,
 				4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */,
@@ -730,6 +736,7 @@
 				FFAC96BD2D358AB5004C2A25 /* UITableView.swift in Sources */,
 				FFD6967F2D28988E003928EF /* LocationManagerService.swift in Sources */,
 				F217029E29D4C7CE00133A1C /* DeviceEvents.swift in Sources */,
+				FFAC96C42D36D7EE004C2A25 /* IdentifierService.swift in Sources */,
 				F27045EE2B6A896700FE24FF /* NetworkMonitoringService.swift in Sources */,
 				F21702A429D4C98E00133A1C /* ValueEvents.swift in Sources */,
 				F21702B829D4CDD300133A1C /* Data.swift in Sources */,
@@ -784,6 +791,7 @@
 				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
 				6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */,
 				6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */,
+				FFAC96C62D36DFF4004C2A25 /* IdentifierServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -602,6 +602,11 @@ public class NIDEvent: Codable {
         self.type = NIDEventName.attemptedLogin.rawValue
         self.uid = uid
     }
+    
+    init(rawEventType: String, uid:String? = nil) {
+         self.type = rawEventType
+         self.uid = uid
+     }
 
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
         let viewId = TargetValue.string(view != nil ? view!.id : "")

@@ -54,9 +54,9 @@ enum Constants: String {
 }
 
 enum UserIDTypes: String {
-    case userID
-    case registeredUserID
-    case attemptedLogin
+    case sessionID = "setUserID" // leaving for log messages
+    case registeredUserID = "setRegisteredUserID"
+    case attemptedLogin = "attemptedLogin"
 }
 
 enum SessionOrigin: String {

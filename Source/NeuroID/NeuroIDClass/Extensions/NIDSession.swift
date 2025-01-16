@@ -20,12 +20,6 @@ public struct SessionStartResult {
 
 public extension NeuroID {
 
-    // This command replaces `getUserID`
-    // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    static func getSessionID() -> String {
-        return NeuroID.sessionID ?? ""
-    }
-
     static func startSession(
         _ sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
@@ -51,11 +45,11 @@ public extension NeuroID {
 
     static func stopSession() -> Bool {
         saveEventToLocalDataStore(
-            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Stop session attempt")
+            NIDEvent(type: .log, level: "INFO", m: "Stop session attempt")
         )
         
         saveEventToLocalDataStore(
-            NIDEvent(type: NIDEventName.closeSession, ct: "SDK_EVENT")
+            NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         )
         
         pauseCollection()
@@ -79,13 +73,12 @@ public extension NeuroID {
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        saveEventToDataStore(
-            NIDEvent(
-                type: NIDEventName.log,
-                level: "INFO",
-                m: "StartAppFlow attempt with siteID: \(siteID), sessionID: \(scrubIdentifier(sessionID ?? "null")))"
+        
+        _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
+                 identifier: sessionID ?? "null",
+                 message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
             )
-        )
+
 
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
@@ -94,7 +87,7 @@ public extension NeuroID {
             
             saveEventToLocalDataStore(
                 NIDEvent(
-                    type: NIDEventName.log,
+                    type: .log,
                     level: "ERROR",
                     m: "Failed to set invalid Linked Site \(siteID)"
                 )
@@ -135,11 +128,38 @@ public extension NeuroID {
                 // if sessionID passed then startSession should be used
                 if sessionID != nil {
                     NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
+                        if !startStatus.started {
+                            completion(startStatus)
+                            
+                            saveEventToDataStore(
+                                NIDEvent(
+                                    type: .log,
+                                    level: "INFO",
+                                    m: "Failed to startAppFlow with inner startSession command"
+                                )
+                            )
+                            return
+                        }
                         NeuroID.addLinkedSiteID(siteID)
                         completion(startStatus)
                     }
                 } else {
                     NeuroID.start(siteID: siteID) { started in
+                        if !started {
+                            completion(
+                                SessionStartResult(started, NeuroID.getSessionID())
+                            )
+                            
+                            saveEventToDataStore(
+                                NIDEvent(
+                                    type: .log,
+                                    level: "INFO",
+                                    m: "Failed to startAppFlow with inner start command"
+                                )
+                            )
+                            return
+                        }
+                        
                         NeuroID.addLinkedSiteID(siteID)
                         completion(
                             SessionStartResult(started, NeuroID.getSessionID())
@@ -152,7 +172,9 @@ public extension NeuroID {
 }
 
 extension NeuroID {
-    static func createNIDSessionEvent(sessionEvent: NIDSessionEventName = .createSession) -> NIDEvent {
+    static func createNIDSessionEvent(
+        sessionEvent: NIDSessionEventName = .createSession
+    ) -> NIDEvent {
         return NIDEvent(
             session: sessionEvent,
             f: NeuroID.getClientKey(),
@@ -184,17 +206,17 @@ extension NeuroID {
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         saveEventToDataStore(
-            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Close session attempt")
+            NIDEvent(type: .log, level: "INFO", m: "Close session attempt")
         )
 
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(
-                NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Close attempt failed since SDK is not started")
+                NIDEvent(type: .log, level: "ERROR", m: "Close attempt failed since SDK is not started")
             )
             throw NIDError.sdkNotStarted
         }
 
-        let closeEvent = NIDEvent(type: NIDEventName.closeSession, ct: "SDK_EVENT")
+        let closeEvent = NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
@@ -280,7 +302,7 @@ extension NeuroID {
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
         saveEventToDataStore(
-            NIDEvent(type: NIDEventName.log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
+            NIDEvent(type: .log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
         )
 
         if !NeuroID.verifyClientKeyExists() {
@@ -290,15 +312,17 @@ extension NeuroID {
 
         // Setup Session with old start timer logic
         // TO-DO - Refactor to behave like startSession
-        NeuroID.setupSession(siteID: siteID, customFunctionality: {
-            #if DEBUG
-            if NSClassFromString("XCTest") == nil {
+        NeuroID.setupSession(
+            siteID: siteID,
+            customFunctionality: {
+                #if DEBUG
+                if NSClassFromString("XCTest") == nil {
+                    initTimer()
+                }
+                #else
                 initTimer()
-            }
-            #else
-            initTimer()
-            #endif
-            initGyroAccelCollectionTimer()
+                #endif
+                initGyroAccelCollectionTimer()
         }) {
             completion(true)
         }
@@ -326,30 +350,34 @@ extension NeuroID {
         let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
-
-        saveEventToDataStore(
-            NIDEvent(
-                type: NIDEventName.log,
-                level: "INFO",
-                m: "Start session attempt with siteID: \(siteID ?? "") and sessionID: \(scrubIdentifier(finalSessionID))"
+        
+        _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
+                 identifier: finalSessionID,
+                 message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
             )
-        )
+        
+        let validSessionID = NeuroID.identifierService.setSessionID(
+                 finalSessionID,
+                 userGenerated
+             )
 
-        if !setSessionID(finalSessionID, userGenerated) {
+        if !validSessionID {
             let res = SessionStartResult(false, "")
 
             completion(res)
             return
         }
 
-        NeuroID.setupSession(siteID: siteID, customFunctionality: {
-            #if DEBUG
-            if NSClassFromString("XCTest") == nil {
+        NeuroID.setupSession(
+            siteID: siteID,
+            customFunctionality: {
+                #if DEBUG
+                if NSClassFromString("XCTest") == nil {
+                    resumeCollection()
+                }
+                #else
                 resumeCollection()
-            }
-            #else
-            resumeCollection()
-            #endif
+                #endif
         }) {
             completion(SessionStartResult(true, finalSessionID))
         }
