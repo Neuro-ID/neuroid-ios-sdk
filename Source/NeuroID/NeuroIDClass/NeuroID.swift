@@ -28,6 +28,7 @@ public class NeuroID: NSObject {
     static var callObserver: NIDCallStatusObserverService?
     static var configService: ConfigServiceProtocol = NIDConfigService()
     static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
+    static var identifierService: IdentifierServiceProtocol = IdentifierService(of: NeuroID.self, of: NIDLog.self)
 
     static var clientID: String?
     static var sessionID: String? // Formerly known as userID, now within the mobile sdk ONLY sessionID

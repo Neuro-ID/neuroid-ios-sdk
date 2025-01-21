@@ -20,6 +20,7 @@ class NeuroIDClassTests: XCTestCase {
 
     func clearOutDataStore() {
         let _ = DataStore.getAndRemoveAllEvents()
+        let _ = DataStore.getAndRemoveAllQueuedEvents()
     }
 
     override func setUpWithError() throws {
@@ -157,27 +158,24 @@ class NeuroIDClassTests: XCTestCase {
 
     func test_start_success_queuedEvent() {
         _ = NeuroID.stop()
-        let setSessionIDRes = NeuroID.setSessionID("test_uid", false)
-        assert(setSessionIDRes)
         NeuroID._isSDKStarted = false
 
         // pre tests
         assert(!NeuroID.isSDKStarted)
+        
+        clearOutDataStore()
 
         // action
         NeuroID.start { started in
-
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count == 14)
+            assert(DataStore.events.count == 5)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
-            self.assertStoredEventCount(type: "SET_USER_ID", count: 1)
             self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 1)
-            self.assertStoredEventCount(type: "SET_VARIABLE", count: 4)
-            self.assertStoredEventCount(type: "LOG", count: 6)
+            self.assertStoredEventCount(type: "LOG", count: 2)
         }
     }
 
@@ -853,210 +851,6 @@ class NIDUserTests: XCTestCase {
         assert(originCodeEvent[0].v == originCode)
     }
 
-    func test_validatedUserID_valid_id() {
-        let validIdentifiers = [
-            "123",
-            "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
-            "a-A_1.0",
-        ]
-
-        for identifier in validIdentifiers {
-            let userNameSet = NeuroID.validateIdentifier(identifier)
-            assert(userNameSet == true)
-        }
-    }
-
-    func test_validatedUserID_invalid_id() {
-        let invalidIdentifiers = [
-            "",
-            "1",
-            "12",
-            "to_long_789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
-            "this_is_way_to_long_0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
-            "invalid characters",
-            "invalid*ch@racters",
-        ]
-
-        for identifier in invalidIdentifiers {
-            let userNameSet = NeuroID.validateIdentifier(identifier)
-            assert(userNameSet == false)
-        }
-    }
-
-    func test_scrubEmailId() {
-        let id = "tt@test.com"
-        let expectedId = "t*@test.com"
-        let scrubbedId = NeuroID.scrubIdentifier(id)
-        XCTAssertEqual(scrubbedId, expectedId)
-    }
-
-    func test_unScrubbedID() {
-        let id = "123_testing123"
-        let expectedId = "123_testing123"
-        let unscrubbedId = NeuroID.scrubIdentifier(id)
-        XCTAssertEqual(unscrubbedId, expectedId)
-    }
-
-    func test_scrubSSN() {
-        let id = "123-23-4568"
-        let expectedId = "***-**-****"
-        let scrubbedId = NeuroID.scrubIdentifier(id)
-        XCTAssertEqual(scrubbedId, expectedId)
-    }
-
-    func test_setGenericIdentifier_valid_id_started() {
-        NeuroID._isSDKStarted = true
-
-        let expectedValue = "myTestUserID"
-        let result = NeuroID.setGenericIdentifier(type: .userID, genericIdentifier: expectedValue, userGenerated: true)
-
-        assert(result == true)
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assert(DataStore.queuedEvents.count == 0)
-    }
-
-    func test_setGenericIdentifier_valid_id_queued() {
-        NeuroID._isSDKStarted = false
-        clearOutDataStore()
-
-        let expectedValue = "myTestUserID"
-        let result = NeuroID.setGenericIdentifier(type: .userID, genericIdentifier: expectedValue, userGenerated: true)
-
-        assert(result == true)
-        assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-    }
-
-    func test_setGenericIdentifier_valid_registered_id_started() {
-        NeuroID._isSDKStarted = true
-
-        let expectedValue = "myTestUserID"
-        let result = NeuroID.setGenericIdentifier(type: .registeredUserID, genericIdentifier: expectedValue, userGenerated: true)
-
-        assert(result == true)
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assert(DataStore.queuedEvents.count == 0)
-    }
-
-    func test_setGenericIdentifier_valid_registered_id_queued() {
-        NeuroID._isSDKStarted = false
-        clearOutDataStore()
-
-        let expectedValue = "myTestUserID"
-        let result = NeuroID.setGenericIdentifier(type: .registeredUserID, genericIdentifier: expectedValue, userGenerated: true)
-
-        assert(result == true)
-        assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-    }
-
-    func test_setGenericIdentifier_invalid_id_started() {
-        NeuroID._isSDKStarted = true
-        clearOutDataStore()
-        let expectedValue = "$!&*"
-        let result = NeuroID.setGenericIdentifier(type: .userID, genericIdentifier: expectedValue, userGenerated: true)
-
-        assert(result == false)
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: false)
-    }
-
-    func test_setGenericIdentifier_invalid_id_queued() {
-        NeuroID._isSDKStarted = false
-        clearOutDataStore()
-
-        let expectedValue = "$!&*"
-        let result = NeuroID.setGenericIdentifier(type: .userID, genericIdentifier: expectedValue, userGenerated: true)
-
-        assert(result == false)
-        assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-    }
-
-    func test_setSessionID_started_customer_origin() {
-
-        let expectedValue = "test_uid"
-
-        let fnSuccess = NeuroID.setSessionID(expectedValue, true)
-
-        assert(fnSuccess)
-        assert(NeuroID.sessionID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
-
-        /* The following events are in the DataStore now.*/
-        // Log
-        // Set Variable (sessionIdCode)
-        // Set Variable (sessionIdSource)
-        // Set Variable (sessionId)
-        // Set Variable (sessionIdType)
-        // SET_USER_ID
-        assert(DataStore.events.count == 6)
-    }
-
-    func test_setSessionID_pre_start_customer_origin() {
-        _ = NeuroID.stop()
-
-        let expectedValue = "test_uid"
-
-        let fnSuccess = NeuroID.setSessionID(expectedValue, true)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.sessionID == expectedValue)
-
-        //        assert(DataStore.events.count == 0) "NETWORK_STATE" event present
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
-    }
-
-    func test_setSessionID_started_nid_origin() {
-
-        let expectedValue = "test_uid"
-
-        let fnSuccess = NeuroID.setSessionID(expectedValue, false)
-
-        assert(fnSuccess)
-        assert(NeuroID.sessionID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
-
-        /* The following events are in the DataStore now.*/
-        // Log
-        // Set Variable (sessionIdCode)
-        // Set Variable (sessionIdSource)
-        // Set Variable (sessionId)
-        // Set Variable (sessionIdType)
-        // SET_USER_ID
-        assert(DataStore.events.count == 6)
-    }
-
-    func test_setSessionID_pre_start_nid_origin() {
-        _ = NeuroID.stop()
-
-        let expectedValue = "test_uid"
-
-        let fnSuccess = NeuroID.setSessionID(expectedValue, false)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.sessionID == expectedValue)
-        assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
-    }
-
     func test_getSessionID_objectLevel() {
 
         let expectedValue = "test_uid"
@@ -1089,76 +883,6 @@ class NIDUserTests: XCTestCase {
 
         assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
-
-        NeuroID.registeredUserID = ""
-    }
-
-    func test_setRegisteredUserID_started() {
-        let expectedValue = "test_ruid"
-
-        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
-        assert(DataStore.queuedEvents.count == 0)
-
-        NeuroID.registeredUserID = ""
-    }
-
-    func test_setRegisteredUserID_pre_start() {
-        _ = NeuroID.stop()
-
-        let expectedValue = "test_ruid"
-
-        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
-
-//        assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
-        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
-        NeuroID.registeredUserID = ""
-    }
-
-    func test_setRegisteredUserID_already_set() {
-        clearOutDataStore()
-        NeuroID._isSDKStarted = true
-        NeuroID.registeredUserID = "setID"
-
-        let expectedValue = "test_ruid"
-
-        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
-        assert(DataStore.queuedEvents.count == 0)
-
-        NeuroID.registeredUserID = ""
-    }
-
-    func test_setRegisteredUserID_same_value() {
-        clearOutDataStore()
-
-        let expectedValue = "test_ruid"
-
-        NeuroID.registeredUserID = expectedValue
-
-        let fnSuccess = NeuroID.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
 
         NeuroID.registeredUserID = ""
     }
