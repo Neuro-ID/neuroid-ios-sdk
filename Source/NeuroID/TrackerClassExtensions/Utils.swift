@@ -190,7 +190,8 @@ enum UtilFunctions {
         let screenName = className ?? ParamsCreator.generateID()
         // Make sure we have a valid url set
         event.url = screenName
-        DataStore.insertEvent(screen: screenName, event: event)
+        
+        NeuroID.saveEventToLocalDataStore(event, screen: screenName)
     }
 
     static func captureTextEvents(view: UIView, textValue: String, eventType: NIDEventName) {

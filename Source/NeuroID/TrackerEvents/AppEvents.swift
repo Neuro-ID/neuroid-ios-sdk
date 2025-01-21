@@ -37,8 +37,8 @@ extension NeuroIDTracker {
         // Reduce memory footprint
         // Only clear this event queue the first time as it might be triggered a few times in a row (dropping our low mem event)
         if !NeuroID.lowMemory {
-            DataStore.events = []
-            DataStore.queuedEvents = []
+            NeuroID.clearDataStore()
+            
             let lowMemEvent = NIDEvent(type: NIDEventName.lowMemory)
             lowMemEvent.url = NeuroID.getScreenName()
 

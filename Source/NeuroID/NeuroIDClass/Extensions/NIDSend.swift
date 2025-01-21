@@ -112,7 +112,7 @@ extension NeuroID {
         }
 
         // get and clear event queue
-        let dataStoreEvents = DataStore.getAndRemoveAllEvents()
+        let dataStoreEvents = NeuroID.datastore.getAndRemoveAllEvents()
 
         if dataStoreEvents.isEmpty {
             completion()

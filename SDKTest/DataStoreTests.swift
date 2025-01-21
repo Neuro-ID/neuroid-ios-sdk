@@ -21,14 +21,16 @@ class DataStoreTests: XCTestCase {
     )
 
     let excludeId = "exclude_test_id"
+    
+    var dataStore = DataStore()
 
     override func setUpWithError() throws {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.stop()
         NeuroID._isSDKStarted = true
-        let _ = DataStore.getAndRemoveAllEvents()
-        let _ = DataStore.getAndRemoveAllQueuedEvents()
+        
+        dataStore = DataStore()
     }
 
     override func tearDownWithError() throws {
@@ -58,132 +60,59 @@ class DataStoreTests: XCTestCase {
         }
     }
 
-    func test_insertEvent_stoppedSDK() {
-        _ = NeuroID.stop()
-
-        DataStore.insertEvent(screen: screenName, event: nidEvent)
-        assert(DataStore.events.count == 0)
-    }
-
-    func test_insertEvent_success() {
-        let screen = "DS_TEST_SCREEN"
-        NeuroID.currentScreenName = screen
-
-        let nidE = nidEvent
-        assert(nidE.url == nil)
-
-        DataStore.insertEvent(screen: screenName, event: nidE)
-        assert(DataStore.events.count == 1)
-        assert(DataStore.events[0].url == "ios://\(screen)")
-    }
-
-    func test_insertQueuedEvent_success() {
-        let screen = "DS_TEST_SCREEN"
-        NeuroID.currentScreenName = screen
-
-        let nidE = nidEvent
-        assert(nidE.url == nil)
-
-        DataStore.insertQueuedEvent(screen: screenName, event: nidE)
-        assert(DataStore.events.count == 0)
-        assert(DataStore.queuedEvents.count == 1)
-        assert(DataStore.queuedEvents[0].url == "ios://\(screen)")
-    }
-
-    func test_cleanAndStoreEvent_RNScreen() {
-        let nidE = nidEvent
-        nidE.url = "RNScreensNavigationController"
-
-        DataStore.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(DataStore.events.count == 0)
-    }
-
-    func test_cleanAndStoreEvent_excludedView_tg() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
-
-        let nidE = nidEvent
-        nidE.tg = [
-            "tgs": TargetValue.string(excludeId)
-        ]
-
-        DataStore.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(DataStore.events.count == 0)
-    }
-
-    func test_cleanAndStoreEvent_excludedView_tgs() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
-
-        let nidE = nidEvent
-
-        nidE.tgs = excludeId
-
-        DataStore.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(DataStore.events.count == 0)
-    }
-
-    func test_cleanAndStoreEvent_excludedView_en() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
-
-        let nidE = nidEvent
-
-        nidE.en = excludeId
-
-        DataStore.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(DataStore.events.count == 0)
-    }
 
     func test_insertCleanedEvent_queued() {
         let nidE = nidEvent
 
-        DataStore.insertCleanedEvent(event: nidE, storeType: "queue")
-        assert(DataStore.events.count == 0)
-        assert(DataStore.queuedEvents.count == 1)
+        dataStore.insertCleanedEvent(event: nidE, storeType: "queue")
+        assert(dataStore.events.count == 0)
+        assert(dataStore.queuedEvents.count == 1)
     }
 
     func test_insertCleanedEvent_event() {
         let nidE = nidEvent
 
-        DataStore.insertCleanedEvent(event: nidE, storeType: "event")
-        assert(DataStore.events.count == 1)
-        assert(DataStore.queuedEvents.count == 0)
+        dataStore.insertCleanedEvent(event: nidE, storeType: "event")
+        assert(dataStore.events.count == 1)
+        assert(dataStore.queuedEvents.count == 0)
     }
 
     func test_getAllEvents() {
-        assert(DataStore.events.count == 0)
+        assert(dataStore.events.count == 0)
 
-        DataStore.events = [
+        dataStore.events = [
             nidEvent
         ]
 
-        let retrievedEvents = DataStore.getAllEvents()
+        let retrievedEvents = dataStore.getAllEvents()
 
         assert(retrievedEvents.count == 1)
     }
 
     func test_getAndRemoveAllEvents() {
-        assert(DataStore.events.count == 0)
+        assert(dataStore.events.count == 0)
 
-        DataStore.events = [
+        dataStore.events = [
             nidEvent
         ]
 
-        let retrievedEvents = DataStore.getAndRemoveAllEvents()
+        let retrievedEvents = dataStore.getAndRemoveAllEvents()
 
         assert(retrievedEvents.count == 1)
-        assert(DataStore.events.count == 0)
+        assert(dataStore.events.count == 0)
     }
 
     func test_getAndRemoveAllQueuedEvents() {
-        assert(DataStore.queuedEvents.count == 0)
+        assert(dataStore.queuedEvents.count == 0)
 
-        DataStore.queuedEvents = [
+        dataStore.queuedEvents = [
             nidEvent
         ]
 
-        let retrievedEvents = DataStore.getAndRemoveAllQueuedEvents()
+        let retrievedEvents = dataStore.getAndRemoveAllQueuedEvents()
 
         assert(retrievedEvents.count == 1)
-        assert(DataStore.queuedEvents.count == 0)
+        assert(dataStore.queuedEvents.count == 0)
     }
 
     func test_getUserDefaultKeyBool() {

@@ -23,6 +23,7 @@ public class NeuroID: NSObject {
     static var siteID: String?
     static var linkedSiteID: String?
 
+    static var datastore: DataStore = DataStore()
     static var locationManager: LocationManagerService?
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserverService?
@@ -96,7 +97,13 @@ public class NeuroID: NSObject {
 
         if !validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
-            saveQueuedEventToLocalDataStore(NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Invalid Client Key \(clientKey)"))
+            saveQueuedEventToLocalDataStore(
+                NIDEvent(
+                    type: NIDEventName.log,
+                    level: "ERROR",
+                    m: "Invalid Client Key \(clientKey)"
+                )
+            )
             setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key")
 
             return false
@@ -188,24 +195,7 @@ public class NeuroID: NSObject {
         didSwizzle.toggle()
     }
 
-    /**
-        Save and event to the datastore (logic of queue or not contained in this function)
-     */
-    static func saveEventToDataStore(_ event: NIDEvent) {
-        if !NeuroID.isSDKStarted {
-            saveQueuedEventToLocalDataStore(event)
-        } else {
-            saveEventToLocalDataStore(event)
-        }
-    }
-
-    static func saveEventToLocalDataStore(_ event: NIDEvent) {
-        DataStore.insertEvent(screen: event.type, event: event)
-    }
-
-    static func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
-        DataStore.insertQueuedEvent(screen: event.type, event: event)
-    }
+    
 
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format

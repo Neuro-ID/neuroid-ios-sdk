@@ -8,9 +8,8 @@
 @testable import NeuroID
 import XCTest
 
-class NeuroIDTrackerTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    let userId = "form_mobilesandbox"
+class NeuroIDTrackerTests: BaseTestClass {
+   let userId = "form_mobilesandbox"
     
     let screenNameValue = "testScreen"
     let guidValue = "\(Constants.attrGuidKey.rawValue)"
@@ -27,7 +26,7 @@ class NeuroIDTrackerTests: XCTestCase {
         _ = NeuroID.stop()
         
         // Clear out the DataStore Events after each test
-        DataStore.removeSentEvents()
+        NeuroID.datastore.removeSentEvents()
     }
     
     func sleep(timeout: Double) {
@@ -46,7 +45,7 @@ class NeuroIDTrackerTests: XCTestCase {
     }
     
     func assertEventTypeCount(type: String, expectedCount: Int) -> [NIDEvent] {
-        let dataStoreEvents = DataStore.getAllEvents()
+        let dataStoreEvents = NeuroID.datastore.getAllEvents()
         let filteredEvents = dataStoreEvents.filter { $0.type == type }
         
         assert(filteredEvents.count == expectedCount)
@@ -63,7 +62,7 @@ class NeuroIDTrackerTests: XCTestCase {
     }
     
     func assertViewNOTRegistered(v: UIView) {
-        let dataStoreEvents = DataStore.getAllEvents()
+        let dataStoreEvents = NeuroID.datastore.getAllEvents()
         let filteredEvent = dataStoreEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(filteredEvent.count == 0)
         
@@ -210,52 +209,52 @@ class NeuroIDTrackerTests: XCTestCase {
         uiControllerBasic.view.addSubview(input)
         
         // subscribe happens in the INIT method
-        let tracker = NeuroIDTracker(
+        let _ = NeuroIDTracker(
             screen: "test",
             controller: uiControllerBasic
         )
         
         // Text Field Notification Tests - observeTextInputEvents()
         // Field Focus
-        let _ = DataStore.getAndRemoveAllEvents()
+        let _ = NeuroID.datastore.getAndRemoveAllEvents()
         NotificationCenter.default.post(name: UITextField.textDidBeginEditingNotification, object: input)
-        var e = DataStore.getAndRemoveAllEvents()
+        var e = NeuroID.datastore.getAndRemoveAllEvents()
         assertEventTypeCountFromArray(type: "REGISTER_TARGET", expectedCount: 1, events: e) // because not registered from view
         assertEventTypeCountFromArray(type: "FOCUS", expectedCount: 1, events: e)
         
         // Field Input
         NotificationCenter.default.post(name: UITextField.textDidChangeNotification, object: input)
-        e = DataStore.getAndRemoveAllEvents()
+        e = NeuroID.datastore.getAndRemoveAllEvents()
         assertEventTypeCountFromArray(type: "INPUT", expectedCount: 1, events: e)
 
         // Field Blur
         NotificationCenter.default.post(name: UITextField.textDidEndEditingNotification, object: input)
-        e = DataStore.getAndRemoveAllEvents()
+        e = NeuroID.datastore.getAndRemoveAllEvents()
         assertEventTypeCountFromArray(type: "BLUR", expectedCount: 1, events: e)
         assertEventTypeCountFromArray(type: "TEXT_CHANGE", expectedCount: 1, events: e)
         
         // App Notification Tests - observeAppEvents()
         NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: UIDevice.self)
-        e = DataStore.getAndRemoveAllEvents()
+        e = NeuroID.datastore.getAndRemoveAllEvents()
         assertEventTypeCountFromArray(type: "DEVICE_ORIENTATION", expectedCount: 1, events: e)
         assertEventTypeCountFromArray(type: "WINDOW_ORIENTATION_CHANGE", expectedCount: 1, events: e)
         
         // Device Notification Tests - observeRotation()
         if #available(iOS 13.0, *) {
             NotificationCenter.default.post(name: UIScene.didActivateNotification, object: UIScene.self)
-            e = DataStore.getAndRemoveAllEvents()
+            e = NeuroID.datastore.getAndRemoveAllEvents()
             assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
             
             NotificationCenter.default.post(name: UIScene.willDeactivateNotification, object: UIScene.self)
-            e = DataStore.getAndRemoveAllEvents()
+            e = NeuroID.datastore.getAndRemoveAllEvents()
             assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
         } else {
             NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: UIApplication.self)
-            e = DataStore.getAndRemoveAllEvents()
+            e = NeuroID.datastore.getAndRemoveAllEvents()
             assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
             
             NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: UIApplication.self)
-            e = DataStore.getAndRemoveAllEvents()
+            e = NeuroID.datastore.getAndRemoveAllEvents()
             assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
         }
     }
