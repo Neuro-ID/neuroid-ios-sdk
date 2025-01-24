@@ -31,11 +31,11 @@ final class UtilFunctionsTests: XCTestCase {
         _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
-        DataStore.removeSentEvents()
+        NeuroID.datastore.removeSentEvents()
     }
 
     func getEventOfType(type: String) -> [NIDEvent] {
-        let dataStoreEvents = DataStore.getAllEvents()
+        let dataStoreEvents = NeuroID.datastore.getAllEvents()
         return dataStoreEvents.filter { $0.type == type }
     }
 

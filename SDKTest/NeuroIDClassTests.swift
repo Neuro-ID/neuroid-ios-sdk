@@ -8,21 +8,9 @@
 @testable import NeuroID
 import XCTest
 
-class NeuroIDClassTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
-    // Keys for storage:
-    let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
-    let clientKeyKey = Constants.storageClientKey.rawValue
-    let tabIdKey = Constants.storageTabIDKey.rawValue
-
+class NeuroIDClassTests: BaseTestClass {
     let mockService = MockDeviceSignalService()
-
-    func clearOutDataStore() {
-        let _ = DataStore.getAndRemoveAllEvents()
-        let _ = DataStore.getAndRemoveAllQueuedEvents()
-    }
-
+    
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
@@ -46,32 +34,8 @@ class NeuroIDClassTests: XCTestCase {
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
         NeuroID.start(true) { _ in
-            let allEvents = DataStore.getAllEvents()
-
-            let validEvent = allEvents.filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-            XCTAssertTrue(validEvent.count == 1)
+            self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
         }
-    }
-
-    func assertDataStoreCount(count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        assert(allEvents.count == count)
-    }
-
-    func assertStoredEventCount(type: String, count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-    }
-
-    func assertStoredEventTypeAndCount(type: String, count: Int, queued: Bool?) {
-        let allEvents = queued ?? false ? DataStore.getAndRemoveAllQueuedEvents() : DataStore.getAllEvents()
-
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        assert(validEvent[0].type == type)
     }
 
     func test_configure_success() {
@@ -116,7 +80,7 @@ class NeuroIDClassTests: XCTestCase {
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
         // 1 Log event should be in queue if the key fails validation
-        assertStoredEventTypeAndCount(type: "LOG", count: 1, queued: true)
+        self.assertQueuedEventTypeAndCount(type: "LOG", count: 1)
 
         assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
     }
@@ -150,7 +114,7 @@ class NeuroIDClassTests: XCTestCase {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count >= 2)
+            assert(NeuroID.datastore.events.count >= 2)
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
         }
@@ -170,7 +134,7 @@ class NeuroIDClassTests: XCTestCase {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(DataStore.events.count == 5)
+            assert(NeuroID.datastore.events.count == 5)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
@@ -208,12 +172,7 @@ class NeuroIDClassTests: XCTestCase {
     }
 }
 
-class NIDRegistrationTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-    }
+class NIDRegistrationTests: BaseTestClass {
 
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
@@ -230,18 +189,6 @@ class NIDRegistrationTests: XCTestCase {
         clearOutDataStore()
     }
 
-    func assertDataStoreCount(count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        assert(allEvents.count == count)
-    }
-
-    func assertStoredEventTypeAndCount(type: String, count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        assert(validEvent[0].type == type)
-    }
 
     func test_excludeViewByTestID() {
         clearOutDataStore()
@@ -265,7 +212,7 @@ class NIDRegistrationTests: XCTestCase {
 
         assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
 
-        let allEvents = DataStore.getAllEvents()
+        let allEvents = NeuroID.datastore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(validEvents[0].tgs == "wow")
         assert(validEvents[0].et == "UITextField::UITextField")
@@ -318,15 +265,7 @@ class NIDRegistrationTests: XCTestCase {
     }
 }
 
-class NIDSessionTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
-    let clientIdKey = Constants.storageClientIDKey.rawValue
-
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-    }
-
+class NIDSessionTests: BaseTestClass {
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
@@ -340,14 +279,6 @@ class NIDSessionTests: XCTestCase {
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-    }
-
-    func assertStoredEventTypeAndCount(type: String, count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        assert(validEvent[0].type == type)
     }
 
 
@@ -371,7 +302,7 @@ class NIDSessionTests: XCTestCase {
 
     func test_createSession() {
         clearOutDataStore()
-        DataStore.removeSentEvents()
+        NeuroID.datastore.removeSentEvents()
 
         NeuroID.createSession()
 
@@ -411,14 +342,10 @@ class NIDSessionTests: XCTestCase {
     }
 }
 
-class NIDNewSessionTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    let clientIdKey = Constants.storageClientIDKey.rawValue
+class NIDNewSessionTests: BaseTestClass {
+ 
 
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-        _ = DataStore.getAndRemoveAllQueuedEvents()
-    }
+  
 
     override func setUpWithError() throws {
         NeuroID.configService = MockConfigService()
@@ -431,39 +358,6 @@ class NIDNewSessionTests: XCTestCase {
         clearOutDataStore()
     }
 
-    func assertStoredEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        if !skipType! {
-            assert(validEvent[0].type == type)
-        }
-    }
-
-    func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = DataStore.queuedEvents
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        if !skipType! {
-            assert(validEvent[0].type == type)
-        }
-    }
-
-    func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
-        let allEvents = queued ? DataStore.queuedEvents : DataStore.getAllEvents()
-        let validEvents = allEvents.filter { $0.type == type }
-
-        let originEvent = validEvents.filter { $0.key == "sessionIdSource" }
-        assert(originEvent.count == 1)
-        assert(originEvent[0].v == origin)
-
-        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode" }
-        assert(originCodeEvent.count == 1)
-        assert(originCodeEvent[0].v == originCode)
-    }
-
     func assertSessionStartedTests(_ sessionRes: SessionStartResult) {
         assert(sessionRes.started)
         assert(NeuroID._isSDKStarted)
@@ -472,7 +366,7 @@ class NIDNewSessionTests: XCTestCase {
         assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
         assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
         assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
-        assert(DataStore.queuedEvents.isEmpty)
+        assert(NeuroID.datastore.queuedEvents.isEmpty)
     }
 
     func assertSessionNotStartedTests(_ sessionRes: SessionStartResult) {
@@ -638,20 +532,20 @@ class NIDNewSessionTests: XCTestCase {
     }
 
     func test_clearSendOldFlowEvents_not_sampled() {
-        DataStore.events.append(NIDEvent(rawType: "test"))
+        NeuroID.datastore.events.append(NIDEvent(rawType: "test"))
         let mockSampling = NIDSamplingService()
         mockSampling._isSessionFlowSampled = false
         NeuroID.samplingService = mockSampling
 
         NeuroID.clearSendOldFlowEvents {
-            assert(DataStore.events.count == 0)
+            assert(NeuroID.datastore.events.count == 0)
 
             NeuroID._isSDKStarted = false
         }
     }
 
     func test_clearSendOldFlowEvents_sampled() {
-        DataStore.events.append(NIDEvent(rawType: "test"))
+        NeuroID.datastore.events.append(NIDEvent(rawType: "test"))
         let mockSampling = NIDSamplingService()
         mockSampling._isSessionFlowSampled = true
         NeuroID.samplingService = mockSampling
@@ -662,21 +556,14 @@ class NIDNewSessionTests: XCTestCase {
         NeuroID._isSDKStarted = true
 
         NeuroID.clearSendOldFlowEvents {
-            assert(DataStore.events.count == 0)
+            assert(NeuroID.datastore.events.count == 0)
 
             NeuroID._isSDKStarted = false
         }
     }
 }
 
-class NIDFormTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    let clientIdKey = Constants.storageClientIDKey.rawValue
-
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-    }
-
+class NIDFormTests: BaseTestClass {
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
@@ -690,14 +577,6 @@ class NIDFormTests: XCTestCase {
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-    }
-
-    func assertStoredEventTypeAndCount(type: String, count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        assert(validEvent[0].type == type)
     }
 
     func test_formSubmit() {
@@ -722,13 +601,7 @@ class NIDFormTests: XCTestCase {
     }
 }
 
-class NIDScreenTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-    }
-
+class NIDScreenTests: BaseTestClass {
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
@@ -742,14 +615,6 @@ class NIDScreenTests: XCTestCase {
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-    }
-
-    func assertStoredEventTypeAndCount(type: String, count: Int) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        assert(validEvent[0].type == type)
     }
 
     func test_setScreenName_getScreenName() {
@@ -790,19 +655,12 @@ class NIDScreenTests: XCTestCase {
         assert(value != "test%20Screen")
         assert(screenNameSet == false)
 
-        let allEvents = DataStore.getAllEvents()
+        let allEvents = NeuroID.datastore.getAllEvents()
         assert(allEvents.count == 0)
     }
 }
 
-class NIDUserTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
-    func clearOutDataStore() {
-        DataStore.removeSentEvents()
-        let _ = DataStore.getAndRemoveAllQueuedEvents()
-    }
-
+class NIDUserTests: BaseTestClass {
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
@@ -818,38 +676,6 @@ class NIDUserTests: XCTestCase {
         clearOutDataStore()
     }
 
-    func assertStoredEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = DataStore.getAllEvents()
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        if !skipType! {
-            assert(validEvent[0].type == type)
-        }
-    }
-
-    func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = DataStore.queuedEvents
-        let validEvent = allEvents.filter { $0.type == type }
-
-        assert(validEvent.count == count)
-        if !skipType! {
-            assert(validEvent[0].type == type)
-        }
-    }
-
-    func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
-        let allEvents = queued ? DataStore.queuedEvents : DataStore.getAllEvents()
-        let validEvents = allEvents.filter { $0.type == type }
-
-        let originEvent = validEvents.filter { $0.key == "sessionIdSource" }
-        assert(originEvent.count == 1)
-        assert(originEvent[0].v == origin)
-
-        let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode" }
-        assert(originCodeEvent.count == 1)
-        assert(originCodeEvent[0].v == originCode)
-    }
 
     func test_getSessionID_objectLevel() {
 
@@ -892,7 +718,7 @@ class NIDUserTests: XCTestCase {
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         assertStoredEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
-        let allEvents = DataStore.getAllEvents()
+        let allEvents = NeuroID.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertTrue(validID)
         XCTAssertNotNil(event[0].uid!)
@@ -906,7 +732,7 @@ class NIDUserTests: XCTestCase {
         assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
-        let allEvents = DataStore.getAndRemoveAllQueuedEvents()
+        let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertTrue(validID)
         XCTAssertNotNil(event[0].uid!)
@@ -916,7 +742,7 @@ class NIDUserTests: XCTestCase {
 
     func test_attemptedLoginWithInvalidID() {
         let invalidID = NeuroID.attemptedLogin("🤣")
-        let allEvents = DataStore.getAllEvents()
+        let allEvents = NeuroID.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssert(event.count == 1)
         XCTAssertTrue(invalidID)
@@ -930,7 +756,7 @@ class NIDUserTests: XCTestCase {
         let invalidID = NeuroID.attemptedLogin("🤣")
         assertQueuedEventTypeAndCount(type: "LOG", count: 2)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-        let allEvents = DataStore.getAndRemoveAllQueuedEvents()
+        let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssert(event.count == 1)
         XCTAssertTrue(invalidID)
@@ -941,7 +767,7 @@ class NIDUserTests: XCTestCase {
         _ = NeuroID.attemptedLogin()
         assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         assertStoredEventTypeAndCount(type: "LOG", count: 1)
-        let allEvents = DataStore.getAllEvents()
+        let allEvents = NeuroID.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
@@ -953,7 +779,7 @@ class NIDUserTests: XCTestCase {
         assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
-        let allEvents = DataStore.getAndRemoveAllQueuedEvents()
+        let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
     }
@@ -989,15 +815,9 @@ class NIDEnvTests: XCTestCase {
     }
 }
 
-class NIDClientSiteIdTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-
-    // Keys for storage:
-    let clientKeyKey = Constants.storageClientKey.rawValue
-    let cidKey = Constants.storageClientIDKey.rawValue
-
+class NIDClientSiteIdTests: BaseTestClass {
     func test_getClientID() {
-        UserDefaults.standard.setValue("test-cid", forKey: cidKey)
+        UserDefaults.standard.setValue("test-cid", forKey: clientIdKey)
         NeuroID.clientID = nil
         let value = NeuroID.getClientID()
 
@@ -1008,7 +828,7 @@ class NIDClientSiteIdTests: XCTestCase {
         let expectedValue = "test-cid"
 
         NeuroID.clientID = expectedValue
-        UserDefaults.standard.set(expectedValue, forKey: cidKey)
+        UserDefaults.standard.set(expectedValue, forKey: clientIdKey)
 
         let value = NeuroID.getClientID()
 
@@ -1018,7 +838,7 @@ class NIDClientSiteIdTests: XCTestCase {
     func test_getClientId_random() {
         let expectedValue = "test_cid"
 
-        UserDefaults.standard.set(expectedValue, forKey: cidKey)
+        UserDefaults.standard.set(expectedValue, forKey: clientIdKey)
 
         let value = NeuroID.getClientID()
 

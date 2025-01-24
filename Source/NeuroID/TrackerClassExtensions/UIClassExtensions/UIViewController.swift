@@ -221,7 +221,7 @@ extension UIViewController {
 
             // Make sure we have a valid url set
             event.url = nidClassName
-            DataStore.insertEvent(screen: nidClassName, event: event)
+            NeuroID.saveEventToLocalDataStore(event, screen: nidClassName)
         }
     }
 
@@ -239,6 +239,7 @@ extension UIViewController {
 
         // Make sure we have a valid url set
         event.url = nidClassName
-        DataStore.insertEvent(screen: nidClassName, event: event)
+        
+        NeuroID.saveEventToLocalDataStore(event, screen: nidClassName)
     }
 }

@@ -286,11 +286,8 @@ extension NeuroID {
         //  this will be refactored once we bring start/startSession in alignment
         customFunctionality()
 
-        let queuedEvents = DataStore.getAndRemoveAllQueuedEvents()
-        for event in queuedEvents {
-            DataStore.insertEvent(screen: "", event: event)
-        }
-
+        moveQueuedEventsToDataStore()
+       
         captureAdvancedDevice()
 
         completion()
@@ -393,7 +390,7 @@ extension NeuroID {
             return
         } else {
             // if not sampled clear any events that might have slipped through
-            _ = DataStore.getAndRemoveAllEvents()
+            _ = NeuroID.datastore.getAndRemoveAllEvents()
 
             completion()
 

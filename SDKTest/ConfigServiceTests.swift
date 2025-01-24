@@ -16,7 +16,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func clearOutDataStore() {
-        DataStore.removeSentEvents()
+        NeuroID.datastore.removeSentEvents()
     }
     
     func setupKeyAndMockInternet() {

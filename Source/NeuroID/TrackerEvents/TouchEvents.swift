@@ -113,5 +113,5 @@ func captureTouchEvent(
     newEvent.touches = touchArray
     // Make sure we have a valid url set
     newEvent.url = NeuroID.getScreenName()
-    DataStore.insertEvent(screen: viewClass, event: newEvent)
+    NeuroID.saveEventToLocalDataStore(newEvent, screen: viewClass)
 }

@@ -15,7 +15,7 @@ class SessionTests: XCTestCase {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
    
         NeuroID._isSDKStarted = true
-        DataStore.removeSentEvents()
+        NeuroID.datastore.removeSentEvents()
 
 
         NeuroID.collectionURL = Constants.productionURL.rawValue
