@@ -89,6 +89,8 @@
 		F2EB87282C500FB7000362C5 /* ApplicationMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */; };
 		F2EF2A4D2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */; };
 		F2F0A3F529FB05A90083D43C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F429FB05A90083D43C /* Constants.swift */; };
+		FF88597C2D481B3A00A91902 /* AdvancedDeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */; };
+		FF88597E2D481B4300A91902 /* ValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597D2D481B4300A91902 /* ValidationService.swift */; };
 		FFAC96B92D358A9F004C2A25 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96B82D358A9F004C2A25 /* UIView.swift */; };
 		FFAC96BB2D358AA7004C2A25 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BA2D358AA7004C2A25 /* UITextView.swift */; };
 		FFAC96BD2D358AB5004C2A25 /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BC2D358AB5004C2A25 /* UITableView.swift */; };
@@ -217,6 +219,8 @@
 		F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMetaData.swift; sourceTree = "<group>"; };
 		F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClassExtensionTests.swift; sourceTree = "<group>"; };
 		F2F0A3F429FB05A90083D43C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceService.swift; sourceTree = "<group>"; };
+		FF88597D2D481B4300A91902 /* ValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationService.swift; sourceTree = "<group>"; };
 		FFAC96B52D358978004C2A25 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		FFAC96B82D358A9F004C2A25 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		FFAC96BA2D358AA7004C2A25 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
@@ -493,6 +497,7 @@
 		FFD6967D2D28948F003928EF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */,
 				FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */,
 				FFD6967E2D28988B003928EF /* LocationManagerService.swift */,
 				F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */,
@@ -500,6 +505,7 @@
 				F25908E22BEE648400B7A73D /* NIDConfigService.swift */,
 				6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */,
 				F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */,
+				FF88597D2D481B4300A91902 /* ValidationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -740,6 +746,7 @@
 				F24BAE782BF51FF500A3605D /* NIDSamplingService.swift in Sources */,
 				FFAC96B92D358A9F004C2A25 /* UIView.swift in Sources */,
 				F25908DF2BEE62EF00B7A73D /* ConfigModels.swift in Sources */,
+				FF88597E2D481B4300A91902 /* ValidationService.swift in Sources */,
 				F21702C929D5D5D000133A1C /* TouchEvents.swift in Sources */,
 				F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */,
 				FFAC96BD2D358AB5004C2A25 /* UITableView.swift in Sources */,
@@ -757,6 +764,7 @@
 				F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */,
 				F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */,
 				F2420C352BF3A1CD00143928 /* NIDListeners.swift in Sources */,
+				FF88597C2D481B3A00A91902 /* AdvancedDeviceService.swift in Sources */,
 				FFAC96BF2D358AC1004C2A25 /* UINavigationController.swift in Sources */,
 				F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */,
 				FFAC96C12D358ACC004C2A25 /* UIButton.swift in Sources */,
