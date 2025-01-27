@@ -80,7 +80,7 @@ public extension NeuroID {
             )
 
 
-        if !NeuroID.verifyClientKeyExists() || !NeuroID.validateSiteID(siteID) {
+        if !NeuroID.verifyClientKeyExists() || !NeuroID.validationService.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
             NeuroID.linkedSiteID = nil

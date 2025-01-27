@@ -24,12 +24,13 @@ public class NeuroID: NSObject {
     static var linkedSiteID: String?
 
     static var datastore: DataStore = DataStore()
+    static var validationService:ValidationService = ValidationService(loggerType:NIDLog.self)
     static var locationManager: LocationManagerService?
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserverService?
     static var configService: ConfigServiceProtocol = NIDConfigService()
     static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
-    static var identifierService: IdentifierServiceProtocol = IdentifierService(of: NeuroID.self, of: NIDLog.self)
+    static var identifierService: IdentifierServiceProtocol = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: NeuroID.validationService)
 
     static var clientID: String?
     static var sessionID: String? // Formerly known as userID, now within the mobile sdk ONLY sessionID
@@ -95,7 +96,7 @@ public class NeuroID: NSObject {
             return false
         }
 
-        if !validateClientKey(clientKey) {
+        if !validationService.validateClientKey(clientKey) {
             NIDLog.e("Invalid Client Key")
             saveQueuedEventToLocalDataStore(
                 NIDEvent(
