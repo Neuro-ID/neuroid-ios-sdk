@@ -10,46 +10,15 @@ import XCTest
 @testable import NeuroID
 
 class IdentifierServiceTests: BaseTestClass {
-    var identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self)
+    var identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
 
     override func setUp() {
         clearOutDataStore()
-        identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self)
+        identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
     }
 
     override func tearDown() {
         clearOutDataStore()
-    }
-
-
-    func test_validatedIdentifiers_valid_id() {
-        let validIdentifiers = [
-            "123",
-            "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
-            "a-A_1.0",
-        ]
-
-        for identifier in validIdentifiers {
-            let userNameSet = identifierService.validateIdentifier(identifier)
-            assert(userNameSet == true)
-        }
-    }
-
-    func test_validatedIdentifiers_invalid_id() {
-        let invalidIdentifiers = [
-            "",
-            "1",
-            "12",
-            "to_long_789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
-            "this_is_way_to_long_0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
-            "invalid characters",
-            "invalid*ch@racters",
-        ]
-
-        for identifier in invalidIdentifiers {
-            let userNameSet = identifierService.validateIdentifier(identifier)
-            assert(userNameSet == false)
-        }
     }
 
     func test_scrubEmailId() {

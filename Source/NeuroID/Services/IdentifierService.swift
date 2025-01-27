@@ -37,13 +37,16 @@ struct SessionIDOriginalResult {
 class IdentifierService: IdentifierServiceProtocol {
     let neuroID: NeuroID.Type
     let logger: NIDLog.Type
+    let validationService:ValidationService
 
     init(
         of neuroID: NeuroID.Type,
-        of logger: NIDLog.Type
+        of logger: NIDLog.Type,
+        validationService:ValidationService
     ) {
         self.neuroID = neuroID
         self.logger = logger
+        self.validationService = validationService
     }
 
     // This command replaces `setUserID` (internal version)
@@ -110,7 +113,7 @@ class IdentifierService: IdentifierServiceProtocol {
             return false
         }
 
-        let validID = validateIdentifier(identifier)
+        let validID = validationService.validateIdentifier(identifier)
 
         sendOriginEvent(
             getOriginResult(
@@ -170,8 +173,6 @@ class IdentifierService: IdentifierServiceProtocol {
         do {
             let emailRegex = try NSRegularExpression(
                 pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-            let ssnRegex = try NSRegularExpression(
-                pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")
             var result = emailRegex.matches(
                 in: identifier, range: NSMakeRange(0, identifier.count))
             if !result.isEmpty {
@@ -185,6 +186,9 @@ class IdentifierService: IdentifierServiceProtocol {
                     + identifier[atIndex...]
                 return scrubbedEmailId
             }
+            
+            let ssnRegex = try NSRegularExpression(
+                pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")
             result = ssnRegex.matches(
                 in: identifier, range: NSMakeRange(0, identifier.count))
             if !result.isEmpty {
@@ -195,27 +199,6 @@ class IdentifierService: IdentifierServiceProtocol {
             logger.e("Invalid pattern: \(error.localizedDescription)")
             return identifier
         }
-    }
-
-    internal func validateIdentifier(_ identifier: String) -> Bool {
-        // user ids must be from 3 to 100 ascii alhpa numeric characters and can include `.`, `-`, and `_`
-        do {
-            let expression = try NSRegularExpression(
-                pattern: "^[a-zA-Z0-9-_.]{3,100}$",
-                options: NSRegularExpression.Options(rawValue: 0))
-            let result = expression.matches(
-                in: identifier,
-                options: NSRegularExpression.MatchingOptions(rawValue: 0),
-                range: NSMakeRange(0, identifier.count))
-            if result.count != 1 {
-                logger.e(NIDError.invalidUserID.rawValue)
-                return false
-            }
-        } catch {
-            logger.e(NIDError.invalidUserID.rawValue)
-            return false
-        }
-        return true
     }
 
     internal func sendOriginEvent(_ originResult: SessionIDOriginalResult) {

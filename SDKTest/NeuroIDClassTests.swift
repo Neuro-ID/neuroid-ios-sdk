@@ -872,47 +872,6 @@ class NIDClientSiteIdTests: BaseTestClass {
         assert(NeuroID.siteID == "test_site")
     }
 
-    func test_validateClientKey_valid_live() {
-        let value = NeuroID.validateClientKey("key_live_XXXXXXXXXXX")
-
-        assert(value)
-    }
-
-    func test_validateClientKey_valid_test() {
-        let value = NeuroID.validateClientKey("key_test_XXXXXXXXXXX")
-
-        assert(value)
-    }
-
-    func test_validateClientKey_invalid_env() {
-        let value = NeuroID.validateClientKey("key_foo_XXXXXXXXXXX")
-
-        assert(!value)
-    }
-
-    func test_validateClientKey_invalid_random() {
-        let value = NeuroID.validateClientKey("sdfsdfsdfsdf")
-
-        assert(!value)
-    }
-
-    func test_validateSiteID_valid() {
-        let value = NeuroID.validateSiteID("form_peaks345")
-
-        assert(value)
-    }
-
-    func test_validateSiteID_invalid_bad() {
-        let value = NeuroID.validateSiteID("badSiteID")
-
-        assert(!value)
-    }
-
-    func test_validateSiteID_invalid_short() {
-        let value = NeuroID.validateSiteID("form_abc123")
-
-        assert(!value)
-    }
 }
 
 class NIDSendTests: XCTestCase {

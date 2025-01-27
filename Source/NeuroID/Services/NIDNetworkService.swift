@@ -36,7 +36,7 @@ class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
             encoder: JSONParameterEncoder.default,
             headers: headers
         ).validate().responseData { response in
-            if let error = response.error, response.response?.statusCode != 403, retryCount < maxRetryCount {
+            if let _ = response.error, response.response?.statusCode != 403, retryCount < maxRetryCount {
                 NIDLog.i("NeuroID network Retrying... attempt \(retryCount + 1)")
                 self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount + 1, completion: completion)
             } else {

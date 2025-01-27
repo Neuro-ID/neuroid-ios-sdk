@@ -50,36 +50,6 @@ extension NeuroID {
         return key
     }
 
-    static func validateClientKey(_ clientKey: String) -> Bool {
-        var validKey = false
-
-        let pattern = "key_(live|test)_[A-Za-z0-9]+"
-        let regex = try! NSRegularExpression(pattern: pattern)
-
-        if let _ = regex.firstMatch(
-            in: clientKey,
-            options: NSRegularExpression.MatchingOptions(rawValue: 0),
-            range: NSMakeRange(0, clientKey.count)
-        ) {
-            validKey = true
-        }
-
-        return validKey
-    }
-
-    static func validateSiteID(_ string: String) -> Bool {
-        let regex = #"^form_[a-zA-Z0-9]{5}\d{3}$"#
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
-
-        let valid = predicate.evaluate(with: string)
-
-        if !valid {
-            NIDLog.e("Invalid SiteID/AppID")
-        }
-
-        return valid
-    }
-
     /**
      Takes an optional string, if the string is nil or matches the cached config siteID then it
        is the "collection" site meaning the siteID that belongs to the clientKey given
@@ -90,7 +60,7 @@ extension NeuroID {
     }
 
     static func addLinkedSiteID(_ siteID: String) {
-        if !NeuroID.validateSiteID(siteID) {
+        if !NeuroID.validationService.validateSiteID(siteID) {
             return
         }
 
