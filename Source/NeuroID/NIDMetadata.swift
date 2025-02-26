@@ -34,6 +34,7 @@ final class NIDMetadata: Codable {
     var isWifiOn: Bool
     var isSimulator: Bool
     var gpsCoordinates: NIDLocation
+    var lastInstallTime: Int64
 
     // Init with local data
     public init() {
@@ -50,7 +51,7 @@ final class NIDMetadata: Codable {
         self.batteryLevel = NIDMetadata.getBaterryLevel()
         self.isJailBreak = NIDMetadata.hasJailbreak()
         self.isSimulator = NIDMetadata.isSimulator()
-
+        self.lastInstallTime = Int64(UserDefaults.standard.integer(forKey: "lastInstallTime") * 1000)
         self.gpsCoordinates = NIDLocation(
             latitude: NeuroID.locationManager?.latitude ?? -1,
             longitude: NeuroID.locationManager?.longitude ?? -1,

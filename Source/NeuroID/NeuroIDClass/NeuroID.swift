@@ -91,6 +91,12 @@ public class NeuroID: NSObject {
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String, isAdvancedDevice: Bool = false) -> Bool {
+        // set last install time if not already set.
+        if (UserDefaults.standard.object(forKey: "lastInstallTime") == nil) {
+            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastInstallTime")
+            UserDefaults.standard.synchronize()
+        }
+        
         if NeuroID.clientKey != nil {
             NIDLog.e("You already configured the SDK")
             return false
