@@ -51,7 +51,7 @@ final class NIDMetadata: Codable {
         self.batteryLevel = NIDMetadata.getBaterryLevel()
         self.isJailBreak = NIDMetadata.hasJailbreak()
         self.isSimulator = NIDMetadata.isSimulator()
-        self.lastInstallTime = Int64(UserDefaults.standard.integer(forKey: "lastInstallTime") * 1000)
+        self.lastInstallTime = Int64(getUserDefaultKeyDouble("lastInstallTime")) * 1000
         self.gpsCoordinates = NIDLocation(
             latitude: NeuroID.locationManager?.latitude ?? -1,
             longitude: NeuroID.locationManager?.longitude ?? -1,
