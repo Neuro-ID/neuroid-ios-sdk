@@ -63,6 +63,10 @@ internal func getUserDefaultKeyString(_ key: String) -> String? {
     return UserDefaults.standard.string(forKey: key)
 }
 
+internal func getUserDefaultKeyDouble(_ key: String) -> Double {
+    return UserDefaults.standard.double(forKey: key)
+}
+
 internal func getUserDefaultKeyDict(_ key: String) -> [String: Any]? {
     return UserDefaults.standard.dictionary(forKey: key)
 }

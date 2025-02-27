@@ -43,6 +43,7 @@ enum Constants: String {
     case etKey = "et"
     case vKey = "v"
     case hashKey = "hash"
+    case lastInstallTime = "lastInstallTime"
 
     // Tags
     case debugTag = "NeuroID Debug:"

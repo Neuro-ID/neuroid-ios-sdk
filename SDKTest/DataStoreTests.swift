@@ -195,4 +195,14 @@ class DataStoreTests: XCTestCase {
         let value = UserDefaults.standard.bool(forKey: testStoreKey)
         assert(value == true)
     }
+    
+    func test_getUserDefaultKeyDouble_no_value() {
+        UserDefaults.standard.removeObject(forKey: "test_key")
+        assert(getUserDefaultKeyDouble("test_key") == 0)
+    }
+    
+    func test_getUserDefaultKeyDouble_valid_value() {
+        setUserDefaultKey("test_key", value: 15.0)
+        assert(getUserDefaultKeyDouble("test_key") == 15.0)
+    }
 }
