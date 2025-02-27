@@ -92,8 +92,8 @@ public class NeuroID: NSObject {
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String, isAdvancedDevice: Bool = false) -> Bool {
         // set last install time if not already set.
-        if (getUserDefaultKeyDouble("lastInstallTime") == 0) {
-            setUserDefaultKey("lastInstallTime", value: (Date().timeIntervalSince1970))
+        if (getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0) {
+            setUserDefaultKey(Constants.lastInstallTime.rawValue, value: (Date().timeIntervalSince1970))
         }
         
         if NeuroID.clientKey != nil {
