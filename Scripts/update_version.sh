@@ -10,7 +10,7 @@ fi
 VERSION="$1"
 SWIFT_FILE="$2"
 
-sed -i.bak "s/%%%Version%%%/$VERSION/" "$SWIFT_FILE"
+sed -i.bak "s/%%%[^%]*%%%/%%%$VERSION%%%/" "$SWIFT_FILE"
 
 rm "$SWIFT_FILE.bak"
 
