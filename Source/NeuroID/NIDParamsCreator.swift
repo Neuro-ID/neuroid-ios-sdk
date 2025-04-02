@@ -183,6 +183,8 @@ enum ParamsCreator {
         // Get Version number from bundled info.plist file if included
         if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: "NeuroID", withExtension: "bundle") {
             version = Bundle(url: bundleURL)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        } else {
+            version = getSPVersionID(version: "%%%3.4.2%%%")
         }
         return "5.ios\(NeuroID.isRN ? "-rn" : "")-adv-\(version ?? "?")"
     }
@@ -196,5 +198,21 @@ enum ParamsCreator {
         let now = Date().timeIntervalSince1970 * 1000
         let rawId = (Int(now) - 1488084578518) * 1024 + (x + 1)
         return String(format: "%02X", rawId)
+    }
+    
+    static func getSPVersionID(version: String) -> String {
+        var spVersion = version
+        
+        // extract version from the sp version string
+        guard let regex = try? NSRegularExpression(pattern: "%%%([^%]*)%%%") else {
+            return spVersion
+        }
+        if let match = regex.firstMatch(in: spVersion, options: [], range: NSRange(spVersion.startIndex..., in: spVersion)) {
+            if let range = Range(match.range(at: 1), in: spVersion) {
+                let extracted = String(spVersion[range])
+                spVersion = extracted
+            }
+        }
+        return spVersion
     }
 }

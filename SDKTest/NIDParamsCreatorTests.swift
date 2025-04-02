@@ -433,4 +433,10 @@ class NIDParamsCreatorTests: XCTestCase {
 
         assert(value != secondValue)
     }
+    
+    func test_getSPVersionID() {
+        let expectedValue = "3.4.5"
+        let value = ParamsCreator.getSPVersionID(version: "%%%3.4.5%%%")
+        assert(value == expectedValue)
+    }
 }
