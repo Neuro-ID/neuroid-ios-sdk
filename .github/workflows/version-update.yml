@@ -86,6 +86,8 @@ jobs:
       - name: Get Updated Version
         run: |
           PACKAGE_VERSION=$(bundle exec fastlane get_project_version | grep -o "SDK Version:.*" | sed "s/SDK Version: //" )
+	  chmod +x ./Scripts/update_version.sh
+	  ./Scripts/update_version $PACKAGE_VERSION Source/NeuroID/NIDParamsCreator.swift
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
 
@@ -107,6 +109,7 @@ jobs:
           set +e
           git add NeuroID.podspec
           git add NeuroID/Info.plist
+	  git add NeuroID/Source/NeuroID/NIDParamsCreator.swift
           git commit -m "Update SDK to $PACKAGE_VERSION"
           git tag "v$PACKAGE_VERSION"
           git push --set-upstream origin ${{ env.BRANCH_NAME }}
