@@ -28,10 +28,16 @@ public extension NeuroID {
     }
 
     static func pauseCollection() {
+        saveEventToLocalDataStore(
+            NIDEvent(type: .log, level: "INFO", m: "pause collection attempt")
+        )
         pauseCollection(flushEventQueue: true)
     }
 
     static func resumeCollection() {
+        saveEventToLocalDataStore(
+            NIDEvent(type: .log, level: "INFO", m: "resume collection attempt")
+        )
         // Don't allow resume to be called if SDK has not been started
         if NeuroID.sessionID.isEmptyOrNil, !NeuroID.isSDKStarted {
             return
