@@ -89,6 +89,12 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}"
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
+          
+      - name: make update script executable
+        run: chmod +x ./Scripts/update_version.sh
+
+	    - name: run update script
+        run: ./Scripts/update_version $PACKAGE_VERSION Source/NeuroID/NIDParamsCreator.swift
 
       - name: Get previous release tag
         run: echo TAG="$(git describe --abbrev=0 --tags --match 'v*')" >> $GITHUB_ENV
@@ -108,6 +114,7 @@ jobs:
           set +e
           git add NeuroID.podspec
           git add NeuroID/Info.plist
+          git add NeuroID/Source/NeuroID/NIDParamsCreator.swift
           git commit -m "Update SDK to $PACKAGE_VERSION"
           git tag "v$PACKAGE_VERSION"
           git push --set-upstream origin ${{ env.BRANCH_NAME }}
