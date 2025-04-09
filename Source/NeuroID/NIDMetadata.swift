@@ -5,13 +5,11 @@
 //  Created by jose perez on 26/08/22.
 //
 
-
+import CoreTelephony
 import Foundation
 import Network
 import SwiftUI
 import UIKit
-import CoreTelephony
-
 
 struct NIDLocation: Codable {
     var latitude: Double?
@@ -210,7 +208,11 @@ extension NIDMetadata {
 
 extension UIDevice {
     var isSimulator: Bool {
-        return TARGET_OS_SIMULATOR != 0
+        #if targetEnvironment(simulator)
+            return true
+        #else
+            return false
+        #endif
     }
 }
 
@@ -325,6 +327,15 @@ public enum Model: String {
          iPhone14Plus = "iPhone 14 Plus",
          iPhone14Pro = "iPhone 14 Pro",
          iPhone14ProMax = "iPhone 14 Pro Max",
+         iPhone15 = "iPhone 15",
+         iPhone15Plus = "iPhone 15 Plus",
+         iPhone15Pro = "iPhone 15 Pro",
+         iPhone15ProMax = "iPhone 15 Pro Max",
+         iPhone16 = "iPhone 16",
+         iPhone16Plus = "iPhone 16 Plus",
+         iPhone16Pro = "iPhone 16 Pro",
+         iPhone16ProMax = "iPhone 16 Pro Max",
+         iPhone16e = "iPhone 16e",
 
          AppleTV = "Apple TV",
          AppleTV_4K = "Apple TV 4K",
@@ -453,6 +464,15 @@ public extension UIDevice {
             "iPhone14,8": .iPhone14Plus,
             "iPhone15,2": .iPhone14Pro,
             "iPhone15,3": .iPhone14ProMax,
+            "iPhone15,4": .iPhone15,
+            "iPhone15,5": .iPhone15Plus,
+            "iPhone16,1": .iPhone15Pro,
+            "iPhone16,2": .iPhone15ProMax,
+            "iPhone17,3": .iPhone16,
+            "iPhone17,4": .iPhone16Plus,
+            "iPhone17,1": .iPhone16Pro,
+            "iPhone17,2": .iPhone16ProMax,
+            "iPhone17,5": .iPhone16e,
 
             "AppleTV5,3": .AppleTV,
             "AppleTV6,2": .AppleTV_4K
