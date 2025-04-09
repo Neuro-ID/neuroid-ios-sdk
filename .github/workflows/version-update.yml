@@ -85,7 +85,7 @@ jobs:
 
       - name: Get Updated Version
         run: |
-	  cat Source/NeuroID/NIDParamsCreator.swift
+	  pwd
           PACKAGE_VERSION=$(bundle exec fastlane get_project_version | grep -o "SDK Version:.*" | sed "s/SDK Version: //" )
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
