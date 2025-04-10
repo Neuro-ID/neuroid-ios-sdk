@@ -113,8 +113,8 @@ jobs:
           git status
           set +e
           git add NeuroID.podspec
-          git add NeuroID/Info.plist
-          git add NeuroID/Source/NeuroID/NIDParamsCreator.swift
+          git add Source/NeuroID/Info.plist
+          git add Source/NeuroID/NIDParamsCreator.swift
           git commit -m "Update SDK to $PACKAGE_VERSION"
           git tag "v$PACKAGE_VERSION"
           git push --set-upstream origin ${{ env.BRANCH_NAME }}
