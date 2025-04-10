@@ -94,7 +94,7 @@ jobs:
         run: chmod +x ./Scripts/update_version.sh
 
       - name: run update_version script
-        run: ./Scripts/update_version $PACKAGE_VERSION Source/NeuroID/NIDParamsCreator.swift
+        run: ./Scripts/update_version.sh $PACKAGE_VERSION Source/NeuroID/NIDParamsCreator.swift
 
       - name: Get previous release tag
         run: echo TAG="$(git describe --abbrev=0 --tags --match 'v*')" >> $GITHUB_ENV
