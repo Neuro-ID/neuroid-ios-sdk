@@ -8,6 +8,25 @@
 import Foundation
 
 extension NeuroID {
+    
+    static let immediateSendTypes: Set<String> = [
+        NIDEventName.formSubmit.rawValue,
+        NIDEventName.pageSubmit.rawValue,
+        NIDSessionEventName.setLinkedSite.rawValue,
+        NIDEventName.focus.rawValue,
+        NIDSessionEventName.setRegisteredUserId.rawValue,
+        NIDEventName.attemptedLogin.rawValue,
+        NIDSessionEventName.setVariable.rawValue,
+        NIDEventName.applicationMetaData.rawValue,
+        NIDSessionEventName.setUserId.rawValue,
+        NIDEventName.createSession.rawValue,
+        NIDEventName.advancedDevice.rawValue,
+        NIDEventName.advancedDeviceRequestFailed.rawValue,
+        NIDEventName.blur.rawValue,
+        NIDEventName.windowBlur.rawValue,
+        NIDEventName.closeSession.rawValue
+    ]
+    
     /**
         Save and event to the datastore (logic of queue or not contained in this function)
      */
@@ -89,6 +108,11 @@ extension NeuroID {
        NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
         NeuroID.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
+        
+        // send on immediate on certain events
+        if (immediateSendTypes.contains(event.type)) {
+            send()
+        }
    }
     
     static func clearDataStore(){
