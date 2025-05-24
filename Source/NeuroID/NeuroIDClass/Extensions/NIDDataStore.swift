@@ -110,7 +110,7 @@ extension NeuroID {
         NeuroID.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
         
         // send on immediate on certain events
-        if (immediateSendTypes.contains(event.type)) {
+        if (immediateSendTypes.contains(event.type) && isSDKStarted) {
             send()
         }
    }
