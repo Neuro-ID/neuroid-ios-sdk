@@ -9,6 +9,9 @@ import Foundation
 
 extension NeuroID {
     internal static var deviceSignalService: DeviceSignalService = AdvancedDeviceService()
+    
+    // flag to ensure that we only have one FPJS call in flight
+    internal static var isFPJSRunning = false
 
     public static func start(
         _ advancedDeviceSignals: Bool,
@@ -61,6 +64,12 @@ extension NeuroID {
     }
 
     internal static func getNewADV() {
+        // run one at a time, drop any other instances
+        if (isFPJSRunning == true) {
+            return
+        } else {
+            isFPJSRunning = true
+        }
         deviceSignalService.getAdvancedDeviceSignal(
             NeuroID.clientKey ?? "",
             clientID: NeuroID.clientID,
@@ -78,6 +87,7 @@ extension NeuroID {
                         "key": requestID,
                     ] as [String: Any]
                 )
+                isFPJSRunning = false
             case .failure(let error):
                 NeuroID.saveEventToLocalDataStore(
                     NIDEvent(
@@ -91,6 +101,7 @@ extension NeuroID {
                         m: error.localizedDescription
                     )
                 )
+                isFPJSRunning = false
                 return
             }
         }
