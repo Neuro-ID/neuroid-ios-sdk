@@ -765,6 +765,9 @@ class NIDUserTests: BaseTestClass {
     func test_attemptedLoginWithInvalidIDQueued() {
         NeuroID._isSDKStarted = false
         let invalidID = NeuroID.attemptedLogin("🤣")
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
         assertQueuedEventTypeAndCount(type: "LOG", count: 2)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
         let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
