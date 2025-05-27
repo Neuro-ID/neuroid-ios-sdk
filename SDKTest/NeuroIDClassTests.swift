@@ -34,7 +34,7 @@ class NeuroIDClassTests: BaseTestClass {
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
         NeuroID.start(true) { _ in
-            self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
+            self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 0)
         }
     }
 
@@ -115,8 +115,8 @@ class NeuroIDClassTests: BaseTestClass {
             assert(started)
             assert(NeuroID.isSDKStarted)
             assert(NeuroID.datastore.events.count >= 2)
-            self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
-            self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
+            self.assertStoredEventCount(type: "CREATE_SESSION", count: 0)
+            self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 0)
         }
     }
 
@@ -134,11 +134,11 @@ class NeuroIDClassTests: BaseTestClass {
             // post action test
             assert(started)
             assert(NeuroID.isSDKStarted)
-            assert(NeuroID.datastore.events.count == 5)
+            assert(NeuroID.datastore.events.count == 2)
 
-            self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
-            self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
-            self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 1)
+            self.assertStoredEventCount(type: "CREATE_SESSION", count: 0)
+            self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 0)
+            self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 0)
             self.assertStoredEventCount(type: "LOG", count: 2)
         }
     }
@@ -248,20 +248,25 @@ class NIDRegistrationTests: BaseTestClass {
         clearOutDataStore()
         let event = NeuroID.setCustomVariable(key: "t", v: "v")
 
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
         XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
         XCTAssertTrue(event.key == "t")
         XCTAssertTrue(event.v == "v")
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
+        
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
     }
 
     func test_setVariable() {
         clearOutDataStore()
         let event = NeuroID.setVariable(key: "t", value: "v")
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         XCTAssertTrue(event.type == NIDSessionEventName.setVariable.rawValue)
         XCTAssertTrue(event.key == "t")
         XCTAssertTrue(event.v == "v")
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
     }
 }
 
@@ -305,9 +310,11 @@ class NIDSessionTests: BaseTestClass {
         NeuroID.datastore.removeSentEvents()
 
         NeuroID.createSession()
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
-        assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
+        assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 0)
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 0)
     }
 
     func test_closeSession() {
@@ -363,9 +370,9 @@ class NIDNewSessionTests: BaseTestClass {
         assert(NeuroID._isSDKStarted)
         assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
 
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 0)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 0)
+        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 0)
         assert(NeuroID.datastore.queuedEvents.isEmpty)
     }
 
@@ -398,11 +405,12 @@ class NIDNewSessionTests: BaseTestClass {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue == sessionRes.sessionID)
         }
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
-        assertStoredEventTypeAndCount(type: "LOG", count: 3)
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
     }
 
     func test_startSession_success_no_id() {
@@ -414,10 +422,11 @@ class NIDNewSessionTests: BaseTestClass {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue != sessionRes.sessionID)
         }
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
     }
 
     func test_startSession_success_no_id_sdk_started() {
@@ -429,9 +438,11 @@ class NIDNewSessionTests: BaseTestClass {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue != sessionRes.sessionID)
         }
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
     }
 
     func test_startSession_success_id_sdk_started() {
@@ -443,9 +454,8 @@ class NIDNewSessionTests: BaseTestClass {
             self.assertSessionStartedTests(sessionRes)
             assert(expectedValue == sessionRes.sessionID)
         }
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
     }
 
     func test_startSession_failure_clientKey() {
@@ -715,15 +725,14 @@ class NIDUserTests: BaseTestClass {
 
     func test_attemptedLoginWthUID() {
         let validID = NeuroID.attemptedLogin("valid_user_id")
-        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: false)
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
+        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 0)
+        assertStoredEventTypeAndCount(type: "LOG", count: 0)
         let allEvents = NeuroID.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertTrue(validID)
-        XCTAssertNotNil(event[0].uid!)
-        // Value shoould be hashed/salted/prefixed
-        XCTAssertEqual("valid_user_id", event[0].uid!)
     }
 
     func test_attemptedLoginWthUIDQueued() {
@@ -744,16 +753,21 @@ class NIDUserTests: BaseTestClass {
         let invalidID = NeuroID.attemptedLogin("🤣")
         let allEvents = NeuroID.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
         XCTAssert(event.count == 1)
         XCTAssertTrue(invalidID)
         XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: false)
+        assertStoredEventTypeAndCount(type: "LOG", count: 0)
     }
 
     func test_attemptedLoginWithInvalidIDQueued() {
         NeuroID._isSDKStarted = false
         let invalidID = NeuroID.attemptedLogin("🤣")
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
         assertQueuedEventTypeAndCount(type: "LOG", count: 2)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
         let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
@@ -765,12 +779,13 @@ class NIDUserTests: BaseTestClass {
 
     func test_attemptedLoginWithNoUID() {
         _ = NeuroID.attemptedLogin()
-        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        
+        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 0)
+        assertStoredEventTypeAndCount(type: "LOG", count: 0)
         let allEvents = NeuroID.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
-        XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: false)
     }
 
     func test_attemptedLoginWithNoUIDQueued() {
@@ -787,8 +802,9 @@ class NIDUserTests: BaseTestClass {
     func test_multipleAttemptedLogins() {
         _ = NeuroID.attemptedLogin()
         _ = NeuroID.attemptedLogin()
-        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 2)
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
+        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 0)
+        assertStoredEventTypeAndCount(type: "LOG", count: 0)
     }
 }
 

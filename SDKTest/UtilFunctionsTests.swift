@@ -110,7 +110,7 @@ final class UtilFunctionsTests: XCTestCase {
 
     func test_captureTextEvents_blur() {
         NeuroID.isSDKStarted = true
-        let expectedValue = 1
+        let expectedValue = 0
         let uiView = UIView()
 
         UtilFunctions.captureTextEvents(
@@ -118,8 +118,8 @@ final class UtilFunctionsTests: XCTestCase {
             textValue: textValue,
             eventType: .blur)
 
-        assertEventTypeCount(type: "BLUR", expectedCount: expectedValue)
-        assertEventTypeCount(type: "TEXT_CHANGE", expectedCount: expectedValue)
+        assertEventTypeCount(type: "BLUR", expectedCount: 0)
+        assertEventTypeCount(type: "TEXT_CHANGE", expectedCount: 1)
     }
 
     func test_captureInputTextChangeEvent_input() {

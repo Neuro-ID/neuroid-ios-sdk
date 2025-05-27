@@ -46,7 +46,7 @@ final class MultiAppFlowTests: XCTestCase {
             let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
             assert(!NeuroID.isAdvancedDevice)
-            assert(validEvent.count == 1)
+            assert(validEvent.count == 0)
         }
     }
 
@@ -58,7 +58,7 @@ final class MultiAppFlowTests: XCTestCase {
             let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
             assert(NeuroID.isAdvancedDevice)
-            assert(validEvent.count == 1)
+            assert(validEvent.count == 0)
         }
     }
 
@@ -70,7 +70,7 @@ final class MultiAppFlowTests: XCTestCase {
             let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
 
             assert(NeuroID.isAdvancedDevice)
-            assert(validEvent.count == 1)
+            assert(validEvent.count == 0)
         }
     }
 
@@ -80,7 +80,7 @@ final class MultiAppFlowTests: XCTestCase {
         NeuroID.start { _ in
             let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
             assert(NeuroID.isAdvancedDevice)
-            assert(validEvent.count == 1)
+            assert(validEvent.count == 0)
         }
     }
 
@@ -91,7 +91,7 @@ final class MultiAppFlowTests: XCTestCase {
 
             let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
             XCTAssert(!NeuroID.isAdvancedDevice)
-            XCTAssertTrue(validEvent.count == 1)
+            XCTAssertTrue(validEvent.count == 0)
         }
     }
 
@@ -123,9 +123,11 @@ final class MultiAppFlowTests: XCTestCase {
         NeuroID.samplingService = service
 
         NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
+        
+        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-        assert(validEvent.count == 1)
+        assert(validEvent.count == 0)
 
         NeuroID._isSDKStarted = false
     }

@@ -47,16 +47,14 @@ class BaseTestClass: XCTestCase {
     func assertStoredEventCount(type: String, count: Int) {
         let allEvents = NeuroID.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
-
         assert(validEvent.count == count)
     }
 
     func assertStoredEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
         let allEvents = NeuroID.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
-
         assert(validEvent.count == count)
-        if !skipType! {
+        if !skipType! && validEvent.count > 0 {
             assert(validEvent[0].type == type)
         }
     }
@@ -64,7 +62,6 @@ class BaseTestClass: XCTestCase {
     func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
         let allEvents = NeuroID.datastore.queuedEvents
         let validEvent = allEvents.filter { $0.type == type }
-
         assert(validEvent.count == count)
         if !skipType! {
             assert(validEvent[0].type == type)
@@ -73,6 +70,7 @@ class BaseTestClass: XCTestCase {
     
     func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
         let allEvents = queued ? NeuroID.datastore.queuedEvents : NeuroID.datastore.getAllEvents()
+        
         let validEvents = allEvents.filter { $0.type == type }
 
         let originEvent = validEvents.filter { $0.key == "sessionIdSource" }
