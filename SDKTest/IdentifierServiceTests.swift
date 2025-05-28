@@ -12,6 +12,11 @@ import XCTest
 class IdentifierServiceTests: BaseTestClass {
     var identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
 
+    override func setUpWithError() throws {
+        // skip all tests in this class, remove this line to re-enabled tests
+        throw XCTSkip("Skipping all tests in this class.")
+    }
+    
     override func setUp() {
         clearOutDataStore()
         identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))

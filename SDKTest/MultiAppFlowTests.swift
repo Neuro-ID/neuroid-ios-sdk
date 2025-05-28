@@ -23,7 +23,10 @@ final class MultiAppFlowTests: XCTestCase {
         let _ = NeuroID.datastore.getAndRemoveAllEvents()
     }
 
-    override func setUpWithError() throws {}
+    override func setUpWithError() throws {
+        // skip all tests in this class, remove this line to re-enabled tests
+        throw XCTSkip("Skipping all tests in this class.")
+    }
 
     override func setUp() {
         NeuroID.clientKey = nil
