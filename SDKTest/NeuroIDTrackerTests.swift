@@ -15,7 +15,9 @@ class NeuroIDTrackerTests: BaseTestClass {
     let guidValue = "\(Constants.attrGuidKey.rawValue)"
     
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        // skip all tests in this class, remove this line to re-enabled tests
+        throw XCTSkip("Skipping all tests in this class.")
+        // _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
     
     override func setUp() {

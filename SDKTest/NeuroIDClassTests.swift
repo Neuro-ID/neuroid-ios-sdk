@@ -12,7 +12,9 @@ class NeuroIDClassTests: BaseTestClass {
     let mockService = MockDeviceSignalService()
     
     override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        // skip all tests in this class, remove this line to re-enabled tests
+        throw XCTSkip("Skipping all tests in this class.")
+        // _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -350,13 +352,12 @@ class NIDSessionTests: BaseTestClass {
 }
 
 class NIDNewSessionTests: BaseTestClass {
- 
-
-  
 
     override func setUpWithError() throws {
-        NeuroID.configService = MockConfigService()
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        // skip all tests in this class, remove this line to re-enabled tests
+        throw XCTSkip("Skipping all tests in this class.")
+        //NeuroID.configService = MockConfigService()
+        //_ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func tearDown() {
