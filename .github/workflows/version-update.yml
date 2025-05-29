@@ -111,6 +111,8 @@ jobs:
           git checkout -b ${{ env.BRANCH_NAME }}
           git status
           set +e
+          git add SDKTest/Info.plist
+          git add SDKUITest/Info.plist
           git add NeuroID.podspec
           git add Source/NeuroID/Info.plist
           git add Source/NeuroID/NIDParamsCreator.swift
