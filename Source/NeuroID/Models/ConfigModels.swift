@@ -24,7 +24,7 @@ struct ConfigResponseData: Codable {
     var gyroAccelCadence: Bool = false
     var gyroAccelCadenceTime: Int = 200
     var lowMemoryBackOff: Double? = NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
-    var advancedCookieExpiration: Int = 12 * 60 * 60
+    var advancedCookieExpiration: Int? = NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
 
     // could exist for parent site or could be null meaning 100%
     var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE

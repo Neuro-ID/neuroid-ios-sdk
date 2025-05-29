@@ -83,7 +83,7 @@ extension NeuroID {
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
                     value: [
-                        "exp": UtilFunctions.getFutureTimeStamp(configService.configCache.advancedCookieExpiration),
+                        "exp": UtilFunctions.getFutureTimeStamp(configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION),
                         "key": requestID,
                     ] as [String: Any]
                 )
