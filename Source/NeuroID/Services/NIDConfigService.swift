@@ -14,6 +14,7 @@ class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
+    static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
     
     let networkService: NIDNetworkServiceProtocol
     let configRetrievalCallback: () -> Void
