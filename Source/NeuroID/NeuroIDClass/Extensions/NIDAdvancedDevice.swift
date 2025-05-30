@@ -77,13 +77,13 @@ extension NeuroID {
         ) { request in
             switch request {
             case .success((let requestID, let duration)):
-
+                
                 captureADVEvent(requestID, cached: false, latency: duration)
-
+                
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
                     value: [
-                        "exp": UtilFunctions.getFutureTimeStamp(24),
+                        "exp": UtilFunctions.getFutureTimeStamp(configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION),
                         "key": requestID,
                     ] as [String: Any]
                 )

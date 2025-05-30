@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 enum UtilFunctions {
-    static func getFutureTimeStamp(_ hoursToAdd: Int) -> Int {
+    static func getFutureTimeStamp(_ secondsToAdd: Int) -> Int {
         // Get the current time
         let currentTime = Date()
 
@@ -17,7 +17,7 @@ enum UtilFunctions {
         let calendar = Calendar.current
 
         // Add the specified number of hours to the current time
-        if let futureTime = calendar.date(byAdding: .hour, value: hoursToAdd, to: currentTime) {
+        if let futureTime = calendar.date(byAdding: .second, value: secondsToAdd, to: currentTime) {
             return Int(futureTime.timeIntervalSince1970)
         } else {
             return 0
