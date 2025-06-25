@@ -14,32 +14,46 @@ struct NIDADVKeyResponse: Codable {
 
 protocol DeviceSignalService {
     func getAdvancedDeviceSignal(
-        _ apiKey: String, clientID: String?, linkedSiteID: String?,
+        _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
         completion: @escaping (Result<(String, Double), Error>) -> Void)
 }
 
 class AdvancedDeviceService: NSObject, DeviceSignalService {
     public func getAdvancedDeviceSignal(
-        _ apiKey: String, clientID: String?, linkedSiteID: String?,
+        _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
         completion: @escaping (Result<(String, Double), Error>) -> Void
     ) {
-        // Retrieve Key from NID Server for Request
-        AdvancedDeviceService.getAPIKey(
-            apiKey, clientID: clientID, linkedSiteID: linkedSiteID
+        guard let notNilFPJSKey = advancedDeviceKey else {
+            // FPJS key not passed in, Retrieve Key from NID Server for Request
+            AdvancedDeviceService.getAPIKey(
+                apiKey, clientID: clientID, linkedSiteID: linkedSiteID
+            ) { result in
+                switch result {
+                case .success(let fAPiKey):
+                    // Retrieve ADV Data using Request Key
+                    AdvancedDeviceService.retryAPICall(
+                        apiKey: fAPiKey, maxRetries: 3, delay: 2
+                    ) { result in
+                        switch result {
+                        case .success(let (value, duration)):
+                            completion(.success((value, duration)))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+            return
+        }
+        // fpjs key passed in, get RID!
+        AdvancedDeviceService.retryAPICall(
+            apiKey: notNilFPJSKey, maxRetries: 3, delay: 2
         ) { result in
             switch result {
-            case .success(let fAPiKey):
-                // Retrieve ADV Data using Request Key
-                AdvancedDeviceService.retryAPICall(
-                    apiKey: fAPiKey, maxRetries: 3, delay: 2
-                ) { result in
-                    switch result {
-                    case .success(let (value, duration)):
-                        completion(.success((value, duration)))
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
+            case .success(let (value, duration)):
+                completion(.success((value, duration)))
             case .failure(let error):
                 completion(.failure(error))
             }

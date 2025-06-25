@@ -19,6 +19,7 @@ import WebKit
 public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
 
+    static var advancedDeviceKey: String?
     static var clientKey: String?
     static var siteID: String?
     static var linkedSiteID: String?
@@ -90,7 +91,7 @@ public class NeuroID: NSObject {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String, isAdvancedDevice: Bool = false) -> Bool {
+    public static func configure(clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil) -> Bool {
         // set last install time if not already set.
         if (getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0) {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: (Date().timeIntervalSince1970))
@@ -114,7 +115,7 @@ public class NeuroID: NSObject {
 
             return false
         }
-
+        NeuroID.advancedDeviceKey = advancedDeviceKey
         NeuroID.isAdvancedDevice = isAdvancedDevice
 
         if clientKey.contains("_live_") {
@@ -135,6 +136,10 @@ public class NeuroID: NSObject {
 
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
+        
+        if (isAdvancedDevice) {
+            captureAdvancedDevice()
+        }
 
         captureApplicationMetaData()
 

@@ -10,7 +10,8 @@ import Foundation
 class MockDeviceSignalService: DeviceSignalService {
     var mockResult: Result<(String, Double), Error>?
 
-    func getAdvancedDeviceSignal(_ apiKey: String, clientID: String?, linkedSiteID: String?, completion: @escaping (Result<(String, Double), Error>) -> Void) {
+    func getAdvancedDeviceSignal(_ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
+                                 completion: @escaping (Result<(String, Double), Error>) -> Void) {
         if let result = mockResult {
             completion(result)
         } else {
