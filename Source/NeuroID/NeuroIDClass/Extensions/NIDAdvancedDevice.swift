@@ -54,7 +54,7 @@ extension NeuroID {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
                 if currentTimeEpoch < exp {
-                    captureADVEvent(requestID, cached: true, latency: 0)
+                    captureADVEvent(requestID, cached: true, latency: 0, message: "")
                     return true
                 }
             }
@@ -73,12 +73,15 @@ extension NeuroID {
         deviceSignalService.getAdvancedDeviceSignal(
             NeuroID.clientKey ?? "",
             clientID: NeuroID.clientID,
-            linkedSiteID: NeuroID.linkedSiteID
+            linkedSiteID: NeuroID.linkedSiteID,
+            advancedDeviceKey: NeuroID.advancedDeviceKey
         ) { request in
             switch request {
             case .success((let requestID, let duration)):
                 
-                captureADVEvent(requestID, cached: false, latency: duration)
+                captureADVEvent(requestID, cached: false,
+                                latency: duration,
+                                message: advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
                 
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
@@ -108,7 +111,7 @@ extension NeuroID {
     }
 
     internal static func captureADVEvent(
-        _ requestID: String, cached: Bool, latency: Double
+        _ requestID: String, cached: Bool, latency: Double, message: String
     ) {
         NeuroID.saveEventToLocalDataStore(
             NIDEvent(
@@ -116,7 +119,8 @@ extension NeuroID {
                 ct: NeuroID.networkMonitor?.connectionType.rawValue,
                 l: latency,
                 rid: requestID,
-                c: cached
+                c: cached,
+                m: message
             )
         )
     }
