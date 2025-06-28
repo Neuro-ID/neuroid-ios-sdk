@@ -17,7 +17,12 @@ public extension NeuroID {
             rnOptions: rnOptions,
             configOptionKey: .isAdvancedDevice
         )
-        let configured = configure(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice)
+        let advancedDeviceKey = getOptionValueString(
+            rnOptions: rnOptions,
+            configOptionKey: .advancedDeviceKey
+        )
+        
+        let configured = configure(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey)
 
         if !configured {
             return false
@@ -40,12 +45,20 @@ public extension NeuroID {
         if let configValue = rnOptions[configOptionKey.rawValue] as? Bool {
             return configValue
         }
-
+        
         return false
+    }
+    
+    internal static func getOptionValueString(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> String? {
+        guard let configValue = rnOptions[configOptionKey.rawValue] as? String else {
+            return ""
+        }
+        return configValue as String
     }
 }
 
 public enum RNConfigOptions: String, Hashable {
     case usingReactNavigation
     case isAdvancedDevice
+    case advancedDeviceKey
 }
