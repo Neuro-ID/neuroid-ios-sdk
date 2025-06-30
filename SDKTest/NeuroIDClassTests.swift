@@ -965,7 +965,8 @@ class NIDRNTests: XCTestCase {
     let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true, RNConfigOptions.isAdvancedDevice.rawValue: false]
     let configOptionsFalse = [RNConfigOptions.usingReactNavigation.rawValue: false]
     let configOptionsInvalid = ["foo": "bar"]
-
+    let configOptionsNonNil = [RNConfigOptions.advancedDeviceKey.rawValue: "testkey"]
+    
     func assertConfigureTests(defaultValue: Bool, expectedValue: Bool) {
         assert(NeuroID.isRN)
         let storedValue = NeuroID.rnOptions[.usingReactNavigation] as? Bool ?? defaultValue
@@ -1032,6 +1033,21 @@ class NIDRNTests: XCTestCase {
         let value = NeuroID.getOptionValueBool(rnOptions: configOptionsInvalid, configOptionKey: .usingReactNavigation)
 
         assert(!value)
+    }
+    
+    func test_getOptionValueString_nonNil() {
+        assert(!NeuroID.isRN)
+        let value = NeuroID.getOptionValueString(rnOptions: configOptionsNonNil, configOptionKey: .advancedDeviceKey)
+
+        assert(value == "testkey")
+    }
+    
+    func test_getOptionValueString_nil() {
+        assert(!NeuroID.isRN)
+        // does not contain advanced device key, therfore nil
+        let value = NeuroID.getOptionValueString(rnOptions: configOptionsFalse, configOptionKey: .advancedDeviceKey)
+
+        assert(value == "")
     }
 }
 

@@ -19,7 +19,7 @@ import WebKit
 public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
 
-    static var advancedDeviceKey: String?
+    static var advancedDeviceKey: String? = nil
     static var clientKey: String?
     static var siteID: String?
     static var linkedSiteID: String?
