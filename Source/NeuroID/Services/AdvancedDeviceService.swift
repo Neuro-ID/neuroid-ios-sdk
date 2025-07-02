@@ -23,7 +23,12 @@ class AdvancedDeviceService: NSObject, DeviceSignalService {
         _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
         completion: @escaping (Result<(String, Double), Error>) -> Void
     ) {
-        guard let notNilFPJSKey = advancedDeviceKey else {
+        // normalize empty advanced device keys to nil for use below
+        var advKey = advancedDeviceKey
+        if (advKey != nil && advKey == "") {
+            advKey = nil
+        }
+        guard let notNilFPJSKey = advKey else {
             // FPJS key not passed in, Retrieve Key from NID Server for Request
             AdvancedDeviceService.getAPIKey(
                 apiKey, clientID: clientID, linkedSiteID: linkedSiteID
