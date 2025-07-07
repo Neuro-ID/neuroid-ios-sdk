@@ -184,7 +184,7 @@ enum ParamsCreator {
         if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: "NeuroID", withExtension: "bundle") {
             version = Bundle(url: bundleURL)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         } else {
-            version = getSPVersionID(version: "%%%3.4.6%%%")
+            version = getSPVersionID(version: "%%%3.4.5%%%")
         }
         return "5.ios\(NeuroID.isRN ? "-rn" : "")-adv-\(version ?? "?")"
     }

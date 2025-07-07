@@ -15,14 +15,14 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.4.6</string>
+	<string>3.4.5</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NeuroURL</key>
 	<string>https://c52d-148-64-34-107.ngrok.io</string>
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-    <string>cydia</string>
-    </array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>cydia</string>
+	</array>
 </dict>
 </plist>
