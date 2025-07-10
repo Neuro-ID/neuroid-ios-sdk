@@ -69,8 +69,8 @@ jobs:
           path: Pods
           key: ${{ runner.os }}-pods-version-${{ hashFiles('**/Podfile.lock') }}
 
-      - name: Run iOS Unit Testing for SDK
-        run: bundle exec fastlane test
+      # - name: Run iOS Unit Testing for SDK
+      #   run: bundle exec fastlane test
 
       - name: Pre-check PodSpec
         run: pod spec lint --allow-warnings

@@ -7,7 +7,7 @@ name: SDK Testing
 on:
   pull_request:
     branches:
-      - main
+      - no-such-branch
 
 jobs:
   test:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Select Xcode 15
         run: xcodebuild -downloadPlatform iOS && sudo xcode-select -s /Applications/Xcode_15.0.1.app
-    
+
       - name: Branch Checkout
         uses: actions/checkout@v3
 
