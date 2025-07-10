@@ -8,7 +8,6 @@
 import Foundation
 
 extension NeuroID {
-    
     static let immediateSendTypes: Set<String> = [
         NIDEventName.formSubmit.rawValue,
         NIDEventName.pageSubmit.rawValue,
@@ -16,7 +15,6 @@ extension NeuroID {
         NIDEventName.focus.rawValue,
         NIDSessionEventName.setRegisteredUserId.rawValue,
         NIDEventName.attemptedLogin.rawValue,
-        NIDSessionEventName.setVariable.rawValue,
         NIDEventName.applicationMetaData.rawValue,
         NIDSessionEventName.setUserId.rawValue,
         NIDEventName.createSession.rawValue,
@@ -26,7 +24,7 @@ extension NeuroID {
         NIDEventName.windowBlur.rawValue,
         NIDEventName.closeSession.rawValue
     ]
-    
+
     /**
         Save and event to the datastore (logic of queue or not contained in this function)
      */
@@ -108,10 +106,10 @@ extension NeuroID {
        NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
         NeuroID.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
-        
-        // send on immediate on certain events
-        if (immediateSendTypes.contains(event.type) && isSDKStarted) {
-            send()
+
+        // send on immediate on certain events regardless of SDK running collection
+        if immediateSendTypes.contains(event.type) {
+            groupAndPOST(forceSend: true)
         }
    }
     

@@ -41,8 +41,11 @@ public class DataStore {
      func getAndRemoveAllEvents() -> [NIDEvent] {
         return self.lock.withCriticalSection {
             let result = self._events
+            let queuedResults = self._queuedEvents
+
             self._events = []
-            return result
+            self._queuedEvents = []
+            return result + queuedResults
         }
     }
 

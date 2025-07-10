@@ -132,18 +132,18 @@ extension NeuroID {
             return newEvent
         }
 
+        NeuroID.incrementPacketNumber()
         post(
             events: cleanEvents,
             screen: getScreenName() ?? altScreenName,
             onSuccess: {
                 logInfo(category: "APICall", content: "Sending successfully")
-                NeuroID.incrementPacketNumber()
                 completion()
             }, onFailure: { error in
                 logError(category: "APICall", content: String(describing: error))
                 let sendEventsLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Group and POST failure: \(error)")
                 saveEventToDataStore(sendEventsLogEvent)
-                
+
                 completion()
             }
         )
