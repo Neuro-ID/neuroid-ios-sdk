@@ -109,7 +109,7 @@ extension NeuroID {
 
         // send on immediate on certain events regardless of SDK running collection
         if immediateSendTypes.contains(event.type) {
-            groupAndPOST(forceSend: true)
+            send(forceSend: true)
         }
    }
     
