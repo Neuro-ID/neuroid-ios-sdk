@@ -92,7 +92,7 @@ extension NeuroID {
                 )
                 isFPJSRunning = false
             case .failure(let error):
-                NeuroID.saveEventToLocalDataStore(
+                NeuroID.saveEventToDataStore(
                     NIDEvent(
                         type: .log, level: "ERROR",
                         m: error.localizedDescription
@@ -113,7 +113,7 @@ extension NeuroID {
     internal static func captureADVEvent(
         _ requestID: String, cached: Bool, latency: Double, message: String
     ) {
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
                 ct: NeuroID.networkMonitor?.connectionType.rawValue,
