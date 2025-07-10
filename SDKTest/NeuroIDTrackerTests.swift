@@ -9,15 +9,14 @@
 import XCTest
 
 class NeuroIDTrackerTests: BaseTestClass {
-   let userId = "form_mobilesandbox"
+    let userId = "form_mobilesandbox"
     
     let screenNameValue = "testScreen"
     let guidValue = "\(Constants.attrGuidKey.rawValue)"
     
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
-        throw XCTSkip("Skipping all tests in this class.")
-        // _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
     
     override func setUp() {
@@ -204,18 +203,18 @@ class NeuroIDTrackerTests: BaseTestClass {
 //    func test_subscribe() {
 //        NeuroID.observingInputs = false
 //        NeuroID._isSDKStarted = true
-//        
+//
 //        let uiControllerBasic = UIViewController()
 //        let input = UITextField()
 //
 //        uiControllerBasic.view.addSubview(input)
-//        
+//
 //        // subscribe happens in the INIT method
 //        let _ = NeuroIDTracker(
 //            screen: "test",
 //            controller: uiControllerBasic
 //        )
-//        
+//
 //        // Text Field Notification Tests - observeTextInputEvents()
 //        // Field Focus
 //        let _ = NeuroID.datastore.getAndRemoveAllEvents()
@@ -223,7 +222,7 @@ class NeuroIDTrackerTests: BaseTestClass {
 //        var e = NeuroID.datastore.getAndRemoveAllEvents()
 //        assertEventTypeCountFromArray(type: "REGISTER_TARGET", expectedCount: 1, events: e) // because not registered from view
 //        assertEventTypeCountFromArray(type: "FOCUS", expectedCount: 1, events: e)
-//        
+//
 //        // Field Input
 //        NotificationCenter.default.post(name: UITextField.textDidChangeNotification, object: input)
 //        e = NeuroID.datastore.getAndRemoveAllEvents()
@@ -234,19 +233,19 @@ class NeuroIDTrackerTests: BaseTestClass {
 //        e = NeuroID.datastore.getAndRemoveAllEvents()
 //        assertEventTypeCountFromArray(type: "BLUR", expectedCount: 1, events: e)
 //        assertEventTypeCountFromArray(type: "TEXT_CHANGE", expectedCount: 1, events: e)
-//        
+//
 //        // App Notification Tests - observeAppEvents()
 //        NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: UIDevice.self)
 //        e = NeuroID.datastore.getAndRemoveAllEvents()
 //        assertEventTypeCountFromArray(type: "DEVICE_ORIENTATION", expectedCount: 1, events: e)
 //        assertEventTypeCountFromArray(type: "WINDOW_ORIENTATION_CHANGE", expectedCount: 1, events: e)
-//        
+//
 //        // Device Notification Tests - observeRotation()
 //        if #available(iOS 13.0, *) {
 //            NotificationCenter.default.post(name: UIScene.didActivateNotification, object: UIScene.self)
 //            e = NeuroID.datastore.getAndRemoveAllEvents()
 //            assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
-//            
+//
 //            NotificationCenter.default.post(name: UIScene.willDeactivateNotification, object: UIScene.self)
 //            e = NeuroID.datastore.getAndRemoveAllEvents()
 //            assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
@@ -254,13 +253,13 @@ class NeuroIDTrackerTests: BaseTestClass {
 //            NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: UIApplication.self)
 //            e = NeuroID.datastore.getAndRemoveAllEvents()
 //            assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
-//            
+//
 //            NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: UIApplication.self)
 //            e = NeuroID.datastore.getAndRemoveAllEvents()
 //            assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
 //        }
 //    }
-//    
+//
     func test_observeViews() {
         let tracker = NeuroIDTracker(
             screen: "test",

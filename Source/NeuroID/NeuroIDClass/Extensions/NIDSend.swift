@@ -93,6 +93,10 @@ extension NeuroID {
 
     static func send(forceSend: Bool = false) {
         DispatchQueue.global(qos: .utility).async {
+            if NeuroID._isTesting {
+                return
+            }
+
             if !NeuroID.isStopped() || forceSend {
                 groupAndPOST(forceSend: forceSend)
             }

@@ -21,8 +21,7 @@ final class UtilFunctionsTests: XCTestCase {
 
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
-        throw XCTSkip("Skipping all tests in this class.")
-        // _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
 
     override func setUp() {
@@ -112,7 +111,7 @@ final class UtilFunctionsTests: XCTestCase {
 
     func test_captureTextEvents_blur() {
         NeuroID.isSDKStarted = true
-        let expectedValue = 0
+        NeuroID._isTesting = true
         let uiView = UIView()
 
         UtilFunctions.captureTextEvents(
@@ -120,8 +119,9 @@ final class UtilFunctionsTests: XCTestCase {
             textValue: textValue,
             eventType: .blur)
 
-        assertEventTypeCount(type: "BLUR", expectedCount: 0)
+        assertEventTypeCount(type: "BLUR", expectedCount: 1)
         assertEventTypeCount(type: "TEXT_CHANGE", expectedCount: 1)
+        NeuroID._isTesting = false
     }
 
     func test_captureInputTextChangeEvent_input() {
