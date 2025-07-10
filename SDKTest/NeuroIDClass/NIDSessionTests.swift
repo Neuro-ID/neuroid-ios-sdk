@@ -15,6 +15,7 @@ class NIDSessionTests: BaseTestClass {
 
     override func setUp() {
         NeuroID._isSDKStarted = true
+        NeuroID._isTesting = true
     }
 
     override func tearDown() {
@@ -22,6 +23,7 @@ class NIDSessionTests: BaseTestClass {
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
+        NeuroID._isTesting = false
     }
 
     func test_getSessionID() {
@@ -48,10 +50,8 @@ class NIDSessionTests: BaseTestClass {
 
         NeuroID.createSession()
 
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
-
-        assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 0)
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 0)
+        assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
+        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
     }
 
     func test_closeSession() {

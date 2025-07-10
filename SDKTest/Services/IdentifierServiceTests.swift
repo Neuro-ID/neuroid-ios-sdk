@@ -212,8 +212,6 @@ class IdentifierServiceTests: BaseTestClass {
 
         let fnSuccess = identifierService.setSessionID(expectedValue, true)
 
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
-
         assert(fnSuccess == true)
         assert(NeuroID.sessionID == expectedValue)
 
@@ -247,8 +245,6 @@ class IdentifierServiceTests: BaseTestClass {
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, false)
-
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
         assert(NeuroID.sessionID == expectedValue)
