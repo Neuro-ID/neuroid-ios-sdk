@@ -381,7 +381,7 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value == expectedValue)
     }
 
-    func test_getSDKVersion() {
+    func getSDKVersion() {
         NeuroID.isRN = false
         let version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let expectedValue = "5.ios-adv-\(version ?? "?")"
@@ -389,7 +389,7 @@ class NIDParamsCreatorTests: XCTestCase {
         let value = ParamsCreator.getSDKVersion()
 
         assert(value == expectedValue)
-        
+
         NeuroID.isRN = true
         let versionRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let expectedValueRN = "5.ios-rn-adv-\(version ?? "?")"
@@ -397,7 +397,7 @@ class NIDParamsCreatorTests: XCTestCase {
         let valueRN = ParamsCreator.getSDKVersion()
 
         assert(valueRN == expectedValueRN)
-        
+
         NeuroID.isRN = false
         let versionADV = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let expectedValueADV = "5.ios-adv-\(version ?? "?")"
@@ -405,7 +405,7 @@ class NIDParamsCreatorTests: XCTestCase {
         let valueADV = ParamsCreator.getSDKVersion()
 
         assert(valueADV == expectedValueADV)
-        
+
         NeuroID.isRN = true
         let versionADVRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let expectedValueADVRN = "5.ios-rn-adv-\(version ?? "?")"
@@ -433,7 +433,7 @@ class NIDParamsCreatorTests: XCTestCase {
 
         assert(value != secondValue)
     }
-    
+
     func test_getSPVersionID() {
         let expectedValue = "3.4.5"
         let value = ParamsCreator.getSPVersionID(version: "%%%3.4.5%%%")

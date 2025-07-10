@@ -6,24 +6,25 @@
 //
 
 import Foundation
-import XCTest
 @testable import NeuroID
+import XCTest
 
 class IdentifierServiceTests: BaseTestClass {
     var identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
 
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
-        throw XCTSkip("Skipping all tests in this class.")
     }
-    
+
     override func setUp() {
         clearOutDataStore()
+        NeuroID._isTesting = true
         identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
     }
 
     override func tearDown() {
         clearOutDataStore()
+        NeuroID._isTesting = false
     }
 
     func test_scrubEmailId() {
@@ -46,16 +47,17 @@ class IdentifierServiceTests: BaseTestClass {
         let scrubbedId = identifierService.scrubIdentifier(id)
         XCTAssertEqual(scrubbedId, expectedId)
     }
-    
+
     func test_logScrubbedIdentityAttempt() {
         NeuroID._isSDKStarted = true
         clearOutDataStore()
-        
+
         let id = "123-23-4568"
         let expectedId = "***-**-****"
         let scrubbedId = identifierService.logScrubbedIdentityAttempt(
             identifier: id,
-            message: "Message Test")
+            message: "Message Test"
+        )
         XCTAssertEqual(scrubbedId, expectedId)
         assertStoredEventTypeAndCount(type: "LOG", count: 1)
     }
@@ -70,17 +72,14 @@ class IdentifierServiceTests: BaseTestClass {
             identifier: expectedValue,
             type: .sessionID,
             userGenerated: true,
-            duplicatesAllowedCheck: {_ in return true},
+            duplicatesAllowedCheck: { _ in true },
             validIDFunction: { successful = true }
         )
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
-        
+
         assert(result == true)
         assert(successful == true)
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
-        assert(NeuroID.datastore.queuedEvents.count == 0)
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
     }
 
     func test_setGenericIdentifier_valid_id_queued() {
@@ -93,7 +92,7 @@ class IdentifierServiceTests: BaseTestClass {
             identifier: expectedValue,
             type: .sessionID,
             userGenerated: true,
-            duplicatesAllowedCheck: {_ in return true},
+            duplicatesAllowedCheck: { _ in true },
             validIDFunction: { successful = true }
         )
 
@@ -106,23 +105,21 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setGenericIdentifier_valid_registered_id_started() {
         NeuroID._isSDKStarted = true
-        
+
         var successful = false
         let expectedValue = "myTestUserID"
         let result = identifierService.setGenericIdentifier(
             identifier: expectedValue,
             type: .registeredUserID,
             userGenerated: true,
-            duplicatesAllowedCheck: {_ in return true},
+            duplicatesAllowedCheck: { _ in true },
             validIDFunction: { successful = true }
         )
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(result == true)
         assert(successful == true)
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 0)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assert(NeuroID.datastore.queuedEvents.count == 0)
     }
 
@@ -136,11 +133,9 @@ class IdentifierServiceTests: BaseTestClass {
             identifier: expectedValue,
             type: .registeredUserID,
             userGenerated: true,
-            duplicatesAllowedCheck: {_ in return true},
+            duplicatesAllowedCheck: { _ in true },
             validIDFunction: { successful = true }
         )
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(result == true)
         assert(successful == true)
@@ -152,43 +147,43 @@ class IdentifierServiceTests: BaseTestClass {
     func test_setGenericIdentifier_invalid_id_started() {
         NeuroID._isSDKStarted = true
         clearOutDataStore()
-     
-        var successful = false
+
+        var successful = true
         let expectedValue = "$!&*"
         let result = identifierService.setGenericIdentifier(
             identifier: expectedValue,
             type: .sessionID,
             userGenerated: true,
-            duplicatesAllowedCheck: {_ in return true},
-            validIDFunction: { successful = false }
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: {
+                successful = false
+                assert(successful == false)
+            }
         )
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(result == false)
-        assert(successful == false)
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
     }
 
     func test_setGenericIdentifier_invalid_id_queued() {
         NeuroID._isSDKStarted = false
         clearOutDataStore()
 
-        var successful = false
+        var successful = true
         let expectedValue = "$!&*"
         let result = identifierService.setGenericIdentifier(
             identifier: expectedValue,
             type: .sessionID,
             userGenerated: true,
-            duplicatesAllowedCheck: {_ in return true},
-            validIDFunction: { successful = false }
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: {
+                successful = false
+                assert(successful == false)
+            }
         )
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(result == false)
-        assert(successful == false)
         assert(NeuroID.datastore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
@@ -201,15 +196,12 @@ class IdentifierServiceTests: BaseTestClass {
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, true)
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess)
         assert(NeuroID.sessionID == expectedValue)
 
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
-        assert(NeuroID.datastore.events.count == 0)
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
     }
 
     func test_setSessionID_pre_start_customer_origin() {
@@ -219,7 +211,7 @@ class IdentifierServiceTests: BaseTestClass {
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, true)
-        
+
         usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
@@ -233,18 +225,19 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setSessionID_started_nid_origin() {
         NeuroID.sessionID = nil
+        NeuroID._isSDKStarted = true
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, false)
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess)
         assert(NeuroID.sessionID == expectedValue)
 
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
-        assert(NeuroID.datastore.events.count == 0)
+        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
+        assert(NeuroID.datastore.queuedEvents.count == 0)
+
+        NeuroID._isSDKStarted = false
     }
 
     func test_setSessionID_pre_start_nid_origin() {
@@ -254,7 +247,7 @@ class IdentifierServiceTests: BaseTestClass {
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, false)
-        
+
         usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
@@ -265,35 +258,36 @@ class IdentifierServiceTests: BaseTestClass {
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
     }
 
-
     func test_setRegisteredUserID_started() {
+        clearOutDataStore()
+        NeuroID._isSDKStarted = true
         let expectedValue = "test_ruid"
         NeuroID.registeredUserID = ""
 
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
         assert(NeuroID.registeredUserID == expectedValue)
 
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 0)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 0)
-        assertStoredEventTypeAndCount(type: "LOG", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
+        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
+        assertStoredEventTypeAndCount(type: "LOG", count: 1)
         assert(NeuroID.datastore.queuedEvents.count == 0)
 
         NeuroID.registeredUserID = ""
+
+        NeuroID._isSDKStarted = false
     }
 
     func test_setRegisteredUserID_pre_start() {
         _ = NeuroID.stop()
+        NeuroID._isSDKStarted = false
+        clearOutDataStore()
         NeuroID.registeredUserID = ""
 
         let expectedValue = "test_ruid"
 
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
         assert(NeuroID.registeredUserID == expectedValue)
@@ -304,6 +298,8 @@ class IdentifierServiceTests: BaseTestClass {
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         NeuroID.registeredUserID = ""
+
+        NeuroID._isSDKStarted = true
     }
 
     func test_setRegisteredUserID_already_set() {
@@ -314,13 +310,11 @@ class IdentifierServiceTests: BaseTestClass {
         let expectedValue = "test_ruid"
 
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
         assert(NeuroID.registeredUserID == expectedValue)
 
-        assertStoredEventTypeAndCount(type: "LOG", count: 0)
+        assertStoredEventTypeAndCount(type: "LOG", count: 2)
         assert(NeuroID.datastore.queuedEvents.count == 0)
 
         NeuroID.registeredUserID = ""
@@ -335,15 +329,12 @@ class IdentifierServiceTests: BaseTestClass {
         NeuroID.registeredUserID = expectedValue
 
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-        
-        usleep(500_000) // Sleep for 500ms (500,000 microseconds)
 
         assert(fnSuccess == true)
         assert(NeuroID.registeredUserID == expectedValue)
 
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 0)
+        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
 
         NeuroID.registeredUserID = ""
     }
-
 }

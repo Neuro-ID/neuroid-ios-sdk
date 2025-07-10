@@ -24,8 +24,8 @@ public class NeuroID: NSObject {
     static var siteID: String?
     static var linkedSiteID: String?
 
-    static var datastore: DataStore = DataStore()
-    static var validationService:ValidationService = ValidationService(loggerType:NIDLog.self)
+    static var datastore: DataStore = .init()
+    static var validationService: ValidationService = .init(loggerType: NIDLog.self)
     static var locationManager: LocationManagerService?
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserverService?
@@ -78,6 +78,9 @@ public class NeuroID: NSObject {
 
     static var packetNumber: Int32 = 0
 
+    // Testing Purposes Only
+    static var _isTesting = false
+
     // MARK: - Setup
 
     static func verifyClientKeyExists() -> Bool {
@@ -93,10 +96,10 @@ public class NeuroID: NSObject {
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     public static func configure(clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil) -> Bool {
         // set last install time if not already set.
-        if (getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0) {
-            setUserDefaultKey(Constants.lastInstallTime.rawValue, value: (Date().timeIntervalSince1970))
+        if getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0 {
+            setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
-        
+
         if NeuroID.clientKey != nil {
             NIDLog.e("You already configured the SDK")
             return false
@@ -136,8 +139,8 @@ public class NeuroID: NSObject {
 
         networkMonitor = NetworkMonitoringService()
         networkMonitor?.startMonitoring()
-        
-        if (isAdvancedDevice) {
+
+        if isAdvancedDevice {
             captureAdvancedDevice()
         }
 
@@ -206,8 +209,6 @@ public class NeuroID: NSObject {
         didSwizzle.toggle()
     }
 
-    
-
     /// Get the current SDK versión from bundle
     /// - Returns: String with the version format
     public static func getSDKVersion() -> String {
@@ -250,8 +251,7 @@ public class NeuroID: NSObject {
         }
         return nil
     }
-    
-    
+
     // ENG-9193 - Will remove on next breaking release
     @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
     public static func printIntegrationHealthInstruction() {
