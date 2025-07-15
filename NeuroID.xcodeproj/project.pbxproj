@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076252EE2876294400FBA209 /* NeuroIDSensors.swift */; };
-		07A2668C28A6A5BC00E973E2 /* PayloadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A2668B28A6A5BC00E973E2 /* PayloadTest.swift */; };
-		07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BB4F61287FE8A200910665 /* SensorsTest.swift */; };
 		1FD6E6BB2C4598DF00C8017E /* NIDPacketNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */; };
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		26BCF34C268DA7CF0002C289 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF349268DA7CF0002C289 /* DataStore.swift */; };
@@ -19,31 +17,22 @@
 		26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF35A268DAC5A0002C289 /* Foundation.framework */; };
 		4B0AA7F92B646D50001F26B3 /* NIDCallStatusObserverService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */; };
 		6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */; };
-		6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8CB26CEA9A800BE9834 /* SessionTests.swift */; };
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
 		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
-		6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */; };
 		6F47B9AF2B7E80360047DFCB /* NIDNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */; };
-		6F47B9B42B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */; };
 		6F543ED32BAA060A00920A7C /* Pods_NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; };
 		6F543ED42BAA060A00920A7C /* Pods_NeuroID.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F6B75512A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
-		6F709ED32BC58C7700F18895 /* ConfigServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */; };
 		6F709ED72BC5905A00F18895 /* NIDMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A05C2028B91B4D00509509 /* NIDMetadata.swift */; };
-		6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */; };
-		6FB4F1D42BD849C200975CE2 /* MockDeviceSignalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */; };
-		6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */; };
 		6FE77FE62937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FE77FE82937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
-		6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF06B26271FCA8300F6704C /* DataStoreTests.swift */; };
 		E494C0748D7A30D17CC3E764 /* Pods_SDKTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */; };
 		F216C4022A718AEA001DDABB /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4012A718AEA001DDABB /* Optional.swift */; };
 		F216C4042A718B0A001DDABB /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */; };
 		F216C4082A71BE19001DDABB /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4072A71BE19001DDABB /* Date.swift */; };
-		F216C40A2A72C649001DDABB /* UtilFunctionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */; };
 		F217029929D4C4DF00133A1C /* UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217029829D4C4DF00133A1C /* UITextField.swift */; };
 		F217029C29D4C79F00133A1C /* AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217029B29D4C79F00133A1C /* AppEvents.swift */; };
 		F217029E29D4C7CE00133A1C /* DeviceEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217029D29D4C7CE00133A1C /* DeviceEvents.swift */; };
@@ -60,23 +49,15 @@
 		F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CB29D5D5E800133A1C /* Bundle.swift */; };
 		F21702D029D5E9D800133A1C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CF29D5E9D800133A1C /* Utils.swift */; };
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
-		F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */; };
 		F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B75532AC36F8A00A7DF4D /* NIDRN.swift */; };
 		F2420C352BF3A1CD00143928 /* NIDListeners.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2420C342BF3A1CD00143928 /* NIDListeners.swift */; };
 		F24BAE782BF51FF500A3605D /* NIDSamplingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */; };
-		F24BAE7A2BF52A0000A3605D /* SampleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24BAE792BF52A0000A3605D /* SampleServiceTests.swift */; };
-		F24BAE7C2BF52B8700A3605D /* MockConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24BAE7B2BF52B8700A3605D /* MockConfigService.swift */; };
 		F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */; };
 		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
 		F2546A6E2B9A121500348BD7 /* NIDTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2546A6D2B9A121500348BD7 /* NIDTesting.swift */; };
 		F25908DF2BEE62EF00B7A73D /* ConfigModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25908DE2BEE62EF00B7A73D /* ConfigModels.swift */; };
 		F25908E32BEE648400B7A73D /* NIDConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25908E22BEE648400B7A73D /* NIDConfigService.swift */; };
-		F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */; };
-		F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */; };
-		F26E03B22AA139A20075E824 /* UIViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26E03B12AA139A20075E824 /* UIViewExtensionTests.swift */; };
 		F27045EE2B6A896700FE24FF /* NetworkMonitoringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */; };
-		F27045F02B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27045EF2B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift */; };
-		F27883E82AA23F920063F78B /* TouchEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27883E72AA23F920063F78B /* TouchEventsTests.swift */; };
 		F2AEE7372A27A5D6009690CB /* NIDLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7362A27A5D6009690CB /* NIDLog.swift */; };
 		F2AEE7392A27A64E009690CB /* NIDSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7382A27A64E009690CB /* NIDSession.swift */; };
 		F2AEE73B2A27A684009690CB /* NIDForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE73A2A27A684009690CB /* NIDForm.swift */; };
@@ -87,8 +68,42 @@
 		F2AEE7452A27A814009690CB /* NIDRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7442A27A814009690CB /* NIDRegistration.swift */; };
 		F2AEE7472A27A84B009690CB /* NIDSend.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AEE7462A27A84B009690CB /* NIDSend.swift */; };
 		F2EB87282C500FB7000362C5 /* ApplicationMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */; };
-		F2EF2A4D2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */; };
 		F2F0A3F529FB05A90083D43C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F0A3F429FB05A90083D43C /* Constants.swift */; };
+		FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */; };
+		FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770872E26DB8E007235A2 /* NIDNewSessionTests.swift */; };
+		FF1770AC2E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770982E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift */; };
+		FF1770AD2E26DB8E007235A2 /* IdentifierServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */; };
+		FF1770AE2E26DB8E007235A2 /* SensorsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709D2E26DB8E007235A2 /* SensorsTest.swift */; };
+		FF1770AF2E26DB8E007235A2 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A42E26DB8E007235A2 /* NeuroIDTrackerTests.swift */; };
+		FF1770B02E26DB8E007235A2 /* UIViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A62E26DB8E007235A2 /* UIViewExtensionTests.swift */; };
+		FF1770B12E26DB8E007235A2 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709E2E26DB8E007235A2 /* SessionTests.swift */; };
+		FF1770B22E26DB8E007235A2 /* NIDRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770892E26DB8E007235A2 /* NIDRegistrationTests.swift */; };
+		FF1770B32E26DB8E007235A2 /* NIDClientSiteIdTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770822E26DB8E007235A2 /* NIDClientSiteIdTests.swift */; };
+		FF1770B42E26DB8E007235A2 /* TouchEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709F2E26DB8E007235A2 /* TouchEventsTests.swift */; };
+		FF1770B52E26DB8E007235A2 /* MultiAppFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770802E26DB8E007235A2 /* MultiAppFlowTests.swift */; };
+		FF1770B62E26DB8E007235A2 /* PayloadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709C2E26DB8E007235A2 /* PayloadTest.swift */; };
+		FF1770B72E26DB8E007235A2 /* NIDUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708E2E26DB8E007235A2 /* NIDUserTests.swift */; };
+		FF1770B82E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770922E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift */; };
+		FF1770B92E26DB8E007235A2 /* NIDPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770882E26DB8E007235A2 /* NIDPerformanceTests.swift */; };
+		FF1770BA2E26DB8E007235A2 /* NIDParamsCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709B2E26DB8E007235A2 /* NIDParamsCreatorTests.swift */; };
+		FF1770BB2E26DB8E007235A2 /* NIDEnvTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770842E26DB8E007235A2 /* NIDEnvTests.swift */; };
+		FF1770BC2E26DB8E007235A2 /* NIDSendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708C2E26DB8E007235A2 /* NIDSendTests.swift */; };
+		FF1770BD2E26DB8E007235A2 /* NIDEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A52E26DB8E007235A2 /* NIDEventTests.swift */; };
+		FF1770BE2E26DB8E007235A2 /* BaseTestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A12E26DB8E007235A2 /* BaseTestClass.swift */; };
+		FF1770BF2E26DB8E007235A2 /* MockDeviceSignalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */; };
+		FF1770C02E26DB8E007235A2 /* ValidationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */; };
+		FF1770C12E26DB8E007235A2 /* NIDLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770862E26DB8E007235A2 /* NIDLogTests.swift */; };
+		FF1770C22E26DB8E007235A2 /* NIDFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770852E26DB8E007235A2 /* NIDFormTests.swift */; };
+		FF1770C32E26DB8E007235A2 /* SampleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770932E26DB8E007235A2 /* SampleServiceTests.swift */; };
+		FF1770C42E26DB8E007235A2 /* NIDScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708B2E26DB8E007235A2 /* NIDScreenTests.swift */; };
+		FF1770C52E26DB8E007235A2 /* NIDDataExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770832E26DB8E007235A2 /* NIDDataExtensionTests.swift */; };
+		FF1770C62E26DB8E007235A2 /* MockConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770962E26DB8E007235A2 /* MockConfigService.swift */; };
+		FF1770C72E26DB8E007235A2 /* NeuroIDClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770812E26DB8E007235A2 /* NeuroIDClassTests.swift */; };
+		FF1770C82E26DB8E007235A2 /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A22E26DB8E007235A2 /* DataStoreTests.swift */; };
+		FF1770C92E26DB8E007235A2 /* NIDRNTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708A2E26DB8E007235A2 /* NIDRNTests.swift */; };
+		FF1770CA2E26DB8E007235A2 /* BaseClassExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709A2E26DB8E007235A2 /* BaseClassExtensionTests.swift */; };
+		FF1770CB2E26DB8E007235A2 /* ConfigServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770902E26DB8E007235A2 /* ConfigServiceTests.swift */; };
+		FF1770CC2E26DB8E007235A2 /* UtilFunctionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */; };
 		FF88597C2D481B3A00A91902 /* AdvancedDeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */; };
 		FF88597E2D481B4300A91902 /* ValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597D2D481B4300A91902 /* ValidationService.swift */; };
 		FFAC96B92D358A9F004C2A25 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96B82D358A9F004C2A25 /* UIView.swift */; };
@@ -98,10 +113,7 @@
 		FFAC96C12D358ACC004C2A25 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C02D358ACC004C2A25 /* UIButton.swift */; };
 		FFAC96C22D358B3D004C2A25 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
 		FFAC96C42D36D7EE004C2A25 /* IdentifierService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */; };
-		FFAC96C62D36DFF4004C2A25 /* IdentifierServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C52D36DFF4004C2A25 /* IdentifierServiceTests.swift */; };
 		FFAC97A12D40047B004C2A25 /* NIDDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */; };
-		FFAC97A32D401559004C2A25 /* BaseTestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC97A22D401559004C2A25 /* BaseTestClass.swift */; };
-		FFAC97A52D4019E5004C2A25 /* NIDDataExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC97A42D4019E5004C2A25 /* NIDDataExtensionTests.swift */; };
 		FFD6967F2D28988E003928EF /* LocationManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD6967E2D28988B003928EF /* LocationManagerService.swift */; };
 /* End PBXBuildFile section */
 
@@ -132,8 +144,6 @@
 /* Begin PBXFileReference section */
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
 		07A05C2028B91B4D00509509 /* NIDMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDMetadata.swift; sourceTree = "<group>"; };
-		07A2668B28A6A5BC00E973E2 /* PayloadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadTest.swift; sourceTree = "<group>"; };
-		07BB4F61287FE8A200910665 /* SensorsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorsTest.swift; sourceTree = "<group>"; };
 		0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		153C967454B5320D895ADE13 /* Pods-SDKTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDKTest.debug.xcconfig"; path = "Target Support Files/Pods-SDKTest/Pods-SDKTest.debug.xcconfig"; sourceTree = "<group>"; };
 		1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPacketNumber.swift; sourceTree = "<group>"; };
@@ -150,22 +160,13 @@
 		4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDCallStatusObserverService.swift; sourceTree = "<group>"; };
 		6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPreferences.swift; sourceTree = "<group>"; };
 		6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6F39E8CB26CEA9A800BE9834 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
-		6F39E8CD26CEA9A800BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKUITest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKUITest.swift; sourceTree = "<group>"; };
 		6F39E8DC26CEAA0C00BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEventTests.swift; sourceTree = "<group>"; };
 		6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkService.swift; sourceTree = "<group>"; };
-		6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceTestImpl.swift; sourceTree = "<group>"; };
 		6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTextFieldUtils.swift; sourceTree = "<group>"; };
-		6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigServiceTests.swift; sourceTree = "<group>"; };
-		6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAppFlowTests.swift; sourceTree = "<group>"; };
-		6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceSignalService.swift; sourceTree = "<group>"; };
-		6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPerformanceTests.swift; sourceTree = "<group>"; };
 		6FE77FE52937B3F700357284 /* NIDErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDErrors.swift; sourceTree = "<group>"; };
-		6FF06B26271FCA8300F6704C /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
 		90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SDKTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F02E629A22E34E06D2AF87 /* Pods-NeuroID.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.release.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.release.xcconfig"; sourceTree = "<group>"; };
 		ADF6B1D19ADA519BE68B6047 /* Pods-SDKTest.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDKTest.staging.xcconfig"; path = "Target Support Files/Pods-SDKTest/Pods-SDKTest.staging.xcconfig"; sourceTree = "<group>"; };
@@ -173,7 +174,6 @@
 		F216C4012A718AEA001DDABB /* Optional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		F216C4072A71BE19001DDABB /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
-		F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilFunctionsTests.swift; sourceTree = "<group>"; };
 		F217029829D4C4DF00133A1C /* UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextField.swift; sourceTree = "<group>"; };
 		F217029B29D4C79F00133A1C /* AppEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvents.swift; sourceTree = "<group>"; };
 		F217029D29D4C7CE00133A1C /* DeviceEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEvents.swift; sourceTree = "<group>"; };
@@ -190,23 +190,15 @@
 		F21702CB29D5D5E800133A1C /* Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		F21702CF29D5E9D800133A1C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
-		F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
 		F23B75532AC36F8A00A7DF4D /* NIDRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRN.swift; sourceTree = "<group>"; };
 		F2420C342BF3A1CD00143928 /* NIDListeners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDListeners.swift; sourceTree = "<group>"; };
 		F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSamplingService.swift; sourceTree = "<group>"; };
-		F24BAE792BF52A0000A3605D /* SampleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleServiceTests.swift; sourceTree = "<group>"; };
-		F24BAE7B2BF52B8700A3605D /* MockConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConfigService.swift; sourceTree = "<group>"; };
 		F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDAdvancedDevice.swift; sourceTree = "<group>"; };
 		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		F2546A6D2B9A121500348BD7 /* NIDTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDTesting.swift; sourceTree = "<group>"; };
 		F25908DE2BEE62EF00B7A73D /* ConfigModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigModels.swift; sourceTree = "<group>"; };
 		F25908E22BEE648400B7A73D /* NIDConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDConfigService.swift; sourceTree = "<group>"; };
-		F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
-		F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
-		F26E03B12AA139A20075E824 /* UIViewExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionTests.swift; sourceTree = "<group>"; };
 		F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoringService.swift; sourceTree = "<group>"; };
-		F27045EF2B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoringServiceTests.swift; sourceTree = "<group>"; };
-		F27883E72AA23F920063F78B /* TouchEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchEventsTests.swift; sourceTree = "<group>"; };
 		F2AEE7362A27A5D6009690CB /* NIDLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDLog.swift; sourceTree = "<group>"; };
 		F2AEE7382A27A64E009690CB /* NIDSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSession.swift; sourceTree = "<group>"; };
 		F2AEE73A2A27A684009690CB /* NIDForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDForm.swift; sourceTree = "<group>"; };
@@ -217,8 +209,43 @@
 		F2AEE7442A27A814009690CB /* NIDRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRegistration.swift; sourceTree = "<group>"; };
 		F2AEE7462A27A84B009690CB /* NIDSend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSend.swift; sourceTree = "<group>"; };
 		F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMetaData.swift; sourceTree = "<group>"; };
-		F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClassExtensionTests.swift; sourceTree = "<group>"; };
 		F2F0A3F429FB05A90083D43C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FF1770802E26DB8E007235A2 /* MultiAppFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAppFlowTests.swift; sourceTree = "<group>"; };
+		FF1770812E26DB8E007235A2 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
+		FF1770822E26DB8E007235A2 /* NIDClientSiteIdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDClientSiteIdTests.swift; sourceTree = "<group>"; };
+		FF1770832E26DB8E007235A2 /* NIDDataExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDDataExtensionTests.swift; sourceTree = "<group>"; };
+		FF1770842E26DB8E007235A2 /* NIDEnvTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEnvTests.swift; sourceTree = "<group>"; };
+		FF1770852E26DB8E007235A2 /* NIDFormTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDFormTests.swift; sourceTree = "<group>"; };
+		FF1770862E26DB8E007235A2 /* NIDLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDLogTests.swift; sourceTree = "<group>"; };
+		FF1770872E26DB8E007235A2 /* NIDNewSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNewSessionTests.swift; sourceTree = "<group>"; };
+		FF1770882E26DB8E007235A2 /* NIDPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPerformanceTests.swift; sourceTree = "<group>"; };
+		FF1770892E26DB8E007235A2 /* NIDRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRegistrationTests.swift; sourceTree = "<group>"; };
+		FF17708A2E26DB8E007235A2 /* NIDRNTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRNTests.swift; sourceTree = "<group>"; };
+		FF17708B2E26DB8E007235A2 /* NIDScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDScreenTests.swift; sourceTree = "<group>"; };
+		FF17708C2E26DB8E007235A2 /* NIDSendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSendTests.swift; sourceTree = "<group>"; };
+		FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSessionTests.swift; sourceTree = "<group>"; };
+		FF17708E2E26DB8E007235A2 /* NIDUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDUserTests.swift; sourceTree = "<group>"; };
+		FF1770902E26DB8E007235A2 /* ConfigServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigServiceTests.swift; sourceTree = "<group>"; };
+		FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierServiceTests.swift; sourceTree = "<group>"; };
+		FF1770922E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoringServiceTests.swift; sourceTree = "<group>"; };
+		FF1770932E26DB8E007235A2 /* SampleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleServiceTests.swift; sourceTree = "<group>"; };
+		FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationServiceTests.swift; sourceTree = "<group>"; };
+		FF1770962E26DB8E007235A2 /* MockConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConfigService.swift; sourceTree = "<group>"; };
+		FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceSignalService.swift; sourceTree = "<group>"; };
+		FF1770982E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceTestImpl.swift; sourceTree = "<group>"; };
+		FF17709A2E26DB8E007235A2 /* BaseClassExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClassExtensionTests.swift; sourceTree = "<group>"; };
+		FF17709B2E26DB8E007235A2 /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
+		FF17709C2E26DB8E007235A2 /* PayloadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadTest.swift; sourceTree = "<group>"; };
+		FF17709D2E26DB8E007235A2 /* SensorsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorsTest.swift; sourceTree = "<group>"; };
+		FF17709E2E26DB8E007235A2 /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
+		FF17709F2E26DB8E007235A2 /* TouchEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchEventsTests.swift; sourceTree = "<group>"; };
+		FF1770A12E26DB8E007235A2 /* BaseTestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestClass.swift; sourceTree = "<group>"; };
+		FF1770A22E26DB8E007235A2 /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
+		FF1770A32E26DB8E007235A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FF1770A42E26DB8E007235A2 /* NeuroIDTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDTrackerTests.swift; sourceTree = "<group>"; };
+		FF1770A52E26DB8E007235A2 /* NIDEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEventTests.swift; sourceTree = "<group>"; };
+		FF1770A62E26DB8E007235A2 /* UIViewExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionTests.swift; sourceTree = "<group>"; };
+		FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilFunctionsTests.swift; sourceTree = "<group>"; };
 		FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceService.swift; sourceTree = "<group>"; };
 		FF88597D2D481B4300A91902 /* ValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationService.swift; sourceTree = "<group>"; };
 		FFAC96B52D358978004C2A25 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -228,10 +255,7 @@
 		FFAC96BE2D358AC1004C2A25 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		FFAC96C02D358ACC004C2A25 /* UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
 		FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierService.swift; sourceTree = "<group>"; };
-		FFAC96C52D36DFF4004C2A25 /* IdentifierServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierServiceTests.swift; sourceTree = "<group>"; };
 		FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDDataStore.swift; sourceTree = "<group>"; };
-		FFAC97A22D401559004C2A25 /* BaseTestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestClass.swift; sourceTree = "<group>"; };
-		FFAC97A42D4019E5004C2A25 /* NIDDataExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDDataExtensionTests.swift; sourceTree = "<group>"; };
 		FFD6967E2D28988B003928EF /* LocationManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -270,7 +294,7 @@
 			children = (
 				FFAC96B52D358978004C2A25 /* Package.swift */,
 				FFAC96B42D358967004C2A25 /* Source */,
-				6F39E8CA26CEA9A800BE9834 /* SDKTest */,
+				FF1770A82E26DB8E007235A2 /* SDKTest */,
 				6F39E8D926CEAA0C00BE9834 /* SDKUITest */,
 				26BCF33D268DA3C40002C289 /* Products */,
 				26BCF357268DAC530002C289 /* Frameworks */,
@@ -334,35 +358,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		6F39E8CA26CEA9A800BE9834 /* SDKTest */ = {
-			isa = PBXGroup;
-			children = (
-				6F47B9B22B7E81230047DFCB /* Utils */,
-				6FB5672C2B7A7B71009B2959 /* NIDPerformanceTests.swift */,
-				FFAC97A42D4019E5004C2A25 /* NIDDataExtensionTests.swift */,
-				6FF06B26271FCA8300F6704C /* DataStoreTests.swift */,
-				6F39E8CB26CEA9A800BE9834 /* SessionTests.swift */,
-				6F39E8CD26CEA9A800BE9834 /* Info.plist */,
-				6F39E8E026CEAA7900BE9834 /* NIDEventTests.swift */,
-				07BB4F61287FE8A200910665 /* SensorsTest.swift */,
-				07A2668B28A6A5BC00E973E2 /* PayloadTest.swift */,
-				F21702D529D607E600133A1C /* NIDParamsCreatorTests.swift */,
-				F25F4BA229DDB5C900E31B32 /* NeuroIDClassTests.swift */,
-				F25F4BA029DCBF4000E31B32 /* NeuroIDTrackerTests.swift */,
-				F216C4092A72C649001DDABB /* UtilFunctionsTests.swift */,
-				F2EF2A4C2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift */,
-				F26E03B12AA139A20075E824 /* UIViewExtensionTests.swift */,
-				F27883E72AA23F920063F78B /* TouchEventsTests.swift */,
-				F27045EF2B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift */,
-				6F709ED22BC58C7700F18895 /* ConfigServiceTests.swift */,
-				6F935FA82BEE945C00573EE9 /* MultiAppFlowTests.swift */,
-				F24BAE792BF52A0000A3605D /* SampleServiceTests.swift */,
-				FFAC96C52D36DFF4004C2A25 /* IdentifierServiceTests.swift */,
-				FFAC97A22D401559004C2A25 /* BaseTestClass.swift */,
-			);
-			path = SDKTest;
-			sourceTree = "<group>";
-		};
 		6F39E8D926CEAA0C00BE9834 /* SDKUITest */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,16 +365,6 @@
 				6F39E8DC26CEAA0C00BE9834 /* Info.plist */,
 			);
 			path = SDKUITest;
-			sourceTree = "<group>";
-		};
-		6F47B9B22B7E81230047DFCB /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				6F47B9B32B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift */,
-				6FB4F1D32BD849C200975CE2 /* MockDeviceSignalService.swift */,
-				F24BAE7B2BF52B8700A3605D /* MockConfigService.swift */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		6FCA77C328BF40E700E06DC1 /* Recovered References */ = {
@@ -484,6 +469,81 @@
 				F2AEE73E2A27A6E9009690CB /* NIDUser.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		FF17708F2E26DB8E007235A2 /* NeuroIDClass */ = {
+			isa = PBXGroup;
+			children = (
+				FF1770802E26DB8E007235A2 /* MultiAppFlowTests.swift */,
+				FF1770812E26DB8E007235A2 /* NeuroIDClassTests.swift */,
+				FF1770822E26DB8E007235A2 /* NIDClientSiteIdTests.swift */,
+				FF1770832E26DB8E007235A2 /* NIDDataExtensionTests.swift */,
+				FF1770842E26DB8E007235A2 /* NIDEnvTests.swift */,
+				FF1770852E26DB8E007235A2 /* NIDFormTests.swift */,
+				FF1770862E26DB8E007235A2 /* NIDLogTests.swift */,
+				FF1770872E26DB8E007235A2 /* NIDNewSessionTests.swift */,
+				FF1770882E26DB8E007235A2 /* NIDPerformanceTests.swift */,
+				FF1770892E26DB8E007235A2 /* NIDRegistrationTests.swift */,
+				FF17708A2E26DB8E007235A2 /* NIDRNTests.swift */,
+				FF17708B2E26DB8E007235A2 /* NIDScreenTests.swift */,
+				FF17708C2E26DB8E007235A2 /* NIDSendTests.swift */,
+				FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */,
+				FF17708E2E26DB8E007235A2 /* NIDUserTests.swift */,
+			);
+			path = NeuroIDClass;
+			sourceTree = "<group>";
+		};
+		FF1770952E26DB8E007235A2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FF1770902E26DB8E007235A2 /* ConfigServiceTests.swift */,
+				FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */,
+				FF1770922E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift */,
+				FF1770932E26DB8E007235A2 /* SampleServiceTests.swift */,
+				FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		FF1770992E26DB8E007235A2 /* TestUtils */ = {
+			isa = PBXGroup;
+			children = (
+				FF1770962E26DB8E007235A2 /* MockConfigService.swift */,
+				FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */,
+				FF1770982E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift */,
+			);
+			path = TestUtils;
+			sourceTree = "<group>";
+		};
+		FF1770A02E26DB8E007235A2 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				FF17709A2E26DB8E007235A2 /* BaseClassExtensionTests.swift */,
+				FF17709B2E26DB8E007235A2 /* NIDParamsCreatorTests.swift */,
+				FF17709C2E26DB8E007235A2 /* PayloadTest.swift */,
+				FF17709D2E26DB8E007235A2 /* SensorsTest.swift */,
+				FF17709E2E26DB8E007235A2 /* SessionTests.swift */,
+				FF17709F2E26DB8E007235A2 /* TouchEventsTests.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		FF1770A82E26DB8E007235A2 /* SDKTest */ = {
+			isa = PBXGroup;
+			children = (
+				FF17708F2E26DB8E007235A2 /* NeuroIDClass */,
+				FF1770952E26DB8E007235A2 /* Services */,
+				FF1770992E26DB8E007235A2 /* TestUtils */,
+				FF1770A02E26DB8E007235A2 /* Utils */,
+				FF1770A12E26DB8E007235A2 /* BaseTestClass.swift */,
+				FF1770A22E26DB8E007235A2 /* DataStoreTests.swift */,
+				FF1770A32E26DB8E007235A2 /* Info.plist */,
+				FF1770A42E26DB8E007235A2 /* NeuroIDTrackerTests.swift */,
+				FF1770A52E26DB8E007235A2 /* NIDEventTests.swift */,
+				FF1770A62E26DB8E007235A2 /* UIViewExtensionTests.swift */,
+				FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */,
+			);
+			path = SDKTest;
 			sourceTree = "<group>";
 		};
 		FFAC96B42D358967004C2A25 /* Source */ = {
@@ -787,31 +847,43 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FFAC97A52D4019E5004C2A25 /* NIDDataExtensionTests.swift in Sources */,
-				F21702D629D607E600133A1C /* NIDParamsCreatorTests.swift in Sources */,
-				F216C40A2A72C649001DDABB /* UtilFunctionsTests.swift in Sources */,
-				F27045F02B6A8FBE00FE24FF /* NetworkMonitoringServiceTests.swift in Sources */,
-				F24BAE7A2BF52A0000A3605D /* SampleServiceTests.swift in Sources */,
-				F25F4BA129DCBF4000E31B32 /* NeuroIDTrackerTests.swift in Sources */,
-				F2EF2A4D2A9FAC3200FBDA0D /* BaseClassExtensionTests.swift in Sources */,
-				6FB4F1D42BD849C200975CE2 /* MockDeviceSignalService.swift in Sources */,
 				6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */,
-				6F39E8E126CEAA7900BE9834 /* NIDEventTests.swift in Sources */,
 				6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
-				6F47B9B42B7E814D0047DFCB /* NIDNetworkServiceTestImpl.swift in Sources */,
-				6F709ED32BC58C7700F18895 /* ConfigServiceTests.swift in Sources */,
-				07BB4F62287FE8A200910665 /* SensorsTest.swift in Sources */,
-				F27883E82AA23F920063F78B /* TouchEventsTests.swift in Sources */,
-				F24BAE7C2BF52B8700A3605D /* MockConfigService.swift in Sources */,
-				F26E03B22AA139A20075E824 /* UIViewExtensionTests.swift in Sources */,
-				F25F4BA329DDB5C900E31B32 /* NeuroIDClassTests.swift in Sources */,
-				07A2668C28A6A5BC00E973E2 /* PayloadTest.swift in Sources */,
-				6F39E8CC26CEA9A800BE9834 /* SessionTests.swift in Sources */,
-				6FF06B2A271FCAA700F6704C /* DataStoreTests.swift in Sources */,
-				6F935FA92BEE945C00573EE9 /* MultiAppFlowTests.swift in Sources */,
-				6FB5672D2B7A7B71009B2959 /* NIDPerformanceTests.swift in Sources */,
-				FFAC96C62D36DFF4004C2A25 /* IdentifierServiceTests.swift in Sources */,
-				FFAC97A32D401559004C2A25 /* BaseTestClass.swift in Sources */,
+				FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */,
+				FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */,
+				FF1770AC2E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift in Sources */,
+				FF1770AD2E26DB8E007235A2 /* IdentifierServiceTests.swift in Sources */,
+				FF1770AE2E26DB8E007235A2 /* SensorsTest.swift in Sources */,
+				FF1770AF2E26DB8E007235A2 /* NeuroIDTrackerTests.swift in Sources */,
+				FF1770B02E26DB8E007235A2 /* UIViewExtensionTests.swift in Sources */,
+				FF1770B12E26DB8E007235A2 /* SessionTests.swift in Sources */,
+				FF1770B22E26DB8E007235A2 /* NIDRegistrationTests.swift in Sources */,
+				FF1770B32E26DB8E007235A2 /* NIDClientSiteIdTests.swift in Sources */,
+				FF1770B42E26DB8E007235A2 /* TouchEventsTests.swift in Sources */,
+				FF1770B52E26DB8E007235A2 /* MultiAppFlowTests.swift in Sources */,
+				FF1770B62E26DB8E007235A2 /* PayloadTest.swift in Sources */,
+				FF1770B72E26DB8E007235A2 /* NIDUserTests.swift in Sources */,
+				FF1770B82E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift in Sources */,
+				FF1770B92E26DB8E007235A2 /* NIDPerformanceTests.swift in Sources */,
+				FF1770BA2E26DB8E007235A2 /* NIDParamsCreatorTests.swift in Sources */,
+				FF1770BB2E26DB8E007235A2 /* NIDEnvTests.swift in Sources */,
+				FF1770BC2E26DB8E007235A2 /* NIDSendTests.swift in Sources */,
+				FF1770BD2E26DB8E007235A2 /* NIDEventTests.swift in Sources */,
+				FF1770BE2E26DB8E007235A2 /* BaseTestClass.swift in Sources */,
+				FF1770BF2E26DB8E007235A2 /* MockDeviceSignalService.swift in Sources */,
+				FF1770C02E26DB8E007235A2 /* ValidationServiceTests.swift in Sources */,
+				FF1770C12E26DB8E007235A2 /* NIDLogTests.swift in Sources */,
+				FF1770C22E26DB8E007235A2 /* NIDFormTests.swift in Sources */,
+				FF1770C32E26DB8E007235A2 /* SampleServiceTests.swift in Sources */,
+				FF1770C42E26DB8E007235A2 /* NIDScreenTests.swift in Sources */,
+				FF1770C52E26DB8E007235A2 /* NIDDataExtensionTests.swift in Sources */,
+				FF1770C62E26DB8E007235A2 /* MockConfigService.swift in Sources */,
+				FF1770C72E26DB8E007235A2 /* NeuroIDClassTests.swift in Sources */,
+				FF1770C82E26DB8E007235A2 /* DataStoreTests.swift in Sources */,
+				FF1770C92E26DB8E007235A2 /* NIDRNTests.swift in Sources */,
+				FF1770CA2E26DB8E007235A2 /* BaseClassExtensionTests.swift in Sources */,
+				FF1770CB2E26DB8E007235A2 /* ConfigServiceTests.swift in Sources */,
+				FF1770CC2E26DB8E007235A2 /* UtilFunctionsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
