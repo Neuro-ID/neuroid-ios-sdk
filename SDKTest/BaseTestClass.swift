@@ -5,7 +5,6 @@
 //  Created by Kevin Sites on 1/21/25.
 //
 
-
 @testable import NeuroID
 import XCTest
 
@@ -41,44 +40,51 @@ class BaseTestClass: XCTestCase {
     
     func assertDataStoreCount(count: Int) {
         let allEvents = NeuroID.datastore.getAllEvents()
-        assert(allEvents.count == count)
+        XCTAssertEqual(allEvents.count, count, "Expected \(count) events in datastore but found \(allEvents.count)")
     }
-    
+
     func assertStoredEventCount(type: String, count: Int) {
         let allEvents = NeuroID.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
-        assert(validEvent.count == count)
+        XCTAssertEqual(validEvent.count, count, "Expected \(count) events of type '\(type)' but found \(validEvent.count)")
     }
 
     func assertStoredEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
         let allEvents = NeuroID.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
-        assert(validEvent.count == count)
+        XCTAssertEqual(validEvent.count, count, "Expected \(count) events of type '\(type)' but found \(validEvent.count)")
+        
         if !skipType! && validEvent.count > 0 {
-            assert(validEvent[0].type == type)
+            XCTAssertEqual(validEvent[0].type, type, "Expected event type '\(type)' but found '\(validEvent[0].type)'")
         }
     }
 
     func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
         let allEvents = NeuroID.datastore.queuedEvents
         let validEvent = allEvents.filter { $0.type == type }
-        assert(validEvent.count == count)
-        if !skipType! {
-            assert(validEvent[0].type == type)
+        XCTAssertEqual(validEvent.count, count, "Expected \(count) queued events of type '\(type)' but found \(validEvent.count)")
+        
+        if !skipType! && validEvent.count > 0 {
+            XCTAssertEqual(validEvent[0].type, type, "Expected queued event type '\(type)' but found '\(validEvent[0].type)'")
         }
     }
-    
+
     func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
         let allEvents = queued ? NeuroID.datastore.queuedEvents : NeuroID.datastore.getAllEvents()
-        
         let validEvents = allEvents.filter { $0.type == type }
-
+        
         let originEvent = validEvents.filter { $0.key == "sessionIdSource" }
-        assert(originEvent.count == 1)
-        assert(originEvent[0].v == origin)
-
+        XCTAssertEqual(originEvent.count, 1, "Expected 1 sessionIdSource event but found \(originEvent.count)")
+        
+        if originEvent.count > 0 {
+            XCTAssertEqual(originEvent[0].v, origin, "Expected origin '\(origin)' but found '\(originEvent[0].v ?? "nil")'")
+        }
+        
         let originCodeEvent = validEvents.filter { $0.key == "sessionIdCode" }
-        assert(originCodeEvent.count == 1)
-        assert(originCodeEvent[0].v == originCode)
+        XCTAssertEqual(originCodeEvent.count, 1, "Expected 1 sessionIdCode event but found \(originCodeEvent.count)")
+        
+        if originCodeEvent.count > 0 {
+            XCTAssertEqual(originCodeEvent[0].v, originCode, "Expected origin code '\(originCode)' but found '\(originCodeEvent[0].v ?? "nil")'")
+        }
     }
 }
