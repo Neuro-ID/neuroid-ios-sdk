@@ -14,8 +14,6 @@ import SwiftUI
 import UIKit
 import WebKit
 
-// MARK: - Neuro ID Class
-
 public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
 
