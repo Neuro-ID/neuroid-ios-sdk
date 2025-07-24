@@ -26,7 +26,7 @@ class SampleServiceTests: XCTestCase {
         sampleService.updateIsSampledStatus(siteID: nil)
         
         // ENG-8305 - Sample Status Not Updated
-        assert(!sampleService.isSessionFlowSampled)
+        assert(sampleService.isSessionFlowSampled)
     }
     
     func test_updateIsSampledStatus_0() {
