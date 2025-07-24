@@ -34,23 +34,19 @@ class NIDSamplingService: NIDSamplingServiceProtocol {
        and will drop events if false
      */
     func updateIsSampledStatus(siteID: String?) {
-//        ENG - 8305 - Ignore updating sample logic
-//
-//
-//        let currentSampleRate = retrieveSampleRate(siteID: siteID)
-//
-//        if currentSampleRate >= NIDSamplingService.MAX_SAMPLE_RATE {
-//            _isSessionFlowSampled = true
-//            return
-//        }
-//
-//        let randomValue = Int.random(in: 0 ..< NIDSamplingService.MAX_SAMPLE_RATE)
-//        if randomValue < currentSampleRate {
-//            _isSessionFlowSampled = true
-//            return
-//        }
-//
-//        _isSessionFlowSampled = false
+        let currentSampleRate = retrieveSampleRate(siteID: siteID)
+        if currentSampleRate >= NIDSamplingService.MAX_SAMPLE_RATE {
+            _isSessionFlowSampled = true
+            return
+        }
+
+        let randomValue = Int.random(in: 0 ..< NIDSamplingService.MAX_SAMPLE_RATE)
+        if randomValue < currentSampleRate {
+            _isSessionFlowSampled = true
+            return
+        }
+
+        _isSessionFlowSampled = false
     }
 
     /**
