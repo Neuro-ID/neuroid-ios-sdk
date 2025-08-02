@@ -10,14 +10,12 @@ import XCTest
 
 final class NIDPerformanceTests: XCTestCase {
     
-    var sampleService: NIDSamplingService = .init()
     let mockedConfigService = MockConfigService()
     
     let childSiteID = "form_weeee"
 
     override func setUpWithError() throws {
         mockedConfigService.configCache = ConfigResponseData()
-        sampleService = NIDSamplingService(configService: mockedConfigService)
         NeuroID.configService = mockedConfigService
         
     }

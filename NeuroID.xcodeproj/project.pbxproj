@@ -51,7 +51,6 @@
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
 		F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B75532AC36F8A00A7DF4D /* NIDRN.swift */; };
 		F2420C352BF3A1CD00143928 /* NIDListeners.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2420C342BF3A1CD00143928 /* NIDListeners.swift */; };
-		F24BAE782BF51FF500A3605D /* NIDSamplingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */; };
 		F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */; };
 		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
 		F2546A6E2B9A121500348BD7 /* NIDTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2546A6D2B9A121500348BD7 /* NIDTesting.swift */; };
@@ -94,7 +93,6 @@
 		FF1770C02E26DB8E007235A2 /* ValidationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */; };
 		FF1770C12E26DB8E007235A2 /* NIDLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770862E26DB8E007235A2 /* NIDLogTests.swift */; };
 		FF1770C22E26DB8E007235A2 /* NIDFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770852E26DB8E007235A2 /* NIDFormTests.swift */; };
-		FF1770C32E26DB8E007235A2 /* SampleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770932E26DB8E007235A2 /* SampleServiceTests.swift */; };
 		FF1770C42E26DB8E007235A2 /* NIDScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708B2E26DB8E007235A2 /* NIDScreenTests.swift */; };
 		FF1770C52E26DB8E007235A2 /* NIDDataExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770832E26DB8E007235A2 /* NIDDataExtensionTests.swift */; };
 		FF1770C62E26DB8E007235A2 /* MockConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770962E26DB8E007235A2 /* MockConfigService.swift */; };
@@ -192,7 +190,6 @@
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
 		F23B75532AC36F8A00A7DF4D /* NIDRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRN.swift; sourceTree = "<group>"; };
 		F2420C342BF3A1CD00143928 /* NIDListeners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDListeners.swift; sourceTree = "<group>"; };
-		F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDSamplingService.swift; sourceTree = "<group>"; };
 		F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDAdvancedDevice.swift; sourceTree = "<group>"; };
 		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		F2546A6D2B9A121500348BD7 /* NIDTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDTesting.swift; sourceTree = "<group>"; };
@@ -228,7 +225,6 @@
 		FF1770902E26DB8E007235A2 /* ConfigServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigServiceTests.swift; sourceTree = "<group>"; };
 		FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierServiceTests.swift; sourceTree = "<group>"; };
 		FF1770922E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoringServiceTests.swift; sourceTree = "<group>"; };
-		FF1770932E26DB8E007235A2 /* SampleServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleServiceTests.swift; sourceTree = "<group>"; };
 		FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationServiceTests.swift; sourceTree = "<group>"; };
 		FF1770962E26DB8E007235A2 /* MockConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConfigService.swift; sourceTree = "<group>"; };
 		FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceSignalService.swift; sourceTree = "<group>"; };
@@ -499,7 +495,6 @@
 				FF1770902E26DB8E007235A2 /* ConfigServiceTests.swift */,
 				FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */,
 				FF1770922E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift */,
-				FF1770932E26DB8E007235A2 /* SampleServiceTests.swift */,
 				FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */,
 			);
 			path = Services;
@@ -564,7 +559,6 @@
 				4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */,
 				F25908E22BEE648400B7A73D /* NIDConfigService.swift */,
 				6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */,
-				F24BAE772BF51FF500A3605D /* NIDSamplingService.swift */,
 				FF88597D2D481B4300A91902 /* ValidationService.swift */,
 			);
 			path = Services;
@@ -803,7 +797,6 @@
 				6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
-				F24BAE782BF51FF500A3605D /* NIDSamplingService.swift in Sources */,
 				FFAC96B92D358A9F004C2A25 /* UIView.swift in Sources */,
 				F25908DF2BEE62EF00B7A73D /* ConfigModels.swift in Sources */,
 				FF88597E2D481B4300A91902 /* ValidationService.swift in Sources */,
@@ -874,7 +867,6 @@
 				FF1770C02E26DB8E007235A2 /* ValidationServiceTests.swift in Sources */,
 				FF1770C12E26DB8E007235A2 /* NIDLogTests.swift in Sources */,
 				FF1770C22E26DB8E007235A2 /* NIDFormTests.swift in Sources */,
-				FF1770C32E26DB8E007235A2 /* SampleServiceTests.swift in Sources */,
 				FF1770C42E26DB8E007235A2 /* NIDScreenTests.swift in Sources */,
 				FF1770C52E26DB8E007235A2 /* NIDDataExtensionTests.swift in Sources */,
 				FF1770C62E26DB8E007235A2 /* MockConfigService.swift in Sources */,

@@ -55,7 +55,7 @@ extension NeuroID {
        // If we hit a low memory event, drop events and early return
        //  OR if we are not sampling the session (i.e. are throttling)
        //  then drop events
-       if NeuroID.lowMemory || !NeuroID.samplingService.isSessionFlowSampled {
+        if NeuroID.lowMemory || !NeuroID.configService.isSessionFlowSampled {
            return
        }
         
