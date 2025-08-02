@@ -7,7 +7,11 @@ import Foundation
 
 protocol ConfigServiceProtocol {
     var configCache: ConfigResponseData { get }
+    var siteIDMap: [String: Bool] { get }
+    func clearSiteIDMap()
     func retrieveOrRefreshCache() -> Void
+    var isSessionFlowSampled: Bool { get }
+    func updateIsSampledStatus(siteID: String?) -> Void
 }
 
 class NIDConfigService: ConfigServiceProtocol {
@@ -21,6 +25,13 @@ class NIDConfigService: ConfigServiceProtocol {
 
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
+    var siteIDMap : [String: Bool] = [:]
+    var _isSessionFlowSampled = true
+    
+    var isSessionFlowSampled: Bool {
+        get { _isSessionFlowSampled }
+        set {}
+    }
     
     public var configCache: ConfigResponseData = .init()
     
@@ -47,8 +58,8 @@ class NIDConfigService: ConfigServiceProtocol {
             switch response.result {
             case .success(let responseData):
                 self.setCache(responseData)
-                NIDLog.d("Retrieved remote config")
-                    
+                NIDLog.d("Retrieved remote config \(responseData)")
+                self.initSiteIDSampleMap(config: responseData)
                 self.cacheSetWithRemote = true
                 self.cacheCreationTime = .init()
                 self.captureConfigEvent(configData: responseData)
@@ -63,6 +74,30 @@ class NIDConfigService: ConfigServiceProtocol {
 
             }
         }
+    }
+    
+    func initSiteIDSampleMap(config: ConfigResponseData) {
+        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions{
+            for siteID in linkedSiteOptions.keys {
+                if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
+                    if (sampleRate == 0) {
+                        siteIDMap[siteID] = false
+                    } else {
+                        siteIDMap[siteID] = (Int.random(in: 1...100) <= sampleRate)
+                    }
+                }
+            }
+        }
+        if let siteID : String = config.siteID {
+            if let sampleRate: Int = config.sampleRate {
+                if (config.sampleRate == 0) {
+                    siteIDMap[siteID] = false
+                } else {
+                    siteIDMap[siteID] = (Int.random(in: 1...100) <= sampleRate)
+                }
+            }
+        }
+        print("kurt_test initSiteIDSampleMap: \(siteIDMap)")
     }
     
     func setCache(_ newCache: ConfigResponseData) {
@@ -92,6 +127,10 @@ class NIDConfigService: ConfigServiceProtocol {
         }
     }
     
+    func clearSiteIDMap() {
+        
+    }
+    
     func captureConfigEvent(configData: ConfigResponseData) {
         let encoder = JSONEncoder()
         
@@ -108,5 +147,30 @@ class NIDConfigService: ConfigServiceProtocol {
             failedCachedConfig.level = "ERROR"
             NeuroID.saveEventToDataStore(failedCachedConfig)
         }
+    }
+    
+    func updateIsSampledStatus(siteID: String?) {
+        if let nonNullSiteID: String = siteID {
+            if let nonNullFlag = siteIDMap[nonNullSiteID] {
+                print("kurt_test siteID \(nonNullSiteID) : \(nonNullFlag)")
+                _isSessionFlowSampled = nonNullFlag
+            }
+            return
+        }
+        
+//        let currentSampleRate = retrieveSampleRate(siteID: siteID)
+//        if currentSampleRate >= NIDSamplingService.MAX_SAMPLE_RATE {
+//            _isSessionFlowSampled = true
+//            return
+//        }
+//
+//        let randomValue = Int.random(in: 0 ..< NIDSamplingService.MAX_SAMPLE_RATE)
+//        if randomValue < currentSampleRate {
+//            _isSessionFlowSampled = true
+//            return
+//        }
+
+        print("kurt_test siteID \(siteID) : false")
+        _isSessionFlowSampled = false
     }
 }

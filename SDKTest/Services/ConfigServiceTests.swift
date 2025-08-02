@@ -115,6 +115,22 @@ class ConfigServiceTests: XCTestCase {
         assert(!expired)
     }
     
-    // Skipping tests for retrieveOrRefreshCache because it is a wrapper function for
-    //  expiredCache and retrieveConfig
+    func test_updateIsSampledStatus_100() {
+        configService.configCache.sampleRate = 100
+        configService._isSessionFlowSampled = false
+        
+        configService.updateIsSampledStatus(siteID: nil)
+        
+        // ENG-8305 - Sample Status Not Updated
+        assert(!configService.isSessionFlowSampled)
+    }
+    
+    func test_updateIsSampledStatus_0() {
+        configService.configCache.sampleRate = 0
+        configService._isSessionFlowSampled = false
+        
+        configService.updateIsSampledStatus(siteID: nil)
+        
+        assert(!configService.isSessionFlowSampled)
+    }
 }
