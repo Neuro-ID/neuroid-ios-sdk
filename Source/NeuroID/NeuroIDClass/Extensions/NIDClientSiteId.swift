@@ -30,7 +30,7 @@ public extension NeuroID {
 
     @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
     static func setSiteId(siteId: String) {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
+        logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
         self.siteID = siteId
     }
 }
@@ -44,7 +44,7 @@ extension NeuroID {
 
     static func getClientKey() -> String {
         guard let key = NeuroID.clientKey else {
-            NIDLog.e("ClientKey is not set")
+            logger.e("ClientKey is not set")
             return ""
         }
         return key

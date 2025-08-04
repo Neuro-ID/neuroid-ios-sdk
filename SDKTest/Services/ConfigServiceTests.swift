@@ -8,11 +8,11 @@
 import XCTest
 
 class ConfigServiceTests: XCTestCase {
-    var configService = NIDConfigService()
+    var configService = NIDConfigService(logger: NIDLog())
     
     override func setUpWithError() throws {
         NIDConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
-        configService = NIDConfigService()
+        configService = NIDConfigService(logger: NIDLog())
     }
     
     func clearOutDataStore() {
@@ -25,7 +25,7 @@ class ConfigServiceTests: XCTestCase {
         let mockedNetwork = NIDNetworkServiceTestImpl()
         mockedNetwork.mockFailedResponse()
         
-        configService = NIDConfigService(networkService: mockedNetwork)
+        configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork)
     }
     
     func test_retrieveConfig_withKeyAndNoInternet() throws {
@@ -72,7 +72,7 @@ class ConfigServiceTests: XCTestCase {
         let mockedNetwork = NIDNetworkServiceTestImpl()
         mockedNetwork.mockFailedResponse()
 
-        configService = NIDConfigService(networkService: mockedNetwork, configRetrievalCallback: {})
+        configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork, configRetrievalCallback: {})
         
         configService.configCache.eventQueueFlushInterval = 0
         configService.configCache.callInProgress = false

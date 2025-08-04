@@ -9,9 +9,9 @@ protocol ConfigServiceProtocol {
     var configCache: ConfigResponseData { get }
     var siteIDMap: [String: Bool] { get }
     func clearSiteIDMap()
-    func retrieveOrRefreshCache() -> Void
+    func retrieveOrRefreshCache()
     var isSessionFlowSampled: Bool { get }
-    func updateIsSampledStatus(siteID: String?) -> Void
+    func updateIsSampledStatus(siteID: String?)
 }
 
 class NIDConfigService: ConfigServiceProtocol {
@@ -20,12 +20,13 @@ class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
     
+    let logger: NIDLog
     let networkService: NIDNetworkServiceProtocol
     let configRetrievalCallback: () -> Void
 
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
-    var siteIDMap : [String: Bool] = [:]
+    var siteIDMap: [String: Bool] = [:]
     var _isSessionFlowSampled = true
     
     var isSessionFlowSampled: Bool {
@@ -36,9 +37,11 @@ class NIDConfigService: ConfigServiceProtocol {
     public var configCache: ConfigResponseData = .init()
     
     init(
+        logger: NIDLog,
         networkService: NIDNetworkServiceProtocol = NeuroID.networkService,
         configRetrievalCallback: @escaping () -> Void = {}
     ) {
+        self.logger = logger
         self.networkService = networkService
         self.configRetrievalCallback = configRetrievalCallback
     }
@@ -58,29 +61,28 @@ class NIDConfigService: ConfigServiceProtocol {
             switch response.result {
             case .success(let responseData):
                 self.setCache(responseData)
-                NIDLog.d("Retrieved remote config \(responseData)")
+                self.logger.d("Retrieved remote config \(responseData)")
                 self.initSiteIDSampleMap(config: responseData)
                 self.cacheSetWithRemote = true
                 self.cacheCreationTime = .init()
                 self.captureConfigEvent(configData: responseData)
                 self.configRetrievalCallback()
             case .failure(let error):
-                NIDLog.e("Failed to retrieve NID Config \(error)")
+                self.logger.e("Failed to retrieve NID Config \(error)")
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
                 let failedRetrievalConfig = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to retrieve NID config: \(error). Default values will be used.")
                 NeuroID.saveEventToDataStore(failedRetrievalConfig)
                 self.configRetrievalCallback()
-
             }
         }
     }
     
     func initSiteIDSampleMap(config: ConfigResponseData) {
-        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions{
+        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions {
             for siteID in linkedSiteOptions.keys {
                 if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
-                    if (sampleRate == 0) {
+                    if sampleRate == 0 {
                         siteIDMap[siteID] = false
                     } else {
                         siteIDMap[siteID] = (Int.random(in: 1...100) <= sampleRate)
@@ -88,16 +90,15 @@ class NIDConfigService: ConfigServiceProtocol {
                 }
             }
         }
-        if let siteID : String = config.siteID {
+        if let siteID: String = config.siteID {
             if let sampleRate: Int = config.sampleRate {
-                if (config.sampleRate == 0) {
+                if config.sampleRate == 0 {
                     siteIDMap[siteID] = false
                 } else {
                     siteIDMap[siteID] = (Int.random(in: 1...100) <= sampleRate)
                 }
             }
         }
-        print("kurt_test initSiteIDSampleMap: \(siteIDMap)")
     }
     
     func setCache(_ newCache: ConfigResponseData) {
@@ -127,9 +128,7 @@ class NIDConfigService: ConfigServiceProtocol {
         }
     }
     
-    func clearSiteIDMap() {
-        
-    }
+    func clearSiteIDMap() {}
     
     func captureConfigEvent(configData: ConfigResponseData) {
         let encoder = JSONEncoder()
@@ -170,7 +169,6 @@ class NIDConfigService: ConfigServiceProtocol {
 //            return
 //        }
 
-        print("kurt_test siteID \(siteID) : false")
         _isSessionFlowSampled = false
     }
 }

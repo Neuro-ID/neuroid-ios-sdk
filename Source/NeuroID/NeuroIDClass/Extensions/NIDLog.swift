@@ -73,11 +73,11 @@ extension NeuroID {
                     fileUpdater.write(",\n".data(using: .utf8)!)
                     fileUpdater.write(jsonStringNIDEvents)
                 } else {
-                    NIDLog.e("Unable to append DEBUG JSON")
+                    logger.e("Unable to append DEBUG JSON")
                 }
             }
         } catch {
-            NIDLog.e(String(describing: error))
+            logger.e(String(describing: error))
         }
     }
 }
@@ -101,10 +101,8 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
     switch mutableEvent.type {
         case NIDSessionEventName.setUserId.rawValue:
             contextString = "uid=\(mutableEvent.uid ?? "")"
-
         case NIDSessionEventName.createSession.rawValue:
             contextString = "cid=\(mutableEvent.cid ?? ""), sh=\(String(describing: mutableEvent.sh ?? nil)), sw=\(String(describing: mutableEvent.sw ?? nil)), jsv=\(mutableEvent.jsv ?? "")"
-
         case NIDEventName.applicationSubmit.rawValue:
             contextString = ""
         case NIDEventName.textChange.rawValue:
@@ -123,7 +121,6 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = ""
         case NIDEventName.blur.rawValue:
             contextString = ""
-
         case NIDEventName.registerTarget.rawValue:
 
             contextString = "et=\(mutableEvent.et ?? ""), rts=\(mutableEvent.rts ?? ""), ec=\(mutableEvent.ec ?? ""), v=\(mutableEvent.v ?? ""), tg=[\(tgString)]"
@@ -146,12 +143,10 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
         case NIDEventName.customLongPress.rawValue:
             contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
-
         case NIDEventName.customTouchStart.rawValue:
             contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
         case NIDEventName.customTouchEnd.rawValue:
             contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"
-
         case NIDEventName.cut.rawValue:
             contextString = "v=\(mutableEvent.v ?? ""), h=\(mutableEvent.hv ?? ""), tg=\(tgString)"
         case NIDEventName.copy.rawValue:
@@ -177,7 +172,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
         case NIDEventName.log.rawValue:
             contextString = "m=\(mutableEvent.m ?? "")"
         case NIDEventName.advancedDevice.rawValue:
-        contextString = "rid=\(mutableEvent.rid ?? "") c=\(mutableEvent.c ?? false) l=\(String(describing: mutableEvent.l)) m=\(mutableEvent.m)"
+            contextString = "rid=\(mutableEvent.rid ?? "") c=\(mutableEvent.c ?? false) l=\(String(describing: mutableEvent.l)) m=\(mutableEvent.m ?? "")"
         case NIDEventName.callInProgress.rawValue: contextString = "cp=\(String(describing: mutableEvent.cp ?? nil)) attrs=[\(attrsString)]"
         case NIDEventName.mobileMetadataIOS.rawValue:
             contextString = "latong=\(mutableEvent.metadata?.gpsCoordinates.latitude ?? -1), \(mutableEvent.metadata?.gpsCoordinates.longitude ?? -1)"
@@ -185,36 +180,35 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "accel=\(mutableEvent.accel?.description ?? "") gyro=\(mutableEvent.gyro?.description ?? "")"
         case NIDEventName.applicationMetaData.rawValue:
             contextString = "attrs=[\(attrsString)]"
-
         default:
             contextString = ""
     }
 
-    NIDLog.d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDLog().d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
 }
 
 class NIDLog {
     init() {}
 
-    static func log(tag: String = "", _ strings: String) {
+    func log(tag: String = "", _ strings: String) {
         if NeuroID._isSDKStarted, NeuroID.showLogs {
             Swift.print("(NeuroID) \(tag) ", strings)
         }
     }
 
-    static func d(tag: String = "", _ strings: String) {
+    func d(tag: String = "", _ strings: String) {
         if NeuroID._isSDKStarted, NeuroID.showLogs {
             Swift.print("(NeuroID Debug) \(tag) ", strings)
         }
     }
 
-    static func i(tag: String = "", _ strings: String) {
+    func i(tag: String = "", _ strings: String) {
         if NeuroID.showLogs {
             Swift.print("(NeuroID Info) \(tag) ", strings)
         }
     }
 
-    static func e(tag: String = "", _ strings: String) {
+    func e(tag: String = "", _ strings: String) {
         if NeuroID.showLogs {
             Swift.print("****** NEUROID ERROR: ******\n\(tag) ", strings)
         }
