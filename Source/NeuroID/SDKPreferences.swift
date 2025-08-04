@@ -17,7 +17,7 @@ class SDKPreferences {
 
         guard let plist = try! PropertyListSerialization.propertyList(from: data, options: .mutableContainers, format: nil) as? [[String: String]] else { return [] }
 
-        NIDLog.log("\(plist)")
+        NeuroID.logger.log("\(plist)")
         return plist
     }
 }

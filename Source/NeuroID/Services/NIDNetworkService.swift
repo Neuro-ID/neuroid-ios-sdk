@@ -14,12 +14,13 @@ protocol NIDNetworkServiceProtocol {
     func getRequest<T: Decodable>(url: URL, responseDecodableType: T.Type, completion: @escaping (DataResponse<T, AFError>) -> Void)
 }
 
-
 class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
+    private let logger: NIDLog
     private var afCustomSession: Alamofire.Session
     private let configuration = URLSessionConfiguration.af.default
 
-    init() {
+    init(logger: NIDLog) {
+        self.logger = logger
         // Initialize the session
         self.afCustomSession = Alamofire.Session(configuration: configuration)
     }
@@ -37,7 +38,7 @@ class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
             headers: headers
         ).validate().responseData { response in
             if let _ = response.error, response.response?.statusCode != 403, retryCount < maxRetryCount {
-                NIDLog.i("NeuroID network Retrying... attempt \(retryCount + 1)")
+                self.logger.i("NeuroID network Retrying... attempt \(retryCount + 1)")
                 self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount + 1, completion: completion)
             } else {
                 completion(response)

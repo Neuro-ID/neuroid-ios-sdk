@@ -1,24 +1,30 @@
 import Foundation
 
 public class DataStore {
-    var _events = [NIDEvent]()
-    private  let lock = NSLock()
-    private  let max_event_size = 1999
+    let logger: NIDLog
 
-     var events: [NIDEvent] {
+    var _events = [NIDEvent]()
+    private let lock = NSLock()
+    private let max_event_size = 1999
+
+    var events: [NIDEvent] {
         get { lock.withCriticalSection { _events } }
         set { lock.withCriticalSection { _events = newValue } }
     }
 
-     var _queuedEvents = [NIDEvent]()
-     var queuedEvents: [NIDEvent] {
+    var _queuedEvents = [NIDEvent]()
+    var queuedEvents: [NIDEvent] {
         get { lock.withCriticalSection { _queuedEvents } }
         set { lock.withCriticalSection { _queuedEvents = newValue } }
-    }     
+    }
 
-     func insertCleanedEvent(event: NIDEvent, storeType: String) {
+    init(logger: NIDLog) {
+        self.logger = logger
+    }
+
+    func insertCleanedEvent(event: NIDEvent, storeType: String) {
         if storeType == "queue" {
-            NIDLog.d("Store Queued Event: \(event.type)")
+            logger.d("Store Queued Event: \(event.type)")
             DispatchQueue.global(qos: .utility).sync {
                 queuedEvents.append(event)
             }
@@ -30,16 +36,16 @@ public class DataStore {
         }
     }
 
-     func getAllEvents() -> [NIDEvent] {
-        return self.events
+    func getAllEvents() -> [NIDEvent] {
+        return events
     }
 
-     func removeSentEvents() {
-        self.events = []
+    func removeSentEvents() {
+        events = []
     }
 
-     func getAndRemoveAllEvents() -> [NIDEvent] {
-        return self.lock.withCriticalSection {
+    func getAndRemoveAllEvents() -> [NIDEvent] {
+        return lock.withCriticalSection {
             let result = self._events
             let queuedResults = self._queuedEvents
 
@@ -49,8 +55,8 @@ public class DataStore {
         }
     }
 
-     func getAndRemoveAllQueuedEvents() -> [NIDEvent] {
-        return self.lock.withCriticalSection {
+    func getAndRemoveAllQueuedEvents() -> [NIDEvent] {
+        return lock.withCriticalSection {
             let result = self._queuedEvents
             self._queuedEvents = []
             return result
@@ -58,23 +64,23 @@ public class DataStore {
     }
 }
 
-internal func getUserDefaultKeyBool(_ key: String) -> Bool {
+func getUserDefaultKeyBool(_ key: String) -> Bool {
     return UserDefaults.standard.bool(forKey: key)
 }
 
-internal func getUserDefaultKeyString(_ key: String) -> String? {
+func getUserDefaultKeyString(_ key: String) -> String? {
     return UserDefaults.standard.string(forKey: key)
 }
 
-internal func getUserDefaultKeyDouble(_ key: String) -> Double {
+func getUserDefaultKeyDouble(_ key: String) -> Double {
     return UserDefaults.standard.double(forKey: key)
 }
 
-internal func getUserDefaultKeyDict(_ key: String) -> [String: Any]? {
+func getUserDefaultKeyDict(_ key: String) -> [String: Any]? {
     return UserDefaults.standard.dictionary(forKey: key)
 }
 
-internal func setUserDefaultKey(_ key: String, value: Any?) {
+func setUserDefaultKey(_ key: String, value: Any?) {
     UserDefaults.standard.set(value, forKey: key)
 }
 

@@ -9,8 +9,6 @@ import Alamofire
 import Foundation
 
 extension NeuroID {
-    static var networkService: NIDNetworkServiceProtocol = NIDNetworkServiceImpl()
-
     static var collectionURL = Constants.productionURL.rawValue
 
     static func getCollectionEndpointURL() -> String {
@@ -210,8 +208,8 @@ extension NeuroID {
             headers: headers,
             retryCount: 0
         ) { response in
-            NIDLog.i("NeuroID Response \(response.response?.statusCode ?? 000)")
-            NIDLog.d(
+            logger.i("NeuroID Response \(response.response?.statusCode ?? 000)")
+            logger.d(
                 tag: "Payload",
                 """
                 \nPayload Summary
@@ -229,10 +227,10 @@ extension NeuroID {
 
             switch response.result {
             case .success:
-                NIDLog.i("NeuroID post to API Successful")
+                logger.i("NeuroID post to API Successful")
                 onSuccess()
             case let .failure(error):
-                NIDLog.e("NeuroID FAIL to post API")
+                logger.e("NeuroID FAIL to post API")
                 logError(content: "Neuro-ID post Error: \(error)")
                 onFailure(error)
             }
@@ -243,7 +241,7 @@ extension NeuroID {
             do {
                 let data = try JSONEncoder().encode(neuroHTTPRequest)
                 let str = String(data: data, encoding: .utf8)
-                NIDLog.i(str ?? "")
+                logger.i(str ?? "")
             } catch {}
         }
     }

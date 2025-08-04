@@ -13,10 +13,9 @@ class SessionTests: XCTestCase {
 
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-   
+
         NeuroID._isSDKStarted = true
         NeuroID.datastore.removeSentEvents()
-
 
         NeuroID.collectionURL = Constants.productionURL.rawValue
     }
@@ -44,7 +43,7 @@ class SessionTests: XCTestCase {
     func testRandom() throws {
         let dictRandom = ["events": "eventstringt", "status": "pending"]
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
-            NIDLog.log(key)
+            NeuroID.logger.log(key)
         }
     }
 

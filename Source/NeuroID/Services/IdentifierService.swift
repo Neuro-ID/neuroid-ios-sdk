@@ -39,7 +39,7 @@ struct SessionIDOriginalResult {
 }
 
 class IdentifierService: IdentifierServiceProtocol {
-    let logger: NIDLog.Type
+    let logger: NIDLog
     let validationService: ValidationService
     let eventStorageService: EventStorageProtocol
 
@@ -47,7 +47,7 @@ class IdentifierService: IdentifierServiceProtocol {
     var registeredUserID: String = ""
 
     init(
-        of logger: NIDLog.Type,
+        logger: NIDLog,
         validationService: ValidationService,
         eventStorageService: EventStorageProtocol
     ) {

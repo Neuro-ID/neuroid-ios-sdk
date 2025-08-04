@@ -21,16 +21,16 @@ class DataStoreTests: XCTestCase {
     )
 
     let excludeId = "exclude_test_id"
-    
-    var dataStore = DataStore()
+
+    var dataStore = DataStore(logger: NIDLog())
 
     override func setUpWithError() throws {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.stop()
         NeuroID._isSDKStarted = true
-        
-        dataStore = DataStore()
+
+        dataStore = DataStore(logger: NIDLog())
     }
 
     override func tearDownWithError() throws {
@@ -59,7 +59,6 @@ class DataStoreTests: XCTestCase {
             assertionFailure("Failed to Encode/Decode: \(String(describing: error))")
         }
     }
-
 
     func test_insertCleanedEvent_queued() {
         let nidE = nidEvent
@@ -195,12 +194,12 @@ class DataStoreTests: XCTestCase {
         let value = UserDefaults.standard.bool(forKey: testStoreKey)
         assert(value == true)
     }
-    
+
     func test_getUserDefaultKeyDouble_no_value() {
         UserDefaults.standard.removeObject(forKey: "test_key")
         assert(getUserDefaultKeyDouble("test_key") == 0)
     }
-    
+
     func test_getUserDefaultKeyDouble_valid_value() {
         setUserDefaultKey("test_key", value: 15.0)
         assert(getUserDefaultKeyDouble("test_key") == 15.0)

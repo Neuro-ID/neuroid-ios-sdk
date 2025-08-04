@@ -11,8 +11,8 @@ import XCTest
 
 class IdentifierServiceTests: BaseTestClass {
     var identifierService = IdentifierService(
-        of: NIDLog.self,
-        validationService: ValidationService(loggerType: NIDLog.self),
+        logger: NIDLog(),
+        validationService: ValidationService(logger: NIDLog()),
         eventStorageService: EventStorageService()
     )
 
@@ -24,8 +24,8 @@ class IdentifierServiceTests: BaseTestClass {
         clearOutDataStore()
         NeuroID._isTesting = true
         identifierService = IdentifierService(
-            of: NIDLog.self,
-            validationService: ValidationService(loggerType: NIDLog.self),
+            logger: NIDLog(),
+            validationService: ValidationService(logger: NIDLog()),
             eventStorageService: EventStorageService()
         )
 

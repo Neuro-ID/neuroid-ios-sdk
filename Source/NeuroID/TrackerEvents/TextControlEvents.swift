@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - Text control events
 
-internal extension NeuroIDTracker {
+extension NeuroIDTracker {
     func observeTextInputEvents() {
         // UITextField
         NotificationCenter.default.addObserver(self,
@@ -68,6 +68,7 @@ internal extension NeuroIDTracker {
                 _ = NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
+
             case is UITextView:
                 let textControl = notification.object as! UITextView
                 _ = NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
@@ -75,7 +76,7 @@ internal extension NeuroIDTracker {
                 UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
 
             default:
-                NIDLog.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
+                NeuroID.logger.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
         }
 
         // DO WE WANT THIS?

@@ -22,18 +22,20 @@ public class NeuroID: NSObject {
     static var siteID: String?
     static var linkedSiteID: String?
 
-    static var datastore: DataStore = .init()
+    static var logger: NIDLog = .init()
+    static var datastore: DataStore = .init(logger: logger)
     static var eventStorageService: EventStorageService = .init()
-    static var validationService: ValidationService = .init(loggerType: NIDLog.self)
+    static var validationService: ValidationService = .init(logger: logger)
     static var locationManager: LocationManagerService?
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserverService?
-    static var configService: ConfigServiceProtocol = NIDConfigService()
+    static var configService: ConfigServiceProtocol = NIDConfigService(logger: logger)
     static var identifierService: IdentifierServiceProtocol = IdentifierService(
-        of: NIDLog.self,
+        logger: logger,
         validationService: NeuroID.validationService,
         eventStorageService: NeuroID.eventStorageService
     )
+    static var networkService: NIDNetworkServiceProtocol = NIDNetworkServiceImpl(logger: logger)
 
     static var clientID: String?
     static var sessionID: String? {
@@ -101,7 +103,7 @@ public class NeuroID: NSObject {
 
     static func verifyClientKeyExists() -> Bool {
         if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
-            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+            logger.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -117,12 +119,12 @@ public class NeuroID: NSObject {
         }
 
         if NeuroID.clientKey != nil {
-            NIDLog.e("You already configured the SDK")
+            logger.e("You already configured the SDK")
             return false
         }
 
         if !validationService.validateClientKey(clientKey) {
-            NIDLog.e("Invalid Client Key")
+            logger.e("Invalid Client Key")
             saveQueuedEventToLocalDataStore(
                 NIDEvent(
                     type: NIDEventName.log,
@@ -173,7 +175,7 @@ public class NeuroID: NSObject {
         saveEventToLocalDataStore(
             NIDEvent(type: .log, level: "info", m: "Remote Config Retrieval Attempt Completed")
         )
-        NIDLog.i("Remote Config Retrieval Attempt Completed")
+        logger.i("Remote Config Retrieval Attempt Completed")
 
         setupListeners()
     }
@@ -186,11 +188,11 @@ public class NeuroID: NSObject {
     }
 
     public static func stop() -> Bool {
-        NIDLog.i("NeuroID Stopped")
+        logger.i("NeuroID Stopped")
         do {
             _ = try closeSession(skipStop: true)
         } catch {
-            NIDLog.e("Failed to Stop because \(error)")
+            logger.e("Failed to Stop because \(error)")
             let stopFailedLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to Stop because \(error)")
             saveEventToDataStore(stopFailedLogEvent)
             return false
@@ -271,12 +273,12 @@ public class NeuroID: NSObject {
     // ENG-9193 - Will remove on next breaking release
     @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
     public static func printIntegrationHealthInstruction() {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     // ENG-9193 - Will remove on next breaking release
     @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
     public static func setVerifyIntegrationHealth(_ verify: Bool) {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }
