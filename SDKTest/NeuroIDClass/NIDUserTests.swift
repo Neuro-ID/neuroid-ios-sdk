@@ -18,6 +18,7 @@ class NIDUserTests: BaseTestClass {
     override func setUp() {
         NeuroID._isSDKStarted = true
         NeuroID._isTesting = true
+        NeuroID.datastore = dataStore
     }
 
     override func tearDown() {

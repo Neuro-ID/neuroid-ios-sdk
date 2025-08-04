@@ -60,18 +60,14 @@ extension NeuroID {
         }
 
         // If queue has more than config event queue size (default 2000), send a queue full event and return
-        if NeuroID.datastore.queuedEvents.count + NeuroID.datastore.events.count
-            > NeuroID.configService.configCache.eventQueueFlushSize
+        if datastore.getAllEventCount()
+            > configService.configCache.eventQueueFlushSize
         {
-            if NeuroID.datastore.events.last?.type != NIDEventName.bufferFull.rawValue,
-               NeuroID.datastore.queuedEvents.last?.type != NIDEventName.bufferFull.rawValue
-            {
-                let fullEvent = NIDEvent(type: NIDEventName.bufferFull)
-                if storeType == "queue" {
-                    NeuroID.datastore.queuedEvents.append(fullEvent)
-                } else {
-                    NeuroID.datastore.events.append(fullEvent)
-                }
+            if datastore.checkLastEventType(type: NIDEventName.bufferFull.rawValue) {
+                datastore.insertCleanedEvent(
+                    event: NIDEvent(type: NIDEventName.bufferFull),
+                    storeType: storeType
+                )
             }
             logger.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
             return
@@ -109,11 +105,12 @@ extension NeuroID {
         mutableEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
 
         NeuroID.logDebug(
-            category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer))
+            category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer)
+        )
         NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
         NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
-        NeuroID.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
+        datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
 
         // send on immediate on certain events regardless of SDK running collection
         if immediateSendTypes.contains(event.type) {
@@ -122,8 +119,7 @@ extension NeuroID {
     }
 
     static func clearDataStore() {
-        NeuroID.datastore.events = []
-        NeuroID.datastore.queuedEvents = []
+        NeuroID.datastore.forceClearAllEvents()
     }
 
     static func moveQueuedEventsToDataStore() {

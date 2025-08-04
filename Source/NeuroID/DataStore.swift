@@ -1,6 +1,18 @@
 import Foundation
 
-public class DataStore {
+protocol DataStoreProtocol {
+    func insertCleanedEvent(event: NIDEvent, storeType: String)
+    func getAllEvents() -> [NIDEvent]
+    func removeSentEvents()
+    func getAndRemoveAllEvents() -> [NIDEvent]
+    func getAndRemoveAllQueuedEvents() -> [NIDEvent]
+    func forceClearAllEvents()
+
+    func getAllEventCount() -> Int
+    func checkLastEventType(type: String) -> Bool
+}
+
+public class DataStore: DataStoreProtocol {
     let logger: NIDLog
 
     var _events = [NIDEvent]()
@@ -61,6 +73,19 @@ public class DataStore {
             self._queuedEvents = []
             return result
         }
+    }
+
+    func forceClearAllEvents() {
+        events = []
+        queuedEvents = []
+    }
+
+    func getAllEventCount() -> Int {
+        return queuedEvents.count + events.count
+    }
+
+    func checkLastEventType(type: String) -> Bool {
+        return events.last?.type != type && queuedEvents.last?.type != type
     }
 }
 
