@@ -23,16 +23,35 @@ public class NeuroID: NSObject {
     static var linkedSiteID: String?
 
     static var datastore: DataStore = .init()
+    static var eventStorageService: EventStorageService = .init()
     static var validationService: ValidationService = .init(loggerType: NIDLog.self)
     static var locationManager: LocationManagerService?
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserverService?
     static var configService: ConfigServiceProtocol = NIDConfigService()
-    static var identifierService: IdentifierServiceProtocol = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: NeuroID.validationService)
+    static var identifierService: IdentifierServiceProtocol = IdentifierService(
+        of: NIDLog.self,
+        validationService: NeuroID.validationService,
+        eventStorageService: NeuroID.eventStorageService
+    )
 
     static var clientID: String?
-    static var sessionID: String? // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    static var registeredUserID: String = ""
+    static var sessionID: String? {
+        get {
+            identifierService.sessionID
+        }
+        set {
+            // setting should not be possible unless through our setIdentity/setUserId command
+        }
+    } // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    static var registeredUserID: String {
+        get {
+            identifierService.registeredUserID
+        }
+        set {
+            // setting should not be possible unless through our setRegisteredUserId command
+        }
+    }
 
     static var trackers = [String: NeuroIDTracker]()
 
