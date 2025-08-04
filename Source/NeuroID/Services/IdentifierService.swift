@@ -22,6 +22,8 @@ protocol IdentifierServiceProtocol {
         validIDFunction: () -> Void
     ) -> Bool
 
+    func clearIDs()
+
     func logScrubbedIdentityAttempt(
         identifier: String, message: String
     ) -> String
@@ -156,6 +158,11 @@ class IdentifierService: IdentifierServiceProtocol {
         validIDFunction()
 
         return true
+    }
+
+    func clearIDs() {
+        sessionID = nil
+        registeredUserID = ""
     }
 
     func logScrubbedIdentityAttempt(
