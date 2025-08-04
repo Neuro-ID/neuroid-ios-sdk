@@ -23,7 +23,7 @@ public class NeuroID: NSObject {
     static var linkedSiteID: String?
 
     static var logger: NIDLog = .init()
-    static var datastore: DataStore = .init(logger: logger)
+    static var datastore: DataStoreProtocol = DataStore(logger: logger)
     static var eventStorageService: EventStorageService = .init()
     static var validationService: ValidationService = .init(logger: logger)
     static var locationManager: LocationManagerService?

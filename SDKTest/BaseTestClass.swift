@@ -17,6 +17,8 @@ class BaseTestClass: XCTestCase {
     let clientIdKey = Constants.storageClientIDKey.rawValue
     let tabIdKey = Constants.storageTabIDKey.rawValue
     
+    var dataStore = DataStore(logger: NIDLog())
+    
     func clearOutDataStore() {
         NeuroID.datastore.removeSentEvents()
         let _ = NeuroID.datastore.getAndRemoveAllEvents()
@@ -28,6 +30,7 @@ class BaseTestClass: XCTestCase {
     }
     
     override func setUp() {
+        NeuroID.datastore = dataStore
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
     }
     
@@ -60,7 +63,7 @@ class BaseTestClass: XCTestCase {
     }
 
     func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = NeuroID.datastore.queuedEvents
+        let allEvents = dataStore.queuedEvents
         let validEvent = allEvents.filter { $0.type == type }
         XCTAssertEqual(validEvent.count, count, "Expected \(count) queued events of type '\(type)' but found \(validEvent.count)")
         
@@ -70,7 +73,7 @@ class BaseTestClass: XCTestCase {
     }
 
     func assertDatastoreEventOrigin(type: String, origin: String, originCode: String, queued: Bool) {
-        let allEvents = queued ? NeuroID.datastore.queuedEvents : NeuroID.datastore.getAllEvents()
+        let allEvents = queued ? dataStore.queuedEvents : dataStore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == type }
         
         let originEvent = validEvents.filter { $0.key == "sessionIdSource" }

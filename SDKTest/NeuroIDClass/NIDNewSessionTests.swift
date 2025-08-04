@@ -35,7 +35,7 @@ class NIDNewSessionTests: BaseTestClass {
         assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
         assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
         assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
-        assert(NeuroID.datastore.queuedEvents.isEmpty)
+        assert(dataStore.queuedEvents.isEmpty)
     }
 
     func assertSessionNotStartedTests(_ sessionRes: SessionStartResult) {
@@ -207,7 +207,7 @@ class NIDNewSessionTests: BaseTestClass {
         NeuroID.configService = MockConfigService()
 
         NeuroID.clearSendOldFlowEvents {
-            assert(NeuroID.datastore.events.count == 0)
+            assert(self.dataStore.events.count == 0)
 
             NeuroID._isSDKStarted = false
         }
@@ -223,7 +223,7 @@ class NIDNewSessionTests: BaseTestClass {
         NeuroID._isSDKStarted = true
 
         NeuroID.clearSendOldFlowEvents {
-            assert(NeuroID.datastore.events.count == 0)
+            assert(self.dataStore.events.count == 0)
 
             NeuroID._isSDKStarted = false
         }
