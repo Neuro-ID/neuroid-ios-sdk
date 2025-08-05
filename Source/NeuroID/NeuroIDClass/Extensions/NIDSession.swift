@@ -262,6 +262,7 @@ extension NeuroID {
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()
         NeuroID.sendCollectionWorkItem = nil
+        configService.clearSiteIDMap()
     }
 
     /**
@@ -278,7 +279,7 @@ extension NeuroID {
         completion: @escaping () -> Void = {}
     ) {
         // Use config cache or if first time, retrieve from server
-       configService.retrieveOrRefreshCache()
+        configService.retrieveOrRefreshCache()
 
         NeuroID.configService.updateIsSampledStatus(siteID: siteID)
 

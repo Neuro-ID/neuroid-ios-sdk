@@ -7,7 +7,32 @@
 @testable import NeuroID
 import XCTest
 
+class MockedNIDRandomGenerator0: RandomGenerator {
+    func getNumber() -> Int {
+        return 0
+    }
+}
+
+class MockedNIDRandomGenerator100: RandomGenerator {
+    func getNumber() -> Int {
+        return 100
+    }
+}
+
+class MockedNIDRandomGenerator50: RandomGenerator {
+    func getNumber() -> Int {
+        return 50
+    }
+}
+
+class MockedNIDRandomGenerator30: RandomGenerator {
+    func getNumber() -> Int {
+        return 30
+    }
+}
+
 class ConfigServiceTests: XCTestCase {
+    
     var configService = NIDConfigService()
     
     override func setUpWithError() throws {
@@ -71,7 +96,7 @@ class ConfigServiceTests: XCTestCase {
         
         let mockedNetwork = NIDNetworkServiceTestImpl()
         mockedNetwork.mockFailedResponse()
-
+        
         configService = NIDConfigService(networkService: mockedNetwork, configRetrievalCallback: {})
         
         configService.configCache.eventQueueFlushInterval = 0
@@ -133,4 +158,156 @@ class ConfigServiceTests: XCTestCase {
         
         assert(!configService.isSessionFlowSampled)
     }
+ 
+    func getResponseData() -> ConfigResponseData {
+        var config: ConfigResponseData = ConfigResponseData()
+        
+        var lso1 = LinkedSiteOption()
+        lso1.sampleRate = 0
+        var lso2 = LinkedSiteOption()
+        lso2.sampleRate = 10
+        var lso3 = LinkedSiteOption()
+        lso3.sampleRate = 30
+        var lso4 = LinkedSiteOption()
+        lso4.sampleRate = 50
+        config.linkedSiteOptions = ["test1":lso1, "test2":lso2, "test3":lso3, "test4":lso4]
+        config.sampleRate = 100
+        config.siteID = "test5"
+        return config
+    }
+    
+    func test_successConfigResponseProcessingRoll30() {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        let mockedData = try! JSONEncoder().encode(getResponseData())
+        let mockedDataRaw = getResponseData()
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        mockedNetwork.mockResponse = mockedData
+        mockedNetwork.shouldMockFalse = false
+        
+        let mockedRandomGenerator = MockedNIDRandomGenerator30()
+        // mockedNetwork.mockFailedResponse()
+        
+        configService = NIDConfigService(networkService: mockedNetwork,
+                                         randomGenerator: mockedRandomGenerator,
+                                         configRetrievalCallback: {})
+        
+        configService.initSiteIDSampleMap(config: getResponseData())
+        
+        configService.configCache.eventQueueFlushInterval = 0
+        configService.configCache.callInProgress = false
+        configService.configCache.geoLocation = false
+        configService.configCache.gyroAccelCadence = true
+        configService.configCache.gyroAccelCadenceTime = 0
+        configService.configCache.requestTimeout = 0
+        
+        configService.updateIsSampledStatus(siteID: "test1")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test2")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test3")
+        assert(configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test4")
+        assert(configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test5")
+        assert(configService.isSessionFlowSampled)
+    }
+    
+    func test_successConfigResponseProcessingRoll0() {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        
+        let mockedRandomGenerator = MockedNIDRandomGenerator0()
+        mockedNetwork.mockFailedResponse()
+
+        configService = NIDConfigService(networkService: mockedNetwork,
+                                         randomGenerator: mockedRandomGenerator,
+                                         configRetrievalCallback: {})
+        
+        configService.initSiteIDSampleMap(config: getResponseData())
+        configService.configCache.eventQueueFlushInterval = 0
+        configService.configCache.callInProgress = false
+        configService.configCache.geoLocation = false
+        configService.configCache.gyroAccelCadence = true
+        configService.configCache.gyroAccelCadenceTime = 0
+        configService.configCache.requestTimeout = 0
+        
+        configService.updateIsSampledStatus(siteID: "test1")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test2")
+        assert(configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test3")
+        assert(configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test4")
+        assert(configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test5")
+        assert(configService.isSessionFlowSampled)
+    }
+    
+    func test_successConfigResponseProcessingRoll100() {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        
+        let mockedRandomGenerator = MockedNIDRandomGenerator100()
+        mockedNetwork.mockFailedResponse()
+
+        configService = NIDConfigService(networkService: mockedNetwork,
+                                         randomGenerator: mockedRandomGenerator,
+                                         configRetrievalCallback: {})
+        
+        configService.initSiteIDSampleMap(config: getResponseData())
+        configService.configCache.eventQueueFlushInterval = 0
+        configService.configCache.callInProgress = false
+        configService.configCache.geoLocation = false
+        configService.configCache.gyroAccelCadence = true
+        configService.configCache.gyroAccelCadenceTime = 0
+        configService.configCache.requestTimeout = 0
+        
+        configService.updateIsSampledStatus(siteID: "test1")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test2")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test3")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test4")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test5")
+        assert(configService.isSessionFlowSampled)
+    }
+    
+    func test_successConfigResponseProcessingRoll50() {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        
+        let mockedRandomGenerator = MockedNIDRandomGenerator50()
+        mockedNetwork.mockFailedResponse()
+
+        configService = NIDConfigService(networkService: mockedNetwork,
+                                         randomGenerator: mockedRandomGenerator,
+                                         configRetrievalCallback: {})
+        
+        configService.initSiteIDSampleMap(config: getResponseData())
+        configService.configCache.eventQueueFlushInterval = 0
+        configService.configCache.callInProgress = false
+        configService.configCache.geoLocation = false
+        configService.configCache.gyroAccelCadence = true
+        configService.configCache.gyroAccelCadenceTime = 0
+        configService.configCache.requestTimeout = 0
+        
+        configService.updateIsSampledStatus(siteID: "test1")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test2")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test3")
+        assert(!configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test4")
+        assert(configService.isSessionFlowSampled)
+        configService.updateIsSampledStatus(siteID: "test5")
+        assert(configService.isSessionFlowSampled)
+    }
+    
 }
