@@ -94,51 +94,82 @@ class MultiAppFlowTests: XCTestCase {
         }
     }
 
-//    func test_start_start_app_flow_configure_adv_true() {
-//        NeuroID.deviceSignalService = mockService
-//        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
-//        clearOutDataStore()
-//
-//        NeuroID.startAppFlow(siteID: "form_dream102", sessionID: "jakeId") { _ in
-//            let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-//
-//            assert(NeuroID.isAdvancedDevice)
-//            assert(validEvent.count == 1)
-//        }
-//    }
-//
-//    func test_captureAdvancedDevice_throttle() {
-//        NeuroID.deviceSignalService = mockService
-//        _ = NeuroID.configure(clientKey: clientKey)
-//        NeuroID._isSDKStarted = true
-//
-//        let service = NIDSamplingService()
-//        service._isSessionFlowSampled = false
-//        NeuroID.samplingService = service // setting to false indicating we are throttling
-//
-//        NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
-//
-//        let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-//        assert(validEvent.count == 0)
-//
-//        service._isSessionFlowSampled = true
-//        NeuroID._isSDKStarted = false
-//    }
-//
-//    func test_captureAdvancedDevice_no_throttle() {
-//        _ = NeuroID.configure(clientKey: clientKey)
-//        NeuroID.deviceSignalService = mockService
-//        NeuroID._isSDKStarted = true
-//
-//        let service = NIDSamplingService()
-//        service._isSessionFlowSampled = true // setting to true indicating we are NOT throttling
-//        NeuroID.samplingService = service
-//
-//        NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
-//
-//        let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
-//        assert(validEvent.count == 1)
-//
-//        NeuroID._isSDKStarted = false
-//    }
+    func test_start_start_app_flow_configure_adv_true() {
+        NeuroID.deviceSignalService = mockService
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
+        clearOutDataStore()
+
+        NeuroID.startAppFlow(siteID: "form_dream102", sessionID: "jakeId") { _ in
+            let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+
+            assert(NeuroID.isAdvancedDevice)
+            assert(validEvent.count == 1)
+        }
+    }
+    
+    func getResponseData() -> ConfigResponseData {
+        var config: ConfigResponseData = ConfigResponseData()
+        config.linkedSiteOptions = ["test0":LinkedSiteOption(sampleRate: 0),
+                                    "test10":LinkedSiteOption(sampleRate: 10),
+                                    "test30":LinkedSiteOption(sampleRate: 30),
+                                    "test50":LinkedSiteOption(sampleRate: 50)]
+        config.sampleRate = 100
+        config.siteID = "test100"
+        return config
+    }
+    
+    func getService(shouldFail: Bool, randomGenerator: RandomGenerator) -> NIDConfigService {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        
+        let mockedData = try! JSONEncoder().encode(getResponseData())
+        
+        let mockedNetwork = NIDNetworkServiceTestImpl()
+        mockedNetwork.mockResponse = mockedData
+        mockedNetwork.mockResponseResult = getResponseData()
+        mockedNetwork.shouldMockFalse = shouldFail
+        
+        let configService = NIDConfigService(networkService: mockedNetwork,
+                                         randomGenerator: randomGenerator,
+                                         configRetrievalCallback: {})
+        return configService
+    }
+    
+    func test_captureAdvancedDevice_throttle() {
+        
+        NeuroID.deviceSignalService = mockService
+        _ = NeuroID.configure(clientKey: clientKey)
+        NeuroID._isSDKStarted = true
+
+        let service = getService(shouldFail: false, randomGenerator: MockedNIDRandomGenerator0())
+        service._isSessionFlowSampled = false
+        service.retrieveConfig()
+        NeuroID.configService = service // setting to false indicating we are throttling
+
+        NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
+
+        let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        assert(validEvent.count == 0)
+
+        service._isSessionFlowSampled = true
+        NeuroID._isSDKStarted = false
+    }
+
+    func test_captureAdvancedDevice_no_throttle() {
+        _ = NeuroID.configure(clientKey: clientKey)
+        NeuroID.deviceSignalService = mockService
+        NeuroID._isSDKStarted = true
+
+        let service = getService(shouldFail: false, randomGenerator: MockedNIDRandomGenerator0())
+
+        service._isSessionFlowSampled = true // setting to true indicating we are NOT throttling
+        NeuroID.configService = service
+
+        NeuroID.captureAdvancedDevice(true) // passing true to indicate we should capture
+        service.retrieveConfig()
+
+        let validEvent = NeuroID.datastore.getAllEvents().filter { $0.type == "ADVANCED_DEVICE_REQUEST" }
+        assert(validEvent.count == 1)
+
+        NeuroID._isSDKStarted = false
+    }
 }
