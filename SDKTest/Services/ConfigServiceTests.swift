@@ -170,7 +170,8 @@ class ConfigServiceTests: XCTestCase {
         return config
     }
     
-    func test_successConfigResponseProcessingRoll30() {
+    func runConfigResponseProcession(mockedRandomGenerator: RandomGenerator, shouldFail: Bool)-> NIDConfigService {
+        
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
         let mockedData = try! JSONEncoder().encode(getResponseData())
@@ -178,24 +179,19 @@ class ConfigServiceTests: XCTestCase {
         let mockedNetwork = NIDNetworkServiceTestImpl()
         mockedNetwork.mockResponse = mockedData
         mockedNetwork.mockResponseResult = getResponseData()
-        mockedNetwork.shouldMockFalse = false
-        
-        let mockedRandomGenerator = MockedNIDRandomGenerator30()
+        mockedNetwork.shouldMockFalse = shouldFail
         
         configService = NIDConfigService(networkService: mockedNetwork,
                                          randomGenerator: mockedRandomGenerator,
                                          configRetrievalCallback: {})
-        
         assert(configService.siteIDMap.isEmpty)
         configService.retrieveConfig()
+        return configService
         
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
-        
+    }
+    
+    func test_successConfigResponseProcessingRoll30() {
+        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator30(), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -209,33 +205,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll0() {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        
-        let mockedData = try! JSONEncoder().encode(getResponseData())
-        
-        let mockedNetwork = NIDNetworkServiceTestImpl()
-        
-        mockedNetwork.mockResponse = mockedData
-        mockedNetwork.mockResponseResult = getResponseData()
-        mockedNetwork.shouldMockFalse = false
-        
-        let mockedRandomGenerator = MockedNIDRandomGenerator0()
-
-        configService = NIDConfigService(networkService: mockedNetwork,
-                                         randomGenerator: mockedRandomGenerator,
-                                         configRetrievalCallback: {})
-        
-        assert(configService.siteIDMap.isEmpty)
-        configService.retrieveConfig()
-        
-        configService.initSiteIDSampleMap(config: getResponseData())
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
-        
+        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator0(), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -249,32 +219,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll100() {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        
-        let mockedData = try! JSONEncoder().encode(getResponseData())
-        
-        let mockedNetwork = NIDNetworkServiceTestImpl()
-        
-        mockedNetwork.mockResponse = mockedData
-        mockedNetwork.mockResponseResult = getResponseData()
-        mockedNetwork.shouldMockFalse = false
-        
-        let mockedRandomGenerator = MockedNIDRandomGenerator100()
-
-        configService = NIDConfigService(networkService: mockedNetwork,
-                                         randomGenerator: mockedRandomGenerator,
-                                         configRetrievalCallback: {})
-        
-        assert(configService.siteIDMap.isEmpty)
-        configService.retrieveConfig()
-        
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
-        
+        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator100(), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -288,32 +233,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll50() {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        
-        let mockedData = try! JSONEncoder().encode(getResponseData())
-        
-        let mockedNetwork = NIDNetworkServiceTestImpl()
-        
-        mockedNetwork.mockResponse = mockedData
-        mockedNetwork.mockResponseResult = getResponseData()
-        mockedNetwork.shouldMockFalse = false
-        
-        let mockedRandomGenerator = MockedNIDRandomGenerator50()
-
-        configService = NIDConfigService(networkService: mockedNetwork,
-                                         randomGenerator: mockedRandomGenerator,
-                                         configRetrievalCallback: {})
-        
-        assert(configService.siteIDMap.isEmpty)
-        configService.retrieveConfig()
-        
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
-        
+        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator50(), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -327,31 +247,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_failConfigResponseProcessing() {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        
-        let mockedData = try! JSONEncoder().encode(getResponseData())
-        
-        let mockedNetwork = NIDNetworkServiceTestImpl()
-        
-        mockedNetwork.mockResponse = mockedData
-        mockedNetwork.mockResponseResult = getResponseData()
-        mockedNetwork.shouldMockFalse = true
-        
-        let mockedRandomGenerator = MockedNIDRandomGenerator50()
-
-        configService = NIDConfigService(networkService: mockedNetwork,
-                                         randomGenerator: mockedRandomGenerator,
-                                         configRetrievalCallback: {})
-        
-        assert(configService.siteIDMap.isEmpty)
-        configService.retrieveConfig()
-        
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
+        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator0(), shouldFail: true)
         
         // all should be true, we failed to get config, using defaults
         assert(configService.siteIDMap.isEmpty)
