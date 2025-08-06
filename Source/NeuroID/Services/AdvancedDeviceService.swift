@@ -12,20 +12,21 @@ struct NIDADVKeyResponse: Codable {
     let key: String
 }
 
-protocol DeviceSignalService {
+protocol AdvancedDeviceServiceProtocol {
     func getAdvancedDeviceSignal(
         _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
-        completion: @escaping (Result<(String, Double), Error>) -> Void)
+        completion: @escaping (Result<(String, Double), Error>) -> Void
+    )
 }
 
-class AdvancedDeviceService: NSObject, DeviceSignalService {
+class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     public func getAdvancedDeviceSignal(
         _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
         completion: @escaping (Result<(String, Double), Error>) -> Void
     ) {
         // normalize empty advanced device keys to nil for use below
         var advKey = advancedDeviceKey
-        if (advKey != nil && advKey == "") {
+        if advKey != nil && advKey == "" {
             advKey = nil
         }
         guard let notNilFPJSKey = advKey else {
@@ -73,7 +74,7 @@ class AdvancedDeviceService: NSObject, DeviceSignalService {
     ) {
         let apiURL = URL(
             string:
-                "https://receiver.neuroid.cloud/a/\(apiKey)?clientId=\(clientID ?? "")&linkedSiteId=\(linkedSiteID ?? "")"
+            "https://receiver.neuroid.cloud/a/\(apiKey)?clientId=\(clientID ?? "")&linkedSiteId=\(linkedSiteID ?? "")"
         )!
         let task = URLSession.shared.dataTask(with: apiURL) {
             data, response, error in
@@ -117,7 +118,8 @@ class AdvancedDeviceService: NSObject, DeviceSignalService {
             do {
                 let decoder = JSONDecoder()
                 let myResponse = try decoder.decode(
-                    NIDADVKeyResponse.self, from: data)
+                    NIDADVKeyResponse.self, from: data
+                )
 
                 if let data = Data(base64Encoded: myResponse.key) {
                     if let string = String(data: data, encoding: .utf8) {
@@ -157,8 +159,8 @@ class AdvancedDeviceService: NSObject, DeviceSignalService {
     ) {
         if #available(iOS 13.0, *) {
             let region: Region = .custom(
-                    domain: "https://advanced.neuro-id.com"
-                )
+                domain: "https://advanced.neuro-id.com"
+            )
             let configuration = Configuration(apiKey: apiKey, region: region)
             let client = FingerprintProFactory.getInstance(configuration)
             client.getVisitorIdResponse { result in

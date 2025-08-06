@@ -8,18 +8,18 @@
 import Alamofire
 import Foundation
 
-protocol NIDNetworkServiceProtocol {
+protocol NetworkServiceProtocol {
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void)
 
     func getRequest<T: Decodable>(url: URL, responseDecodableType: T.Type, completion: @escaping (DataResponse<T, AFError>) -> Void)
 }
 
-class NIDNetworkServiceImpl: NIDNetworkServiceProtocol {
-    private let logger: NIDLog
+class NIDNetworkServiceImpl: NetworkServiceProtocol {
+    private let logger: LoggerProtocol
     private var afCustomSession: Alamofire.Session
     private let configuration = URLSessionConfiguration.af.default
 
-    init(logger: NIDLog) {
+    init(logger: LoggerProtocol) {
         self.logger = logger
         // Initialize the session
         self.afCustomSession = Alamofire.Session(configuration: configuration)

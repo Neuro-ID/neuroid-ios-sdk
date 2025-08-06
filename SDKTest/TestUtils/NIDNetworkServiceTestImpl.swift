@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 @testable import NeuroID
 
-class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
+class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
     var mockResponse: Data?
     var mockResponseResult: Any?
     var mockError: Error?
@@ -60,7 +60,7 @@ class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
         completion: @escaping (AFDataResponse<Data>) -> Void
     ) {
         // Set collection URL to dev
-        NeuroID.collectionURL = Constants.developmentURL.rawValue
+        NeuroID.COLLECTION_URL = Constants.developmentURL.rawValue
 
         print("NIDNetworkServiceTestImpl Mocked Request \(neuroHTTPRequest)")
     }

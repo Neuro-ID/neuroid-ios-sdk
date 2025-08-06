@@ -8,7 +8,12 @@
 import CallKit
 import Foundation
 
-class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate {
+protocol CallStatusObserverServiceProtocol {
+    func startListeningToCallStatus()
+    func stopListeningToCallStatus()
+}
+
+class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatusObserverServiceProtocol {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
     
@@ -24,7 +29,7 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate {
         var progress: String
         
         // Add call type
-        attrs.append(Attrs(n:"type",v:call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue))
+        attrs.append(Attrs(n: "type", v: call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue))
         
         if call.hasEnded {
             status = CallInProgress.INACTIVE.rawValue
@@ -36,16 +41,15 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate {
             
         } else if call.hasConnected {
             status = CallInProgress.ACTIVE.rawValue
-            progress =  CallInProgressMetaData.ANSWERED.rawValue
+            progress = CallInProgressMetaData.ANSWERED.rawValue
             
         } else {
             status = CallInProgress.INACTIVE.rawValue
-            progress =  CallInProgressMetaData.RINGING.rawValue
-            
+            progress = CallInProgressMetaData.RINGING.rawValue
         }
         
         // Add call progress
-        attrs.append(Attrs(n: "progress", v: progress ))
+        attrs.append(Attrs(n: "progress", v: progress))
         UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: status, attrs: attrs)
     }
     

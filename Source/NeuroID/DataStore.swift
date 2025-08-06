@@ -1,6 +1,6 @@
 import Foundation
 
-protocol DataStoreProtocol {
+protocol DataStoreServiceProtocol {
     func insertCleanedEvent(event: NIDEvent, storeType: String)
     func getAllEvents() -> [NIDEvent]
     func removeSentEvents()
@@ -12,8 +12,8 @@ protocol DataStoreProtocol {
     func checkLastEventType(type: String) -> Bool
 }
 
-public class DataStore: DataStoreProtocol {
-    let logger: NIDLog
+public class DataStore: DataStoreServiceProtocol {
+    let logger: LoggerProtocol
 
     var _events = [NIDEvent]()
     private let lock = NSLock()
@@ -30,7 +30,7 @@ public class DataStore: DataStoreProtocol {
         set { lock.withCriticalSection { _queuedEvents = newValue } }
     }
 
-    init(logger: NIDLog) {
+    init(logger: LoggerProtocol) {
         self.logger = logger
     }
 
