@@ -71,8 +71,9 @@ class NIDConfigService: ConfigServiceProtocol {
                 self.logger.e("Failed to retrieve NID Config \(error)")
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
-                let failedRetrievalConfig = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to retrieve NID config: \(error). Default values will be used.")
-                NeuroID.saveEventToDataStore(failedRetrievalConfig)
+                NeuroID.saveEventToDataStore(
+                    NIDEvent.createErrorLogEvent("Failed to retrieve NID config: \(error). Default values will be used.")
+                )
                 self.configRetrievalCallback()
             }
         }
@@ -141,17 +142,15 @@ class NIDConfigService: ConfigServiceProtocol {
             cachedConfigLog.v = jsonString
             NeuroID.saveEventToDataStore(cachedConfigLog)
         } else {
-            let failedCachedConfig = NIDEvent(type: NIDEventName.log)
-            failedCachedConfig.m = "Failed to parse config"
-            failedCachedConfig.level = "ERROR"
-            NeuroID.saveEventToDataStore(failedCachedConfig)
+            NeuroID.saveEventToDataStore(
+                NIDEvent.createErrorLogEvent("Failed to parse config")
+            )
         }
     }
     
     func updateIsSampledStatus(siteID: String?) {
         if let nonNullSiteID: String = siteID {
             if let nonNullFlag = siteIDMap[nonNullSiteID] {
-                print("kurt_test siteID \(nonNullSiteID) : \(nonNullFlag)")
                 _isSessionFlowSampled = nonNullFlag
             }
             return

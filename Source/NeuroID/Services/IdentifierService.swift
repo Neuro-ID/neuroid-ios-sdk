@@ -79,10 +79,7 @@ class IdentifierService: IdentifierServiceProtocol {
                    registeredUserID != self.registeredUserID
                 {
                     self.eventStorageService.saveEventToLocalDataStore(
-                        NIDEvent(
-                            type: .log,
-                            level: "WARN",
-                            m:
+                        NIDEvent.createWarnLogEvent(
                             "Multiple Registered UserID Attempt - existing:\(self.registeredUserID) new:\(scrubbedIdentifier)"
                         )
                     )
@@ -132,10 +129,7 @@ class IdentifierService: IdentifierServiceProtocol {
 
         if !validID {
             eventStorageService.saveEventToDataStore(
-                NIDEvent(
-                    type: .log,
-                    level: "ERROR",
-                    m:
+                NIDEvent.createErrorLogEvent(
                     "Failed to save genericIdentifier of \(type.rawValue) event:\(scrubbedIdentifier)"
                 )
             )
@@ -170,10 +164,8 @@ class IdentifierService: IdentifierServiceProtocol {
     ) -> String {
         let scrubbedIdentifier = scrubIdentifier(identifier)
         eventStorageService.saveEventToDataStore(
-            NIDEvent(
-                type: .log,
-                level: "INFO",
-                m: "\(message): \(scrubbedIdentifier)"
+            NIDEvent.createInfoLogEvent(
+                "\(message): \(scrubbedIdentifier)"
             )
         )
 
