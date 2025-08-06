@@ -7,10 +7,16 @@
 
 import Foundation
 
-class ValidationService {
-    let logger: NIDLog
+protocol ValidationServiceProtocol {
+    func validateClientKey(_ clientKey: String) -> Bool
+    func validateSiteID(_ string: String) -> Bool
+    func validateIdentifier(_ identifier: String) -> Bool
+}
 
-    init(logger: NIDLog) {
+class ValidationService: ValidationServiceProtocol {
+    let logger: LoggerProtocol
+
+    init(logger: LoggerProtocol) {
         self.logger = logger
     }
 

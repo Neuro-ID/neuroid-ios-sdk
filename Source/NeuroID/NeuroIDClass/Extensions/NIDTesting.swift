@@ -11,6 +11,6 @@ public extension NeuroID {
     // MARK: Used for Testing Only
 
     static func setDevTestingURL() {
-        NeuroID.collectionURL = Constants.developmentURL.rawValue
+        NeuroID.COLLECTION_URL = Constants.developmentURL.rawValue
     }
 }

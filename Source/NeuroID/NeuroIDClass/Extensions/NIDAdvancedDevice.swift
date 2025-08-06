@@ -8,10 +8,6 @@
 import Foundation
 
 extension NeuroID {
-    internal static var deviceSignalService: DeviceSignalService = AdvancedDeviceService()
-    
-    // flag to ensure that we only have one FPJS call in flight
-    internal static var isFPJSRunning = false
 
     public static func start(
         _ advancedDeviceSignals: Bool,

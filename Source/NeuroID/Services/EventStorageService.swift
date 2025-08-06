@@ -5,7 +5,7 @@
 //  Created by Kevin Sites on 8/4/25.
 //
 
-protocol EventStorageProtocol {
+protocol EventStorageServiceProtocol {
     func saveEventToDataStore(_ event: NIDEvent)
     func saveEventToDataStore(_ event: NIDEvent, screen: String?)
 
@@ -13,7 +13,7 @@ protocol EventStorageProtocol {
     func saveEventToLocalDataStore(_ event: NIDEvent, screen: String?)
 }
 
-struct EventStorageService: EventStorageProtocol {
+struct EventStorageService: EventStorageServiceProtocol {
     func saveEventToDataStore(_ event: NIDEvent) {
         NeuroID.saveEventToDataStore(event)
     }
