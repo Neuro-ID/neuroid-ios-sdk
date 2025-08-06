@@ -93,9 +93,8 @@ extension NeuroID {
                 isFPJSRunning = false
             case .failure(let error):
                 NeuroID.saveEventToDataStore(
-                    NIDEvent(
-                        type: .log, level: "ERROR",
-                        m: error.localizedDescription
+                    NIDEvent.createErrorLogEvent(
+                        error.localizedDescription
                     )
                 )
                 NeuroID.saveEventToDataStore(
@@ -138,10 +137,8 @@ extension NeuroID {
         _ shouldCapture: Bool = NeuroID.isAdvancedDevice
     ) {
         NeuroID.saveEventToDataStore(
-            NIDEvent(
-                type: .log,
-                level: "INFO",
-                m: "shouldCapture setting: \(shouldCapture)"
+            NIDEvent.createInfoLogEvent(
+                "shouldCapture setting: \(shouldCapture)"
             )
         )
 
