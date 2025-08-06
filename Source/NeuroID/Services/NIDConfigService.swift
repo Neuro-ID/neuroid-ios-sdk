@@ -115,7 +115,6 @@ class NIDConfigService: ConfigServiceProtocol {
         }
         let initSiteIDMapEvent = NIDEvent(type: NIDEventName.updateSampleSiteIDMap,
                                                level: "INFO")
-        print("sitemapID: \(siteIDMap)")
         NeuroID.saveQueuedEventToLocalDataStore(initSiteIDMapEvent)
     }
     
