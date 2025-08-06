@@ -28,14 +28,14 @@ public extension NeuroID {
 
     static func pauseCollection() {
         saveEventToLocalDataStore(
-            NIDEvent(type: .log, level: "INFO", m: "pause collection attempt")
+            NIDEvent.createInfoLogEvent("pause collection attempt")
         )
         pauseCollection(flushEventQueue: true)
     }
 
     static func resumeCollection() {
         saveEventToLocalDataStore(
-            NIDEvent(type: .log, level: "INFO", m: "resume collection attempt")
+            NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
         if NeuroID.sessionID.isEmptyOrNil, !NeuroID.isSDKStarted {
@@ -50,7 +50,7 @@ public extension NeuroID {
 
     static func stopSession() -> Bool {
         saveEventToLocalDataStore(
-            NIDEvent(type: .log, level: "INFO", m: "Stop session attempt")
+            NIDEvent.createInfoLogEvent("Stop session attempt")
         )
 
         saveEventToLocalDataStore(
@@ -89,10 +89,8 @@ public extension NeuroID {
             NeuroID.linkedSiteID = nil
 
             saveEventToLocalDataStore(
-                NIDEvent(
-                    type: .log,
-                    level: "ERROR",
-                    m: "Failed to set invalid Linked Site \(siteID)"
+                NIDEvent.createErrorLogEvent(
+                    "Failed to set invalid Linked Site \(siteID)"
                 )
             )
 
@@ -135,10 +133,8 @@ public extension NeuroID {
                             completion(startStatus)
 
                             saveEventToDataStore(
-                                NIDEvent(
-                                    type: .log,
-                                    level: "INFO",
-                                    m: "Failed to startAppFlow with inner startSession command"
+                                NIDEvent.createInfoLogEvent(
+                                    "Failed to startAppFlow with inner startSession command"
                                 )
                             )
                             return
@@ -154,10 +150,8 @@ public extension NeuroID {
                             )
 
                             saveEventToDataStore(
-                                NIDEvent(
-                                    type: .log,
-                                    level: "INFO",
-                                    m: "Failed to startAppFlow with inner start command"
+                                NIDEvent.createInfoLogEvent(
+                                    "Failed to startAppFlow with inner start command"
                                 )
                             )
                             return
@@ -210,12 +204,12 @@ extension NeuroID {
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         saveEventToDataStore(
-            NIDEvent(type: .log, level: "INFO", m: "Close session attempt")
+            NIDEvent.createInfoLogEvent("Close session attempt")
         )
 
         if !NeuroID.isSDKStarted {
             saveQueuedEventToLocalDataStore(
-                NIDEvent(type: .log, level: "ERROR", m: "Close attempt failed since SDK is not started")
+                NIDEvent.createErrorLogEvent("Close attempt failed since SDK is not started")
             )
             throw NIDError.sdkNotStarted
         }
@@ -303,7 +297,7 @@ extension NeuroID {
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
         saveEventToDataStore(
-            NIDEvent(type: .log, level: "INFO", m: "Start attempt with siteID: \(siteID ?? ""))")
+            NIDEvent.createInfoLogEvent("Start attempt with siteID: \(siteID ?? ""))")
         )
 
         if !NeuroID.verifyClientKeyExists() {

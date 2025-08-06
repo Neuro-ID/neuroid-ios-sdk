@@ -143,8 +143,9 @@ extension NeuroID {
                 completion()
             }, onFailure: { error in
                 logError(category: "APICall", content: String(describing: error))
-                let sendEventsLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Group and POST failure: \(error)")
-                saveEventToDataStore(sendEventsLogEvent)
+                saveEventToDataStore(
+                    NIDEvent.createErrorLogEvent("Group and POST failure: \(error)")
+                )
 
                 completion()
             }

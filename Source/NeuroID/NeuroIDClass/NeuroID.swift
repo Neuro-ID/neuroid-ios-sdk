@@ -126,10 +126,8 @@ public class NeuroID: NSObject {
         if !validationService.validateClientKey(clientKey) {
             logger.e("Invalid Client Key")
             saveQueuedEventToLocalDataStore(
-                NIDEvent(
-                    type: NIDEventName.log,
-                    level: "ERROR",
-                    m: "Invalid Client Key \(clientKey)"
+                NIDEvent.createErrorLogEvent(
+                    "Invalid Client Key \(clientKey)"
                 )
             )
             setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key")
@@ -152,7 +150,9 @@ public class NeuroID: NSObject {
 
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-        saveEventToDataStore(NIDEvent(type: NIDEventName.log, level: "INFO", m: "Reset Tab Id"))
+        saveEventToDataStore(
+            NIDEvent.createInfoLogEvent("Reset Tab Id")
+        )
         packetNumber = 0
 
         networkMonitor = NetworkMonitoringService()
@@ -165,7 +165,7 @@ public class NeuroID: NSObject {
         captureApplicationMetaData()
 
         NeuroID.saveEventToDataStore(
-            NIDEvent(type: .log, level: "INFO", m: "isAdvancedDevice setting: \(isAdvancedDevice)")
+            NIDEvent.createInfoLogEvent("isAdvancedDevice setting: \(isAdvancedDevice)")
         )
 
         return true
@@ -173,7 +173,7 @@ public class NeuroID: NSObject {
 
     static func configSetupCompletion() {
         saveEventToLocalDataStore(
-            NIDEvent(type: .log, level: "info", m: "Remote Config Retrieval Attempt Completed")
+            NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
         logger.i("Remote Config Retrieval Attempt Completed")
 
@@ -193,8 +193,9 @@ public class NeuroID: NSObject {
             _ = try closeSession(skipStop: true)
         } catch {
             logger.e("Failed to Stop because \(error)")
-            let stopFailedLogEvent = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to Stop because \(error)")
-            saveEventToDataStore(stopFailedLogEvent)
+            saveEventToDataStore(
+                NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
+            )
             return false
         }
 
