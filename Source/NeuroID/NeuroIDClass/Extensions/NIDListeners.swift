@@ -10,7 +10,10 @@ import Foundation
 extension NeuroID {
     static func setupListeners() {
         if configService.configCache.callInProgress {
-            callObserver = NIDCallStatusObserverService()
+            callObserver = NIDCallStatusObserverService(
+                eventStorageService: NeuroID.eventStorageService,
+                configService: NeuroID.configService
+            )
             callObserver?.startListeningToCallStatus()
         } else {
             callObserver = nil

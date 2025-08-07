@@ -190,7 +190,7 @@ enum UtilFunctions {
         let screenName = className ?? ParamsCreator.generateID()
         // Make sure we have a valid url set
         event.url = screenName
-        
+
         NeuroID.saveEventToLocalDataStore(event, screen: screenName)
     }
 
@@ -279,17 +279,6 @@ enum UtilFunctions {
         NeuroID.saveEventToLocalDataStore(event)
 
         // URL capture?
-    }
-
-    static func captureCallStatusEvent(
-        eventType: NIDEventName,
-        status: String,
-        attrs: [Attrs]
-    ) {
-        let event = NIDEvent(type: eventType)
-        event.cp = status
-        event.attrs = attrs
-        NeuroID.saveEventToLocalDataStore(event)
     }
 
     static func captureWindowLoadUnloadEvent(
