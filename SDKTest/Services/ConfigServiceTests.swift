@@ -128,7 +128,7 @@ class ConfigServiceTests: XCTestCase {
         assert(!expired)
     }
     
-    func test_updateIsSampledStatus_100() {
+    func test_updateIsSampledStatus_100_nilSiteID() {
         configService.configCache.sampleRate = 100
         configService._isSessionFlowSampled = false
         
@@ -138,7 +138,7 @@ class ConfigServiceTests: XCTestCase {
         assert(configService.isSessionFlowSampled)
     }
     
-    func test_updateIsSampledStatus_0() {
+    func test_updateIsSampledStatus_0_nilSiteID() {
         configService.configCache.sampleRate = 0
         configService._isSessionFlowSampled = false
         
@@ -178,77 +178,55 @@ class ConfigServiceTests: XCTestCase {
         
     }
     
+    func evaluateConfigResponseProcessing(mockedRandomGenerator: RandomGenerator, shouldFail: Bool,
+                                          expectedResults: [String:Bool], siteIDMapIsEmpty: Bool) {
+        let configService = runConfigResponseProcessing(mockedRandomGenerator: mockedRandomGenerator, shouldFail: shouldFail)
+        for key in expectedResults.keys {
+            configService.updateIsSampledStatus(siteID:key)
+            assert(configService.isSessionFlowSampled == expectedResults[key])
+        }
+        assert(configService.siteIDMap.isEmpty == siteIDMapIsEmpty)
+    }
+    
     func test_successConfigResponseProcessingRoll30() {
-        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(30), shouldFail: false)
-        configService.updateIsSampledStatus(siteID: "test0")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test10")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test30")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test50")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test100")
-        assert(configService.isSessionFlowSampled)
+        let expectedResults = ["test0":false, "test10":false, "test30": true, "test50": true, "test100": true]
+        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(30),
+                                         shouldFail: false,
+                                         expectedResults: expectedResults,
+                                         siteIDMapIsEmpty: false)
     }
     
     func test_successConfigResponseProcessingRoll0() {
-        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0), shouldFail: false)
-        configService.updateIsSampledStatus(siteID: "test0")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test10")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test30")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test50")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test100")
-        assert(configService.isSessionFlowSampled)
+        let expectedResults = ["test0":false, "test10":true, "test30": true, "test50": true, "test100": true]
+        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0),
+                                         shouldFail: false,
+                                         expectedResults: expectedResults,
+                                         siteIDMapIsEmpty: false)
     }
     
     func test_successConfigResponseProcessingRoll100() {
-        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(100), shouldFail: false)
-        configService.updateIsSampledStatus(siteID: "test0")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test10")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test30")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test50")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test100")
-        assert(configService.isSessionFlowSampled)
+        let expectedResults = ["test0":false, "test10":false, "test30": false, "test50": false, "test100": true]
+        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(100),
+                                         shouldFail: false,
+                                         expectedResults: expectedResults,
+                                         siteIDMapIsEmpty: false)
     }
     
     func test_successConfigResponseProcessingRoll50() {
-        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(50), shouldFail: false)
-        configService.updateIsSampledStatus(siteID: "test0")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test10")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test30")
-        assert(!configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test50")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test100")
-        assert(configService.isSessionFlowSampled)
+        let expectedResults = ["test0":false, "test10":false, "test30": false, "test50": true, "test100": true]
+        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(50),
+                                         shouldFail: false,
+                                         expectedResults: expectedResults,
+                                         siteIDMapIsEmpty: false)
     }
     
     func test_failConfigResponseProcessing() {
-        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0), shouldFail: true)
-        
-        // all should be true, we failed to get config, using defaults
-        assert(configService.siteIDMap.isEmpty)
-        configService.updateIsSampledStatus(siteID: "test0")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test10")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test30")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test50")
-        assert(configService.isSessionFlowSampled)
-        configService.updateIsSampledStatus(siteID: "test100")
-        assert(configService.isSessionFlowSampled)
+        let expectedResults = ["test0":true, "test10":true, "test30": true, "test50": true, "test100": true]
+        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0),
+                                         shouldFail: true,
+                                         expectedResults: expectedResults,
+                                         siteIDMapIsEmpty: true)
+
     }
     
 }
