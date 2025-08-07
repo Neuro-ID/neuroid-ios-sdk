@@ -111,7 +111,7 @@ extension NeuroID {
         NeuroID.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
-                ct: NeuroID.networkMonitor?.connectionType.rawValue,
+                ct: NeuroID.networkMonitor.connectionType,
                 l: latency,
                 rid: requestID,
                 c: cached,
