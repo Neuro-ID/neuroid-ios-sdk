@@ -8,9 +8,10 @@ import Foundation
 protocol ConfigServiceProtocol {
     var configCache: ConfigResponseData { get }
     var siteIDMap: [String: Bool] { get }
+    var isSessionFlowSampled: Bool { get }
+    
     func clearSiteIDMap()
     func retrieveOrRefreshCache() -> Void
-    var isSessionFlowSampled: Bool { get }
     func updateIsSampledStatus(siteID: String?) -> Void
 }
 
@@ -44,7 +45,7 @@ class NIDConfigService: ConfigServiceProtocol {
     
     var isSessionFlowSampled: Bool {
         get { _isSessionFlowSampled }
-        set {}
+
     }
     
     public var configCache: ConfigResponseData = .init()
@@ -115,7 +116,7 @@ class NIDConfigService: ConfigServiceProtocol {
         }
         let initSiteIDMapEvent = NIDEvent(type: NIDEventName.updateSampleSiteIDMap,
                                                level: "INFO")
-        NeuroID.saveQueuedEventToLocalDataStore(initSiteIDMapEvent)
+        NeuroID.saveEventToDataStore(initSiteIDMapEvent)
     }
     
     func setCache(_ newCache: ConfigResponseData) {
@@ -149,7 +150,7 @@ class NIDConfigService: ConfigServiceProtocol {
         siteIDMap.removeAll()
         let clearSiteIDMapEvent = NIDEvent(type: NIDEventName.clearSampleSiteIDmap,
                                                level: "INFO")
-        NeuroID.saveQueuedEventToLocalDataStore(clearSiteIDMapEvent)
+        NeuroID.saveEventToDataStore(clearSiteIDMapEvent)
     }
     
     func captureConfigEvent(configData: ConfigResponseData) {
@@ -176,14 +177,14 @@ class NIDConfigService: ConfigServiceProtocol {
                 _isSessionFlowSampled = nonNullFlag
                 let sampleStatusUpdateEvent = NIDEvent(type: NIDEventName.updateIsSampledStatus,
                                                        level: "INFO",  m:"\(nonNullSiteID) : \(nonNullFlag)")
-                NeuroID.saveQueuedEventToLocalDataStore(sampleStatusUpdateEvent)
+                NeuroID.saveEventToDataStore(sampleStatusUpdateEvent)
             }
             return
         }
-        _isSessionFlowSampled = false
+        _isSessionFlowSampled = true
         
         let sampleStatusUpdateEvent = NIDEvent(type: NIDEventName.updateIsSampledStatus,
                                                level: "INFO", m:"\(siteID) : \(false)")
-        NeuroID.saveQueuedEventToLocalDataStore(sampleStatusUpdateEvent)
+        NeuroID.saveEventToDataStore(sampleStatusUpdateEvent)
     }
 }

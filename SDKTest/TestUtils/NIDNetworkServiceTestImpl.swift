@@ -96,7 +96,6 @@ class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
             let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
 
             var result: Result<T, AFError>
-            // let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 200))
             result = .success(mockResponseResult as! T)
 
             let finalRes: DataResponse<T, AFError> = .init(

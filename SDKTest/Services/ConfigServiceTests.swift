@@ -7,27 +7,15 @@
 @testable import NeuroID
 import XCTest
 
-class MockedNIDRandomGenerator0: RandomGenerator {
-    func getNumber() -> Int {
-        return 0
+class MockedNIDRandomGenerator: RandomGenerator {
+    var number: Int
+    
+    init(_ number: Int) {
+        self.number = number
     }
-}
-
-class MockedNIDRandomGenerator100: RandomGenerator {
+    
     func getNumber() -> Int {
-        return 100
-    }
-}
-
-class MockedNIDRandomGenerator50: RandomGenerator {
-    func getNumber() -> Int {
-        return 50
-    }
-}
-
-class MockedNIDRandomGenerator30: RandomGenerator {
-    func getNumber() -> Int {
-        return 30
+        return number
     }
 }
 
@@ -147,7 +135,7 @@ class ConfigServiceTests: XCTestCase {
         configService.updateIsSampledStatus(siteID: nil)
         
         // ENG-8305 - Sample Status Not Updated
-        assert(!configService.isSessionFlowSampled)
+        assert(configService.isSessionFlowSampled)
     }
     
     func test_updateIsSampledStatus_0() {
@@ -156,10 +144,10 @@ class ConfigServiceTests: XCTestCase {
         
         configService.updateIsSampledStatus(siteID: nil)
         
-        assert(!configService.isSessionFlowSampled)
+        assert(configService.isSessionFlowSampled)
     }
  
-    func getResponseData() -> ConfigResponseData {
+    func getMockResponseData() -> ConfigResponseData {
         var config: ConfigResponseData = ConfigResponseData()
         config.linkedSiteOptions = ["test0":LinkedSiteOption(sampleRate: 0),
                                     "test10":LinkedSiteOption(sampleRate: 10),
@@ -170,15 +158,15 @@ class ConfigServiceTests: XCTestCase {
         return config
     }
     
-    func runConfigResponseProcession(mockedRandomGenerator: RandomGenerator, shouldFail: Bool)-> NIDConfigService {
+    func runConfigResponseProcessing(mockedRandomGenerator: RandomGenerator, shouldFail: Bool)-> NIDConfigService {
         
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
-        let mockedData = try! JSONEncoder().encode(getResponseData())
+        let mockedData = try! JSONEncoder().encode(getMockResponseData())
         
         let mockedNetwork = NIDNetworkServiceTestImpl()
         mockedNetwork.mockResponse = mockedData
-        mockedNetwork.mockResponseResult = getResponseData()
+        mockedNetwork.mockResponseResult = getMockResponseData()
         mockedNetwork.shouldMockFalse = shouldFail
         
         configService = NIDConfigService(networkService: mockedNetwork,
@@ -191,7 +179,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll30() {
-        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator30(), shouldFail: false)
+        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(30), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -205,7 +193,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll0() {
-        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator0(), shouldFail: false)
+        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -219,7 +207,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll100() {
-        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator100(), shouldFail: false)
+        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(100), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -233,7 +221,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll50() {
-        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator50(), shouldFail: false)
+        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(50), shouldFail: false)
         configService.updateIsSampledStatus(siteID: "test0")
         assert(!configService.isSessionFlowSampled)
         configService.updateIsSampledStatus(siteID: "test10")
@@ -247,7 +235,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_failConfigResponseProcessing() {
-        let configService = runConfigResponseProcession(mockedRandomGenerator: MockedNIDRandomGenerator0(), shouldFail: true)
+        let configService = runConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0), shouldFail: true)
         
         // all should be true, we failed to get config, using defaults
         assert(configService.siteIDMap.isEmpty)
