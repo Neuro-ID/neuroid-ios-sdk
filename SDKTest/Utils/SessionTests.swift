@@ -17,7 +17,7 @@ class SessionTests: XCTestCase {
         NeuroID._isSDKStarted = true
         NeuroID.datastore.removeSentEvents()
 
-        NeuroID.collectionURL = Constants.productionURL.rawValue
+        NeuroID.COLLECTION_URL = Constants.productionURL.rawValue
     }
 
     func testConfigureEndpoint() throws {

@@ -83,7 +83,7 @@ final class NIDPerformanceTests: XCTestCase {
 //
 //    override func tearDown() {
 //        _ = NeuroID.stop()
-//        NeuroID.collectionURL = Constants.productionURL.rawValue
+//        NeuroID.COLLECTION_URL = Constants.productionURL.rawValue
 //        NeuroID.lowMemory = false
 //        // Clear out the DataStore Events after each test
 //        clearOutDataStore()

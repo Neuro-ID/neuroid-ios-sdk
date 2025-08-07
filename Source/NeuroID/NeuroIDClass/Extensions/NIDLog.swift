@@ -184,16 +184,41 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = ""
     }
 
-    NIDLog().d(tag: "Event:", "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDLog().d(
+        tag: "Event:",
+        "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)"
+    )
 }
 
-class NIDLog {
-    init() {}
+// Protocols don't allow optional args so we need to allow both with and
+//  without tags
+protocol LoggerProtocol {
+    func log(_ strings: String)
+    func log(tag: String, _ strings: String)
+
+    func d(_ strings: String)
+    func d(tag: String, _ strings: String)
+
+    func i(_ strings: String)
+    func i(tag: String, _ strings: String)
+
+    func e(_ strings: String)
+    func e(tag: String, _ strings: String)
+}
+
+class NIDLog: LoggerProtocol {
+    func log(_ strings: String) {
+        log(tag: "", strings)
+    }
 
     func log(tag: String = "", _ strings: String) {
         if NeuroID._isSDKStarted, NeuroID.showLogs {
             Swift.print("(NeuroID) \(tag) ", strings)
         }
+    }
+
+    func d(_ strings: String) {
+        d(tag: "", strings)
     }
 
     func d(tag: String = "", _ strings: String) {
@@ -202,10 +227,18 @@ class NIDLog {
         }
     }
 
+    func i(_ strings: String) {
+        i(tag: "", strings)
+    }
+
     func i(tag: String = "", _ strings: String) {
         if NeuroID.showLogs {
             Swift.print("(NeuroID Info) \(tag) ", strings)
         }
+    }
+
+    func e(_ strings: String) {
+        e(tag: "", strings)
     }
 
     func e(tag: String = "", _ strings: String) {

@@ -39,17 +39,17 @@ struct SessionIDOriginalResult {
 }
 
 class IdentifierService: IdentifierServiceProtocol {
-    let logger: NIDLog
-    let validationService: ValidationService
-    let eventStorageService: EventStorageProtocol
+    let logger: LoggerProtocol
+    let validationService: ValidationServiceProtocol
+    let eventStorageService: EventStorageServiceProtocol
 
     var sessionID: String? // Formerly known as userID, now within the mobile sdk ONLY sessionID
     var registeredUserID: String = ""
 
     init(
-        logger: NIDLog,
-        validationService: ValidationService,
-        eventStorageService: EventStorageProtocol
+        logger: LoggerProtocol,
+        validationService: ValidationServiceProtocol,
+        eventStorageService: EventStorageServiceProtocol
     ) {
         self.logger = logger
         self.validationService = validationService

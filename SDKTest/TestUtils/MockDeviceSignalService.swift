@@ -7,11 +7,12 @@
 import Foundation
 @testable import NeuroID
 
-class MockDeviceSignalService: DeviceSignalService {
+class MockDeviceSignalService: AdvancedDeviceServiceProtocol {
     var mockResult: Result<(String, Double), Error>?
 
     func getAdvancedDeviceSignal(_ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
-                                 completion: @escaping (Result<(String, Double), Error>) -> Void) {
+                                 completion: @escaping (Result<(String, Double), Error>) -> Void)
+    {
         if let result = mockResult {
             completion(result)
         } else {
