@@ -31,7 +31,7 @@ class NIDUserTests: BaseTestClass {
     func test_getSessionID_objectLevel() {
         let expectedValue = "test_uid"
 
-        NeuroID.sessionID = expectedValue
+        NeuroID.identifierService.sessionID = expectedValue
 
         let value = NeuroID.getSessionID()
 
@@ -42,7 +42,7 @@ class NIDUserTests: BaseTestClass {
     func test_getSessionID_dataStore() {
         let expectedValue = "test_uid"
 
-        NeuroID.sessionID = nil
+        NeuroID.identifierService.sessionID = nil
 
         let value = NeuroID.getSessionID()
 
@@ -53,14 +53,14 @@ class NIDUserTests: BaseTestClass {
     func test_getRegisteredUserID_objectLevel() {
         let expectedValue = "test_uid"
 
-        NeuroID.registeredUserID = expectedValue
+        NeuroID.identifierService.registeredUserID = expectedValue
 
         let value = NeuroID.getRegisteredUserID()
 
         assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
 
-        NeuroID.registeredUserID = ""
+        NeuroID.identifierService.registeredUserID = ""
     }
 
     func test_attemptedLoginWthUID() {

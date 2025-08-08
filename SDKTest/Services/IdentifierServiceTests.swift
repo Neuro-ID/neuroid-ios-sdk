@@ -10,7 +10,11 @@ import Foundation
 import XCTest
 
 class IdentifierServiceTests: BaseTestClass {
-    var identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
+    var identifierService = IdentifierService(
+        of: NIDLog.self,
+        validationService: ValidationService(loggerType: NIDLog.self),
+        eventStorageService: EventStorageService()
+    )
 
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
@@ -19,7 +23,13 @@ class IdentifierServiceTests: BaseTestClass {
     override func setUp() {
         clearOutDataStore()
         NeuroID._isTesting = true
-        identifierService = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: ValidationService(loggerType: NIDLog.self))
+        identifierService = IdentifierService(
+            of: NIDLog.self,
+            validationService: ValidationService(loggerType: NIDLog.self),
+            eventStorageService: EventStorageService()
+        )
+
+        NeuroID.identifierService = identifierService
     }
 
     override func tearDown() {
@@ -192,7 +202,7 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setSessionID_started_customer_origin() {
         NeuroID._isSDKStarted = true
-        NeuroID.sessionID = nil
+        identifierService.sessionID = nil
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, true)
@@ -206,7 +216,7 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setSessionID_pre_start_customer_origin() {
         _ = NeuroID.stop()
-        NeuroID.sessionID = nil
+        identifierService.sessionID = nil
 
         let expectedValue = "test_uid"
 
@@ -222,7 +232,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setSessionID_started_nid_origin() {
-        NeuroID.sessionID = nil
+        identifierService.sessionID = nil
         NeuroID._isSDKStarted = true
         let expectedValue = "test_uid"
 
@@ -240,7 +250,7 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setSessionID_pre_start_nid_origin() {
         _ = NeuroID.stop()
-        NeuroID.sessionID = nil
+        identifierService.sessionID = nil
 
         let expectedValue = "test_uid"
 
@@ -258,7 +268,7 @@ class IdentifierServiceTests: BaseTestClass {
         clearOutDataStore()
         NeuroID._isSDKStarted = true
         let expectedValue = "test_ruid"
-        NeuroID.registeredUserID = ""
+        identifierService.registeredUserID = ""
 
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
 
@@ -270,7 +280,7 @@ class IdentifierServiceTests: BaseTestClass {
         assertStoredEventTypeAndCount(type: "LOG", count: 1)
         assert(NeuroID.datastore.queuedEvents.count == 0)
 
-        NeuroID.registeredUserID = ""
+        identifierService.registeredUserID = ""
 
         NeuroID._isSDKStarted = false
     }
@@ -279,7 +289,7 @@ class IdentifierServiceTests: BaseTestClass {
         _ = NeuroID.stop()
         NeuroID._isSDKStarted = false
         clearOutDataStore()
-        NeuroID.registeredUserID = ""
+        identifierService.registeredUserID = ""
 
         let expectedValue = "test_ruid"
 
@@ -293,7 +303,7 @@ class IdentifierServiceTests: BaseTestClass {
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
-        NeuroID.registeredUserID = ""
+        identifierService.registeredUserID = ""
 
         NeuroID._isSDKStarted = true
     }
@@ -301,7 +311,7 @@ class IdentifierServiceTests: BaseTestClass {
     func test_setRegisteredUserID_already_set() {
         clearOutDataStore()
         NeuroID._isSDKStarted = true
-        NeuroID.registeredUserID = "setID"
+        identifierService.registeredUserID = "setID"
 
         let expectedValue = "test_ruid"
 
@@ -313,7 +323,7 @@ class IdentifierServiceTests: BaseTestClass {
         assertStoredEventTypeAndCount(type: "LOG", count: 2)
         assert(NeuroID.datastore.queuedEvents.count == 0)
 
-        NeuroID.registeredUserID = ""
+        identifierService.registeredUserID = ""
     }
 
     func test_setRegisteredUserID_same_value() {
@@ -322,7 +332,7 @@ class IdentifierServiceTests: BaseTestClass {
 
         let expectedValue = "test_ruid"
 
-        NeuroID.registeredUserID = expectedValue
+        identifierService.registeredUserID = expectedValue
 
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
 
@@ -331,6 +341,6 @@ class IdentifierServiceTests: BaseTestClass {
 
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
 
-        NeuroID.registeredUserID = ""
+        identifierService.registeredUserID = ""
     }
 }

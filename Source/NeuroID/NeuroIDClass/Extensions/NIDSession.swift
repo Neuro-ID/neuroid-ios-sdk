@@ -19,7 +19,6 @@ public struct SessionStartResult {
 }
 
 public extension NeuroID {
-
     static func startSession(
         _ sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
@@ -53,11 +52,11 @@ public extension NeuroID {
         saveEventToLocalDataStore(
             NIDEvent(type: .log, level: "INFO", m: "Stop session attempt")
         )
-        
+
         saveEventToLocalDataStore(
             NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         )
-        
+
         pauseCollection()
 
         clearSessionVariables()
@@ -79,18 +78,16 @@ public extension NeuroID {
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        
         _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
-                 identifier: sessionID ?? "null",
-                 message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
-            )
-
+            identifier: sessionID ?? "null",
+            message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
+        )
 
         if !NeuroID.verifyClientKeyExists() || !NeuroID.validationService.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
             NeuroID.linkedSiteID = nil
-            
+
             saveEventToLocalDataStore(
                 NIDEvent(
                     type: .log,
@@ -136,7 +133,7 @@ public extension NeuroID {
                     NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
                         if !startStatus.started {
                             completion(startStatus)
-                            
+
                             saveEventToDataStore(
                                 NIDEvent(
                                     type: .log,
@@ -155,7 +152,7 @@ public extension NeuroID {
                             completion(
                                 SessionStartResult(started, NeuroID.getSessionID())
                             )
-                            
+
                             saveEventToDataStore(
                                 NIDEvent(
                                     type: .log,
@@ -165,7 +162,7 @@ public extension NeuroID {
                             )
                             return
                         }
-                        
+
                         NeuroID.addLinkedSiteID(siteID)
                         completion(
                             SessionStartResult(started, NeuroID.getSessionID())
@@ -247,8 +244,7 @@ extension NeuroID {
     }
 
     static func clearSessionVariables() {
-        NeuroID.sessionID = nil
-        NeuroID.registeredUserID = ""
+        NeuroID.identifierService.clearIDs()
 
         NeuroID.linkedSiteID = nil
     }
@@ -295,7 +291,7 @@ extension NeuroID {
         customFunctionality()
 
         moveQueuedEventsToDataStore()
-       
+
         captureAdvancedDevice()
 
         completion()
@@ -328,7 +324,8 @@ extension NeuroID {
                 initTimer()
                 #endif
                 initGyroAccelCollectionTimer()
-        }) {
+            }
+        ) {
             completion(true)
         }
     }
@@ -355,16 +352,16 @@ extension NeuroID {
         let userGenerated = sessionID != nil
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
-        
+
         _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
-                 identifier: finalSessionID,
-                 message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
-            )
-        
+            identifier: finalSessionID,
+            message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
+        )
+
         let validSessionID = NeuroID.identifierService.setSessionID(
-                 finalSessionID,
-                 userGenerated
-             )
+            finalSessionID,
+            userGenerated
+        )
 
         if !validSessionID {
             let res = SessionStartResult(false, "")
@@ -383,7 +380,8 @@ extension NeuroID {
                 #else
                 resumeCollection()
                 #endif
-        }) {
+            }
+        ) {
             completion(SessionStartResult(true, finalSessionID))
         }
     }
