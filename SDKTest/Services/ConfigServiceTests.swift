@@ -186,6 +186,10 @@ class ConfigServiceTests: XCTestCase {
             assert(configService.isSessionFlowSampled == expectedResults[key])
         }
         assert(configService.siteIDMap.isEmpty == siteIDMapIsEmpty)
+        
+        // test siteID not found in map
+        configService.updateIsSampledStatus(siteID: "test1000")
+        assert(configService.isSessionFlowSampled == true)
     }
     
     func test_successConfigResponseProcessingRoll30() {
@@ -228,5 +232,4 @@ class ConfigServiceTests: XCTestCase {
                                          siteIDMapIsEmpty: true)
 
     }
-    
 }
