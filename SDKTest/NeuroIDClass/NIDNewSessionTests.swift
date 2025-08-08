@@ -204,9 +204,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_clearSendOldFlowEvents_not_sampled() {
         NeuroID.datastore.events.append(NIDEvent(rawType: "test"))
-        let mockSampling = NIDSamplingService()
-        mockSampling._isSessionFlowSampled = false
-        NeuroID.samplingService = mockSampling
+        NeuroID.configService = MockConfigService()
 
         NeuroID.clearSendOldFlowEvents {
             assert(NeuroID.datastore.events.count == 0)
@@ -217,9 +215,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_clearSendOldFlowEvents_sampled() {
         NeuroID.datastore.events.append(NIDEvent(rawType: "test"))
-        let mockSampling = NIDSamplingService()
-        mockSampling._isSessionFlowSampled = true
-        NeuroID.samplingService = mockSampling
+        NeuroID.configService = MockConfigService()
 
         let mockNetwork = NIDNetworkServiceTestImpl()
         NeuroID.networkService = mockNetwork

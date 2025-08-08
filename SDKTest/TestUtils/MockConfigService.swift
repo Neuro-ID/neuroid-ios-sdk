@@ -12,4 +12,9 @@ class MockConfigService: ConfigServiceProtocol {
     var configCache: ConfigResponseData = .init()
 
     func retrieveOrRefreshCache() {}
+    
+    var siteIDMap: [String: Bool] = [:]
+    func clearSiteIDMap() { siteIDMap.removeAll() }
+    var isSessionFlowSampled: Bool { return true }
+    func updateIsSampledStatus(siteID: String?) -> Void {  }
 }

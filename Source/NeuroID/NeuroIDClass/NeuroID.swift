@@ -28,7 +28,6 @@ public class NeuroID: NSObject {
     static var networkMonitor: NetworkMonitoringService?
     static var callObserver: NIDCallStatusObserverService?
     static var configService: ConfigServiceProtocol = NIDConfigService()
-    static var samplingService: NIDSamplingServiceProtocol = NIDSamplingService()
     static var identifierService: IdentifierServiceProtocol = IdentifierService(of: NeuroID.self, of: NIDLog.self, validationService: NeuroID.validationService)
 
     static var clientID: String?

@@ -114,7 +114,7 @@ public extension NeuroID {
 
             // If SDK is already started, update sampleStatus and continue
             if NeuroID.isSDKStarted {
-                NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
+                NeuroID.configService.updateIsSampledStatus(siteID: siteID)
 
                 // capture CREATE_SESSION and METADATA events for new flow
                 saveEventToLocalDataStore(createNIDSessionEvent())
@@ -203,6 +203,7 @@ extension NeuroID {
     }
 
     static func createSession() {
+        configService.updateIsSampledStatus(siteID: linkedSiteID)
         saveEventToLocalDataStore(
             createNIDSessionEvent()
         )
@@ -261,6 +262,7 @@ extension NeuroID {
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()
         NeuroID.sendCollectionWorkItem = nil
+        configService.clearSiteIDMap()
     }
 
     /**
@@ -277,9 +279,9 @@ extension NeuroID {
         completion: @escaping () -> Void = {}
     ) {
         // Use config cache or if first time, retrieve from server
-       configService.retrieveOrRefreshCache()
+        configService.retrieveOrRefreshCache()
 
-        NeuroID.samplingService.updateIsSampledStatus(siteID: siteID)
+        NeuroID.configService.updateIsSampledStatus(siteID: siteID)
 
         NeuroID._isSDKStarted = true
 
@@ -388,9 +390,9 @@ extension NeuroID {
 
     static func clearSendOldFlowEvents(completion: @escaping () -> Void = {}) {
         // if the session is being sampled we should send, else we don't want those events anyways
-        if NeuroID.samplingService.isSessionFlowSampled {
+        if NeuroID.configService.isSessionFlowSampled {
             // immediately flush events before anything else
-            groupAndPOST(forceSend: NeuroID.samplingService.isSessionFlowSampled) {
+            groupAndPOST(forceSend: NeuroID.configService.isSessionFlowSampled) {
                 completion()
             }
             return

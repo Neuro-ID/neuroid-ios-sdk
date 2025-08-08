@@ -149,7 +149,7 @@ extension NeuroID {
         //  is NOT being restricted/throttled prior to calling for an ADV event
 
         if shouldCapture,
-            NeuroID.samplingService.isSessionFlowSampled
+            NeuroID.configService.isSessionFlowSampled
         {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {
