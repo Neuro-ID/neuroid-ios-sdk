@@ -178,8 +178,8 @@ class NIDConfigService: ConfigServiceProtocol {
                 let sampleStatusUpdateEvent = NIDEvent(type: NIDEventName.updateIsSampledStatus,
                                                        level: "INFO",  m:"\(nonNullSiteID) : \(nonNullFlag)")
                 NeuroID.saveEventToDataStore(sampleStatusUpdateEvent)
+                return
             }
-            return
         }
         _isSessionFlowSampled = true
         
