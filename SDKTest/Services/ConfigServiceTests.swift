@@ -34,7 +34,7 @@ class ConfigServiceTests: XCTestCase {
     func setupKeyAndMockInternet() {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
-        let mockedNetwork = NIDNetworkServiceTestImpl()
+        let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
         
         configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork)
@@ -64,7 +64,7 @@ class ConfigServiceTests: XCTestCase {
     func test_retrieveConfig_withNoKey() throws {
         NeuroID.clientKey = ""
         
-        NeuroID.networkService = NIDNetworkServiceTestImpl()
+        NeuroID.networkService = MockNetworkService()
         
         configService.configCache.requestTimeout = 0
         configService.cacheSetWithRemote = true
@@ -79,9 +79,9 @@ class ConfigServiceTests: XCTestCase {
     func test_retrieveConfig_withKeyAndInternet() throws {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
-        NeuroID.networkService = NIDNetworkServiceTestImpl()
+        NeuroID.networkService = MockNetworkService()
         
-        let mockedNetwork = NIDNetworkServiceTestImpl()
+        let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
 
         configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork, configRetrievalCallback: {})

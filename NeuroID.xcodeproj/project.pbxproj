@@ -71,7 +71,7 @@
 		FF0E22252E41497B00DECB89 /* EventStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0E22242E41497400DECB89 /* EventStorageService.swift */; };
 		FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */; };
 		FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770872E26DB8E007235A2 /* NIDNewSessionTests.swift */; };
-		FF1770AC2E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770982E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift */; };
+		FF1770AC2E26DB8E007235A2 /* MockNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770982E26DB8E007235A2 /* MockNetworkService.swift */; };
 		FF1770AD2E26DB8E007235A2 /* IdentifierServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */; };
 		FF1770AE2E26DB8E007235A2 /* SensorsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709D2E26DB8E007235A2 /* SensorsTest.swift */; };
 		FF1770AF2E26DB8E007235A2 /* NeuroIDTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A42E26DB8E007235A2 /* NeuroIDTrackerTests.swift */; };
@@ -230,7 +230,7 @@
 		FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationServiceTests.swift; sourceTree = "<group>"; };
 		FF1770962E26DB8E007235A2 /* MockConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConfigService.swift; sourceTree = "<group>"; };
 		FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceSignalService.swift; sourceTree = "<group>"; };
-		FF1770982E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkServiceTestImpl.swift; sourceTree = "<group>"; };
+		FF1770982E26DB8E007235A2 /* MockNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkService.swift; sourceTree = "<group>"; };
 		FF17709A2E26DB8E007235A2 /* BaseClassExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseClassExtensionTests.swift; sourceTree = "<group>"; };
 		FF17709B2E26DB8E007235A2 /* NIDParamsCreatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreatorTests.swift; sourceTree = "<group>"; };
 		FF17709C2E26DB8E007235A2 /* PayloadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadTest.swift; sourceTree = "<group>"; };
@@ -507,7 +507,7 @@
 			children = (
 				FF1770962E26DB8E007235A2 /* MockConfigService.swift */,
 				FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */,
-				FF1770982E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift */,
+				FF1770982E26DB8E007235A2 /* MockNetworkService.swift */,
 			);
 			path = TestUtils;
 			sourceTree = "<group>";
@@ -848,7 +848,7 @@
 				6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
 				FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */,
 				FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */,
-				FF1770AC2E26DB8E007235A2 /* NIDNetworkServiceTestImpl.swift in Sources */,
+				FF1770AC2E26DB8E007235A2 /* MockNetworkService.swift in Sources */,
 				FF1770AD2E26DB8E007235A2 /* IdentifierServiceTests.swift in Sources */,
 				FF1770AE2E26DB8E007235A2 /* SensorsTest.swift in Sources */,
 				FF1770AF2E26DB8E007235A2 /* NeuroIDTrackerTests.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  NIDNetworkServiceTestImpl.swift
+//  MockNetworkService.swift
 //  SDKTest
 //
 //  Created by Clayton Selby on 2/15/24.
@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 @testable import NeuroID
 
-class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
+class MockNetworkService: NetworkServiceProtocol {
     var mockResponse: Data?
     var mockResponseResult: Any?
     var mockError: Error?
@@ -60,9 +60,9 @@ class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
         completion: @escaping (AFDataResponse<Data>) -> Void
     ) {
         // Set collection URL to dev
-        NeuroID.COLLECTION_URL = Constants.developmentURL.rawValue
+//        NeuroID.COLLECTION_URL = Constants.developmentURL.rawValue
 
-        print("NIDNetworkServiceTestImpl Mocked Request \(neuroHTTPRequest)")
+        print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
     }
 
     func getRequest<T: Decodable>(
@@ -113,6 +113,6 @@ class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
             return
         }
 
-        print("NIDNetworkServiceTestImpl Mocked GET Request \(url)")
+        print("MockNetworkService Mocked GET Request \(url)")
     }
 }
