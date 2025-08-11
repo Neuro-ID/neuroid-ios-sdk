@@ -92,6 +92,10 @@ public enum NIDEventName: String {
     case networkState = "NETWORK_STATE"
     case applicationMetaData = "APPLICATION_METADATA"
     case advancedDeviceRequestFailed = "ADVANCED_DEVICE_REQUEST_FAILED"
+    
+    case updateSampleSiteIDMap = "UPDATE_SAMPLE_SITE_ID_MAP"
+    case clearSampleSiteIDmap = "CLEAR_SAMPLE_SITE_ID_MAP"
+    case updateIsSampledStatus = "UPDATE_IS_SAMPLED_STATUS"
 
     // Memory and queue events
     case bufferFull = "FULL_BUFFER"

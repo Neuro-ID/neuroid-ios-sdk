@@ -11,6 +11,7 @@ import Foundation
 
 class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
     var mockResponse: Data?
+    var mockResponseResult: Any?
     var mockError: Error?
 
     var shouldMockFalse = false
@@ -76,6 +77,26 @@ class NIDNetworkServiceTestImpl: NIDNetworkServiceProtocol {
             var result: Result<T, AFError>
             let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 500))
             result = .failure(error)
+
+            let finalRes: DataResponse<T, AFError> = .init(
+                request: request,
+                response: response,
+                data: mockResponse,
+                metrics: nil,
+                serializationDuration: 0,
+                result: result
+            )
+
+            completion(finalRes)
+
+            shouldMockFalse = false
+            return
+        } else {
+            let request = URLRequest(url: URL(string: "https://mock-nid.com")!)
+            let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+
+            var result: Result<T, AFError>
+            result = .success(mockResponseResult as! T)
 
             let finalRes: DataResponse<T, AFError> = .init(
                 request: request,
