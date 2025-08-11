@@ -45,7 +45,6 @@ class NIDConfigService: ConfigServiceProtocol {
     
     var isSessionFlowSampled: Bool {
         get { _isSessionFlowSampled }
-
     }
     
     public var configCache: ConfigResponseData = .init()

@@ -152,7 +152,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_resumeCollection() {
         NeuroID._isSDKStarted = false
-        NeuroID.sessionID = "temp"
+        NeuroID.identifierService.sessionID = "temp"
         NeuroID.sendCollectionWorkItem = nil
 
         NeuroID.resumeCollection()
@@ -163,7 +163,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_willNotResumeCollectionIfNotStarted() {
         NeuroID._isSDKStarted = false
-        NeuroID.sessionID = nil
+        NeuroID.identifierService.sessionID = nil
         NeuroID.resumeCollection()
 
         assert(!NeuroID._isSDKStarted)
