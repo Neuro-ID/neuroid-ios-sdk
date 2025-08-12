@@ -29,8 +29,8 @@ public extension NeuroID {
         }
     }
 
-    @available(*, deprecated, message: "manuallyRegisterTarget is deprecated and no longer used")
     /** Public API for manually registering a target. This should only be used when automatic fails. */
+    @available(*, deprecated, message: "manuallyRegisterTarget is deprecated and no longer used")
     static func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
         let guid = ParamsCreator.generateID()
@@ -54,8 +54,8 @@ public extension NeuroID {
         }
     }
 
-    @available(*, deprecated, message: "manuallyRegisterRNTarget is deprecated and no longer used")
     /** React Native API for manual registration - DEPRECATED */
+    @available(*, deprecated, message: "manuallyRegisterRNTarget is deprecated and no longer used")
     static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
         let guid = ParamsCreator.generateID()
         let fullViewString = screenName

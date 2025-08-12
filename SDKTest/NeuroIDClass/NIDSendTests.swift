@@ -8,7 +8,6 @@
 import XCTest
 
 class NIDSendTests: XCTestCase {
-
     func test_initCollectionTimer_item() {
         NeuroID._isSDKStarted = false
         let expectation = XCTestExpectation(description: "Wait for 5 seconds")

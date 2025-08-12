@@ -11,8 +11,8 @@ protocol ConfigServiceProtocol {
     var isSessionFlowSampled: Bool { get }
     
     func clearSiteIDMap()
-    func retrieveOrRefreshCache() -> Void
-    func updateIsSampledStatus(siteID: String?) -> Void
+    func retrieveOrRefreshCache()
+    func updateIsSampledStatus(siteID: String?)
 }
 
 protocol RandomGenerator {
@@ -21,7 +21,7 @@ protocol RandomGenerator {
 
 class NIDRandomGenerator: RandomGenerator {
     func getNumber() -> Int {
-        let num = Int.random(in: 1...NIDConfigService.MAX_SAMPLE_RATE)
+        let num = Int.random(in: 1 ... NIDConfigService.MAX_SAMPLE_RATE)
         return num
     }
 }
@@ -41,12 +41,10 @@ class NIDConfigService: ConfigServiceProtocol {
 
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
-    var siteIDMap : [String: Bool] = [:]
+    var siteIDMap: [String: Bool] = [:]
     var _isSessionFlowSampled = true
     
-    var isSessionFlowSampled: Bool {
-        get { _isSessionFlowSampled }
-    }
+    var isSessionFlowSampled: Bool { _isSessionFlowSampled }
     
     public var configCache: ConfigResponseData = .init()
     
@@ -88,7 +86,9 @@ class NIDConfigService: ConfigServiceProtocol {
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
                 NeuroID.saveEventToDataStore(
-                    NIDEvent.createErrorLogEvent("Failed to retrieve NID config: \(error). Default values will be used.")
+                    NIDEvent.createErrorLogEvent(
+                        "Failed to retrieve NID config: \(error). Default values will be used."
+                    )
                 )
                 self.configRetrievalCallback()
             }
@@ -154,9 +154,12 @@ class NIDConfigService: ConfigServiceProtocol {
     
     func clearSiteIDMap() {
         siteIDMap.removeAll()
-        let clearSiteIDMapEvent = NIDEvent(type: NIDEventName.clearSampleSiteIDmap,
-                                               level: "INFO")
-        NeuroID.saveEventToDataStore(clearSiteIDMapEvent)
+        NeuroID.saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.clearSampleSiteIDmap,
+                level: "INFO"
+            )
+        )
     }
     
     func captureConfigEvent(configData: ConfigResponseData) {
@@ -180,16 +183,24 @@ class NIDConfigService: ConfigServiceProtocol {
         if let nonNullSiteID: String = siteID {
             if let nonNullFlag = siteIDMap[nonNullSiteID] {
                 _isSessionFlowSampled = nonNullFlag
-                let sampleStatusUpdateEvent = NIDEvent(type: NIDEventName.updateIsSampledStatus,
-                                                       level: "INFO",  m:"\(nonNullSiteID) : \(nonNullFlag)")
-                NeuroID.saveEventToDataStore(sampleStatusUpdateEvent)
+                NeuroID.saveEventToDataStore(
+                    NIDEvent(
+                        type: NIDEventName.updateIsSampledStatus,
+                        level: "INFO",
+                        m: "\(nonNullSiteID) : \(nonNullFlag)"
+                    )
+                )
                 return
             }
         }
         _isSessionFlowSampled = true
         
-        let sampleStatusUpdateEvent = NIDEvent(type: NIDEventName.updateIsSampledStatus,
-                                               level: "INFO", m:"\(siteID) : \(false)")
-        NeuroID.saveEventToDataStore(sampleStatusUpdateEvent)
+        NeuroID.saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.updateIsSampledStatus,
+                level: "INFO",
+                m: "\(siteID ?? "unknownSiteID") : \(false)"
+            )
+        )
     }
 }

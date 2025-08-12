@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - Device events
 
-internal extension NeuroIDTracker {
+extension NeuroIDTracker {
     func observeRotation() {
         NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: UIDevice.orientationDidChangeNotification, object: nil)
     }

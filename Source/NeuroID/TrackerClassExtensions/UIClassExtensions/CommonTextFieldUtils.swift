@@ -10,5 +10,4 @@ import UIKit
 
 import Foundation
 
-class CommonTextFieldUtils {
-}
+class CommonTextFieldUtils {}

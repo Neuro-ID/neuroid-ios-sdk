@@ -46,7 +46,6 @@ final class UtilFunctionsTests: XCTestCase {
     }
 
     func test_getFullViewlURLPath() {
-        let expectedValue = screenNameValue
         let uiView = UIView()
 
         let value = UtilFunctions.getFullViewlURLPath(currView: uiView)

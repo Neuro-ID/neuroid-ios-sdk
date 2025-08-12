@@ -92,7 +92,7 @@ public enum NIDEventName: String {
     case networkState = "NETWORK_STATE"
     case applicationMetaData = "APPLICATION_METADATA"
     case advancedDeviceRequestFailed = "ADVANCED_DEVICE_REQUEST_FAILED"
-    
+
     case updateSampleSiteIDMap = "UPDATE_SAMPLE_SITE_ID_MAP"
     case clearSampleSiteIDmap = "CLEAR_SAMPLE_SITE_ID_MAP"
     case updateIsSampledStatus = "UPDATE_IS_SAMPLED_STATUS"
@@ -648,7 +648,7 @@ public class NIDEvent: Codable {
             m: m
         )
     }
-    
+
     public static func createWarnLogEvent(_ m: String) -> NIDEvent {
         return NIDEvent(
             type: .log,

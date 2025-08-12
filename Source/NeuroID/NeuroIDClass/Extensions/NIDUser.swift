@@ -44,14 +44,13 @@ public extension NeuroID {
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
         let validID = NeuroID.identifierService.setGenericIdentifier(
-                        identifier: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation",
-                        type: .attemptedLogin,
-                        userGenerated: attemptedRegisteredUserId != nil,
-                        duplicatesAllowedCheck: { _ in return true },
-                        validIDFunction: {}
-                    )
-        
-        
+            identifier: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation",
+            type: .attemptedLogin,
+            userGenerated: attemptedRegisteredUserId != nil,
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: {}
+        )
+         
         if !validID {
             saveEventToDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
         }

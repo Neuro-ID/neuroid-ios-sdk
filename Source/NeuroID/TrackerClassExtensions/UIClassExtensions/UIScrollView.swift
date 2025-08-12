@@ -22,7 +22,7 @@ private func UIScrollViewSwizzling(element: UIScrollView.Type,
     }
 }
 
-internal extension UIScrollView {
+extension UIScrollView {
     static func startSwizzlingUIScroll() {
         let scrollView = UIScrollView.self
 

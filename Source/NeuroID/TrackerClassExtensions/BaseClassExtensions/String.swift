@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal extension String {
+extension String {
     func sha256() -> String {
         var existingSalt = getUserDefaultKeyString(Constants.storageSaltKey.rawValue) ?? ""
 

@@ -84,7 +84,11 @@ class ConfigServiceTests: XCTestCase {
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
 
-        configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork, configRetrievalCallback: {})
+        configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: mockedNetwork,
+            configRetrievalCallback: {}
+        )
         
         configService.configCache.eventQueueFlushInterval = 0
         configService.configCache.callInProgress = false
@@ -147,18 +151,20 @@ class ConfigServiceTests: XCTestCase {
     }
  
     func getMockResponseData() -> ConfigResponseData {
-        var config: ConfigResponseData = ConfigResponseData()
-        config.linkedSiteOptions = ["test0":LinkedSiteOption(sampleRate: 0),
-                                    "test10":LinkedSiteOption(sampleRate: 10),
-                                    "test30":LinkedSiteOption(sampleRate: 30),
-                                    "test50":LinkedSiteOption(sampleRate: 50)]
+        var config = ConfigResponseData()
+        config.linkedSiteOptions = ["test0": LinkedSiteOption(sampleRate: 0),
+                                    "test10": LinkedSiteOption(sampleRate: 10),
+                                    "test30": LinkedSiteOption(sampleRate: 30),
+                                    "test50": LinkedSiteOption(sampleRate: 50)]
         config.sampleRate = 100
         config.siteID = "test100"
         return config
     }
     
-    func runConfigResponseProcessing(mockedRandomGenerator: RandomGenerator, shouldFail: Bool)-> NIDConfigService {
-        
+    func runConfigResponseProcessing(
+        mockedRandomGenerator: RandomGenerator,
+        shouldFail: Bool
+    ) -> NIDConfigService {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
         let mockedData = try! JSONEncoder().encode(getMockResponseData())
@@ -178,12 +184,19 @@ class ConfigServiceTests: XCTestCase {
         configService.retrieveConfig()
         return configService
     }
-    
-    func evaluateConfigResponseProcessing(mockedRandomGenerator: RandomGenerator, shouldFail: Bool,
-                                          expectedResults: [String:Bool], siteIDMapIsEmpty: Bool) {
-        let configService = runConfigResponseProcessing(mockedRandomGenerator: mockedRandomGenerator, shouldFail: shouldFail)
+     
+    func evaluateConfigResponseProcessing(
+        mockedRandomGenerator: RandomGenerator,
+        shouldFail: Bool,
+        expectedResults: [String: Bool],
+        siteIDMapIsEmpty: Bool
+    ) {
+        let configService = runConfigResponseProcessing(
+            mockedRandomGenerator: mockedRandomGenerator,
+            shouldFail: shouldFail
+        )
         for key in expectedResults.keys {
-            configService.updateIsSampledStatus(siteID:key)
+            configService.updateIsSampledStatus(siteID: key)
             assert(configService.isSessionFlowSampled == expectedResults[key])
         }
         assert(configService.siteIDMap.isEmpty == siteIDMapIsEmpty)
@@ -194,43 +207,82 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_successConfigResponseProcessingRoll30() {
-        let expectedResults = ["test0":false, "test10":false, "test30": true, "test50": true, "test100": true]
-        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(30),
-                                         shouldFail: false,
-                                         expectedResults: expectedResults,
-                                         siteIDMapIsEmpty: false)
+        let expectedResults = [
+            "test0": false,
+            "test10": false,
+            "test30": true,
+            "test50": true,
+            "test100": true
+        ]
+        evaluateConfigResponseProcessing(
+            mockedRandomGenerator: MockedNIDRandomGenerator(30),
+            shouldFail: false,
+            expectedResults: expectedResults,
+            siteIDMapIsEmpty: false
+        )
     }
     
     func test_successConfigResponseProcessingRoll0() {
-        let expectedResults = ["test0":false, "test10":true, "test30": true, "test50": true, "test100": true]
-        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0),
-                                         shouldFail: false,
-                                         expectedResults: expectedResults,
-                                         siteIDMapIsEmpty: false)
+        let expectedResults = [
+            "test0": false,
+            "test10": true,
+            "test30": true,
+            "test50": true,
+            "test100": true
+        ]
+        evaluateConfigResponseProcessing(
+            mockedRandomGenerator: MockedNIDRandomGenerator(0),
+            shouldFail: false,
+            expectedResults: expectedResults,
+            siteIDMapIsEmpty: false
+        )
     }
     
     func test_successConfigResponseProcessingRoll100() {
-        let expectedResults = ["test0":false, "test10":false, "test30": false, "test50": false, "test100": true]
-        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(100),
-                                         shouldFail: false,
-                                         expectedResults: expectedResults,
-                                         siteIDMapIsEmpty: false)
+        let expectedResults = [
+            "test0": false,
+            "test10": false,
+            "test30": false,
+            "test50": false,
+            "test100": true
+        ]
+        evaluateConfigResponseProcessing(
+            mockedRandomGenerator: MockedNIDRandomGenerator(100),
+            shouldFail: false,
+            expectedResults: expectedResults,
+            siteIDMapIsEmpty: false
+        )
     }
     
     func test_successConfigResponseProcessingRoll50() {
-        let expectedResults = ["test0":false, "test10":false, "test30": false, "test50": true, "test100": true]
-        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(50),
-                                         shouldFail: false,
-                                         expectedResults: expectedResults,
-                                         siteIDMapIsEmpty: false)
+        let expectedResults = [
+            "test0": false,
+            "test10": false,
+            "test30": false,
+            "test50": true,
+            "test100": true
+        ]
+        evaluateConfigResponseProcessing(
+            mockedRandomGenerator: MockedNIDRandomGenerator(50),
+            shouldFail: false,
+            expectedResults: expectedResults,
+            siteIDMapIsEmpty: false
+        )
     }
     
     func test_failConfigResponseProcessing() {
-        let expectedResults = ["test0":true, "test10":true, "test30": true, "test50": true, "test100": true]
-        evaluateConfigResponseProcessing(mockedRandomGenerator: MockedNIDRandomGenerator(0),
-                                         shouldFail: true,
-                                         expectedResults: expectedResults,
-                                         siteIDMapIsEmpty: true)
-
+        let expectedResults = [
+            "test0": true,
+            "test10": true,
+            "test30": true,
+            "test50": true,
+            "test100": true
+        ]
+        evaluateConfigResponseProcessing(
+            mockedRandomGenerator: MockedNIDRandomGenerator(0),
+            shouldFail: true,
+            expectedResults: expectedResults,
+            siteIDMapIsEmpty: true
+        )
     }
 }

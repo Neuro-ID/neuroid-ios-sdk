@@ -21,7 +21,7 @@ public extension NeuroID {
             rnOptions: rnOptions,
             configOptionKey: .advancedDeviceKey
         )
-        
+
         let configured = configure(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey)
 
         if !configured {
@@ -45,10 +45,10 @@ public extension NeuroID {
         if let configValue = rnOptions[configOptionKey.rawValue] as? Bool {
             return configValue
         }
-        
+
         return false
     }
-    
+
     internal static func getOptionValueString(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> String? {
         guard let configValue = rnOptions[configOptionKey.rawValue] as? String else {
             return ""
