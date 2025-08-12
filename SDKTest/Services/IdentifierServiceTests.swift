@@ -30,6 +30,7 @@ class IdentifierServiceTests: BaseTestClass {
         )
 
         NeuroID.identifierService = identifierService
+        NeuroID.datastore = dataStore
     }
 
     override func tearDown() {
@@ -108,7 +109,7 @@ class IdentifierServiceTests: BaseTestClass {
 
         assert(result == true)
         assert(successful == true)
-        assert(NeuroID.datastore.events.count == 0)
+        assert(dataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
     }
@@ -130,7 +131,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(successful == true)
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assert(NeuroID.datastore.queuedEvents.count == 0)
+        assert(dataStore.queuedEvents.count == 0)
     }
 
     func test_setGenericIdentifier_valid_registered_id_queued() {
@@ -149,7 +150,7 @@ class IdentifierServiceTests: BaseTestClass {
 
         assert(result == true)
         assert(successful == true)
-        assert(NeuroID.datastore.events.count == 0)
+        assert(dataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
     }
@@ -194,7 +195,7 @@ class IdentifierServiceTests: BaseTestClass {
         )
 
         assert(result == false)
-        assert(NeuroID.datastore.events.count == 0)
+        assert(dataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
@@ -243,7 +244,7 @@ class IdentifierServiceTests: BaseTestClass {
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assert(NeuroID.datastore.queuedEvents.count == 0)
+        assert(dataStore.queuedEvents.count == 0)
 
         NeuroID._isSDKStarted = false
     }
@@ -258,7 +259,7 @@ class IdentifierServiceTests: BaseTestClass {
 
         assert(fnSuccess == true)
         assert(NeuroID.sessionID == expectedValue)
-        assert(NeuroID.datastore.events.count == 0)
+        assert(dataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
@@ -278,7 +279,7 @@ class IdentifierServiceTests: BaseTestClass {
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assertStoredEventTypeAndCount(type: "LOG", count: 1)
-        assert(NeuroID.datastore.queuedEvents.count == 0)
+        assert(dataStore.queuedEvents.count == 0)
 
         identifierService.registeredUserID = ""
 
@@ -321,7 +322,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(NeuroID.registeredUserID == expectedValue)
 
         assertStoredEventTypeAndCount(type: "LOG", count: 2)
-        assert(NeuroID.datastore.queuedEvents.count == 0)
+        assert(dataStore.queuedEvents.count == 0)
 
         identifierService.registeredUserID = ""
     }

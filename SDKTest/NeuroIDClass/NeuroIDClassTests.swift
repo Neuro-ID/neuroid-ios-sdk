@@ -23,6 +23,7 @@ class NeuroIDClassTests: BaseTestClass {
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
         NeuroID._isTesting = true
+        NeuroID.datastore = dataStore
     }
 
     override func tearDown() {
