@@ -55,7 +55,9 @@ class NetworkMonitoringService {
         monitor.start(queue: queue)
 
         NeuroID.saveEventToLocalDataStore(
-            NIDEvent(type: .log, level: "info", m: "Network Monitoring Started with starting status of connectionType:\(connectionType) connected:\(isConnected)")
+            NIDEvent.createInfoLogEvent(
+                "Network Monitoring Started with starting status of connectionType:\(connectionType) connected:\(isConnected)"
+            )
         )
 
         monitor.pathUpdateHandler = { path in

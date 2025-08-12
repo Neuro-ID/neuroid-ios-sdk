@@ -606,11 +606,11 @@ public class NIDEvent: Codable {
         self.type = NIDEventName.attemptedLogin.rawValue
         self.uid = uid
     }
-    
-    init(rawEventType: String, uid:String? = nil) {
-         self.type = rawEventType
-         self.uid = uid
-     }
+
+    init(rawEventType: String, uid: String? = nil) {
+        self.type = rawEventType
+        self.uid = uid
+    }
 
     public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
         let viewId = TargetValue.string(view != nil ? view!.id : "")
@@ -639,6 +639,30 @@ public class NIDEvent: Codable {
             self.x = view?.frame.origin.x
             self.y = view?.frame.origin.y
         }
+    }
+
+    public static func createInfoLogEvent(_ m: String) -> NIDEvent {
+        return NIDEvent(
+            type: .log,
+            level: "INFO",
+            m: m
+        )
+    }
+    
+    public static func createWarnLogEvent(_ m: String) -> NIDEvent {
+        return NIDEvent(
+            type: .log,
+            level: "WARN",
+            m: m
+        )
+    }
+
+    public static func createErrorLogEvent(_ m: String) -> NIDEvent {
+        return NIDEvent(
+            type: .log,
+            level: "ERROR",
+            m: m
+        )
     }
 
     var asDictionary: [String: Any] {
