@@ -5,14 +5,14 @@
 //  Created by Kevin Sites on 1/27/25.
 //
 
-@testable import NeuroID
 import Foundation
+@testable import NeuroID
 
 class ValidationServiceTests: BaseTestClass {
     let validationService = ValidationService(
-        loggerType: NIDLog.self
+        logger: NIDLog()
     )
- 
+
     func test_validateClientKey_valid_live() {
         let value = validationService.validateClientKey("key_live_XXXXXXXXXXX")
 
@@ -54,7 +54,7 @@ class ValidationServiceTests: BaseTestClass {
 
         assert(!value)
     }
-    
+
     func test_validatedIdentifiers_valid_id() {
         let validIdentifiers = [
             "123",
@@ -84,7 +84,6 @@ class ValidationServiceTests: BaseTestClass {
             assert(userNameSet == false)
         }
     }
-    
+
 //    validateIdentifier
-    
 }

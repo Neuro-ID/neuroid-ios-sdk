@@ -12,6 +12,8 @@ class NIDEventTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     let userId = "form_mobilesandbox"
     
+    let logger = NIDLog()
+    
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
     }
@@ -178,12 +180,12 @@ class NIDEventTests: XCTestCase {
             let encoder = JSONEncoder()
             let values = try encoder.encode(neuroHTTPRequest)
             let str = String(data: values, encoding: .utf8)
-            NIDLog.log("\(String(describing: str))")
+            logger.log("\(String(describing: str))")
             let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
-            NIDLog.log("************\(filename)*************")
+            logger.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
         } catch {
-            NIDLog.e("\(error.localizedDescription)")
+            logger.e("\(error.localizedDescription)")
         }
         assert(neuroHTTPRequest != nil)
     }

@@ -61,8 +61,9 @@ enum ParamsCreator {
             params = [
                 "\(Constants.tgsKey.rawValue)": TargetValue.string(view.id),
             ]
+
         default:
-            NIDLog.log("Invalid input type")
+            NeuroID.logger.log("Invalid input type")
         }
         for (key, value) in extraParams {
             params[key] = value
@@ -199,10 +200,10 @@ enum ParamsCreator {
         let rawId = (Int(now) - 1488084578518) * 1024 + (x + 1)
         return String(format: "%02X", rawId)
     }
-    
+
     static func getSPVersionID(version: String) -> String {
         var spVersion = version
-        
+
         // extract version from the sp version string
         guard let regex = try? NSRegularExpression(pattern: "%%%([^%]*)%%%") else {
             return spVersion

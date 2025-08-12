@@ -8,10 +8,10 @@
 import Foundation
 
 class ValidationService {
-    let logger: NIDLog.Type
+    let logger: NIDLog
 
-    init(loggerType: NIDLog.Type) {
-        self.logger = loggerType
+    init(logger: NIDLog) {
+        self.logger = logger
     }
 
     func validateClientKey(_ clientKey: String) -> Bool {
@@ -23,8 +23,8 @@ class ValidationService {
         if regex.firstMatch(
             in: clientKey,
             options: NSRegularExpression.MatchingOptions(rawValue: 0),
-            range: NSMakeRange(0, clientKey.count)
-        ) != nil {
+            range: NSMakeRange(0, clientKey.count)) != nil
+        {
             validKey = true
         } else {
             logger.e("Invalid ClientKey")

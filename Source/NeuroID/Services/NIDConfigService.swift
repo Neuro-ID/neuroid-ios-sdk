@@ -35,6 +35,7 @@ class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
     
+    let logger: NIDLog
     let networkService: NIDNetworkServiceProtocol
     let configRetrievalCallback: () -> Void
 
@@ -50,12 +51,14 @@ class NIDConfigService: ConfigServiceProtocol {
     public var configCache: ConfigResponseData = .init()
     
     init(
+        logger: NIDLog,
         networkService: NIDNetworkServiceProtocol = NeuroID.networkService,
         randomGenerator: RandomGenerator = NIDRandomGenerator(),
         configRetrievalCallback: @escaping () -> Void = {}
     ) {
-        self.randomGenerator = randomGenerator
+        self.logger = logger
         self.networkService = networkService
+        self.randomGenerator = randomGenerator
         self.configRetrievalCallback = configRetrievalCallback
     }
     
@@ -74,29 +77,28 @@ class NIDConfigService: ConfigServiceProtocol {
             switch response.result {
             case .success(let responseData):
                 self.setCache(responseData)
-                NIDLog.d("Retrieved remote config \(responseData)")
+                self.logger.d("Retrieved remote config \(responseData)")
                 self.initSiteIDSampleMap(config: responseData)
                 self.cacheSetWithRemote = true
                 self.cacheCreationTime = .init()
                 self.captureConfigEvent(configData: responseData)
                 self.configRetrievalCallback()
             case .failure(let error):
-                NIDLog.e("Failed to retrieve NID Config \(error)")
+                self.logger.e("Failed to retrieve NID Config \(error)")
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
                 let failedRetrievalConfig = NIDEvent(type: NIDEventName.log, level: "ERROR", m: "Failed to retrieve NID config: \(error). Default values will be used.")
                 NeuroID.saveEventToDataStore(failedRetrievalConfig)
                 self.configRetrievalCallback()
-
             }
         }
     }
     
     func initSiteIDSampleMap(config: ConfigResponseData) {
-        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions{
+        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions {
             for siteID in linkedSiteOptions.keys {
                 if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
-                    if (sampleRate == 0) {
+                    if sampleRate == 0 {
                         siteIDMap[siteID] = false
                     } else {
                         siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
@@ -104,18 +106,22 @@ class NIDConfigService: ConfigServiceProtocol {
                 }
             }
         }
-        if let siteID : String = config.siteID {
+        if let siteID: String = config.siteID {
             if let sampleRate: Int = config.sampleRate {
-                if (config.sampleRate == 0) {
+                if config.sampleRate == 0 {
                     siteIDMap[siteID] = false
                 } else {
                     siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
                 }
             }
         }
-        let initSiteIDMapEvent = NIDEvent(type: NIDEventName.updateSampleSiteIDMap,
-                                               level: "INFO")
-        NeuroID.saveEventToDataStore(initSiteIDMapEvent)
+
+        NeuroID.saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.updateSampleSiteIDMap,
+                level: "INFO"
+            )
+        )
     }
     
     func setCache(_ newCache: ConfigResponseData) {
