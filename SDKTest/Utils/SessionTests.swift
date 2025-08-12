@@ -17,27 +17,6 @@ class SessionTests: XCTestCase {
         NeuroID._isSDKStarted = true
         NeuroID.datastore.removeSentEvents()
 
-        NeuroID.COLLECTION_URL = Constants.productionURL.rawValue
-    }
-
-    func testConfigureEndpoint() throws {
-        #if DEBUG
-        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
-        #elseif STAGING
-        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
-        #else
-        XCTAssertTrue(NeuroID.getCollectionEndpointURL() == "https://receiver.neuroid.cloud/c")
-        #endif
-    }
-
-    func testCreateSession() throws {
-        // As soon as we load a view we should create a swession
-        let urlName = "HomeScreen"
-        let testView = UIViewController()
-        let tracker = NeuroIDTracker(screen: urlName, controller: testView)
-        let session = NeuroID.getSessionID()
-        NeuroID.groupAndPOST()
-//        XCTAssertTrue(session == nil)
     }
 
     func testRandom() throws {

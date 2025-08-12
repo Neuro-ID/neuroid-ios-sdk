@@ -37,6 +37,12 @@ public class NeuroID: NSObject {
     static var networkMonitor: NetworkMonitoringServiceProtocol = NetworkMonitoringService()
     static var deviceSignalService: AdvancedDeviceServiceProtocol = AdvancedDeviceService()
 
+    static var payloadSendingService: PayloadSendingServiceProtocol = PayloadSendingService(
+        logger: logger,
+        datastore: datastore,
+        networkService: networkService
+    )
+
     static var callObserver: CallStatusObserverServiceProtocol?
     static var locationManager: LocationManagerServiceProtocol?
 
@@ -204,7 +210,7 @@ public class NeuroID: NSObject {
             return false
         }
 
-        NeuroID.groupAndPOST(forceSend: true)
+        NeuroID.send(forceSend: true)
         NeuroID._isSDKStarted = false
         NeuroID.linkedSiteID = nil
 

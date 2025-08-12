@@ -16,6 +16,14 @@ class MockNetworkService: NetworkServiceProtocol {
 
     var shouldMockFalse = false
 
+    var mockedRetryableRequestSuccess = 0
+    var mockedRetryableRequestFailure = 0
+
+    func resetMockCounts() {
+        mockedRetryableRequestSuccess = 0
+        mockedRetryableRequestFailure = 0
+    }
+
     // Mock Class Utils
     func createMockAlamofireResponse(
         successful: Bool,
@@ -59,10 +67,21 @@ class MockNetworkService: NetworkServiceProtocol {
         retryCount: Int,
         completion: @escaping (AFDataResponse<Data>) -> Void
     ) {
-        // Set collection URL to dev
-//        NeuroID.COLLECTION_URL = Constants.developmentURL.rawValue
-
         print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
+
+        if shouldMockFalse {
+            mockedRetryableRequestFailure += 1
+        } else {
+            mockedRetryableRequestSuccess += 1
+        }
+
+        let mockResponse = createMockAlamofireResponse(
+            successful: !shouldMockFalse,
+            responseData: nil,
+            statusCode: 200
+        )
+
+        completion(mockResponse)
     }
 
     func getRequest<T: Decodable>(

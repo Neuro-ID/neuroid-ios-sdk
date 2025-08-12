@@ -38,25 +38,22 @@ extension NeuroIDTracker {
         // Only clear this event queue the first time as it might be triggered a few times in a row (dropping our low mem event)
         if !NeuroID.lowMemory {
             NeuroID.clearDataStore()
-            
-            let lowMemEvent = NIDEvent(type: NIDEventName.lowMemory)
-            lowMemEvent.url = NeuroID.getScreenName()
 
-            NeuroID.post(
-                events: [lowMemEvent],
-                screen: NeuroID.getScreenName() ?? "low_mem_no_screen",
-                onSuccess: {
-                    NeuroID.logInfo(category: "APICall", content: "Sending successfully")
-                },
-                onFailure: { error in
-                    NeuroID.logError(category: "APICall", content: String(describing: error))
-                })
+            NeuroID.send(
+                forceSend: true,
+                eventSubset: [
+                    NIDEvent(
+                        type: NIDEventName.lowMemory,
+                        url: NeuroID.getScreenName() ?? "low_mem_no_screen"
+                    )
+                ]
+            )
 
             NeuroID.lowMemory = true
         }
 
         let lowMembackOffTime = NeuroID.configService.configCache.lowMemoryBackOff ?? NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + lowMembackOffTime) {
             NeuroID.lowMemory = false
         }

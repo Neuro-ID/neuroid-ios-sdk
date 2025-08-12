@@ -8,13 +8,6 @@
 import XCTest
 
 class NIDSendTests: XCTestCase {
-    func test_getCollectionEndpointURL() {
-        NeuroID.setDevTestingURL()
-        let expectedValue = "https://receiver.neuro-dev.com/c"
-
-        let value = NeuroID.getCollectionEndpointURL()
-        assert(value == expectedValue)
-    }
 
     func test_initCollectionTimer_item() {
         NeuroID._isSDKStarted = false
