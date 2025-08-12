@@ -183,11 +183,6 @@ class NeuroIDClassTests: BaseTestClass {
 }
 
 // swizzle
-// initTimer
-// send
-
-// groupAndPOST
-// post
 
 // logInfo
 // logError
@@ -195,5 +190,3 @@ class NeuroIDClassTests: BaseTestClass {
 // logDebug
 // logDefault
 // osLog
-
-// saveDebugJSON

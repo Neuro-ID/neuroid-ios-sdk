@@ -40,6 +40,64 @@ class ConfigServiceTests: XCTestCase {
         configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork)
     }
     
+    func getMockResponseData() -> ConfigResponseData {
+        var config = ConfigResponseData()
+        config.linkedSiteOptions = ["test0": LinkedSiteOption(sampleRate: 0),
+                                    "test10": LinkedSiteOption(sampleRate: 10),
+                                    "test30": LinkedSiteOption(sampleRate: 30),
+                                    "test50": LinkedSiteOption(sampleRate: 50)]
+        config.sampleRate = 100
+        config.siteID = "test100"
+        return config
+    }
+    
+    func setupMockNetworkRequest(shouldFail: Bool) -> NetworkServiceProtocol {
+        let mockedNetwork = MockNetworkService()
+        mockedNetwork.mockResponse = try! JSONEncoder().encode(getMockResponseData())
+        mockedNetwork.mockResponseResult = getMockResponseData()
+        mockedNetwork.shouldMockFalse = shouldFail
+        
+        return mockedNetwork
+    }
+       
+    func runConfigResponseProcessing(
+        mockedRandomGenerator: RandomGenerator,
+        shouldFail: Bool
+    ) -> NIDConfigService {
+        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+
+        configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: setupMockNetworkRequest(shouldFail: shouldFail),
+            randomGenerator: mockedRandomGenerator,
+            configRetrievalCallback: {}
+        )
+        assert(configService.siteIDMap.isEmpty)
+        configService.retrieveConfig()
+        return configService
+    }
+        
+    func evaluateConfigResponseProcessing(
+        mockedRandomGenerator: RandomGenerator,
+        shouldFail: Bool,
+        expectedResults: [String: Bool],
+        siteIDMapIsEmpty: Bool
+    ) {
+        let configService = runConfigResponseProcessing(
+            mockedRandomGenerator: mockedRandomGenerator,
+            shouldFail: shouldFail
+        )
+        for key in expectedResults.keys {
+            configService.updateIsSampledStatus(siteID: key)
+            assert(configService.isSessionFlowSampled == expectedResults[key])
+        }
+        assert(configService.siteIDMap.isEmpty == siteIDMapIsEmpty)
+           
+        // test siteID not found in map
+        configService.updateIsSampledStatus(siteID: "test1000")
+        assert(configService.isSessionFlowSampled == true)
+    }
+    
     func test_retrieveConfig_withKeyAndNoInternet() throws {
         setupKeyAndMockInternet()
         
@@ -150,62 +208,6 @@ class ConfigServiceTests: XCTestCase {
         assert(configService.isSessionFlowSampled)
     }
  
-    func getMockResponseData() -> ConfigResponseData {
-        var config = ConfigResponseData()
-        config.linkedSiteOptions = ["test0": LinkedSiteOption(sampleRate: 0),
-                                    "test10": LinkedSiteOption(sampleRate: 10),
-                                    "test30": LinkedSiteOption(sampleRate: 30),
-                                    "test50": LinkedSiteOption(sampleRate: 50)]
-        config.sampleRate = 100
-        config.siteID = "test100"
-        return config
-    }
-    
-    func runConfigResponseProcessing(
-        mockedRandomGenerator: RandomGenerator,
-        shouldFail: Bool
-    ) -> NIDConfigService {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
-        
-        let mockedData = try! JSONEncoder().encode(getMockResponseData())
-        
-        let mockedNetwork = MockNetworkService()
-        mockedNetwork.mockResponse = mockedData
-        mockedNetwork.mockResponseResult = getMockResponseData()
-        mockedNetwork.shouldMockFalse = shouldFail
-        
-        configService = NIDConfigService(
-            logger: NIDLog(),
-            networkService: mockedNetwork,
-            randomGenerator: mockedRandomGenerator,
-            configRetrievalCallback: {}
-        )
-        assert(configService.siteIDMap.isEmpty)
-        configService.retrieveConfig()
-        return configService
-    }
-     
-    func evaluateConfigResponseProcessing(
-        mockedRandomGenerator: RandomGenerator,
-        shouldFail: Bool,
-        expectedResults: [String: Bool],
-        siteIDMapIsEmpty: Bool
-    ) {
-        let configService = runConfigResponseProcessing(
-            mockedRandomGenerator: mockedRandomGenerator,
-            shouldFail: shouldFail
-        )
-        for key in expectedResults.keys {
-            configService.updateIsSampledStatus(siteID: key)
-            assert(configService.isSessionFlowSampled == expectedResults[key])
-        }
-        assert(configService.siteIDMap.isEmpty == siteIDMapIsEmpty)
-        
-        // test siteID not found in map
-        configService.updateIsSampledStatus(siteID: "test1000")
-        assert(configService.isSessionFlowSampled == true)
-    }
-    
     func test_successConfigResponseProcessingRoll30() {
         let expectedResults = [
             "test0": false,
@@ -284,5 +286,35 @@ class ConfigServiceTests: XCTestCase {
             expectedResults: expectedResults,
             siteIDMapIsEmpty: true
         )
+    }
+    
+    func test_configRetrievalCallback_on_success() {
+        var configCallBackCalled = false
+        
+        configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: setupMockNetworkRequest(shouldFail: false),
+            randomGenerator: MockedNIDRandomGenerator(0),
+            configRetrievalCallback: { configCallBackCalled.toggle() }
+        )
+        
+        configService.retrieveConfig()
+        
+        assert(configCallBackCalled)
+    }
+    
+    func test_configRetrievalCallback_on_failure() {
+        var configCallBackCalled = false
+        
+        configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: setupMockNetworkRequest(shouldFail: true),
+            randomGenerator: MockedNIDRandomGenerator(0),
+            configRetrievalCallback: { configCallBackCalled.toggle() }
+        )
+        
+        configService.retrieveConfig()
+        
+        assert(configCallBackCalled)
     }
 }

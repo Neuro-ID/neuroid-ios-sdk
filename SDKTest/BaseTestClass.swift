@@ -27,10 +27,13 @@ class BaseTestClass: XCTestCase {
     
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        NeuroID.sendCollectionEventsJob.cancel()
+        NeuroID.sendGyroAccelCollectionWorkItem.cancel()
     }
     
     override func setUp() {
         NeuroID.datastore = dataStore
+        NeuroID.networkService = MockNetworkService()
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
     }
     

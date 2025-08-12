@@ -7,45 +7,54 @@
 @testable import NeuroID
 import XCTest
 
-class NIDSendTests: XCTestCase {
-    func test_initCollectionTimer_item() {
-        NeuroID._isSDKStarted = false
-        let expectation = XCTestExpectation(description: "Wait for 5 seconds")
+class NIDSendTests: BaseTestClass {
+    override func setUpWithError() throws {
+        NeuroID.networkService = MockNetworkService()
+        NeuroID.configService = MockConfigService()
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        NeuroID.sendCollectionEventsJob.cancel()
+        NeuroID._isTesting = true
 
-        let workItem = DispatchWorkItem {
-            NeuroID._isSDKStarted = true
-            expectation.fulfill()
-        }
-        NeuroID.sendCollectionWorkItem = workItem
-
-        NeuroID.initCollectionTimer()
-
-        // Wait for the expectation to be fulfilled, or timeout after 7 seconds
-        wait(for: [expectation], timeout: 7)
-
-        assert(NeuroID._isSDKStarted)
-        NeuroID._isSDKStarted = false
+        clearOutDataStore()
     }
 
-    func test_initCollectionTimer_item_nil() {
-        NeuroID._isSDKStarted = false
-        let expectation = XCTestExpectation(description: "Wait for 5 seconds")
-
-        // setting the item as nil so the queue won't run
-        NeuroID.sendCollectionWorkItem = nil
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            expectation.fulfill()
-        }
-
-        NeuroID.initCollectionTimer()
-
-        // Wait for the expectation to be fulfilled, or timeout after 7 seconds
-        wait(for: [expectation], timeout: 7)
-
-        assert(!NeuroID._isSDKStarted)
-        NeuroID._isSDKStarted = false
+    override func tearDown() {
+        _ = NeuroID.stop()
+        // Clear out the DataStore Events after each test
+        clearOutDataStore()
+        NeuroID._isTesting = false
     }
 
-    //    createCollectionWorkItem // Not sure how to test because it returns an item that always exists
+    func test_sendCollectionEventsJob() {
+        var valueChanged = 0
+        let expectations1 = XCTestExpectation(description: "Wait for 3 seconds pt 1")
+        let expectations2 = XCTestExpectation(description: "Wait for 3 seconds pt 2")
+
+        NeuroID.sendCollectionEventsJob.cancel()
+
+        NeuroID.sendCollectionEventsJob = RepeatingTask(
+            interval: 3,
+            task: {
+                valueChanged += 1
+                if valueChanged == 1 {
+                    expectations1.fulfill()
+                } else if valueChanged == 2 {
+                    expectations2.fulfill()
+                } else {
+                    print("ERROR - Unknown Expectation")
+                    XCTAssertThrowsError("Unknown Expectation - sendCollectionEventsJob")
+                }
+            }
+        )
+
+        NeuroID.sendCollectionEventsJob.start()
+
+        wait(for: [expectations1], timeout: 7)
+        assert(valueChanged == 1)
+
+        wait(for: [expectations2], timeout: 7)
+        assert(valueChanged == 2)
+
+        NeuroID.sendCollectionEventsJob.cancel()
+    }
 }
