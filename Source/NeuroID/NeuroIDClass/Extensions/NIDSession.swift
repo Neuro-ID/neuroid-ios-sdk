@@ -258,6 +258,7 @@ extension NeuroID {
         NeuroID._isSDKStarted = false
         NeuroID.sendCollectionWorkItem?.cancel()
         NeuroID.sendCollectionWorkItem = nil
+        configService.clearSiteIDMap()
     }
 
     /**
