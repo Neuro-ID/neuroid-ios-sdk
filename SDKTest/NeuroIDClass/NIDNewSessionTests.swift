@@ -203,7 +203,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_clearSendOldFlowEvents_not_sampled() {
-        NeuroID.datastore.events.append(NIDEvent(rawType: "test"))
+        dataStore.events.append(NIDEvent(rawType: "test"))
         NeuroID.configService = MockConfigService()
 
         NeuroID.clearSendOldFlowEvents {
@@ -214,7 +214,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_clearSendOldFlowEvents_sampled() {
-        NeuroID.datastore.events.append(NIDEvent(rawType: "test"))
+        dataStore.events.append(NIDEvent(rawType: "test"))
         NeuroID.configService = MockConfigService()
 
         let mockNetwork = NIDNetworkServiceTestImpl()
