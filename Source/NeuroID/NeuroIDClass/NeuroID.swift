@@ -196,6 +196,7 @@ public class NeuroID: NSObject {
             saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
+
             return false
         }
 
