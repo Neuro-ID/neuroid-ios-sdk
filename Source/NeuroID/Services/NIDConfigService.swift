@@ -101,7 +101,7 @@ class NIDConfigService: ConfigServiceProtocol {
                     if sampleRate == 0 {
                         siteIDMap[siteID] = false
                     } else {
-                        siteIDMap[siteID] = (Int.random(in: 1...100) <= sampleRate)
+                        siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
                     }
                 }
             }
@@ -111,36 +111,17 @@ class NIDConfigService: ConfigServiceProtocol {
                 if config.sampleRate == 0 {
                     siteIDMap[siteID] = false
                 } else {
-                    siteIDMap[siteID] = (Int.random(in: 1...100) <= sampleRate)
-                }
-            }
-        }
-    }
-    
-    func initSiteIDSampleMap(config: ConfigResponseData) {
-        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions{
-            for siteID in linkedSiteOptions.keys {
-                if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
-                    if (sampleRate == 0) {
-                        siteIDMap[siteID] = false
-                    } else {
-                        siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
-                    }
-                }
-            }
-        }
-        if let siteID : String = config.siteID {
-            if let sampleRate: Int = config.sampleRate {
-                if (config.sampleRate == 0) {
-                    siteIDMap[siteID] = false
-                } else {
                     siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
                 }
             }
         }
-        let initSiteIDMapEvent = NIDEvent(type: NIDEventName.updateSampleSiteIDMap,
-                                               level: "INFO")
-        NeuroID.saveEventToDataStore(initSiteIDMapEvent)
+
+        NeuroID.saveEventToDataStore(
+            NIDEvent(
+                type: NIDEventName.updateSampleSiteIDMap,
+                level: "INFO"
+            )
+        )
     }
     
     func setCache(_ newCache: ConfigResponseData) {

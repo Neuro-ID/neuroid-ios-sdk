@@ -168,13 +168,15 @@ class ConfigServiceTests: XCTestCase {
         mockedNetwork.mockResponseResult = getMockResponseData()
         mockedNetwork.shouldMockFalse = shouldFail
         
-        configService = NIDConfigService(networkService: mockedNetwork,
-                                         randomGenerator: mockedRandomGenerator,
-                                         configRetrievalCallback: {})
+        configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: mockedNetwork,
+            randomGenerator: mockedRandomGenerator,
+            configRetrievalCallback: {}
+        )
         assert(configService.siteIDMap.isEmpty)
         configService.retrieveConfig()
         return configService
-        
     }
     
     func evaluateConfigResponseProcessing(mockedRandomGenerator: RandomGenerator, shouldFail: Bool,

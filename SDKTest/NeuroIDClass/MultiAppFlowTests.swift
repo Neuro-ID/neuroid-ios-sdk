@@ -119,7 +119,7 @@ class MultiAppFlowTests: XCTestCase {
   }
 
   func getMockResponseData() -> ConfigResponseData {
-    var config: ConfigResponseData = ConfigResponseData()
+    var config = ConfigResponseData()
     config.linkedSiteOptions = [
       "test0": LinkedSiteOption(sampleRate: 0),
       "test10": LinkedSiteOption(sampleRate: 10),
@@ -143,14 +143,15 @@ class MultiAppFlowTests: XCTestCase {
     mockedNetwork.shouldMockFalse = shouldFail
 
     let configService = NIDConfigService(
+      logger: NIDLog(),
       networkService: mockedNetwork,
       randomGenerator: randomGenerator,
-      configRetrievalCallback: {})
+      configRetrievalCallback: {}
+    )
     return configService
   }
 
   func test_captureAdvancedDevice_throttle() {
-
     NeuroID.deviceSignalService = mockService
     _ = NeuroID.configure(clientKey: clientKey)
     NeuroID._isSDKStarted = true
