@@ -1,5 +1,5 @@
 //
-//  NIDNetworkServiceTestImpl.swift
+//  MockNetworkService.swift
 //  SDKTest
 //
 //  Created by Clayton Selby on 2/15/24.
@@ -9,12 +9,20 @@ import Alamofire
 import Foundation
 @testable import NeuroID
 
-class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
+class MockNetworkService: NetworkServiceProtocol {
     var mockResponse: Data?
     var mockResponseResult: Any?
     var mockError: Error?
 
     var shouldMockFalse = false
+
+    var mockedRetryableRequestSuccess = 0
+    var mockedRetryableRequestFailure = 0
+
+    func resetMockCounts() {
+        mockedRetryableRequestSuccess = 0
+        mockedRetryableRequestFailure = 0
+    }
 
     // Mock Class Utils
     func createMockAlamofireResponse(
@@ -59,10 +67,21 @@ class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
         retryCount: Int,
         completion: @escaping (AFDataResponse<Data>) -> Void
     ) {
-        // Set collection URL to dev
-        NeuroID.COLLECTION_URL = Constants.developmentURL.rawValue
+        print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
 
-        print("NIDNetworkServiceTestImpl Mocked Request \(neuroHTTPRequest)")
+        if shouldMockFalse {
+            mockedRetryableRequestFailure += 1
+        } else {
+            mockedRetryableRequestSuccess += 1
+        }
+
+        let mockResponse = createMockAlamofireResponse(
+            successful: !shouldMockFalse,
+            responseData: nil,
+            statusCode: 200
+        )
+
+        completion(mockResponse)
     }
 
     func getRequest<T: Decodable>(
@@ -113,6 +132,6 @@ class NIDNetworkServiceTestImpl: NetworkServiceProtocol {
             return
         }
 
-        print("NIDNetworkServiceTestImpl Mocked GET Request \(url)")
+        print("MockNetworkService Mocked GET Request \(url)")
     }
 }

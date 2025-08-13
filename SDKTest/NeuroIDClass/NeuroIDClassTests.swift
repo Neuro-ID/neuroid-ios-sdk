@@ -67,7 +67,6 @@ class NeuroIDClassTests: BaseTestClass {
     }
 
     func test_configure_invalidKey() {
-        NeuroID.setDevTestingURL()
         clearOutDataStore()
         // remove things configured in setup
         NeuroID.environment = Constants.environmentTest.rawValue

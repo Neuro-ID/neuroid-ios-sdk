@@ -246,7 +246,7 @@ extension NeuroID {
     static func pauseCollection(flushEventQueue: Bool = false) {
         if flushEventQueue {
             // flush all events immediately before pause
-            groupAndPOST(forceSend: true)
+            NeuroID.send(forceSend: true)
         }
 
         NeuroID._isSDKStarted = false
@@ -384,7 +384,7 @@ extension NeuroID {
         // if the session is being sampled we should send, else we don't want those events anyways
         if NeuroID.configService.isSessionFlowSampled {
             // immediately flush events before anything else
-            groupAndPOST(forceSend: NeuroID.configService.isSessionFlowSampled) {
+            NeuroID.send(forceSend: true) {
                 completion()
             }
             return

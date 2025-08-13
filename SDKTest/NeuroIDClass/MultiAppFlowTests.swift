@@ -137,7 +137,7 @@ class MultiAppFlowTests: XCTestCase {
 
     let mockedData = try! JSONEncoder().encode(getMockResponseData())
 
-    let mockedNetwork = NIDNetworkServiceTestImpl()
+    let mockedNetwork = MockNetworkService()
     mockedNetwork.mockResponse = mockedData
     mockedNetwork.mockResponseResult = getMockResponseData()
     mockedNetwork.shouldMockFalse = shouldFail

@@ -217,7 +217,7 @@ class NIDNewSessionTests: BaseTestClass {
         dataStore.events.append(NIDEvent(rawType: "test"))
         NeuroID.configService = MockConfigService()
 
-        let mockNetwork = NIDNetworkServiceTestImpl()
+        let mockNetwork = MockNetworkService()
         NeuroID.networkService = mockNetwork
 
         NeuroID._isSDKStarted = true

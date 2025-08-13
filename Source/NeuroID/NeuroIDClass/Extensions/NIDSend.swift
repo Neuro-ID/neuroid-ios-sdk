@@ -9,12 +9,6 @@ import Alamofire
 import Foundation
 
 extension NeuroID {
-    static var COLLECTION_URL = Constants.productionURL.rawValue
-
-    static func getCollectionEndpointURL() -> String {
-        return COLLECTION_URL
-    }
-
     static func initTimer() {
         // Send up the first payload, and then setup a repeating timer
         DispatchQueue
@@ -89,161 +83,32 @@ extension NeuroID {
         return workItem
     }
 
-    static func send(forceSend: Bool = false) {
-        DispatchQueue.global(qos: .utility).async {
-            if NeuroID._isTesting {
-                return
-            }
-
-            if !NeuroID.isStopped() || forceSend {
-                groupAndPOST(forceSend: forceSend)
-            }
-        }
-    }
-
-    /**
-     Publically exposed just for testing. This should not be any reason to call this directly.
-     */
-    static func groupAndPOST(
+    static func send(
         forceSend: Bool = false,
+        eventSubset: [NIDEvent]? = nil,
         completion: @escaping () -> Void = {}
     ) {
-        if NeuroID.isStopped(), !forceSend {
-            completion()
+        if NeuroID._isTesting {
             return
         }
 
-        // get and clear event queue
-        let dataStoreEvents = NeuroID.datastore.getAndRemoveAllEvents()
+        if !NeuroID.isStopped() || forceSend {
+            DispatchQueue.global(qos: .utility).async {
+                NeuroID.payloadSendingService.cleanAndSendEvents(
+                    clientKey: NeuroID.getClientKey(),
+                    screenName: NeuroID.getScreenName(),
+                    onPacketIncrement: { NeuroID.incrementPacketNumber() },
+                    onSuccess: completion,
+                    onFailure: { error in
+                        NeuroID.saveEventToDataStore(
+                            NIDEvent.createErrorLogEvent("Group and POST failure: \(error)")
+                        )
 
-        if dataStoreEvents.isEmpty {
-            completion()
-            return
-        }
-
-        // capture first event url as backup screen name
-        let altScreenName = dataStoreEvents.first?.url ?? "unnamed_screen"
-
-        /** Just send all the evnets */
-        let cleanEvents = dataStoreEvents.map { nidevent -> NIDEvent in
-            let newEvent = nidevent
-            // Only send url on register target and create session.
-            if nidevent.type != NIDEventName.registerTarget.rawValue, nidevent.type != "\(NIDEventName.createSession.rawValue)" {
-                newEvent.url = nil
-            }
-            return newEvent
-        }
-
-        NeuroID.incrementPacketNumber()
-        post(
-            events: cleanEvents,
-            screen: getScreenName() ?? altScreenName,
-            onSuccess: {
-                logInfo(category: "APICall", content: "Sending successfully")
-                completion()
-            }, onFailure: { error in
-                logError(category: "APICall", content: String(describing: error))
-                saveEventToDataStore(
-                    NIDEvent.createErrorLogEvent("Group and POST failure: \(error)")
+                        completion()
+                    },
+                    eventSubset: eventSubset
                 )
-
-                completion()
             }
-        )
-    }
-
-    /// Direct send to API to create session
-    /// Regularly send in loop
-    static func post(
-        events: [NIDEvent],
-        screen: String,
-        onSuccess: @escaping () -> Void,
-        onFailure: @escaping
-        (Error) -> Void
-    ) {
-        guard let url = URL(string: NeuroID.getCollectionEndpointURL()) else {
-            logError(content: "NeuroID base URL found")
-            return
-        }
-
-        let tabId = ParamsCreator.getTabId()
-        let sessionID = NeuroID.getSessionID()
-        let registeredUserID = NeuroID.getRegisteredUserID()
-
-        let randomString = ParamsCreator.generateID()
-        let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
-
-        let neuroHTTPRequest = NeuroHTTPRequest(
-            clientID: NeuroID.getClientID(),
-            environment: NeuroID.getEnvironment(),
-            sdkVersion: NeuroID.getSDKVersion(),
-            pageTag: NeuroID.getScreenName() ?? "UNKNOWN",
-            responseID: ParamsCreator.generateUniqueHexID(),
-            siteID: NeuroID.siteID ?? "",
-            linkedSiteID: NeuroID.linkedSiteID,
-            sessionID: sessionID == "" ? nil : sessionID,
-            registeredUserID: registeredUserID == "" ? nil : registeredUserID,
-            jsonEvents: events,
-            tabID: "\(tabId)",
-            pageID: "\(pageid)",
-            url: "ios://\(NeuroID.getScreenName() ?? "")",
-            packetNumber: NeuroID.getPacketNumber()
-        )
-
-        if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
-            saveDebugJSON(events: "******************** New POST to NeuroID Collector")
-//            saveDebugJSON(events: dataString)
-//            saveDebugJSON(events: jsonEvents):
-            saveDebugJSON(events: "******************** END")
-        }
-
-        let headers: HTTPHeaders = [
-            "Content-Type": "application/json",
-            "site_key": NeuroID.getClientKey(),
-            "authority": "receiver.neuroid.cloud",
-        ]
-
-        networkService.retryableRequest(
-            url: url,
-            neuroHTTPRequest: neuroHTTPRequest,
-            headers: headers,
-            retryCount: 0
-        ) { response in
-            logger.i("NeuroID Response \(response.response?.statusCode ?? 000)")
-            logger.d(
-                tag: "Payload",
-                """
-                \nPayload Summary
-                 ClientID: \(neuroHTTPRequest.clientId)
-                 SessionID: \(neuroHTTPRequest.userId ?? "")
-                 RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
-                 LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
-                 TabID: \(neuroHTTPRequest.tabId)
-                 Packet Number: \(neuroHTTPRequest.packetNumber)
-                 SDK Version: \(neuroHTTPRequest.sdkVersion)
-                 Screen Name: \(NeuroID.getScreenName() ?? "")
-                 Event Count: \(neuroHTTPRequest.jsonEvents.count)
-                """
-            )
-
-            switch response.result {
-            case .success:
-                logger.i("NeuroID post to API Successful")
-                onSuccess()
-            case let .failure(error):
-                logger.e("NeuroID FAIL to post API")
-                logError(content: "Neuro-ID post Error: \(error)")
-                onFailure(error)
-            }
-        }
-
-        // Output post data to terminal if debug
-        if ProcessInfo.processInfo.environment[Constants.debugJsonKey.rawValue] == "true" {
-            do {
-                let data = try JSONEncoder().encode(neuroHTTPRequest)
-                let str = String(data: data, encoding: .utf8)
-                logger.i(str ?? "")
-            } catch {}
         }
     }
 }
