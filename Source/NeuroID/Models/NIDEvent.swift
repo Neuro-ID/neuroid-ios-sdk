@@ -1,8 +1,9 @@
 import UIKit
 
-enum NIDSessionEventName: String {
+public enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
     case closeSession = "CLOSE_SESSION"
+    case attemptedLogin = "ATTEMPTED_LOGIN"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
     case setRegisteredUserId = "SET_REGISTERED_USER_ID"
@@ -10,17 +11,9 @@ enum NIDSessionEventName: String {
     case tag = "TAG"
     case setCheckPoint = "SET_CHECKPOINT"
     case setCustomEvent = "SET_CUSTOM_EVENT"
-    case heartBeat = "HEARTBEAT"
     case setLinkedSite = "SET_LINKED_SITE"
-
-    case mobileMetadataIOS = "MOBILE_METADATA_IOS"
     case configCached = "CONFIG_CACHED"
-}
 
-public enum NIDEventName: String {
-    case createSession = "CREATE_SESSION"
-    case closeSession = "CLOSE_SESSION"
-    case attemptedLogin = "ATTEMPTED_LOGIN"
     case heartbeat = "HEARTBEAT"
     case error = "ERROR"
     case log = "LOG"
@@ -458,210 +451,31 @@ public class NIDEvent: Codable {
         self.isconnected = isconnected
     }
 
-    /** Register Target
-       {"type":"REGISTER_TARGET","tgs":"#happyforms_message_nonce","en":"happyforms_message_nonce","eid":"happyforms_message_nonce","ec":"","etn":"INPUT","et":"hidden","ef":null,"v":"S~C~~10","ts":1633972363470}
-         ET - Submit, Blank, Hidden
-     */
-
-    init(type: NIDEventName) {
-        self.type = type.rawValue
-    }
-
-    init(sessionEvent: NIDSessionEventName) {
-        self.type = sessionEvent.rawValue
-    }
-
     init(rawType: String) {
         self.type = rawType
-    }
-
-    init(type: NIDEventName = NIDEventName.log, level: String, m: String) {
-        self.type = type.rawValue
-        self.level = level
-        self.m = m
-    }
-
-    /**
-        Use to initiate a new session
-         Element mapping:
-
-         type: CREATE_SESSION,
-         f: key,
-         siteId: siteId,
-         sid: sessionId,
-         lsid: lastSessionId,
-         clientId: clientId,
-         did: deviceId,
-         loc: locale,
-         ua: userAgent,
-         tzo: timezoneOffset,
-         lng: language,
-         ce: cookieEnabled,
-         je: javaEnabled,
-         ol: onLine,
-         p: platform,
-         sh: screenHeight,
-         sw: screenWidth,
-         ah: availHeight,
-         aw: availWidth,
-         cd: colorDepth,
-         pd: pixelDepth,
-         jsl: jsLibraries,
-         dnt: doNotTrack,
-         tch: touch,
-         pageTag: pageTag,
-         ns: commandQueueNamespace,
-        sdkVersion: sdkVersion,
-         is: idleSince,
-         ts: Date.now(),
-
-        Event Change
-        type: CHANGE,
-       tg: { tgs: target, et: eventMetadata.elementType, etn: eventMetadata.elementTagName },
-       v: eventMetadata.value,
-       sm: eventMetadata.similarity,
-       pd: eventMetadata.percentDiff,
-       pl: eventMetadata.previousLength,
-       cl: eventMetadata.currentLength,
-       ld: eventMetadata.levenshtein,
-       ts: Date.now(),
-     */
-
-    init(
-        session: NIDSessionEventName,
-        f: String? = nil,
-        sid: String? = nil,
-        lsid: String? = nil,
-        cid: String? = nil,
-        did: String? = nil,
-        loc: String? = nil,
-        ua: String? = nil,
-        tzo: Int? = nil,
-        lng: String? = nil,
-        p: String? = nil,
-        dnt: Bool? = nil,
-        tch: Bool? = nil,
-        pageTag: String? = nil,
-        ns: String? = nil,
-        jsv: String? = nil,
-        gyro: NIDSensorData? = nil,
-        accel: NIDSensorData? = nil,
-        rts: String? = nil,
-        sh: CGFloat? = nil,
-        sw: CGFloat? = nil,
-        metadata: NIDMetadata? = nil,
-        cp: String? = nil
-    ) {
-        self.type = session.rawValue
-        self.f = f
-        self.sid = sid
-        self.lsid = lsid
-        self.cid = cid
-        self.did = did
-        self.loc = loc
-        self.ua = ua
-        self.tzo = tzo
-        self.lng = lng
-        self.p = p
-        self.dnt = dnt
-        self.tch = tch
-        self.url = pageTag
-        self.ns = ns
-        self.jsv = jsv
-        self.jsl = []
-        self.gyro = gyro
-        self.accel = accel
-        self.rts = rts
-        self.sh = sh
-        self.sw = sw
-        self.metadata = metadata
-        self.cp = cp
-    }
-
-    /**
-     SET_TARGET
-     */
-
-    init(sessionEvent: NIDSessionEventName, key: String, v: String) {
-        self.type = sessionEvent.rawValue
-        self.key = key
-        self.v = v
-    }
-
-    /**
-     FOCUS
-     BLUR
-     LOAD
-     */
-
-    public init(type: NIDEventName, tg: [String: TargetValue]?) {
-        self.type = type.rawValue
-        self.tg = tg
-    }
-
-    /**
-     Attempted login
-     */
-    public init(uid: String?) {
-        self.type = NIDEventName.attemptedLogin.rawValue
-        self.uid = uid
-    }
-
-    init(rawEventType: String, uid: String? = nil) {
-        self.type = rawEventType
-        self.uid = uid
-    }
-
-    public init(type: NIDEventName, tg: [String: TargetValue]?, view: UIView?) {
-        let viewId = TargetValue.string(view != nil ? view!.id : "")
-
-        var newTg = tg ?? [String: TargetValue]()
-        newTg["\(Constants.tgsKey.rawValue)"] = viewId
-
-        self.type = type.rawValue
-        self.ts = ParamsCreator.getTimeStamp()
-        self.url = view != nil ? UtilFunctions.getFullViewlURLPath(
-            currView: view!
-        ) : NeuroID.getScreenName() ?? view?.nidClassName ?? ""
-
-        self.tgs = viewId.toString()
-        self.tg = newTg
-
-        switch type {
-        case .touchStart, .touchMove, .touchEnd, .touchCancel:
-            let touch = NIDTouches(
-                x: view?.frame.origin.x,
-                y: view?.frame.origin.y,
-                tid: -1
-            )
-            self.touches = [touch]
-        default:
-            self.x = view?.frame.origin.x
-            self.y = view?.frame.origin.y
-        }
     }
 
     public static func createInfoLogEvent(_ m: String) -> NIDEvent {
         return NIDEvent(
             type: .log,
-            level: "INFO",
-            m: m
+            m: m,
+            level: "INFO"
         )
     }
 
     public static func createWarnLogEvent(_ m: String) -> NIDEvent {
         return NIDEvent(
             type: .log,
-            level: "WARN",
-            m: m
+            m: m,
+            level: "WARN"
         )
     }
 
     public static func createErrorLogEvent(_ m: String) -> NIDEvent {
         return NIDEvent(
             type: .log,
-            level: "ERROR",
-            m: m
+            m: m,
+            level: "ERROR"
         )
     }
 

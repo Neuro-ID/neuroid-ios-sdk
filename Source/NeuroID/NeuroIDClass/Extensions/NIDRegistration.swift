@@ -60,28 +60,28 @@ public extension NeuroID {
         let guid = ParamsCreator.generateID()
         let fullViewString = screenName
 
-        let nidEvent = NIDEvent(type: .registerTarget)
-        nidEvent.tgs = id
-        nidEvent.eid = id
-        nidEvent.en = id
-        nidEvent.etn = NIDEventName.input.rawValue
-        nidEvent.et = "\(className)"
-        nidEvent.ec = screenName
-        nidEvent.v = "\(Constants.eventValuePrefix.rawValue)\(placeHolder.count)"
-        nidEvent.url = screenName
-
-        nidEvent.hv = placeHolder.hashValue()
-
-        nidEvent.tg = [
-            "\(Constants.attrKey.rawValue)": TargetValue.attr([
-                Attr(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString),
-                Attr(n: "\(Constants.attrGuidKey.rawValue)", v: guid)
-            ])
-        ]
-        nidEvent.attrs = [
-            Attrs(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
-            Attrs(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString)
-        ]
+        let nidEvent = NIDEvent(type: .registerTarget,
+                                tg: [
+                                    "\(Constants.attrKey.rawValue)": TargetValue.attr([
+                                        Attr(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString),
+                                        Attr(n: "\(Constants.attrGuidKey.rawValue)", v: guid)
+                                    ])
+                                ],
+                                tgs: id,
+                                v: "\(Constants.eventValuePrefix.rawValue)\(placeHolder.count)",
+                                hv: placeHolder.hashValue(),
+                                en: id,
+                                etn: NIDEventName.input.rawValue,
+                                et: "\(className)",
+                                ec: screenName,
+                                eid: id,
+                                url: screenName,
+                                attrs: [
+                                    Attrs(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
+                                    Attrs(
+                                        n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: fullViewString
+                                    )
+                                ])
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
         return nidEvent
@@ -101,19 +101,20 @@ public extension NeuroID {
 
      */
     static func setVariable(key: String, value: String) -> NIDEvent {
-        let variableEvent = NIDEvent(sessionEvent: NIDSessionEventName.setVariable)
-        variableEvent.key = key
-        variableEvent.v = NeuroID.identifierService.scrubIdentifier(value)
-
         let myKeys: [String] = trackers.map { String($0.key) }
 
-        // Set the screen to the last active view
-        variableEvent.url = myKeys.last
-
         // If we don't have a valid URL, that means this was called before any views were tracked. Use "AppDelegate" as default
-        if variableEvent.url == nil || variableEvent.url!.isEmpty {
-            variableEvent.url = "AppDelegate"
+        var url = myKeys.last
+        if url == nil || url!.isEmpty {
+            url = "AppDelegate"
         }
+
+        let variableEvent = NIDEvent(
+            type: .setVariable,
+            key: key,
+            v: NeuroID.identifierService.scrubIdentifier(value),
+            url: url
+        )
 
         saveEventToLocalDataStore(variableEvent)
         return variableEvent

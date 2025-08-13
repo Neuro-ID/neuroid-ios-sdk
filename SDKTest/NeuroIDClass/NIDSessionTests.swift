@@ -82,6 +82,6 @@ class NIDSessionTests: BaseTestClass {
 
         NeuroID.captureMobileMetadata()
 
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDEventName.mobileMetadataIOS.rawValue, count: 1)
     }
 }

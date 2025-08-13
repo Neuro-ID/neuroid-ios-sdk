@@ -99,9 +99,9 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
     } ?? [""]).joined(separator: ", ")
 
     switch mutableEvent.type {
-        case NIDSessionEventName.setUserId.rawValue:
+        case NIDEventName.setUserId.rawValue:
             contextString = "uid=\(mutableEvent.uid ?? "")"
-        case NIDSessionEventName.createSession.rawValue:
+        case NIDEventName.createSession.rawValue:
             contextString = "cid=\(mutableEvent.cid ?? ""), sh=\(String(describing: mutableEvent.sh ?? nil)), sw=\(String(describing: mutableEvent.sw ?? nil)), jsv=\(mutableEvent.jsv ?? "")"
         case NIDEventName.applicationSubmit.rawValue:
             contextString = ""
@@ -135,7 +135,7 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "xy=[\(touchesString)] tg=\(tgString)"
         case NIDEventName.closeSession.rawValue:
             contextString = ""
-        case NIDSessionEventName.setVariable.rawValue:
+        case NIDEventName.setVariable.rawValue:
             contextString = "key=\(mutableEvent.key ?? "Missing Key") v=\(mutableEvent.v ?? "Missing Value")"
         case NIDEventName.customTap.rawValue:
             contextString = "xy=[\(touchesString)] tg=\(tgString) attrs=[\(attrsString)]"

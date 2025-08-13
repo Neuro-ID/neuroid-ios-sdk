@@ -31,9 +31,9 @@ class NIDNewSessionTests: BaseTestClass {
         assert(sessionRes.started)
         assert(NeuroID._isSDKStarted)
 
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
-        assertStoredEventTypeAndCount(type: NIDSessionEventName.setUserId.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDEventName.createSession.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDEventName.mobileMetadataIOS.rawValue, count: 1)
+        assertStoredEventTypeAndCount(type: NIDEventName.setUserId.rawValue, count: 1)
         assert(dataStore.queuedEvents.isEmpty)
     }
 

@@ -140,19 +140,20 @@ enum UtilFunctions {
     ) {
         NeuroID.registeredTargets.append(id)
 
-        let nidEvent = NIDEvent(type: .registerTarget)
-        nidEvent.tgs = id
-        nidEvent.eid = id
-        nidEvent.en = id
-        nidEvent.etn = etn
-        nidEvent.et = "\(type)::\(className)"
-        nidEvent.ec = screenName
-        nidEvent.v = rawText ?? false ? textValue : "\(Constants.eventValuePrefix.rawValue)\(textValue.count)"
-        nidEvent.url = screenName
-
-        nidEvent.hv = textValue.hashValue()
-        nidEvent.tg = tg
-        nidEvent.attrs = attrs
+        let nidEvent = NIDEvent(
+            type: .registerTarget,
+            tg: tg,
+            tgs: id,
+            v: rawText ?? false ? textValue : "\(Constants.eventValuePrefix.rawValue)\(textValue.count)",
+            hv: textValue.hashValue(),
+            en: id,
+            etn: etn,
+            et: "\(type)::\(className)",
+            ec: screenName,
+            eid: id,
+            url: screenName,
+            attrs: attrs
+        )
 
         // If RTS is set, set rts on focus events
         nidEvent.setRTS(rts)
@@ -178,20 +179,24 @@ enum UtilFunctions {
             eventName: type,
             view: view,
             type: type.rawValue,
-            attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": text ?? ""]
+            attrParams: [
+                "\(Constants.vKey.rawValue)": lengthValue,
+                "\(Constants.hashKey.rawValue)": text ?? "",
+            ]
         )
 
-        let event = NIDEvent(type: type, tg: eventTg)
-
-        event.v = lengthValue
-        event.hv = hashValue
-        event.tgs = view.id
-
         let screenName = className ?? ParamsCreator.generateID()
-        // Make sure we have a valid url set
-        event.url = screenName
-
-        NeuroID.saveEventToLocalDataStore(event, screen: screenName)
+        NeuroID.saveEventToLocalDataStore(
+            NIDEvent(
+                type: type,
+                tg: eventTg,
+                tgs: view.id,
+                v: lengthValue,
+                hv: hashValue,
+                url: screenName
+            ),
+            screen: screenName
+        )
     }
 
     static func captureTextEvents(view: UIView, textValue: String, eventType: NIDEventName) {
@@ -203,32 +208,32 @@ enum UtilFunctions {
         let attrParams = ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textValue]
 
         switch eventType {
-            case .input:
-                captureInputTextChangeEvent(
-                    eventType: NIDEventName.input,
-                    textControl: view,
-                    inputType: inputType,
-                    lengthValue: lengthValue,
-                    hashValue: hashValue,
-                    attrParams: attrParams
-                )
-            case .focus:
-                captureFocusBlurEvent(eventType: eventType, id: id)
-            case .blur:
-                captureFocusBlurEvent(eventType: eventType, id: id)
+        case .input:
+            captureInputTextChangeEvent(
+                eventType: NIDEventName.input,
+                textControl: view,
+                inputType: inputType,
+                lengthValue: lengthValue,
+                hashValue: hashValue,
+                attrParams: attrParams
+            )
+        case .focus:
+            captureFocusBlurEvent(eventType: eventType, id: id)
+        case .blur:
+            captureFocusBlurEvent(eventType: eventType, id: id)
 
-                captureInputTextChangeEvent(
-                    eventType: NIDEventName.textChange,
-                    textControl: view,
-                    inputType: inputType,
-                    lengthValue: lengthValue,
-                    hashValue: hashValue,
-                    attrParams: attrParams
-                )
+            captureInputTextChangeEvent(
+                eventType: NIDEventName.textChange,
+                textControl: view,
+                inputType: inputType,
+                lengthValue: lengthValue,
+                hashValue: hashValue,
+                attrParams: attrParams
+            )
 
-                NeuroID.send()
-            default:
-                return
+            NeuroID.send()
+        default:
+            return
         }
     }
 
@@ -247,11 +252,14 @@ enum UtilFunctions {
             type: inputType,
             attrParams: attrParams
         )
-        let event = NIDEvent(type: eventType, tg: eventTg)
-
-        event.v = lengthValue
-        event.hv = hashValue
-        event.tgs = textControl.id
+        let event =
+            NIDEvent(
+                type: eventType,
+                tg: eventTg,
+                tgs: textControl.id,
+                v: lengthValue,
+                hv: hashValue
+            )
 
         if eventType == .textChange {
             event.sm = 0
@@ -259,26 +267,21 @@ enum UtilFunctions {
         }
 
         NeuroID.saveEventToLocalDataStore(event)
-
-        // URL capture?
     }
 
     static func captureFocusBlurEvent(
         eventType: NIDEventName,
         id: String
     ) {
-        let event = NIDEvent(
-            type: eventType,
-            tg: [
-                "\(Constants.tgsKey.rawValue)": TargetValue.string(id),
-            ]
+        NeuroID.saveEventToLocalDataStore(
+            NIDEvent(
+                type: eventType,
+                tg: [
+                    "\(Constants.tgsKey.rawValue)": TargetValue.string(id),
+                ],
+                tgs: id
+            )
         )
-
-        event.tgs = id
-
-        NeuroID.saveEventToLocalDataStore(event)
-
-        // URL capture?
     }
 
     static func captureWindowLoadUnloadEvent(
@@ -286,21 +289,18 @@ enum UtilFunctions {
         id: String,
         className: String
     ) {
-        let event = NIDEvent(
-            type: eventType,
-            tg: [
-                "\(Constants.tgsKey.rawValue)": TargetValue.string(id),
-            ]
+        NeuroID.saveEventToLocalDataStore(
+            NIDEvent(
+                type: eventType,
+                tg: [
+                    "\(Constants.tgsKey.rawValue)": TargetValue.string(id),
+                ],
+                tgs: id,
+                attrs: [
+                    Attrs(n: "className", v: className),
+                ]
+            )
         )
-
-        event.attrs = [
-            Attrs(n: "className", v: className),
-        ]
-        event.tgs = id
-
-        NeuroID.saveEventToLocalDataStore(event)
-
-        // URL capture?
     }
 
     static func extractTouchesFromEvent(uiView: UIView, event: UIEvent) -> [NIDTouches] {
@@ -355,5 +355,30 @@ enum UtilFunctions {
         }
 
         return touchArray
+    }
+
+    static func createTouchEvent(sender: UIView, eventName: NIDEventName, location: String, touches: [NIDTouches]) -> NIDEvent {
+        let viewId = TargetValue.string(sender.id)
+
+        let tg = ParamsCreator.getTgParams(
+            view: sender,
+            extraParams: [
+                "sender": TargetValue.string(sender.nidClassName),
+                "location": TargetValue.string("\(location)"),
+                "\(Constants.tgsKey.rawValue)": viewId,
+            ]
+        )
+
+        return NIDEvent(
+            type: eventName,
+            tg: tg,
+            tgs: viewId.toString(),
+            x: sender.frame.origin.x,
+            y: sender.frame.origin.y,
+            url: UtilFunctions.getFullViewlURLPath(
+                currView: sender
+            ),
+            touches: touches
+        )
     }
 }

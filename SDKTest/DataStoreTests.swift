@@ -40,8 +40,7 @@ class DataStoreTests: XCTestCase {
     func testEncodeAndDecode() throws {
         let nidE = NIDEvent(
             type: .radioChange,
-            tg: ["name": TargetValue.string("john")],
-            view: UIView()
+            tg: ["name": TargetValue.string("john")]
         )
 
         let encoder = JSONEncoder()

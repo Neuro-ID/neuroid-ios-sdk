@@ -17,7 +17,7 @@ extension NeuroIDTracker {
 
     @objc func valueChanged(sender: UIView) {
         var eventName = NIDEventName.change
-        let tg: [String: TargetValue] = ParamsCreator.getUiControlTgParams(sender: sender)
+        var tg: [String: TargetValue] = ParamsCreator.getUiControlTgParams(sender: sender)
 
         if let _ = sender as? UISwitch {
             eventName = .selectChange
@@ -43,6 +43,20 @@ extension NeuroIDTracker {
             }
         }
 
-        captureEvent(event: NIDEvent(type: eventName, tg: tg, view: sender))
+        let viewId = TargetValue.string(sender.id)
+        tg["\(Constants.tgsKey.rawValue)"] = viewId
+
+        captureEvent(event:
+            NIDEvent(
+                type: eventName,
+                tg: tg,
+                tgs: viewId.toString(),
+                x: sender.frame.origin.x,
+                y: sender.frame.origin.y,
+                url: UtilFunctions.getFullViewlURLPath(
+                    currView: sender
+                )
+            )
+        )
     }
 }

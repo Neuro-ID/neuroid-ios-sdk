@@ -151,10 +151,13 @@ extension UITextField {
                 "location": TargetValue.string("UITextFieldSwizzle"),
             ])
 
-        let event = NIDEvent(type: eventName, tg: tg, view: sender)
-        event.touches = touchArray
-
-        NeuroID.saveEventToDataStore(event)
+        NeuroID.saveEventToDataStore(
+            UtilFunctions.createTouchEvent(
+                sender: sender,
+                eventName: eventName,
+                location: "UITextFieldSwizzle",
+                touches: touchArray)
+        )
     }
 }
 

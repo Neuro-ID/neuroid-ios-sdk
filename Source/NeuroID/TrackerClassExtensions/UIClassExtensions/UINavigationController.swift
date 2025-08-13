@@ -68,9 +68,6 @@ extension UINavigationController {
     }
 
     func captureWindowEvent(type: NIDEventName, attrs: [Attrs] = []) {
-        let event = NIDEvent(type: type)
-        event.attrs = attrs
-
-        captureEvent(event: event)
+        captureEvent(event: NIDEvent(type: type, attrs: attrs))
     }
 }

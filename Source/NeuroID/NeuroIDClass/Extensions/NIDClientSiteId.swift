@@ -66,10 +66,8 @@ extension NeuroID {
 
         NeuroID.linkedSiteID = siteID
 
-        // Add the SET_LINKED_SITE event for MIHR purposes
-        //  this event is ignore by the collector service
-        let setLinkedSiteIDEvent = NIDEvent(sessionEvent: NIDSessionEventName.setLinkedSite)
-        setLinkedSiteIDEvent.v = siteID
-        saveEventToLocalDataStore(setLinkedSiteIDEvent)
+        saveEventToLocalDataStore(
+            NIDEvent(type: .setLinkedSite, v: siteID)
+        )
     }
 }
