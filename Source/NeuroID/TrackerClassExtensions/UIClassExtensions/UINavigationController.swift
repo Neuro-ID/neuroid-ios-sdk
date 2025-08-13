@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-internal extension UINavigationController {
+extension UINavigationController {
     static func swizzleNavigation() {
         let screen = UINavigationController.self
         uiViewSwizzling(viewController: screen,

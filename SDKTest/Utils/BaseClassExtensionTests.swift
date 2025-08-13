@@ -50,7 +50,7 @@ class BaseClassExtensionTests: XCTestCase {
         assert(value == "foo=bar")
         
         og["foo2"] = "bar2"
-        
+
         let value2 = og.toKeyValueString()
         
         if value2 != "foo=bar&foo2=bar2" && value2 != "foo2=bar2&foo=bar" {

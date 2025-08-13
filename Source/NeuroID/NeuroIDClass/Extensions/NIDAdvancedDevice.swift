@@ -8,7 +8,6 @@
 import Foundation
 
 extension NeuroID {
-
     public static func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
@@ -40,12 +39,12 @@ extension NeuroID {
         }
     }
 
-    internal static func getCachedADV() -> Bool {
+    static func getCachedADV() -> Bool {
         if let storedADVKey = getUserDefaultKeyDict(
             Constants.storageAdvancedDeviceKey.rawValue)
         {
             if let exp = storedADVKey["exp"] as? Double,
-                let requestID = storedADVKey["key"] as? String
+               let requestID = storedADVKey["key"] as? String
             {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
@@ -59,9 +58,9 @@ extension NeuroID {
         return false
     }
 
-    internal static func getNewADV() {
+    static func getNewADV() {
         // run one at a time, drop any other instances
-        if (isFPJSRunning == true) {
+        if isFPJSRunning == true {
             return
         } else {
             isFPJSRunning = true
@@ -74,11 +73,11 @@ extension NeuroID {
         ) { request in
             switch request {
             case .success((let requestID, let duration)):
-                
+
                 captureADVEvent(requestID, cached: false,
                                 latency: duration,
                                 message: advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
-                
+
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
                     value: [
@@ -105,7 +104,7 @@ extension NeuroID {
         }
     }
 
-    internal static func captureADVEvent(
+    static func captureADVEvent(
         _ requestID: String, cached: Bool, latency: Double, message: String
     ) {
         NeuroID.saveEventToDataStore(
@@ -129,7 +128,7 @@ extension NeuroID {
      Because of the reflection we use an array with a boolean instead of just boolean. Log the shouldCapture flag
      in a LOG event (isAdvancedDevice setting: <true/false>.
      */
-    @objc internal static func captureAdvancedDevice(
+    @objc static func captureAdvancedDevice(
         _ shouldCapture: Bool = NeuroID.isAdvancedDevice
     ) {
         NeuroID.saveEventToDataStore(
@@ -142,7 +141,7 @@ extension NeuroID {
         //  is NOT being restricted/throttled prior to calling for an ADV event
 
         if shouldCapture,
-            NeuroID.configService.isSessionFlowSampled
+           NeuroID.configService.isSessionFlowSampled
         {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {
@@ -151,4 +150,3 @@ extension NeuroID {
         }
     }
 }
-

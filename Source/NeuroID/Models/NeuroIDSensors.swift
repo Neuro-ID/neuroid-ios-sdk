@@ -6,6 +6,7 @@
 //
 import CoreMotion
 import Foundation
+
 /// Sensor manager to get data current
 public final class NIDSensorManager: NSObject {
     /// Instance of the class

@@ -130,7 +130,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                                 createError(
                                     code: 3,
                                     description:
-                                        "NeuroID API Error: Unable to convert to string"
+                                    "NeuroID API Error: Unable to convert to string"
                                 )
                             )
                         )
@@ -141,7 +141,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                             createError(
                                 code: 4,
                                 description:
-                                    "NeuroID API Error: Error Retrieving Data"
+                                "NeuroID API Error: Error Retrieving Data"
                             )
                         )
                     )
@@ -173,7 +173,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                             createError(
                                 code: 6,
                                 description:
-                                    "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
+                                "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
                             )
                         )
                     )
@@ -185,7 +185,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                     createError(
                         code: 7,
                         description:
-                            "Fingerprint Response Failure (code 7): Method Not Available"
+                        "Fingerprint Response Failure (code 7): Method Not Available"
                     )
                 )
             )

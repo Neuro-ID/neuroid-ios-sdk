@@ -16,7 +16,6 @@ class SessionTests: XCTestCase {
 
         NeuroID._isSDKStarted = true
         NeuroID.datastore.removeSentEvents()
-
     }
 
     func testRandom() throws {

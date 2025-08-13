@@ -239,7 +239,7 @@ extension UIViewController {
 
         // Make sure we have a valid url set
         event.url = nidClassName
-        
+
         NeuroID.saveEventToLocalDataStore(event, screen: nidClassName)
     }
 }

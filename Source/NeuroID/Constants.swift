@@ -43,7 +43,7 @@ enum Constants: String {
     case etKey = "et"
     case vKey = "v"
     case hashKey = "hash"
-    case lastInstallTime = "lastInstallTime"
+    case lastInstallTime
 
     // Tags
     case debugTag = "NeuroID Debug:"
@@ -57,7 +57,7 @@ enum Constants: String {
 enum UserIDTypes: String {
     case sessionID = "setUserID" // leaving for log messages
     case registeredUserID = "setRegisteredUserID"
-    case attemptedLogin = "attemptedLogin"
+    case attemptedLogin
 }
 
 enum SessionOrigin: String {

@@ -9,7 +9,6 @@
 import XCTest
 
 final class NIDPerformanceTests: XCTestCase {
-    
     let mockedConfigService = MockConfigService()
     
     let childSiteID = "form_weeee"
@@ -17,7 +16,6 @@ final class NIDPerformanceTests: XCTestCase {
     override func setUpWithError() throws {
         mockedConfigService.configCache = ConfigResponseData()
         NeuroID.configService = mockedConfigService
-        
     }
     
     func test_remote_backoff_overrides_default() {
@@ -67,7 +65,7 @@ final class NIDPerformanceTests: XCTestCase {
         waitForExpectations(timeout: 6.0, handler: nil)
     }
 //    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-//    
+//
 //    func clearOutDataStore() {
 //        let _ = DataStore.getAndRemoveAllEvents()
 //    }
@@ -105,7 +103,7 @@ final class NIDPerformanceTests: XCTestCase {
 //        print("NID Event Size: \(DataStore.events.count)")
 //        assert(DataStore.events.count <= 2010)
 //        assert(DataStore.events.last!.type == NIDEventName.bufferFull.rawValue)
-//        
+//
 //        // Test Queued Events
 //        _ = NeuroID.stop()
 //        for _ in 1...2100 {
@@ -120,24 +118,24 @@ final class NIDPerformanceTests: XCTestCase {
 //        print("NID Queue Size: \(DataStore.queuedEvents.count)")
 //        assert(DataStore.queuedEvents.count <= 2010)
 //        assert(DataStore.queuedEvents.last?.type == NIDEventName.bufferFull.rawValue)
-//        
+//
 //        // Test low memory
 //        // Setup a view and invoke observeAppEvents to get listeners attached for the test
 //        let uiView = UITextView()
-//        
+//
 //        let screenNameValue = "testScreen"
-//        
+//
 //        let tracker = NeuroIDTracker(screen: "Temp", controller: uiView.inputViewController)
 //
 //        let guidValue = "\(Constants.attrGuidKey.rawValue)"
-//        
+//
 //        tracker.observeAppEvents()
-//        
+//
 //        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue)
-//            
+//
 //        // Manually trigger low memory event
 //        NotificationCenter.default.post(name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
-//        
+//
 //        for _ in 1...100 {
 //            let expectedValue = "myTestUserID"
 //            _ = NeuroID.setGenericIdentifier(

@@ -36,7 +36,6 @@ public class NeuroID: NSObject {
     static var networkService: NetworkServiceProtocol = NIDNetworkServiceImpl(logger: logger)
     static var networkMonitor: NetworkMonitoringServiceProtocol = NetworkMonitoringService()
     static var deviceSignalService: AdvancedDeviceServiceProtocol = AdvancedDeviceService()
-
     static var payloadSendingService: PayloadSendingServiceProtocol = PayloadSendingService(
         logger: logger,
         datastore: datastore,

@@ -11,8 +11,8 @@ public extension NeuroID {
     static func getPacketNumber() -> Int32 {
         return packetNumber
     }
-    
-    static func incrementPacketNumber () {
+
+    static func incrementPacketNumber() {
         packetNumber += 1
     }
 }
