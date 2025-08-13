@@ -35,8 +35,8 @@ class NIDConfigService: ConfigServiceProtocol {
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
     
-    let logger: NIDLog
-    let networkService: NIDNetworkServiceProtocol
+    let logger: LoggerProtocol
+    let networkService: NetworkServiceProtocol
     let configRetrievalCallback: () -> Void
 
     var cacheSetWithRemote = false
@@ -51,8 +51,8 @@ class NIDConfigService: ConfigServiceProtocol {
     public var configCache: ConfigResponseData = .init()
     
     init(
-        logger: NIDLog,
-        networkService: NIDNetworkServiceProtocol = NeuroID.networkService,
+        logger: LoggerProtocol,
+        networkService: NetworkServiceProtocol = NeuroID.networkService,
         randomGenerator: RandomGenerator = NIDRandomGenerator(),
         configRetrievalCallback: @escaping () -> Void = {}
     ) {

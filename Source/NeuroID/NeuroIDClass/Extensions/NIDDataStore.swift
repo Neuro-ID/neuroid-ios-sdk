@@ -121,7 +121,7 @@ extension NeuroID {
     static func clearDataStore() {
         NeuroID.datastore.forceClearAllEvents()
     }
-  
+
     static func moveQueuedEventsToDataStore() {
         let queuedEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
         for event in queuedEvents {

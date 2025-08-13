@@ -22,20 +22,26 @@ public class NeuroID: NSObject {
     static var siteID: String?
     static var linkedSiteID: String?
 
-    static var logger: NIDLog = .init()
-    static var datastore: DataStoreProtocol = DataStore(logger: logger)
-    static var eventStorageService: EventStorageService = .init()
-    static var validationService: ValidationService = .init(logger: logger)
-    static var locationManager: LocationManagerService?
-    static var networkMonitor: NetworkMonitoringService?
-    static var callObserver: NIDCallStatusObserverService?
+    // Services
+    static var logger: LoggerProtocol = NIDLog()
+    static var datastore: DataStoreServiceProtocol = DataStore(logger: logger)
+    static var eventStorageService: EventStorageServiceProtocol = EventStorageService()
+    static var validationService: ValidationServiceProtocol = ValidationService(logger: logger)
     static var configService: ConfigServiceProtocol = NIDConfigService(logger: logger)
     static var identifierService: IdentifierServiceProtocol = IdentifierService(
         logger: logger,
         validationService: NeuroID.validationService,
         eventStorageService: NeuroID.eventStorageService
     )
-    static var networkService: NIDNetworkServiceProtocol = NIDNetworkServiceImpl(logger: logger)
+    static var networkService: NetworkServiceProtocol = NIDNetworkServiceImpl(logger: logger)
+    static var networkMonitor: NetworkMonitoringServiceProtocol = NetworkMonitoringService()
+    static var deviceSignalService: AdvancedDeviceServiceProtocol = AdvancedDeviceService()
+
+    static var callObserver: CallStatusObserverServiceProtocol?
+    static var locationManager: LocationManagerServiceProtocol?
+
+    // flag to ensure that we only have one FPJS call in flight
+    static var isFPJSRunning = false
 
     static var clientID: String?
     static var sessionID: String? {
@@ -155,8 +161,7 @@ public class NeuroID: NSObject {
         )
         packetNumber = 0
 
-        networkMonitor = NetworkMonitoringService()
-        networkMonitor?.startMonitoring()
+        networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
             captureAdvancedDevice()
@@ -196,7 +201,6 @@ public class NeuroID: NSObject {
             saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
-
             return false
         }
 

@@ -216,13 +216,6 @@ extension UIDevice {
     }
 }
 
-public enum ConnectionType: String {
-    case wifi
-    case ethernet
-    case cellular
-    case unknown
-}
-
 @available(iOS 12.0, *)
 class NetworkStatus {
     public static let shared = NetworkStatus()

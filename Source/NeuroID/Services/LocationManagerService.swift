@@ -6,7 +6,15 @@
 //
 import CoreLocation
 
-class LocationManagerService: NSObject, CLLocationManagerDelegate {
+protocol LocationManagerServiceProtocol {
+    var latitude: Double? { get }
+    var longitude: Double? { get }
+    var authorizationStatus: String { get }
+
+    func checkLocationAuthorization()
+}
+
+class LocationManagerService: NSObject, CLLocationManagerDelegate, LocationManagerServiceProtocol {
     let manager = CLLocationManager()
     var latitude: Double?
     var longitude: Double?

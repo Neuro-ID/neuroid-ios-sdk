@@ -9,10 +9,10 @@ import Alamofire
 import Foundation
 
 extension NeuroID {
-    static var collectionURL = Constants.productionURL.rawValue
+    static var COLLECTION_URL = Constants.productionURL.rawValue
 
     static func getCollectionEndpointURL() -> String {
-        return collectionURL
+        return COLLECTION_URL
     }
 
     static func initTimer() {

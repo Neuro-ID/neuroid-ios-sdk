@@ -8,7 +8,20 @@
 import Foundation
 import Network
 
-class NetworkMonitoringService {
+protocol NetworkMonitoringServiceProtocol {
+    var connectionType: String { get }
+
+    func startMonitoring()
+}
+
+enum ConnectionType: String {
+    case wifi
+    case ethernet
+    case cellular
+    case unknown
+}
+
+class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
     private let queue = DispatchQueue.global()
     private let monitor: NWPathMonitor
 
@@ -17,13 +30,9 @@ class NetworkMonitoringService {
     private var resumeNetworkTask: DispatchWorkItem = DispatchWorkItem {}
 
     private(set) var isConnected: Bool = false
-    private(set) var connectionType: ConnectionType = .unknown
-
-    enum ConnectionType: String {
-        case wifi
-        case cellular
-        case ethernet
-        case unknown
+    private(set) var _connectionType: ConnectionType = .unknown
+    var connectionType: String {
+        _connectionType.rawValue
     }
 
     init() {
@@ -66,10 +75,10 @@ class NetworkMonitoringService {
             self.getConnectionType(path)
 
             let nidEvent = NIDEvent(type: .networkState)
-            nidEvent.iswifi = self.connectionType == .wifi
+            nidEvent.iswifi = self._connectionType == .wifi
             nidEvent.isconnected = connectionStatus
             nidEvent.attrs = [
-                Attrs(n: "connectionType", v: "\(self.connectionType.rawValue)"),
+                Attrs(n: "connectionType", v: "\(self.connectionType)"),
             ]
 
             NeuroID.saveEventToLocalDataStore(nidEvent)
@@ -118,13 +127,13 @@ class NetworkMonitoringService {
 
     private func getConnectionType(_ path: NWPath) {
         if path.usesInterfaceType(.wifi) {
-            connectionType = .wifi
+            _connectionType = .wifi
         } else if path.usesInterfaceType(.cellular) {
-            connectionType = .cellular
+            _connectionType = .cellular
         } else if path.usesInterfaceType(.wiredEthernet) {
-            connectionType = .ethernet
+            _connectionType = .ethernet
         } else {
-            connectionType = .unknown
+            _connectionType = .unknown
         }
     }
 }
