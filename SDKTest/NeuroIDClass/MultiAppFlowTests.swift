@@ -146,7 +146,8 @@ class MultiAppFlowTests: XCTestCase {
       logger: NIDLog(),
       networkService: mockedNetwork,
       randomGenerator: randomGenerator,
-      configRetrievalCallback: {})
+      configRetrievalCallback: {}
+    )
     return configService
   }
 
