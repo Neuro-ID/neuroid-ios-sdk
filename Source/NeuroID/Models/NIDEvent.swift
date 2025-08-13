@@ -648,7 +648,7 @@ public class NIDEvent: Codable {
             m: m
         )
     }
-
+    
     public static func createWarnLogEvent(_ m: String) -> NIDEvent {
         return NIDEvent(
             type: .log,
