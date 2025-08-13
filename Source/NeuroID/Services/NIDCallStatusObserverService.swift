@@ -17,12 +17,20 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
     private let callObserver = CXCallObserver()
     private var isRegistered = false
     
-    override init() {
+    private let eventStorageService: EventStorageServiceProtocol
+    private let configService: ConfigServiceProtocol
+    
+    init(
+        eventStorageService: EventStorageServiceProtocol,
+        configService: ConfigServiceProtocol
+    ) {
+        self.eventStorageService = eventStorageService
+        self.configService = configService
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
         self.isRegistered = true
     }
-    
+
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         var status: String
         var attrs: [Attrs] = []
@@ -50,12 +58,19 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
         
         // Add call progress
         attrs.append(Attrs(n: "progress", v: progress))
-        UtilFunctions.captureCallStatusEvent(eventType: NIDEventName.callInProgress, status: status, attrs: attrs)
+        
+        self.eventStorageService.saveEventToLocalDataStore(
+            NIDEvent(
+                type: .callInProgress,
+                attrs: attrs,
+                cp: status
+            )
+        )
     }
     
     func startListeningToCallStatus() {
         if !self.isRegistered {
-            if NeuroID.configService.configCache.callInProgress {
+            if self.configService.configCache.callInProgress {
                 self.callObserver.setDelegate(self, queue: nil)
                 self.isRegistered = true
             }
