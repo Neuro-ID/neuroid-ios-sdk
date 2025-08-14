@@ -23,21 +23,21 @@ public extension NeuroID {
     static func identify(_ sessionID: String) -> Bool {
         return NeuroID.identifierService.setSessionID(sessionID, true)
     }
-    
+
     // This command replaces `getUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static func getSessionID() -> String {
         return NeuroID.sessionID ?? ""
     }
-    
+
     static func getRegisteredUserID() -> String {
         return NeuroID.registeredUserID
     }
-    
+
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
         return NeuroID.identifierService.setRegisteredUserID(registeredUserID)
     }
-    
+
     /**
      This should be called the moment a user trys to login. Returns true always
      @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
@@ -50,9 +50,8 @@ public extension NeuroID {
             duplicatesAllowedCheck: { _ in true },
             validIDFunction: {}
         )
-         
         if !validID {
-            saveEventToDataStore(NIDEvent(uid: "scrubbed-id-failed-validation"))
+            saveEventToDataStore(NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation"))
         }
         return true
     }

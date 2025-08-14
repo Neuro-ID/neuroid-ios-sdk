@@ -168,10 +168,10 @@ public extension NeuroID {
 
 extension NeuroID {
     static func createNIDSessionEvent(
-        sessionEvent: NIDSessionEventName = .createSession
+        sessionEvent: NIDEventName = .createSession
     ) -> NIDEvent {
         return NIDEvent(
-            session: sessionEvent,
+            type: sessionEvent,
             f: NeuroID.getClientKey(),
             cid: NeuroID.getClientID(),
             did: ParamsCreator.getDeviceId(),
@@ -182,12 +182,12 @@ extension NeuroID {
             p: ParamsCreator.getPlatform(),
             dnt: false,
             tch: ParamsCreator.getTouch(),
-            pageTag: NeuroID.getScreenName(),
+            url: NeuroID.getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
             jsv: NeuroID.getSDKVersion(),
+            metadata: NIDMetadata(),
             sh: UIScreen.main.bounds.height,
-            sw: UIScreen.main.bounds.width,
-            metadata: NIDMetadata()
+            sw: UIScreen.main.bounds.width
         )
     }
 
@@ -248,10 +248,10 @@ extension NeuroID {
         }
 
         NeuroID._isSDKStarted = false
-        
+
         NeuroID.sendCollectionEventsJob.cancel()
         NeuroID.sendGyroAccelCollectionWorkItem.cancel()
-        
+
         configService.clearSiteIDMap()
     }
 

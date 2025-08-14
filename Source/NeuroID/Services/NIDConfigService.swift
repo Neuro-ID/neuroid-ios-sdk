@@ -168,10 +168,9 @@ class NIDConfigService: ConfigServiceProtocol {
         guard let jsonData = try? encoder.encode(configData) else { return }
           
         if let jsonString = String(data: jsonData, encoding: .utf8) {
-            // log current config
-            let cachedConfigLog = NIDEvent(sessionEvent: NIDSessionEventName.configCached)
-            cachedConfigLog.v = jsonString
-            NeuroID.saveEventToDataStore(cachedConfigLog)
+            NeuroID.saveEventToDataStore(
+                NIDEvent(type: .configCached, v: jsonString)
+            )
         } else {
             NeuroID.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to parse config")
@@ -186,8 +185,8 @@ class NIDConfigService: ConfigServiceProtocol {
                 NeuroID.saveEventToDataStore(
                     NIDEvent(
                         type: NIDEventName.updateIsSampledStatus,
-                        level: "INFO",
-                        m: "\(nonNullSiteID) : \(nonNullFlag)"
+                        m: "\(nonNullSiteID) : \(nonNullFlag)",
+                        level: "INFO"
                     )
                 )
                 return
@@ -198,8 +197,8 @@ class NIDConfigService: ConfigServiceProtocol {
         NeuroID.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateIsSampledStatus,
-                level: "INFO",
-                m: "\(siteID ?? "unknownSiteID") : \(false)"
+                m: "\(siteID ?? "unknownSiteID") : \(false)",
+                level: "INFO"
             )
         )
     }

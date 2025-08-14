@@ -7,7 +7,7 @@
 
 import DSJSONSchemaValidation
 import JSONSchema
-import NeuroID
+@testable import NeuroID
 import XCTest
 
 class PayloadTest: XCTestCase {
@@ -35,7 +35,7 @@ class PayloadTest: XCTestCase {
 
     func testPayloadSchema() {
         do {
-            let entity = NIDEvent(type: .radioChange, tg: ["url": TargetValue.string("clay")], view: UIView())
+            let entity = NIDEvent(type: .radioChange, tg: ["url": TargetValue.string("clay")])
             let neuroHTTPRequest = NeuroHTTPRequest(
                 clientID: "1",
                 environment: NeuroID.getEnvironment(),
@@ -58,7 +58,7 @@ class PayloadTest: XCTestCase {
             if let JSONString = String(data: data, encoding: String.Encoding.utf8) {
                 print(JSONString)
             }
-            let validate = try JSONSchema.validate(object, schema: self.schema)
+            let validate = JSONSchema.validate(object, schema: self.schema)
             switch validate {
             case .valid:
                 XCTAssert(true)
@@ -75,7 +75,7 @@ class PayloadTest: XCTestCase {
     func testNewPayloadSchema() {
         do {
             let schema = try DSJSONSchema(data: data, baseURI: nil, referenceStorage: nil, specification: DSJSONSchemaSpecification.draft6(), options: nil)
-            let entity = NIDEvent(type: .radioChange, tg: ["url": TargetValue.string("clay")], view: UIView())
+            let entity = NIDEvent(type: .radioChange, tg: ["url": TargetValue.string("clay")])
             let neuroHTTPRequest = NeuroHTTPRequest(
                 clientID: "A0CDADAD-1BD3-4570-AA8E-AFF517EFC775",
                 environment: NeuroID.getEnvironment(),

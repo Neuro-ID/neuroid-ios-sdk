@@ -74,14 +74,16 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
 
             self.getConnectionType(path)
 
-            let nidEvent = NIDEvent(type: .networkState)
-            nidEvent.iswifi = self._connectionType == .wifi
-            nidEvent.isconnected = connectionStatus
-            nidEvent.attrs = [
-                Attrs(n: "connectionType", v: "\(self.connectionType)"),
-            ]
-
-            NeuroID.saveEventToLocalDataStore(nidEvent)
+            NeuroID.saveEventToLocalDataStore(
+                NIDEvent(
+                    type: .networkState,
+                    attrs: [
+                        Attrs(n: "connectionType", v: "\(self.connectionType)"),
+                    ],
+                    iswifi: self._connectionType == .wifi,
+                    isconnected: connectionStatus
+                )
+            )
 
             if connectionStatus != self.isConnected {
                 self.isConnected = connectionStatus

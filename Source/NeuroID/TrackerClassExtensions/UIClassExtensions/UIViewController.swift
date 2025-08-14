@@ -79,12 +79,6 @@ public extension UIViewController {
         tracker?.captureEvent(event: event)
 //        }
     }
-
-    func captureEvent(eventName: NIDEventName, params: [String: TargetValue]? = nil) {
-        let event = NIDEvent(type: eventName, tg: params, view: view)
-
-        captureEvent(event: event)
-    }
 }
 
 extension UIViewController {
@@ -200,46 +194,46 @@ extension UIViewController {
                 return
             }
 
-            let event = NIDEvent(type: NIDEventName.windowResize)
-
-            event.w = UIScreen.main.bounds.size.width
-            event.h = UIScreen.main.bounds.size.height - keyboardFrame.size.height
-            event.x = keyboardFrame.origin.x
-            event.y = keyboardFrame.origin.y
-            event.tgs = view.id
-            event.attrs = [
-                Attrs(n: "inSafeArea", v: "\(inSafeArea)"),
-                Attrs(n: "appear", v: "\(true)"),
-
-                Attrs(n: "keyboardW", v: "\(keyboardFrame.size.width)"),
-                Attrs(n: "keyboardH", v: "\(keyboardFrame.size.height)"),
-                Attrs(n: "keyboardX", v: "\(keyboardFrame.origin.x)"),
-                Attrs(n: "keyboardY", v: "\(keyboardFrame.origin.y)"),
-                Attrs(n: "screenHeightTotal", v: "\(UIScreen.main.bounds.size.height)"),
-                Attrs(n: "screenWidthTotal", v: "\(UIScreen.main.bounds.size.width)"),
-            ]
-
-            // Make sure we have a valid url set
-            event.url = nidClassName
-            NeuroID.saveEventToLocalDataStore(event, screen: nidClassName)
+            NeuroID.saveEventToLocalDataStore(
+                NIDEvent(
+                    type: NIDEventName.windowResize,
+                    tgs: view.id,
+                    x: keyboardFrame.origin.x,
+                    y: keyboardFrame.origin.y,
+                    h: UIScreen.main.bounds.size.height - keyboardFrame.size.height,
+                    w: UIScreen.main.bounds.size.width,
+                    url: nidClassName,
+                    attrs: [
+                        Attrs(n: "inSafeArea", v: "\(inSafeArea)"),
+                        Attrs(n: "appear", v: "\(true)"),
+                        Attrs(n: "keyboardW", v: "\(keyboardFrame.size.width)"),
+                        Attrs(n: "keyboardH", v: "\(keyboardFrame.size.height)"),
+                        Attrs(n: "keyboardX", v: "\(keyboardFrame.origin.x)"),
+                        Attrs(n: "keyboardY", v: "\(keyboardFrame.origin.y)"),
+                        Attrs(n: "screenHeightTotal", v: "\(UIScreen.main.bounds.size.height)"),
+                        Attrs(n: "screenWidthTotal", v: "\(UIScreen.main.bounds.size.width)"),
+                    ]
+                ),
+                screen: nidClassName
+            )
         }
     }
 
     @objc func keyboardWillHide(notification: Notification) {
         // Handle keyboard will hide event - Does not recieve any X, Y, W, H information
 
-        let event = NIDEvent(type: NIDEventName.windowResize)
-
-        event.w = UIScreen.main.bounds.size.width
-        event.h = UIScreen.main.bounds.size.height
-        event.tgs = view.id
-        event.attrs = [
-            Attrs(n: "appear", v: "\(false)"),
-        ]
-
-        // Make sure we have a valid url set
-        event.url = nidClassName
-
-        NeuroID.saveEventToLocalDataStore(event, screen: nidClassName)
+        NeuroID.saveEventToLocalDataStore(
+            NIDEvent(
+                type: NIDEventName.windowResize,
+                tgs: view.id,
+                h: UIScreen.main.bounds.size.height,
+                w: UIScreen.main.bounds.size.width,
+                url: nidClassName,
+                attrs: [
+                    Attrs(n: "appear", v: "\(false)"),
+                ]
+            ),
+            screen: nidClassName
+        )
     }
 }

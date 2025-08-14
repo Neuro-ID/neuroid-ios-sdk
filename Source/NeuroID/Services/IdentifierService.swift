@@ -140,11 +140,11 @@ class IdentifierService: IdentifierServiceProtocol {
 
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                rawEventType: type == .sessionID
-                    ? NIDSessionEventName.setUserId.rawValue
+                type: type == .sessionID
+                    ? .setUserId
                     : type == .registeredUserID
-                    ? NIDSessionEventName.setRegisteredUserId.rawValue
-                    : NIDEventName.attemptedLogin.rawValue,
+                    ? .setRegisteredUserId
+                    : .attemptedLogin,
                 uid: identifier
             )
         )
@@ -210,28 +210,28 @@ class IdentifierService: IdentifierServiceProtocol {
     func sendOriginEvent(_ originResult: SessionIDOriginalResult) {
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                sessionEvent: .setVariable,
+                type: .setVariable,
                 key: "sessionIdCode",
                 v: originResult.originCode
             )
         )
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                sessionEvent: .setVariable,
+                type: .setVariable,
                 key: "sessionIdSource",
                 v: originResult.origin
             )
         )
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                sessionEvent: .setVariable,
+                type: .setVariable,
                 key: "sessionId",
                 v: "\(originResult.idValue)"
             )
         )
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                sessionEvent: .setVariable,
+                type: .setVariable,
                 key: "sessionIdType",
                 v: originResult.idType.rawValue
             )

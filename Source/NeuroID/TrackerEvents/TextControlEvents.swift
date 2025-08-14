@@ -67,13 +67,21 @@ extension NeuroIDTracker {
                 let textControl = notification.object as! UITextField
                 _ = NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
-                UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
+                UtilFunctions.captureTextEvents(
+                    view: textControl,
+                    textValue: textControl.text ?? "",
+                    eventType: eventType
+                )
 
             case is UITextView:
                 let textControl = notification.object as! UITextView
                 _ = NeuroIDTracker.registerViewIfNotRegistered(view: textControl)
 
-                UtilFunctions.captureTextEvents(view: textControl, textValue: textControl.text ?? "", eventType: eventType)
+                UtilFunctions.captureTextEvents(
+                    view: textControl,
+                    textValue: textControl.text ?? "",
+                    eventType: eventType
+                )
 
             default:
                 NeuroID.logger.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
@@ -81,11 +89,20 @@ extension NeuroIDTracker {
 
         // DO WE WANT THIS?
         if let textControl = notification.object as? UISearchBar {
-            let id = textControl.id
-            let tg = ParamsCreator.getTGParamsForInput(eventName: eventType, view: textControl, type: "UISearchBar", attrParams: nil)
-            let searchEvent = NIDEvent(type: eventType, tg: tg)
-            searchEvent.tgs = TargetValue.string(id).toString()
-            captureEvent(event: searchEvent)
+            let tg = ParamsCreator.getTGParamsForInput(
+                eventName: eventType,
+                view: textControl,
+                type: "UISearchBar",
+                attrParams: nil
+            )
+
+            captureEvent(
+                event: NIDEvent(
+                    type: eventType,
+                    tg: tg,
+                    tgs: TargetValue.string(textControl.id).toString()
+                )
+            )
         }
     }
 }

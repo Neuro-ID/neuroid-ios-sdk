@@ -18,18 +18,26 @@ extension NeuroIDTracker {
     @objc func deviceRotated(notification: Notification) {
         let orientation: String = ParamsCreator.getOrientation()
 
+        let viewId = TargetValue.string("")
+        let tg = [
+            "\(Constants.orientationKey.rawValue)": TargetValue.string(orientation),
+            "\(Constants.tgsKey.rawValue)": viewId
+        ]
+
         captureEvent(
             event: NIDEvent(
                 type: NIDEventName.windowOrientationChange,
-                tg: ["\(Constants.orientationKey.rawValue)": TargetValue.string(orientation)],
-                view: nil
+                tg: tg,
+                tgs: viewId.toString(),
+                url: NeuroID.getScreenName() ?? ""
             )
         )
         captureEvent(
             event: NIDEvent(
                 type: NIDEventName.deviceOrientation,
-                tg: ["\(Constants.orientationKey.rawValue)": TargetValue.string(orientation)],
-                view: nil
+                tg: tg,
+                tgs: viewId.toString(),
+                url: NeuroID.getScreenName() ?? ""
             )
         )
     }

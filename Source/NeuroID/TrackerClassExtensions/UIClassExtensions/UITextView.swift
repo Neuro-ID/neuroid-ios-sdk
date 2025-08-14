@@ -137,16 +137,13 @@ extension UITextView {
 
     func touchEvent(sender: UIView, eventName: NIDEventName, touches: Set<UITouch>) {
         let touchArray = UtilFunctions.extractTouchInfoFromTouchArray(touches)
-        let tg = ParamsCreator.getTgParams(
-            view: sender,
-            extraParams: [
-                "sender": TargetValue.string(sender.nidClassName),
-                "location": TargetValue.string("UITextViewSwizzle"),
-            ])
 
-        let event = NIDEvent(type: eventName, tg: tg, view: sender)
-        event.touches = touchArray
-
-        NeuroID.saveEventToDataStore(event)
+        NeuroID.saveEventToDataStore(
+            UtilFunctions.createTouchEvent(
+                sender: sender,
+                eventName: eventName,
+                location: "UITextViewSwizzle",
+                touches: touchArray)
+        )
     }
 }

@@ -32,18 +32,14 @@ extension NeuroIDTracker {
     func touchEvent(sender: UIView, eventName: NIDEventName, event: UIEvent) {
         let touchArray = UtilFunctions.extractTouchesFromEvent(uiView: sender, event: event)
 
-        let tg = ParamsCreator.getTgParams(
-            view: sender,
-            extraParams: [
-                "sender": TargetValue.string(sender.nidClassName),
-                "location": TargetValue.string("UIControlSwizzle"),
-            ]
+        captureEvent(event:
+            UtilFunctions.createTouchEvent(
+                sender: sender,
+                eventName: eventName,
+                location: "UIControlSwizzle",
+                touches: touchArray
+            )
         )
-
-        let nidEvent = NIDEvent(type: eventName, tg: tg, view: sender)
-        nidEvent.touches = touchArray
-
-        captureEvent(event: nidEvent)
     }
 }
 
@@ -102,16 +98,19 @@ func captureTouchEvent(
     ]
 
     var attrs: [Attrs] = []
-
     for (key, value) in extraAttr {
         attrs.append(Attrs(n: key, v: value))
     }
 
-    let newEvent = NIDEvent(type: type, tg: tg)
-    newEvent.tgs = viewName
-    newEvent.attrs = attrs
-    newEvent.touches = touchArray
-    // Make sure we have a valid url set
-    newEvent.url = NeuroID.getScreenName()
-    NeuroID.saveEventToLocalDataStore(newEvent, screen: viewClass)
+    NeuroID.saveEventToLocalDataStore(
+        NIDEvent(
+            type: type,
+            tg: tg,
+            tgs: viewName,
+            url: NeuroID.getScreenName(),
+            attrs: attrs,
+            touches: touchArray
+        ),
+        screen: viewClass
+    )
 }

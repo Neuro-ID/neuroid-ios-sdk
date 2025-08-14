@@ -23,41 +23,7 @@ class NIDEventTests: XCTestCase {
         NeuroID.datastore.removeSentEvents()
         NeuroID.currentScreenName = nil
     }
-    
-    func initV6BasicTests(
-        nidEvent: NIDEvent,
-        screenName: String = "",
-        eventType: NIDEventName = NIDEventName.blur,
-        tgs: String = "",
-        tgCount: Int = 1,
-        x: CGFloat? = nil,
-        y: CGFloat? = nil,
-        touchesNil: Bool = true)
-    {
-        assert(nidEvent.type == eventType.rawValue)
-        
-        if (nidEvent.url?.hasPrefix("/")) == true {
-            assert(nidEvent.url == "/\(screenName)")
-        } else {
-            assert(nidEvent.url == screenName)
-        }
-
-        assert(nidEvent.tgs == tgs)
-        
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == tgCount)
-        assert(nidEvent.tg?["\(Constants.tgsKey.rawValue)"]?.toString() == tgs)
-        
-        assert(nidEvent.x == x)
-        assert(nidEvent.y == y)
-        
-        if touchesNil {
-            assert(nidEvent.touches == nil)
-        } else {
-            assert(nidEvent.touches != nil)
-        }
-    }
-    
+ 
     func dictionaryTests(dict: [String: Any?], expectedV: String) {
         let actualType = dict["type"] ?? ""
         let actualV = dict["v"] ?? ""
@@ -98,12 +64,22 @@ class NIDEventTests: XCTestCase {
         NeuroID.manuallyRegisterTarget(view: textfield)
         NeuroID.manuallyRegisterTarget(view: button)
         /// Create touch event
-        let tg = ParamsCreator.getTgParams(
+        var tg = ParamsCreator.getTgParams(
             view: textfield,
             extraParams: ["sender": TargetValue.string(textfield.nidClassName)])
         
-        let touch = NIDEvent(type: .touchStart, tg: tg, view: textfield)
-        tracker?.captureEvent(event: touch)
+        let viewId = TargetValue.string(textfield.id)
+        tg["\(Constants.tgsKey.rawValue)"] = viewId
+        
+        tracker?.captureEvent(event: NIDEvent(
+            type: .touchStart,
+            tg: tg,
+            tgs: viewId.toString(),
+            x: textfield.frame.origin.x,
+            y: textfield.frame.origin.y,
+            url: UtilFunctions.getFullViewlURLPath(
+                currView: textfield
+            )))
         /// Create Focus event
         let focusBlurEvent = NIDEvent(type: .focus, tg: [
             "\(Constants.tgsKey.rawValue)": TargetValue.string(textfield.id),
@@ -144,12 +120,22 @@ class NIDEventTests: XCTestCase {
         tracker?.captureEvent(event: textChangeEvent)
         
         /// Touch a button
-        let tg2 = ParamsCreator.getTgParams(
+        var tg2 = ParamsCreator.getTgParams(
             view: button,
             extraParams: ["sender": TargetValue.string(button.nidClassName)])
         
-        let touch2 = NIDEvent(type: .touchStart, tg: tg2, view: button)
-        tracker?.captureEvent(event: touch2)
+        let viewId2 = TargetValue.string(button.id)
+        tg2["\(Constants.tgsKey.rawValue)"] = viewId2
+
+        tracker?.captureEvent(event: NIDEvent(
+            type: .touchStart,
+            tg: tg2,
+            tgs: viewId2.toString(),
+            x: button.frame.origin.x,
+            y: button.frame.origin.y,
+            url: UtilFunctions.getFullViewlURLPath(
+                currView: button
+            )))
         
         /// Get all events
         let events = NeuroID.datastore.getAllEvents()
@@ -196,212 +182,12 @@ class NIDEventTests: XCTestCase {
         assert(nidEvent.type == NIDEventName.blur.rawValue)
     }
     
-    func test_init_2() {
-        let nidEvent = NIDEvent(sessionEvent: NIDSessionEventName.setVariable)
-        
-        assert(nidEvent.type == NIDSessionEventName.setVariable.rawValue)
-    }
-    
     func test_init_3() {
         let nidEvent = NIDEvent(rawType: "testRaw")
         
         assert(nidEvent.type == "testRaw")
     }
 
-    func test_init_4() {
-        let nidEvent = NIDEvent(session: .createSession)
-        
-        assert(nidEvent.type == NIDSessionEventName.createSession.rawValue)
-        assert(nidEvent.f == nil)
-    }
-    
-    func test_init_4_1() {
-        let nidEvent = NIDEvent(
-            session: .createSession,
-            f: "test1",
-            sid: "test2",
-            lsid: "test3",
-            cid: "test4",
-            did: "test5",
-            loc: "test6",
-            ua: "test7",
-            tzo: 0,
-            lng: "test8",
-            p: "test9",
-            dnt: false,
-            tch: true,
-            pageTag: "testURL",
-            ns: "test10",
-            jsv: "test11",
-            gyro: NIDSensorData(axisX: 0, axisY: 0, axisZ: 0),
-            accel: NIDSensorData(axisX: 0, axisY: 0, axisZ: 0),
-            rts: "test12",
-            sh: 0.1,
-            sw: 0.2,
-            metadata: NIDMetadata())
-        
-        assert(nidEvent.type == NIDSessionEventName.createSession.rawValue)
-        assert(nidEvent.f == "test1")
-        assert(nidEvent.sid == "test2")
-        assert(nidEvent.lsid == "test3")
-        assert(nidEvent.cid == "test4")
-        assert(nidEvent.did == "test5")
-        assert(nidEvent.loc == "test6")
-        assert(nidEvent.ua == "test7")
-        assert(nidEvent.tzo == 0)
-        assert(nidEvent.lng == "test8")
-        assert(nidEvent.p == "test9")
-        assert(nidEvent.dnt == false)
-        assert(nidEvent.tch == true)
-        assert(nidEvent.url == "testURL")
-        assert(nidEvent.ns == "test10")
-        assert(nidEvent.jsv == "test11")
-        assert(nidEvent.gyro != nil)
-        assert(nidEvent.accel != nil)
-        assert(nidEvent.rts == "test12")
-        assert(nidEvent.sh == 0.1)
-        assert(nidEvent.sw == 0.2)
-        assert(nidEvent.metadata != nil)
-    }
-    
-    func test_init_5() {
-        let nidEvent = NIDEvent(type: .blur, tg: nil)
-        
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.tg == nil)
-    }
-    
-    func test_init_5_1() {
-        let nidEvent = NIDEvent(
-            type: .blur,
-            tg: ["foo": TargetValue.string("bar")])
-        
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.tg != nil)
-        assert(nidEvent.tg?.count == 1)
-        assert(nidEvent.tg?["foo"]?.toString() == "bar")
-    }
-    
-    func test_init_6() {
-        let screenName = "myTestScreenName"
-        NeuroID.currentScreenName = screenName
-        let nidEvent = NIDEvent(
-            type: .blur,
-            tg: nil,
-            view: nil)
-        
-        initV6BasicTests(nidEvent: nidEvent, screenName: screenName)
-    }
-    
-    func test_init_6_1() {
-        let screenName = "myTestScreenName"
-        NeuroID.currentScreenName = screenName
-        let nidEvent = NIDEvent(
-            type: .blur,
-            tg: ["foo": TargetValue.string("bar")],
-            view: nil)
-        
-        initV6BasicTests(nidEvent: nidEvent, screenName: screenName, tgCount: 2)
-        assert(nidEvent.tg?["foo"]?.toString() == "bar")
-    }
-    
-    func test_init_6_2() {
-        let uiId = "testUIViewId"
-        let uiView = UIView()
-        uiView.id = uiId
-        
-        let screenName = "UIView"
-        
-        let nidEvent = NIDEvent(
-            type: .blur,
-            tg: nil,
-            view: uiView)
-        
-        initV6BasicTests(nidEvent: nidEvent, screenName: screenName, tgs: uiId, x: 0.0, y: 0.0)
-    }
-    
-    func test_init_6_2_1() {
-        let screenName = "UIView"
-        NeuroID.currentScreenName = screenName
-        
-        let uiId = "testUIViewId"
-        let uiView = UIView()
-        uiView.id = uiId
-        
-        let nidEvent = NIDEvent(
-            type: .blur,
-            tg: nil,
-            view: uiView)
-        
-        initV6BasicTests(nidEvent: nidEvent, screenName: screenName, tgs: uiId, x: 0.0, y: 0.0)
-    }
-    
-    func test_init_6_3() {
-        let nidEvent = NIDEvent(
-            type: .touchStart,
-            tg: nil,
-            view: nil)
-        
-        initV6BasicTests(nidEvent: nidEvent, eventType: .touchStart, touchesNil: false)
-        
-        assert(nidEvent.touches?.count == 1)
-    }
-    
-    func test_init_6_3_1() {
-        let screenName = "UIView"
-        let uiView = UIView()
-        
-        let nidEvent = NIDEvent(
-            type: .touchStart,
-            tg: nil,
-            view: uiView)
-        
-        initV6BasicTests(
-            nidEvent: nidEvent,
-            screenName: screenName,
-            eventType: .touchStart,
-            tgs: "UIView_UNKNOWN_NO_ID_SET_\(uiView.description.hashValue)",
-            touchesNil: false)
-
-        assert(nidEvent.touches?.count == 1)
-    }
-    
-    func test_init_6_3_2() {
-        let nidEvent = NIDEvent(
-            type: .touchMove,
-            tg: nil,
-            view: nil)
-        
-        initV6BasicTests(
-            nidEvent: nidEvent,
-            eventType: .touchMove,
-            touchesNil: false)
-    }
-    
-    func test_init_6_3_3() {
-        let nidEvent = NIDEvent(
-            type: .touchEnd,
-            tg: nil,
-            view: nil)
-        
-        initV6BasicTests(
-            nidEvent: nidEvent,
-            eventType: .touchEnd,
-            touchesNil: false)
-    }
-    
-    func test_init_6_3_4() {
-        let nidEvent = NIDEvent(
-            type: .touchCancel,
-            tg: nil,
-            view: nil)
-        
-        initV6BasicTests(
-            nidEvent: nidEvent,
-            eventType: .touchCancel,
-            touchesNil: false)
-    }
-    
     func test_asDictionary() {
         let expectedV = "value"
         

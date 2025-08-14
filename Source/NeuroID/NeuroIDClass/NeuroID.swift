@@ -278,15 +278,17 @@ public class NeuroID: NSObject {
     static func captureApplicationMetaData() {
         let appMetaData = getAppMetaData()
 
-        let event = NIDEvent(type: .applicationMetaData)
-        event.attrs = [
-            Attrs(n: "versionName", v: appMetaData?.versionName ?? "N/A"),
-            Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
-            Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
-            Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
-        ]
-
-        saveEventToDataStore(event)
+        saveEventToDataStore(
+            NIDEvent(
+                type: .applicationMetaData,
+                attrs: [
+                    Attrs(n: "versionName", v: appMetaData?.versionName ?? "N/A"),
+                    Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
+                    Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
+                    Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
+                ]
+            )
+        )
     }
 
     static func getAppMetaData() -> ApplicationMetaData? {
