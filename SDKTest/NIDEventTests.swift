@@ -20,7 +20,7 @@ class NIDEventTests: XCTestCase {
     
     override func setUp() {
         // Clear out the DataStore Events after each test
-        NeuroID.datastore.removeSentEvents()
+        NeuroID.shared.datastore.removeSentEvents()
         NeuroID.currentScreenName = nil
     }
  
@@ -138,7 +138,7 @@ class NIDEventTests: XCTestCase {
             )))
         
         /// Get all events
-        let events = NeuroID.datastore.getAllEvents()
+        let events = NeuroID.shared.datastore.getAllEvents()
         /// Create http request
         let tabId = ParamsCreator.getTabId()
         

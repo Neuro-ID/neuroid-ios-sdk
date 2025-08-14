@@ -174,16 +174,16 @@ public class NeuroIDTracker: NSObject {
             // UNSUPPORTED AS OF RIGHT NOW
             case is UIPickerView:
                 let element = v as! UIPickerView
-                NeuroID.logger.d(tag: "NeuroID FE:", "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
+                NeuroID.shared.logger.d(tag: "NeuroID FE:", "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)")
 
             case is UITableViewCell:
                 // swiftUI list
                 let element = v as! UITableViewCell
-                NeuroID.logger.d(tag: "NeuroID FE:", "Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
+                NeuroID.shared.logger.d(tag: "NeuroID FE:", "Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
 
             case is UIScrollView:
                 let element = v as! UIScrollView
-                NeuroID.logger.d(tag: "NeuroID FE:", "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
+                NeuroID.shared.logger.d(tag: "NeuroID FE:", "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
                 
             default:
                 if !found {

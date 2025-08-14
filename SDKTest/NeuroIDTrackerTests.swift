@@ -27,7 +27,7 @@ class NeuroIDTrackerTests: BaseTestClass {
         _ = NeuroID.stop()
         
         // Clear out the DataStore Events after each test
-        NeuroID.datastore.removeSentEvents()
+        NeuroID.shared.datastore.removeSentEvents()
     }
     
     func sleep(timeout: Double) {
@@ -46,7 +46,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     }
     
     func assertEventTypeCount(type: String, expectedCount: Int) -> [NIDEvent] {
-        let dataStoreEvents = NeuroID.datastore.getAllEvents()
+        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
         let filteredEvents = dataStoreEvents.filter { $0.type == type }
         
         assert(filteredEvents.count == expectedCount)
@@ -63,7 +63,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     }
     
     func assertViewNOTRegistered(v: UIView) {
-        let dataStoreEvents = NeuroID.datastore.getAllEvents()
+        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
         let filteredEvent = dataStoreEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(filteredEvent.count == 0)
         

@@ -23,11 +23,11 @@ class TouchEventTests: XCTestCase {
         _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
-        NeuroID.datastore.removeSentEvents()
+        NeuroID.shared.datastore.removeSentEvents()
     }
 
     func assertEventTypeCount(type: String, expectedCount: Int) {
-        let dataStoreEvents = NeuroID.datastore.getAllEvents()
+        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
         let filteredEvents = dataStoreEvents.filter { $0.type == type }
 
         assert(filteredEvents.count == expectedCount)

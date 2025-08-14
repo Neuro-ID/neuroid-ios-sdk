@@ -64,7 +64,7 @@ class NIDScreenTests: BaseTestClass {
         assert(value != "test%20Screen")
         assert(screenNameSet == false)
 
-        let allEvents = NeuroID.datastore.getAllEvents()
+        let allEvents = NeuroID.shared.datastore.getAllEvents()
         assert(allEvents.count == 0)
     }
 }

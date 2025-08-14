@@ -13,7 +13,7 @@ class NIDNewSessionTests: BaseTestClass {
         // skip all tests in this class, remove this line to re-enabled tests
 //        throw XCTSkip("Skipping all tests in this class.")
 
-        NeuroID.configService = MockConfigService()
+        NeuroID.shared.configService = MockConfigService()
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         NeuroID._isTesting = true
 
@@ -146,7 +146,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_resumeCollection() {
         NeuroID._isSDKStarted = false
-        NeuroID.identifierService.sessionID = "temp"
+        NeuroID.shared.identifierService.sessionID = "temp"
 
         NeuroID.resumeCollection()
 
@@ -155,7 +155,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_willNotResumeCollectionIfNotStarted() {
         NeuroID._isSDKStarted = false
-        NeuroID.identifierService.sessionID = nil
+        NeuroID.shared.identifierService.sessionID = nil
         NeuroID.resumeCollection()
 
         assert(!NeuroID._isSDKStarted)
@@ -196,7 +196,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_clearSendOldFlowEvents_not_sampled() {
         dataStore.events.append(NIDEvent(rawType: "test"))
-        NeuroID.configService = MockConfigService()
+        NeuroID.shared.configService = MockConfigService()
 
         NeuroID.clearSendOldFlowEvents {
             assert(self.dataStore.events.count == 0)
@@ -207,10 +207,10 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_clearSendOldFlowEvents_sampled() {
         dataStore.events.append(NIDEvent(rawType: "test"))
-        NeuroID.configService = MockConfigService()
+        NeuroID.shared.configService = MockConfigService()
 
         let mockNetwork = MockNetworkService()
-        NeuroID.networkService = mockNetwork
+        NeuroID.shared.networkService = mockNetwork
 
         NeuroID._isSDKStarted = true
 

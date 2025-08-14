@@ -15,13 +15,13 @@ class SessionTests: XCTestCase {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
 
         NeuroID._isSDKStarted = true
-        NeuroID.datastore.removeSentEvents()
+        NeuroID.shared.datastore.removeSentEvents()
     }
 
     func testRandom() throws {
         let dictRandom = ["events": "eventstringt", "status": "pending"]
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
-            NeuroID.logger.log(key)
+            NeuroID.shared.logger.log(key)
         }
     }
 

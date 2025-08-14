@@ -29,8 +29,8 @@ class IdentifierServiceTests: BaseTestClass {
             eventStorageService: EventStorageService()
         )
 
-        NeuroID.identifierService = identifierService
-        NeuroID.datastore = dataStore
+        NeuroID.shared.identifierService = identifierService
+        NeuroID.shared.datastore = dataStore
     }
 
     override func tearDown() {

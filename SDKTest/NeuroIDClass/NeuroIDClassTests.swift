@@ -23,7 +23,7 @@ class NeuroIDClassTests: BaseTestClass {
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
         NeuroID._isTesting = true
-        NeuroID.datastore = dataStore
+        NeuroID.shared.datastore = dataStore
     }
 
     override func tearDown() {
@@ -36,7 +36,7 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_getAdvDeviceLatency() {
         let mockService = MockDeviceSignalService()
-        NeuroID.deviceSignalService = mockService
+        NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))

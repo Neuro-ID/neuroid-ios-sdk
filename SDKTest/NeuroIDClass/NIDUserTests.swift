@@ -18,7 +18,7 @@ class NIDUserTests: BaseTestClass {
     override func setUp() {
         NeuroID._isSDKStarted = true
         NeuroID._isTesting = true
-        NeuroID.datastore = dataStore
+        NeuroID.shared.datastore = dataStore
     }
 
     override func tearDown() {
@@ -32,7 +32,7 @@ class NIDUserTests: BaseTestClass {
     func test_getSessionID_objectLevel() {
         let expectedValue = "test_uid"
 
-        NeuroID.identifierService.sessionID = expectedValue
+        NeuroID.shared.identifierService.sessionID = expectedValue
 
         let value = NeuroID.getSessionID()
 
@@ -43,7 +43,7 @@ class NIDUserTests: BaseTestClass {
     func test_getSessionID_dataStore() {
         let expectedValue = "test_uid"
 
-        NeuroID.identifierService.sessionID = nil
+        NeuroID.shared.identifierService.sessionID = nil
 
         let value = NeuroID.getSessionID()
 
@@ -54,14 +54,14 @@ class NIDUserTests: BaseTestClass {
     func test_getRegisteredUserID_objectLevel() {
         let expectedValue = "test_uid"
 
-        NeuroID.identifierService.registeredUserID = expectedValue
+        NeuroID.shared.identifierService.registeredUserID = expectedValue
 
         let value = NeuroID.getRegisteredUserID()
 
         assert(NeuroID.registeredUserID == expectedValue)
         assert(value == expectedValue)
 
-        NeuroID.identifierService.registeredUserID = ""
+        NeuroID.shared.identifierService.registeredUserID = ""
     }
 
     func test_attemptedLoginWthUID() {
@@ -79,7 +79,7 @@ class NIDUserTests: BaseTestClass {
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
 
-        let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
+        let allEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
 
         XCTAssertTrue(validID)
@@ -90,7 +90,7 @@ class NIDUserTests: BaseTestClass {
 
     func test_attemptedLoginWithInvalidID() {
         let invalidID = NeuroID.attemptedLogin("🤣")
-        let allEvents = NeuroID.datastore.getAllEvents()
+        let allEvents = NeuroID.shared.datastore.getAllEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
 
         XCTAssert(event.count == 1)
@@ -105,7 +105,7 @@ class NIDUserTests: BaseTestClass {
 
         assertQueuedEventTypeAndCount(type: "LOG", count: 2)
         assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-        let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
+        let allEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssert(event.count == 1)
         XCTAssertTrue(invalidID)
@@ -130,7 +130,7 @@ class NIDUserTests: BaseTestClass {
             originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue,
             queued: true
         )
-        let allEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
+        let allEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
         let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
         XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
     }

@@ -46,7 +46,7 @@ class NIDRegistrationTests: BaseTestClass {
 
         assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
 
-        let allEvents = NeuroID.datastore.getAllEvents()
+        let allEvents =  NeuroID.shared.datastore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(validEvents[0].tgs == "wow")
         assert(validEvents[0].et == "UITextField::UITextField")

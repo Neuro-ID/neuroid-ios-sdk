@@ -21,7 +21,7 @@ public extension NeuroID {
     // This command replaces `setUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static func identify(_ sessionID: String) -> Bool {
-        return NeuroID.identifierService.setSessionID(sessionID, true)
+        return NeuroID.shared.identifierService.setSessionID(sessionID, true)
     }
 
     // This command replaces `getUserID`
@@ -35,7 +35,7 @@ public extension NeuroID {
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
-        return NeuroID.identifierService.setRegisteredUserID(registeredUserID)
+        return NeuroID.shared.identifierService.setRegisteredUserID(registeredUserID)
     }
 
     /**
@@ -43,7 +43,7 @@ public extension NeuroID {
      @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
     static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
-        let validID = NeuroID.identifierService.setGenericIdentifier(
+        let validID = NeuroID.shared.identifierService.setGenericIdentifier(
             identifier: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation",
             type: .attemptedLogin,
             userGenerated: attemptedRegisteredUserId != nil,

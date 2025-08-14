@@ -28,7 +28,7 @@ class NIDNetworkServiceImpl: NetworkServiceProtocol {
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int = 0, completion: @escaping (AFDataResponse<Data>) -> Void) {
         let maxRetryCount = 3
 
-        configuration.timeoutIntervalForRequest = Double(NeuroID.configService.configCache.requestTimeout)
+        configuration.timeoutIntervalForRequest = Double(NeuroID.shared.configService.configCache.requestTimeout)
 
         afCustomSession.request(
             url,

@@ -60,7 +60,7 @@ public extension NeuroID {
         clearSessionVariables()
 
         // Stop listening to changes in call status
-        NeuroID.callObserver?.stopListeningToCallStatus()
+        NeuroID.shared.callObserver?.stopListeningToCallStatus()
 
         return true
     }
@@ -76,12 +76,12 @@ public extension NeuroID {
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
+        _ = NeuroID.shared.identifierService.logScrubbedIdentityAttempt(
             identifier: sessionID ?? "null",
             message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
         )
 
-        if !NeuroID.verifyClientKeyExists() || !NeuroID.validationService.validateSiteID(siteID) {
+        if !NeuroID.verifyClientKeyExists() || !NeuroID.shared.validationService.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
             NeuroID.linkedSiteID = nil
@@ -107,7 +107,7 @@ public extension NeuroID {
 
             // If SDK is already started, update sampleStatus and continue
             if NeuroID.isSDKStarted {
-                NeuroID.configService.updateIsSampledStatus(siteID: siteID)
+                NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
 
                 // capture CREATE_SESSION and METADATA events for new flow
                 saveEventToLocalDataStore(createNIDSessionEvent())
@@ -192,7 +192,7 @@ extension NeuroID {
     }
 
     static func createSession() {
-        configService.updateIsSampledStatus(siteID: linkedSiteID)
+        NeuroID.shared.configService.updateIsSampledStatus(siteID: linkedSiteID)
         saveEventToLocalDataStore(
             createNIDSessionEvent()
         )
@@ -236,7 +236,7 @@ extension NeuroID {
     }
 
     static func clearSessionVariables() {
-        NeuroID.identifierService.clearIDs()
+        NeuroID.shared.identifierService.clearIDs()
 
         NeuroID.linkedSiteID = nil
     }
@@ -252,7 +252,7 @@ extension NeuroID {
         NeuroID.sendCollectionEventsJob.cancel()
         NeuroID.sendGyroAccelCollectionWorkItem.cancel()
 
-        configService.clearSiteIDMap()
+        NeuroID.shared.configService.clearSiteIDMap()
     }
 
     /**
@@ -269,9 +269,9 @@ extension NeuroID {
         completion: @escaping () -> Void = {}
     ) {
         // Use config cache or if first time, retrieve from server
-        configService.retrieveOrRefreshCache()
+        NeuroID.shared.configService.retrieveOrRefreshCache()
 
-        NeuroID.configService.updateIsSampledStatus(siteID: siteID)
+        NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
 
         NeuroID._isSDKStarted = true
 
@@ -347,12 +347,12 @@ extension NeuroID {
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
 
-        _ = NeuroID.identifierService.logScrubbedIdentityAttempt(
+        _ = NeuroID.shared.identifierService.logScrubbedIdentityAttempt(
             identifier: finalSessionID,
             message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
         )
 
-        let validSessionID = NeuroID.identifierService.setSessionID(
+        let validSessionID = NeuroID.shared.identifierService.setSessionID(
             finalSessionID,
             userGenerated
         )
@@ -382,7 +382,7 @@ extension NeuroID {
 
     static func clearSendOldFlowEvents(completion: @escaping () -> Void = {}) {
         // if the session is being sampled we should send, else we don't want those events anyways
-        if NeuroID.configService.isSessionFlowSampled {
+        if NeuroID.shared.configService.isSessionFlowSampled {
             // immediately flush events before anything else
             NeuroID.send(forceSend: true) {
                 completion()
@@ -390,7 +390,7 @@ extension NeuroID {
             return
         } else {
             // if not sampled clear any events that might have slipped through
-            _ = NeuroID.datastore.getAndRemoveAllEvents()
+            _ = NeuroID.shared.datastore.getAndRemoveAllEvents()
 
             completion()
 

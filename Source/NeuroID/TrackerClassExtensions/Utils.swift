@@ -88,7 +88,7 @@ enum UtilFunctions {
 
     static func registerSubViewsTargets(controller: UIViewController) {
         // self
-        NeuroID.logger.d(tag: "\(Constants.registrationTag.rawValue)", "Registering Top Level UIViewController \(controller.nidClassName)")
+        NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "Registering Top Level UIViewController \(controller.nidClassName)")
 
         let allChildren = registerRecursiveUIViewController(controller: controller, parentTag: controller.nidClassName)
 
@@ -102,7 +102,7 @@ enum UtilFunctions {
                 continue
             }
 
-            NeuroID.logger.d(tag: "\(Constants.registrationTag.rawValue)", "    Registering Child UIViewController \(childController.1) - \(childController.0.nidClassName)")
+            NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "    Registering Child UIViewController \(childController.1) - \(childController.0.nidClassName)")
 
             guard let view = childController.0.viewIfLoaded else {
                 continue
@@ -114,7 +114,7 @@ enum UtilFunctions {
 
             for _view in subViewChildren {
                 let v = _view as! UIView
-                NeuroID.logger.d(tag: "\(Constants.registrationTag.rawValue)", "         Registering Single View \(childController.1)/\(v.nidClassName)")
+                NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "         Registering Single View \(childController.1)/\(v.nidClassName)")
 
                 NeuroIDTracker.registerSingleView(
                     v: _view,
@@ -160,7 +160,7 @@ enum UtilFunctions {
 
         NeuroID.saveEventToLocalDataStore(nidEvent)
 
-        NeuroID.logger.d(tag: "\(Constants.registrationTag.rawValue)", "            Registered View: \(className) - \(id)")
+        NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "            Registered View: \(className) - \(id)")
     }
 
     static func captureContextMenuAction(
@@ -245,7 +245,7 @@ enum UtilFunctions {
         hashValue: String,
         attrParams: [String: String]
     ) {
-        NeuroID.logger.d("Input = <\(textControl.id)>")
+        NeuroID.shared.logger.d("Input = <\(textControl.id)>")
         let eventTg = ParamsCreator.getTGParamsForInput(
             eventName: eventType,
             view: textControl,

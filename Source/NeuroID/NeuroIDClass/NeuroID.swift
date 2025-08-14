@@ -16,6 +16,7 @@ import WebKit
 
 public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
+    static let shared: NeuroID = .init()
 
     static var advancedDeviceKey: String? = nil
     static var clientKey: String?
@@ -23,30 +24,19 @@ public class NeuroID: NSObject {
     static var linkedSiteID: String?
 
     // Services
-    static var logger: LoggerProtocol = NIDLog()
-    static var datastore: DataStoreServiceProtocol = DataStore(logger: logger)
-    static var eventStorageService: EventStorageServiceProtocol = EventStorageService()
-    static var validationService: ValidationServiceProtocol = ValidationService(logger: logger)
-    static var configService: ConfigServiceProtocol = NIDConfigService(
-        logger: logger,
-        configRetrievalCallback: NeuroID.configSetupCompletion
-    )
-    static var identifierService: IdentifierServiceProtocol = IdentifierService(
-        logger: logger,
-        validationService: NeuroID.validationService,
-        eventStorageService: NeuroID.eventStorageService
-    )
-    static var networkService: NetworkServiceProtocol = NIDNetworkServiceImpl(logger: logger)
-    static var networkMonitor: NetworkMonitoringServiceProtocol = NetworkMonitoringService()
-    static var deviceSignalService: AdvancedDeviceServiceProtocol = AdvancedDeviceService()
-    static var payloadSendingService: PayloadSendingServiceProtocol = PayloadSendingService(
-        logger: logger,
-        datastore: datastore,
-        networkService: networkService
-    )
+    var logger: LoggerProtocol
+    var datastore: DataStoreServiceProtocol
+    var eventStorageService: EventStorageServiceProtocol
+    var validationService: ValidationServiceProtocol
+    var configService: ConfigServiceProtocol
+    var identifierService: IdentifierServiceProtocol
+    var networkService: NetworkServiceProtocol
+    var networkMonitor: NetworkMonitoringServiceProtocol
+    var deviceSignalService: AdvancedDeviceServiceProtocol
+    var payloadSendingService: PayloadSendingServiceProtocol
 
-    static var callObserver: CallStatusObserverServiceProtocol?
-    static var locationManager: LocationManagerServiceProtocol?
+    var callObserver: CallStatusObserverServiceProtocol?
+    var locationManager: LocationManagerServiceProtocol?
 
     // flag to ensure that we only have one FPJS call in flight
     static var isFPJSRunning = false
@@ -54,7 +44,7 @@ public class NeuroID: NSObject {
     static var clientID: String?
     static var sessionID: String? {
         get {
-            identifierService.sessionID
+            NeuroID.shared.identifierService.sessionID
         }
         set {
             // setting should not be possible unless through our setIdentity/setUserId command
@@ -62,7 +52,7 @@ public class NeuroID: NSObject {
     } // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static var registeredUserID: String {
         get {
-            identifierService.registeredUserID
+            NeuroID.shared.identifierService.registeredUserID
         }
         set {
             // setting should not be possible unless through our setRegisteredUserId command
@@ -98,14 +88,14 @@ public class NeuroID: NSObject {
     }
 
     static var collectGyroAccelEventTask: () -> Void = {
-        if !NeuroID.isStopped(), NeuroID.configService.configCache.gyroAccelCadence {
+        if !NeuroID.isStopped(), NeuroID.shared.configService.configCache.gyroAccelCadence {
             NeuroID.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .cadenceReadingAccel,
                     attrs: [
                         Attrs(
                             n: "interval",
-                            v: "\(NeuroID.configService.configCache.gyroAccelCadenceTime)ms"
+                            v: "\(NeuroID.shared.configService.configCache.gyroAccelCadenceTime)ms"
                         ),
                     ]
                 )
@@ -114,12 +104,12 @@ public class NeuroID: NSObject {
     }
 
     static var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
-        interval: Double(NeuroID.configService.configCache.eventQueueFlushInterval),
+        interval: Double(5), // default 5, will be recreated on `configure` command
         task: NeuroID.sendCollectionEventsTask
     )
 
     static var sendGyroAccelCollectionWorkItem: RepeatingTaskProtocol = RepeatingTask(
-        interval: Double(NeuroID.configService.configCache.gyroAccelCadenceTime),
+        interval: Double(5), // default 5, will be recreated on `configure` command
         task: NeuroID.collectGyroAccelEventTask
     )
 
@@ -143,9 +133,65 @@ public class NeuroID: NSObject {
 
     // MARK: - Setup
 
+    init(
+        logger: LoggerProtocol? = nil,
+        datastore: DataStoreServiceProtocol? = nil,
+        eventStorageService: EventStorageServiceProtocol? = nil,
+        validationService: ValidationServiceProtocol? = nil,
+        networkService: NetworkServiceProtocol? = nil,
+        configService: ConfigServiceProtocol? = nil,
+        identifierService: IdentifierServiceProtocol? = nil,
+        networkMonitor: NetworkMonitoringServiceProtocol? = nil,
+        deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
+        payloadSendingService: PayloadSendingServiceProtocol? = nil,
+        callObserver: CallStatusObserverServiceProtocol? = nil,
+        locationManager: LocationManagerServiceProtocol? = nil
+    ) {
+        self.logger = logger ?? NIDLog()
+        self.datastore = datastore ?? DataStore(logger: self.logger)
+        self.eventStorageService = eventStorageService ?? EventStorageService()
+        self.validationService = validationService ?? ValidationService(logger: self.logger)
+        self.networkService = networkService ?? NIDNetworkServiceImpl(logger: self.logger)
+        self.configService =
+            configService
+                ?? NIDConfigService(
+                    logger: self.logger,
+                    networkService: self.networkService,
+                    configRetrievalCallback: NeuroID.configSetupCompletion
+                )
+        self.identifierService =
+            identifierService
+                ?? IdentifierService(
+                    logger: self.logger,
+                    validationService: self.validationService,
+                    eventStorageService: self.eventStorageService
+                )
+        self.networkMonitor = networkMonitor ?? NetworkMonitoringService()
+        self.deviceSignalService = deviceSignalService ?? AdvancedDeviceService()
+        self.payloadSendingService =
+            payloadSendingService
+                ?? PayloadSendingService(
+                    logger: self.logger,
+                    datastore: self.datastore,
+                    networkService: self.networkService
+                )
+        self.callObserver = callObserver
+        self.locationManager = locationManager
+
+        NeuroID.sendCollectionEventsJob = RepeatingTask(
+            interval: Double(self.configService.configCache.eventQueueFlushInterval),
+            task: NeuroID.sendCollectionEventsTask
+        )
+
+        NeuroID.sendGyroAccelCollectionWorkItem = RepeatingTask(
+            interval: Double(self.configService.configCache.gyroAccelCadenceTime),
+            task: NeuroID.collectGyroAccelEventTask
+        )
+    }
+
     static func verifyClientKeyExists() -> Bool {
         if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
-            logger.e("Missing Client Key - please call configure prior to calling start")
+            NeuroID.shared.logger.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -154,25 +200,29 @@ public class NeuroID: NSObject {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil) -> Bool {
+    public static func configure(
+        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
+    ) -> Bool {
         // set last install time if not already set.
         if getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0 {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
         if NeuroID.clientKey != nil {
-            logger.e("You already configured the SDK")
+            NeuroID.shared.logger.e("You already configured the SDK")
             return false
         }
 
-        if !validationService.validateClientKey(clientKey) {
-            logger.e("Invalid Client Key")
+        if !NeuroID.shared.validationService.validateClientKey(clientKey) {
+            NeuroID.shared.logger.e("Invalid Client Key")
             saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Invalid Client Key \(clientKey)"
                 )
             )
-            setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key")
+            setUserDefaultKey(
+                Constants.storageTabIDKey.rawValue, value: ParamsCreator.getTabId() + "-invalid-client-key"
+            )
 
             return false
         }
@@ -197,7 +247,7 @@ public class NeuroID: NSObject {
         )
         packetNumber = 0
 
-        networkMonitor.startMonitoring()
+        NeuroID.shared.networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
             captureAdvancedDevice()
@@ -216,7 +266,7 @@ public class NeuroID: NSObject {
         saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
-        logger.i("Remote Config Retrieval Attempt Completed")
+        NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")
 
         setupListeners()
     }
@@ -229,11 +279,11 @@ public class NeuroID: NSObject {
     }
 
     public static func stop() -> Bool {
-        logger.i("NeuroID Stopped")
+        NeuroID.shared.logger.i("NeuroID Stopped")
         do {
             _ = try closeSession(skipStop: true)
         } catch {
-            logger.e("Failed to Stop because \(error)")
+            NeuroID.shared.logger.e("Failed to Stop because \(error)")
             saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
@@ -245,7 +295,7 @@ public class NeuroID: NSObject {
         NeuroID.linkedSiteID = nil
 
         //  stop listening to changes in call status
-        NeuroID.callObserver?.stopListeningToCallStatus()
+        NeuroID.shared.callObserver?.stopListeningToCallStatus()
         return true
     }
 
@@ -263,8 +313,8 @@ public class NeuroID: NSObject {
         UITextView.startSwizzling()
         UINavigationController.swizzleNavigation()
         UITableView.tableviewSwizzle()
-//        UIScrollView.startSwizzlingUIScroll()
-//        UIButton.startSwizzling()
+        // UIScrollView.startSwizzlingUIScroll()
+        // UIButton.startSwizzling()
 
         didSwizzle.toggle()
     }
@@ -315,14 +365,20 @@ public class NeuroID: NSObject {
     }
 
     // ENG-9193 - Will remove on next breaking release
-    @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
+    @available(
+        *, deprecated,
+        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
+    )
     public static func printIntegrationHealthInstruction() {
-        logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     // ENG-9193 - Will remove on next breaking release
-    @available(*, deprecated, message: "printIntegrationHealthInstruction is deprecated and no longer functional")
+    @available(
+        *, deprecated,
+        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
+    )
     public static func setVerifyIntegrationHealth(_ verify: Bool) {
-        logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }

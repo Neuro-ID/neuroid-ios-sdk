@@ -20,9 +20,9 @@ class BaseTestClass: XCTestCase {
     var dataStore = DataStore(logger: NIDLog())
     
     func clearOutDataStore() {
-        NeuroID.datastore.removeSentEvents()
-        let _ = NeuroID.datastore.getAndRemoveAllEvents()
-        let _ = NeuroID.datastore.getAndRemoveAllQueuedEvents()
+        NeuroID.shared.datastore.removeSentEvents()
+        let _ = NeuroID.shared.datastore.getAndRemoveAllEvents()
+        let _ = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
     }
     
     override func setUpWithError() throws {
@@ -32,8 +32,8 @@ class BaseTestClass: XCTestCase {
     }
     
     override func setUp() {
-        NeuroID.datastore = dataStore
-        NeuroID.networkService = MockNetworkService()
+        NeuroID.shared.datastore = dataStore
+        NeuroID.shared.networkService = MockNetworkService()
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
     }
     
@@ -45,18 +45,18 @@ class BaseTestClass: XCTestCase {
     }
     
     func assertDataStoreCount(count: Int) {
-        let allEvents = NeuroID.datastore.getAllEvents()
+        let allEvents = NeuroID.shared.datastore.getAllEvents()
         XCTAssertEqual(allEvents.count, count, "Expected \(count) events in datastore but found \(allEvents.count)")
     }
 
     func assertStoredEventCount(type: String, count: Int) {
-        let allEvents = NeuroID.datastore.getAllEvents()
+        let allEvents = NeuroID.shared.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
         XCTAssertEqual(validEvent.count, count, "Expected \(count) events of type '\(type)' but found \(validEvent.count)")
     }
 
     func assertStoredEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = NeuroID.datastore.getAllEvents()
+        let allEvents = NeuroID.shared.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
         XCTAssertEqual(validEvent.count, count, "Expected \(count) events of type '\(type)' but found \(validEvent.count)")
         
