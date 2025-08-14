@@ -18,10 +18,10 @@ public class NeuroID: NSObject {
     static let SEND_INTERVAL: Double = 5
     static let shared: NeuroID = .init()
 
-    static var advancedDeviceKey: String? = nil
-    static var clientKey: String?
-    static var siteID: String?
-    static var linkedSiteID: String?
+    var advancedDeviceKey: String? = nil
+    var clientKey: String?
+    var siteID: String?
+    var linkedSiteID: String?
 
     // Services
     var logger: LoggerProtocol
@@ -39,9 +39,9 @@ public class NeuroID: NSObject {
     var locationManager: LocationManagerServiceProtocol?
 
     // flag to ensure that we only have one FPJS call in flight
-    static var isFPJSRunning = false
+    var isFPJSRunning = false
 
-    static var clientID: String?
+    var clientID: String?
     static var sessionID: String? {
         get {
             NeuroID.shared.identifierService.sessionID
@@ -63,7 +63,7 @@ public class NeuroID: NSObject {
 
     /// Turn on/off printing the SDK log to your console
     public static var showLogs = true
-    static let showDebugLog = false
+    let showDebugLog = false
 
     static var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
@@ -119,14 +119,14 @@ public class NeuroID: NSObject {
 
     public static var registeredTargets = [String]()
 
-    static var isRN: Bool = false
-    static var rnOptions: [RNConfigOptions: Any] = [:]
+    var isRN: Bool = false
+    var rnOptions: [RNConfigOptions: Any] = [:]
 
     static var lowMemory: Bool = false
 
     static var isAdvancedDevice: Bool = false
 
-    static var packetNumber: Int32 = 0
+    var packetNumber: Int32 = 0
 
     // Testing Purposes Only
     static var _isTesting = false
@@ -190,7 +190,7 @@ public class NeuroID: NSObject {
     }
 
     static func verifyClientKeyExists() -> Bool {
-        if NeuroID.clientKey == nil || NeuroID.clientKey == "" {
+        if NeuroID.shared.clientKey == nil || NeuroID.shared.clientKey == "" {
             NeuroID.shared.logger.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
@@ -208,7 +208,7 @@ public class NeuroID: NSObject {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
-        if NeuroID.clientKey != nil {
+        if NeuroID.verifyClientKeyExists() {
             NeuroID.shared.logger.e("You already configured the SDK")
             return false
         }
@@ -226,7 +226,7 @@ public class NeuroID: NSObject {
 
             return false
         }
-        NeuroID.advancedDeviceKey = advancedDeviceKey
+        NeuroID.shared.advancedDeviceKey = advancedDeviceKey
         NeuroID.isAdvancedDevice = isAdvancedDevice
 
         if clientKey.contains("_live_") {
@@ -237,7 +237,7 @@ public class NeuroID: NSObject {
 
         NeuroID.clearSessionVariables()
 
-        NeuroID.clientKey = clientKey
+        NeuroID.shared.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id / packet number on configure
@@ -245,7 +245,7 @@ public class NeuroID: NSObject {
         saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Reset Tab Id")
         )
-        packetNumber = 0
+        NeuroID.shared.packetNumber = 0
 
         NeuroID.shared.networkMonitor.startMonitoring()
 
@@ -292,7 +292,7 @@ public class NeuroID: NSObject {
 
         NeuroID.send(forceSend: true)
         NeuroID._isSDKStarted = false
-        NeuroID.linkedSiteID = nil
+        NeuroID.shared.linkedSiteID = nil
 
         //  stop listening to changes in call status
         NeuroID.shared.callObserver?.stopListeningToCallStatus()

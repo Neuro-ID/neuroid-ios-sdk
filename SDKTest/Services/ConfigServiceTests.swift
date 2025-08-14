@@ -38,7 +38,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func setupKeyAndMockInternet() {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
@@ -70,7 +70,7 @@ class ConfigServiceTests: XCTestCase {
         mockedRandomGenerator: RandomGenerator,
         shouldFail: Bool
     ) -> NIDConfigService {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
         configService = NIDConfigService(
             logger: NIDLog(),
@@ -126,7 +126,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_retrieveConfig_withNoKey() throws {
-        NeuroID.clientKey = ""
+        NeuroID.shared.clientKey = ""
         
         NeuroID.shared.networkService = MockNetworkService()
         
@@ -141,7 +141,7 @@ class ConfigServiceTests: XCTestCase {
     }
     
     func test_retrieveConfig_withKeyAndInternet() throws {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
         NeuroID.shared.networkService = MockNetworkService()
         

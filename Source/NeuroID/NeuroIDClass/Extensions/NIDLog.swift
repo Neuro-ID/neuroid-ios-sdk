@@ -12,7 +12,7 @@ private enum Log {
     @available(iOS 10.0, *)
     static func log(category: String, contents: Any..., type: OSLogType) {
         #if DEBUG
-        if NeuroID.showDebugLog {
+        if NeuroID.shared.showDebugLog {
             let message = contents.map { "\($0)" }.joined(separator: " ")
             os_log("NeuroID: %@", message)
         }
