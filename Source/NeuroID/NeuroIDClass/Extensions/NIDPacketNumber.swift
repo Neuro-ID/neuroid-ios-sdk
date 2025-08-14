@@ -9,10 +9,10 @@ import Foundation
 
 public extension NeuroID {
     static func getPacketNumber() -> Int32 {
-        return packetNumber
+        return NeuroID.shared.packetNumber
     }
 
     static func incrementPacketNumber() {
-        packetNumber += 1
+        NeuroID.shared.packetNumber += 1
     }
 }

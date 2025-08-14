@@ -60,23 +60,23 @@ extension NeuroID {
 
     static func getNewADV() {
         // run one at a time, drop any other instances
-        if isFPJSRunning == true {
+        if NeuroID.shared.isFPJSRunning == true {
             return
         } else {
-            isFPJSRunning = true
+            NeuroID.shared.isFPJSRunning = true
         }
         NeuroID.shared.deviceSignalService.getAdvancedDeviceSignal(
-            NeuroID.clientKey ?? "",
-            clientID: NeuroID.clientID,
-            linkedSiteID: NeuroID.linkedSiteID,
-            advancedDeviceKey: NeuroID.advancedDeviceKey
+            NeuroID.getClientKey(),
+            clientID: NeuroID.shared.clientID,
+            linkedSiteID: NeuroID.shared.linkedSiteID,
+            advancedDeviceKey: NeuroID.shared.advancedDeviceKey
         ) { request in
             switch request {
             case .success((let requestID, let duration)):
 
                 captureADVEvent(requestID, cached: false,
                                 latency: duration,
-                                message: advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
+                                message: NeuroID.shared.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
 
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
@@ -87,7 +87,7 @@ extension NeuroID {
                         "key": requestID,
                     ] as [String: Any]
                 )
-                isFPJSRunning = false
+                NeuroID.shared.isFPJSRunning = false
             case .failure(let error):
                 NeuroID.saveEventToDataStore(
                     NIDEvent.createErrorLogEvent(
@@ -100,7 +100,7 @@ extension NeuroID {
                         m: error.localizedDescription
                     )
                 )
-                isFPJSRunning = false
+                NeuroID.shared.isFPJSRunning = false
                 return
             }
         }

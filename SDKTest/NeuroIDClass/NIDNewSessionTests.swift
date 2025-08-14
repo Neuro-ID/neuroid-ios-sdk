@@ -51,13 +51,13 @@ class NIDNewSessionTests: BaseTestClass {
     func test_clearSessionVariables() {
         NeuroID.sessionID = "myUserID"
         NeuroID.registeredUserID = "myRegisteredUserID"
-        NeuroID.linkedSiteID = "mySite"
+        NeuroID.shared.linkedSiteID = "mySite"
 
         NeuroID.clearSessionVariables()
 
         assert(NeuroID.sessionID == nil)
         assert(NeuroID.registeredUserID == "")
-        assert(NeuroID.linkedSiteID == nil)
+        assert(NeuroID.shared.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
@@ -113,7 +113,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_failure_clientKey() {
-        NeuroID.clientKey = nil
+        NeuroID.shared.clientKey = nil
 
         NeuroID.startSession { sessionRes in
             self.assertSessionNotStartedTests(sessionRes)
@@ -170,25 +170,25 @@ class NIDNewSessionTests: BaseTestClass {
     func test_startAppFlow_valid_site() {
         let mySite = "form_thing123"
         NeuroID._isSDKStarted = true
-        NeuroID.linkedSiteID = nil
+        NeuroID.shared.linkedSiteID = nil
 
         NeuroID.startAppFlow(siteID: mySite) { started in
             assert(started.started)
-            assert(NeuroID.linkedSiteID == mySite)
+            assert(NeuroID.shared.linkedSiteID == mySite)
 
             NeuroID._isSDKStarted = false
-            NeuroID.linkedSiteID = nil
+            NeuroID.shared.linkedSiteID = nil
         }
     }
 
     func test_startAppFlow_invalid_site() {
         let mySite = "mySite"
         NeuroID._isSDKStarted = true
-        NeuroID.linkedSiteID = nil
+        NeuroID.shared.linkedSiteID = nil
 
         NeuroID.startAppFlow(siteID: mySite) { started in
             assert(!started.started)
-            assert(NeuroID.linkedSiteID == nil)
+            assert(NeuroID.shared.linkedSiteID == nil)
 
             NeuroID._isSDKStarted = false
         }

@@ -14,15 +14,15 @@ public extension NeuroID {
     static func getClientID() -> String {
         let clientIdName = Constants.storageClientIDKey.rawValue
         var cid = getUserDefaultKeyString(clientIdName)
-        if NeuroID.clientID != nil {
-            cid = NeuroID.clientID
+        if NeuroID.shared.clientID != nil {
+            cid = NeuroID.shared.clientID
         }
         // Ensure we aren't on old client id
         if cid != nil && !cid!.contains("_") {
             return cid!
         } else {
             cid = ParamsCreator.generateID()
-            NeuroID.clientID = cid
+            NeuroID.shared.clientID = cid
             setUserDefaultKey(clientIdName, value: cid)
             return cid!
         }
@@ -31,7 +31,7 @@ public extension NeuroID {
     @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
     static func setSiteId(siteId: String) {
         NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
-        self.siteID = siteId
+        self.shared.siteID = siteId
     }
 }
 
@@ -43,7 +43,7 @@ extension NeuroID {
     }
 
     static func getClientKey() -> String {
-        guard let key = NeuroID.clientKey else {
+        guard let key = NeuroID.shared.clientKey else {
             NeuroID.shared.logger.e("ClientKey is not set")
             return ""
         }
@@ -64,7 +64,7 @@ extension NeuroID {
             return
         }
 
-        NeuroID.linkedSiteID = siteID
+        NeuroID.shared.linkedSiteID = siteID
 
         saveEventToLocalDataStore(
             NIDEvent(type: .setLinkedSite, v: siteID)

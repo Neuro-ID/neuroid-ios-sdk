@@ -187,7 +187,7 @@ enum ParamsCreator {
         } else {
             version = getSPVersionID(version: "%%%3.4.7%%%")
         }
-        return "5.ios\(NeuroID.isRN ? "-rn" : "")-adv-\(version ?? "?")"
+        return "5.ios\(NeuroID.shared.isRN ? "-rn" : "")-adv-\(version ?? "?")"
     }
 
     static func getCommandQueueNamespace() -> String {
