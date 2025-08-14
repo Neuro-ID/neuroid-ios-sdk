@@ -4,6 +4,7 @@
 //
 //  Created by Kevin Sites on 8/11/25.
 //
+import Foundation
 
 protocol RepeatingTaskProtocol {
     func start()
