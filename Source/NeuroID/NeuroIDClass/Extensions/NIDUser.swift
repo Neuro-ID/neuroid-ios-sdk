@@ -50,7 +50,6 @@ public extension NeuroID {
             duplicatesAllowedCheck: { _ in true },
             validIDFunction: {}
         )
-
         if !validID {
             saveEventToDataStore(NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation"))
         }
