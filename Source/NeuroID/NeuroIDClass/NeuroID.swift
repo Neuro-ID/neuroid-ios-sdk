@@ -27,7 +27,10 @@ public class NeuroID: NSObject {
     static var datastore: DataStoreServiceProtocol = DataStore(logger: logger)
     static var eventStorageService: EventStorageServiceProtocol = EventStorageService()
     static var validationService: ValidationServiceProtocol = ValidationService(logger: logger)
-    static var configService: ConfigServiceProtocol = NIDConfigService(logger: logger)
+    static var configService: ConfigServiceProtocol = NIDConfigService(
+        logger: logger,
+        configRetrievalCallback: NeuroID.configSetupCompletion
+    )
     static var identifierService: IdentifierServiceProtocol = IdentifierService(
         logger: logger,
         validationService: NeuroID.validationService,
@@ -89,8 +92,36 @@ public class NeuroID: NSObject {
         set {}
     }
 
-    static var sendCollectionWorkItem: DispatchWorkItem?
-    static var sendGyroAccelCollectionWorkItem: DispatchWorkItem?
+    // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
+    static var sendCollectionEventsTask: () -> Void = {
+        NeuroID.send()
+    }
+
+    static var collectGyroAccelEventTask: () -> Void = {
+        if !NeuroID.isStopped(), NeuroID.configService.configCache.gyroAccelCadence {
+            NeuroID.saveEventToLocalDataStore(
+                NIDEvent(
+                    type: .cadenceReadingAccel,
+                    attrs: [
+                        Attrs(
+                            n: "interval",
+                            v: "\(NeuroID.configService.configCache.gyroAccelCadenceTime)ms"
+                        ),
+                    ]
+                )
+            )
+        }
+    }
+
+    static var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
+        interval: Double(NeuroID.configService.configCache.eventQueueFlushInterval),
+        task: NeuroID.sendCollectionEventsTask
+    )
+
+    static var sendGyroAccelCollectionWorkItem: RepeatingTaskProtocol = RepeatingTask(
+        interval: Double(NeuroID.configService.configCache.gyroAccelCadenceTime),
+        task: NeuroID.collectGyroAccelEventTask
+    )
 
     static var observingInputs = false
     static var observingKeyboard = false

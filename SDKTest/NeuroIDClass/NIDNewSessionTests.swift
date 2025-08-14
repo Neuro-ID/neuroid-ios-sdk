@@ -30,7 +30,6 @@ class NIDNewSessionTests: BaseTestClass {
     func assertSessionStartedTests(_ sessionRes: SessionStartResult) {
         assert(sessionRes.started)
         assert(NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
 
         assertStoredEventTypeAndCount(type: NIDSessionEventName.createSession.rawValue, count: 1)
         assertStoredEventTypeAndCount(type: NIDSessionEventName.mobileMetadataIOS.rawValue, count: 1)
@@ -42,7 +41,6 @@ class NIDNewSessionTests: BaseTestClass {
         assert(!sessionRes.started)
         assert(sessionRes.sessionID == "")
         assert(!NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil) // In real world it would != nil but because of tests we don't want to trigger a re-occuring event
     }
 
     func assertSetVariableEvents() {
@@ -116,7 +114,6 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_startSession_failure_clientKey() {
         NeuroID.clientKey = nil
-        NeuroID.sendCollectionWorkItem = nil
 
         NeuroID.startSession { sessionRes in
             self.assertSessionNotStartedTests(sessionRes)
@@ -124,7 +121,6 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_failure_userID() {
-        NeuroID.sendCollectionWorkItem = nil
         NeuroID.startSession("MY bad -.-. id") {
             sessionRes in
             self.assertSessionNotStartedTests(sessionRes)
@@ -142,23 +138,19 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_pauseCollection() {
         NeuroID._isSDKStarted = true
-        NeuroID.sendCollectionWorkItem = DispatchWorkItem {}
 
         NeuroID.pauseCollection()
 
         assert(!NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem == nil)
     }
 
     func test_resumeCollection() {
         NeuroID._isSDKStarted = false
         NeuroID.identifierService.sessionID = "temp"
-        NeuroID.sendCollectionWorkItem = nil
 
         NeuroID.resumeCollection()
 
         assert(NeuroID._isSDKStarted)
-        assert(NeuroID.sendCollectionWorkItem != nil)
     }
 
     func test_willNotResumeCollectionIfNotStarted() {

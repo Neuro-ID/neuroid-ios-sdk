@@ -42,10 +42,8 @@ public extension NeuroID {
             return
         }
         NeuroID._isSDKStarted = true
-        let workItem = NeuroID.createCollectionWorkItem()
-        NeuroID.sendCollectionWorkItem = workItem
-        initCollectionTimer()
-        initGyroAccelCollectionTimer()
+        NeuroID.sendCollectionEventsJob.start()
+        NeuroID.sendGyroAccelCollectionWorkItem.start()
     }
 
     static func stopSession() -> Bool {
@@ -250,8 +248,10 @@ extension NeuroID {
         }
 
         NeuroID._isSDKStarted = false
-        NeuroID.sendCollectionWorkItem?.cancel()
-        NeuroID.sendCollectionWorkItem = nil
+        
+        NeuroID.sendCollectionEventsJob.cancel()
+        NeuroID.sendGyroAccelCollectionWorkItem.cancel()
+        
         configService.clearSiteIDMap()
     }
 
@@ -312,12 +312,12 @@ extension NeuroID {
             customFunctionality: {
                 #if DEBUG
                 if NSClassFromString("XCTest") == nil {
-                    initTimer()
+                    NeuroID.sendCollectionEventsJob.start()
                 }
                 #else
-                initTimer()
+                NeuroID.sendCollectionEventsJob.start()
                 #endif
-                initGyroAccelCollectionTimer()
+                NeuroID.sendGyroAccelCollectionWorkItem.start()
             }
         ) {
             completion(true)
