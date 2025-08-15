@@ -29,7 +29,7 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.clientKey = nil
+        NeuroID.shared.clientKey = nil
         NeuroID.shared.configService = mockedConfig
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
@@ -132,7 +132,7 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) -> NIDConfigService {
-        NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
         let mockedData = try! JSONEncoder().encode(getMockResponseData())
 

@@ -11,7 +11,7 @@ import XCTest
 class NIDClientSiteIdTests: BaseTestClass {
     func test_getClientID() {
         UserDefaults.standard.setValue("test-cid", forKey: clientIdKey)
-        NeuroID.clientID = nil
+        NeuroID.shared.clientID = nil
         let value = NeuroID.getClientID()
 
         assert(value == "test-cid")
@@ -20,7 +20,7 @@ class NIDClientSiteIdTests: BaseTestClass {
     func test_getClientId_existing() {
         let expectedValue = "test-cid"
 
-        NeuroID.clientID = expectedValue
+        NeuroID.shared.clientID = expectedValue
         UserDefaults.standard.set(expectedValue, forKey: clientIdKey)
 
         let value = NeuroID.getClientID()
@@ -41,7 +41,7 @@ class NIDClientSiteIdTests: BaseTestClass {
     }
 
     func test_getClientKey() {
-        NeuroID.clientKey = nil
+        NeuroID.shared.clientKey = nil
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         let expectedValue = clientKey
 
@@ -62,6 +62,6 @@ class NIDClientSiteIdTests: BaseTestClass {
     func test_setSiteId() {
         NeuroID.setSiteId(siteId: "test_site")
 
-        assert(NeuroID.siteID == "test_site")
+        assert(NeuroID.shared.siteID == "test_site")
     }
 }

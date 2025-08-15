@@ -156,7 +156,7 @@ extension UIViewController {
         if ignoreLists.contains(nidClassName) { return }
 
         // check if its RN, using the React Navigation Package, and Matching the ClassName
-        if NeuroID.isRN, NeuroID.rnOptions[.usingReactNavigation] as? Bool ?? false, nidClassName == "UIViewController" { return }
+        if NeuroID.shared.isRN, NeuroID.shared.rnOptions[.usingReactNavigation] as? Bool ?? false, nidClassName == "UIViewController" { return }
 
         if NeuroID.isStopped() {
             return

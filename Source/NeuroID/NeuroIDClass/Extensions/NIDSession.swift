@@ -84,7 +84,7 @@ public extension NeuroID {
         if !NeuroID.verifyClientKeyExists() || !NeuroID.shared.validationService.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
-            NeuroID.linkedSiteID = nil
+            NeuroID.shared.linkedSiteID = nil
 
             saveEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
@@ -192,7 +192,7 @@ extension NeuroID {
     }
 
     static func createSession() {
-        NeuroID.shared.configService.updateIsSampledStatus(siteID: linkedSiteID)
+        NeuroID.shared.configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
         saveEventToLocalDataStore(
             createNIDSessionEvent()
         )
@@ -228,7 +228,7 @@ extension NeuroID {
 
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
-            Attrs(n: "isRN", v: "\(isRN)"),
+            Attrs(n: "isRN", v: "\(NeuroID.shared.isRN)"),
         ]
         saveEventToLocalDataStore(event)
 
@@ -238,7 +238,7 @@ extension NeuroID {
     static func clearSessionVariables() {
         NeuroID.shared.identifierService.clearIDs()
 
-        NeuroID.linkedSiteID = nil
+        NeuroID.shared.linkedSiteID = nil
     }
 
     static func pauseCollection(flushEventQueue: Bool = false) {

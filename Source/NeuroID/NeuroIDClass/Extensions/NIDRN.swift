@@ -9,7 +9,7 @@ import Foundation
 
 public extension NeuroID {
     static func setIsRN() {
-        isRN = true
+        NeuroID.shared.isRN = true
     }
 
     static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
@@ -36,7 +36,7 @@ public extension NeuroID {
             configOptionKey: .usingReactNavigation
         )
 
-        self.rnOptions[.usingReactNavigation] = usingReactNavigation
+        NeuroID.shared.rnOptions[.usingReactNavigation] = usingReactNavigation
 
         return true
     }

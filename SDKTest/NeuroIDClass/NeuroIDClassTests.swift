@@ -48,7 +48,7 @@ class NeuroIDClassTests: BaseTestClass {
     func test_configure_success() {
         clearOutDataStore()
         // remove things configured in setup
-        NeuroID.clientKey = nil
+        NeuroID.shared.clientKey = nil
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
@@ -70,7 +70,7 @@ class NeuroIDClassTests: BaseTestClass {
         clearOutDataStore()
         // remove things configured in setup
         NeuroID.environment = Constants.environmentTest.rawValue
-        NeuroID.clientKey = nil
+        NeuroID.shared.clientKey = nil
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
@@ -94,11 +94,11 @@ class NeuroIDClassTests: BaseTestClass {
     func test_start_failure() {
         tearDown()
         NeuroID._isSDKStarted = false
-        NeuroID.clientKey = nil
+        NeuroID.shared.clientKey = nil
 
         // pre tests
         assert(!NeuroID.isSDKStarted)
-        assert(NeuroID.clientKey == nil)
+        assert(NeuroID.shared.clientKey == nil)
 
         // action
         NeuroID.start { started in
@@ -172,11 +172,11 @@ class NeuroIDClassTests: BaseTestClass {
         let resultAdvTrue = NeuroID.getSDKVersion()
         assert(resultAdvTrue.contains("-adv"))
 
-        NeuroID.isRN = true
+        NeuroID.shared.isRN = true
         let resultRNTrue = NeuroID.getSDKVersion()
         assert(resultRNTrue.contains("-rn"))
 
-        NeuroID.isRN = false
+        NeuroID.shared.isRN = false
         let resultRNFalse = NeuroID.getSDKVersion()
         assert(!resultRNFalse.contains("-rn"))
     }
