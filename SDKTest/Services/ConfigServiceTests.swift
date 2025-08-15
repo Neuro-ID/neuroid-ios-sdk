@@ -20,15 +20,21 @@ class MockedNIDRandomGenerator: RandomGenerator {
 }
 
 class ConfigServiceTests: XCTestCase {
-    var configService = NIDConfigService(logger: NIDLog())
+    var configService = NIDConfigService(
+        logger: NIDLog(),
+        networkService: MockNetworkService()
+    )
     
     override func setUpWithError() throws {
         NIDConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
-        configService = NIDConfigService(logger: NIDLog())
+        configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: MockNetworkService()
+        )
     }
     
     func clearOutDataStore() {
-        NeuroID.datastore.removeSentEvents()
+        NeuroID.shared.datastore.removeSentEvents()
     }
     
     func setupKeyAndMockInternet() {
@@ -122,7 +128,7 @@ class ConfigServiceTests: XCTestCase {
     func test_retrieveConfig_withNoKey() throws {
         NeuroID.clientKey = ""
         
-        NeuroID.networkService = MockNetworkService()
+        NeuroID.shared.networkService = MockNetworkService()
         
         configService.configCache.requestTimeout = 0
         configService.cacheSetWithRemote = true
@@ -137,7 +143,7 @@ class ConfigServiceTests: XCTestCase {
     func test_retrieveConfig_withKeyAndInternet() throws {
         NeuroID.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         
-        NeuroID.networkService = MockNetworkService()
+        NeuroID.shared.networkService = MockNetworkService()
         
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()

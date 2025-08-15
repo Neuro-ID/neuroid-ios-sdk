@@ -15,7 +15,7 @@ final class NIDPerformanceTests: XCTestCase {
 
     override func setUpWithError() throws {
         mockedConfigService.configCache = ConfigResponseData()
-        NeuroID.configService = mockedConfigService
+        NeuroID.shared.configService = mockedConfigService
     }
     
     func test_remote_backoff_overrides_default() {

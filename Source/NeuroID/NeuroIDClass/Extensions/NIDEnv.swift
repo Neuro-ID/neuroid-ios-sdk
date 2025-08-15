@@ -14,6 +14,6 @@ public extension NeuroID {
 
     @available(*, deprecated, message: "setEnvironmentProduction is deprecated and no longer required")
     static func setEnvironmentProduction(_ value: Bool) {
-        logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
+        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
     }
 }

@@ -12,33 +12,33 @@ extension NeuroID {
         // We will always cancel the collection job and then recreate with new interval and start
         sendCollectionEventsJob.cancel()
         sendCollectionEventsJob = RepeatingTask(
-            interval: Double(NeuroID.configService.configCache.eventQueueFlushInterval),
+            interval: Double(NeuroID.shared.configService.configCache.eventQueueFlushInterval),
             task: NeuroID.sendCollectionEventsTask
         )
         sendCollectionEventsJob.start()
 
-        if configService.configCache.callInProgress {
-            callObserver = NIDCallStatusObserverService(
-                eventStorageService: NeuroID.eventStorageService,
-                configService: NeuroID.configService
+        if NeuroID.shared.configService.configCache.callInProgress {
+            NeuroID.shared.callObserver = NIDCallStatusObserverService(
+                eventStorageService: NeuroID.shared.eventStorageService,
+                configService: NeuroID.shared.configService
             )
-            callObserver?.startListeningToCallStatus()
+            NeuroID.shared.callObserver?.startListeningToCallStatus()
         } else {
-            callObserver = nil
+            NeuroID.shared.callObserver = nil
         }
 
-        if configService.configCache.geoLocation {
-            locationManager = LocationManagerService()
+        if NeuroID.shared.configService.configCache.geoLocation {
+            NeuroID.shared.locationManager = LocationManagerService()
         } else {
-            locationManager = nil
+            NeuroID.shared.locationManager = nil
         }
 
         // We will always cancel the current gyro job and then if the config allows we will recreate and start
         //  with new interval value
         NeuroID.sendGyroAccelCollectionWorkItem.cancel()
-        if configService.configCache.gyroAccelCadence {
+        if NeuroID.shared.configService.configCache.gyroAccelCadence {
             NeuroID.sendGyroAccelCollectionWorkItem = RepeatingTask(
-                interval: Double(NeuroID.configService.configCache.gyroAccelCadenceTime),
+                interval: Double(NeuroID.shared.configService.configCache.gyroAccelCadenceTime),
                 task: NeuroID.collectGyroAccelEventTask
             )
 

@@ -63,7 +63,7 @@ class PayloadSendingServiceTests: BaseTestClass {
             }
         )
 
-        NeuroID.payloadSendingService = payloadSendingService
+        NeuroID.shared.payloadSendingService = payloadSendingService
     }
 
     override func tearDown() {

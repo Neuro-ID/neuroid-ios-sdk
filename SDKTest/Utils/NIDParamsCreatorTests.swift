@@ -46,7 +46,7 @@ class NIDParamsCreatorTests: XCTestCase {
 
     override func setUp() {
         // Clear out the DataStore Events after each test
-        NeuroID.datastore.removeSentEvents()
+        NeuroID.shared.datastore.removeSentEvents()
     }
 
     // Util Helper Functions

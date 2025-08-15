@@ -30,7 +30,7 @@ public extension NeuroID {
 
     @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
     static func setSiteId(siteId: String) {
-        logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
+        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
         self.siteID = siteId
     }
 }
@@ -44,7 +44,7 @@ extension NeuroID {
 
     static func getClientKey() -> String {
         guard let key = NeuroID.clientKey else {
-            logger.e("ClientKey is not set")
+            NeuroID.shared.logger.e("ClientKey is not set")
             return ""
         }
         return key
@@ -56,11 +56,11 @@ extension NeuroID {
        in the `configure` command
      */
     static func isCollectionSite(siteID: String?) -> Bool {
-        return siteID == nil || siteID ?? "" == NeuroID.configService.configCache.siteID ?? "noID"
+        return siteID == nil || siteID ?? "" == NeuroID.shared.configService.configCache.siteID ?? "noID"
     }
 
     static func addLinkedSiteID(_ siteID: String) {
-        if !NeuroID.validationService.validateSiteID(siteID) {
+        if !NeuroID.shared.validationService.validateSiteID(siteID) {
             return
         }
 

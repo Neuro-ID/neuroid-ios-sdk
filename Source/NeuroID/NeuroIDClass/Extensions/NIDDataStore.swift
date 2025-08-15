@@ -55,21 +55,21 @@ extension NeuroID {
         // If we hit a low memory event, drop events and early return
         //  OR if we are not sampling the session (i.e. are throttling)
         //  then drop events
-        if NeuroID.lowMemory || !NeuroID.configService.isSessionFlowSampled {
+        if NeuroID.lowMemory || !NeuroID.shared.configService.isSessionFlowSampled {
             return
         }
 
         // If queue has more than config event queue size (default 2000), send a queue full event and return
-        if datastore.getAllEventCount()
-            > configService.configCache.eventQueueFlushSize
+        if NeuroID.shared.datastore.getAllEventCount()
+            > NeuroID.shared.configService.configCache.eventQueueFlushSize
         {
-            if datastore.checkLastEventType(type: NIDEventName.bufferFull.rawValue) {
-                datastore.insertCleanedEvent(
+            if NeuroID.shared.datastore.checkLastEventType(type: NIDEventName.bufferFull.rawValue) {
+                NeuroID.shared.datastore.insertCleanedEvent(
                     event: NIDEvent(type: NIDEventName.bufferFull),
                     storeType: storeType
                 )
             }
-            logger.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
+            NeuroID.shared.logger.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
             return
         }
 
@@ -110,7 +110,7 @@ extension NeuroID {
         NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
         NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
-        datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
+        NeuroID.shared.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
 
         // send on immediate on certain events regardless of SDK running collection
         if immediateSendTypes.contains(event.type) {
@@ -119,11 +119,11 @@ extension NeuroID {
     }
 
     static func clearDataStore() {
-        NeuroID.datastore.forceClearAllEvents()
+        NeuroID.shared.datastore.forceClearAllEvents()
     }
 
     static func moveQueuedEventsToDataStore() {
-        let queuedEvents = NeuroID.datastore.getAndRemoveAllQueuedEvents()
+        let queuedEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
         for event in queuedEvents {
             NeuroID.saveEventToLocalDataStore(event)
         }

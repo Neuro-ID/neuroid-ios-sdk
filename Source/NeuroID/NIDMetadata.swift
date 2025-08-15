@@ -51,9 +51,9 @@ final class NIDMetadata: Codable {
         self.isSimulator = NIDMetadata.isSimulator()
         self.lastInstallTime = Int64(getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) * 1000)
         self.gpsCoordinates = NIDLocation(
-            latitude: NeuroID.locationManager?.latitude ?? -1,
-            longitude: NeuroID.locationManager?.longitude ?? -1,
-            authorizationStatus: NeuroID.locationManager?.authorizationStatus ?? "unknown"
+            latitude: NeuroID.shared.locationManager?.latitude ?? -1,
+            longitude: NeuroID.shared.locationManager?.longitude ?? -1,
+            authorizationStatus: NeuroID.shared.locationManager?.authorizationStatus ?? "unknown"
         )
     }
 }

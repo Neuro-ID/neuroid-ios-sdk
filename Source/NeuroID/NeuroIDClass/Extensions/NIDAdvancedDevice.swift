@@ -65,7 +65,7 @@ extension NeuroID {
         } else {
             isFPJSRunning = true
         }
-        deviceSignalService.getAdvancedDeviceSignal(
+        NeuroID.shared.deviceSignalService.getAdvancedDeviceSignal(
             NeuroID.clientKey ?? "",
             clientID: NeuroID.clientID,
             linkedSiteID: NeuroID.linkedSiteID,
@@ -81,7 +81,9 @@ extension NeuroID {
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
                     value: [
-                        "exp": UtilFunctions.getFutureTimeStamp(configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION),
+                        "exp": UtilFunctions.getFutureTimeStamp(
+                            NeuroID.shared.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
+                        ),
                         "key": requestID,
                     ] as [String: Any]
                 )
@@ -110,7 +112,7 @@ extension NeuroID {
         NeuroID.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
-                ct: NeuroID.networkMonitor.connectionType,
+                ct: NeuroID.shared.networkMonitor.connectionType,
                 l: latency,
                 rid: requestID,
                 c: cached,
@@ -141,7 +143,7 @@ extension NeuroID {
         //  is NOT being restricted/throttled prior to calling for an ADV event
 
         if shouldCapture,
-           NeuroID.configService.isSessionFlowSampled
+           NeuroID.shared.configService.isSessionFlowSampled
         {
             // call stored value, if expired then clear and get new one, else send existing
             if !getCachedADV() {

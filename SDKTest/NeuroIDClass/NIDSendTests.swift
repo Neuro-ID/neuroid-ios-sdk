@@ -9,8 +9,8 @@ import XCTest
 
 class NIDSendTests: BaseTestClass {
     override func setUpWithError() throws {
-        NeuroID.networkService = MockNetworkService()
-        NeuroID.configService = MockConfigService()
+        NeuroID.shared.networkService = MockNetworkService()
+        NeuroID.shared.configService = MockConfigService()
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         NeuroID.sendCollectionEventsJob.cancel()
         NeuroID._isTesting = true

@@ -50,7 +50,7 @@ class NIDConfigService: ConfigServiceProtocol {
     
     init(
         logger: LoggerProtocol,
-        networkService: NetworkServiceProtocol = NeuroID.networkService,
+        networkService: NetworkServiceProtocol,
         randomGenerator: RandomGenerator = NIDRandomGenerator(),
         configRetrievalCallback: @escaping () -> Void = {}
     ) {

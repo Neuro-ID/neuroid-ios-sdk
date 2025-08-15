@@ -73,11 +73,11 @@ extension NeuroID {
                     fileUpdater.write(",\n".data(using: .utf8)!)
                     fileUpdater.write(jsonStringNIDEvents)
                 } else {
-                    logger.e("Unable to append DEBUG JSON")
+                    NeuroID.shared.logger.e("Unable to append DEBUG JSON")
                 }
             }
         } catch {
-            logger.e(String(describing: error))
+            NeuroID.shared.logger.e(String(describing: error))
         }
     }
 }

@@ -20,7 +20,7 @@ extension NeuroID {
 
         if !NeuroID.isStopped() || forceSend {
             DispatchQueue.global(qos: .utility).async {
-                NeuroID.payloadSendingService.cleanAndSendEvents(
+                NeuroID.shared.payloadSendingService.cleanAndSendEvents(
                     clientKey: NeuroID.getClientKey(),
                     screenName: NeuroID.getScreenName(),
                     onPacketIncrement: { NeuroID.incrementPacketNumber() },

@@ -20,7 +20,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-        NeuroID.datastore = dataStore
+        NeuroID.shared.datastore = dataStore
     }
 
     override func setUp() {
@@ -44,7 +44,7 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_saveEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
         NeuroID.currentScreenName = screen
-        NeuroID.datastore = dataStore
+        NeuroID.shared.datastore = dataStore
 
         NeuroID._isSDKStarted = true
 
