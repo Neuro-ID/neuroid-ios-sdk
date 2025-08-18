@@ -55,7 +55,7 @@ extension NeuroID {
         // If we hit a low memory event, drop events and early return
         //  OR if we are not sampling the session (i.e. are throttling)
         //  then drop events
-        if NeuroID.lowMemory || !NeuroID.shared.configService.isSessionFlowSampled {
+        if NeuroID.shared.lowMemory || !NeuroID.shared.configService.isSessionFlowSampled {
             return
         }
 
@@ -86,7 +86,7 @@ extension NeuroID {
         mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
 
         if mutableEvent.tg?["\(Constants.tgsKey.rawValue)"] != nil {
-            if NeuroID.excludedViewsTestIDs.contains(where: {
+            if NeuroID.shared.excludedViewsTestIDs.contains(where: {
                 $0 == mutableEvent.tg!["\(Constants.tgsKey.rawValue)"]!.toString()
             }) {
                 return
@@ -94,7 +94,7 @@ extension NeuroID {
         }
 
         // Ensure this event is not on the exclude list
-        if NeuroID.excludedViewsTestIDs.contains(where: {
+        if NeuroID.shared.excludedViewsTestIDs.contains(where: {
             $0 == mutableEvent.tgs || $0 == mutableEvent.en
         }) {
             return

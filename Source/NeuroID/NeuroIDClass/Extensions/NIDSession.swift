@@ -113,7 +113,7 @@ public extension NeuroID {
                 saveEventToLocalDataStore(createNIDSessionEvent())
                 captureMobileMetadata()
 
-                captureAdvancedDevice()
+                captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
                 NeuroID.addLinkedSiteID(siteID)
                 completion(
@@ -286,7 +286,7 @@ extension NeuroID {
 
         moveQueuedEventsToDataStore()
 
-        captureAdvancedDevice()
+        captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
         completion()
     }

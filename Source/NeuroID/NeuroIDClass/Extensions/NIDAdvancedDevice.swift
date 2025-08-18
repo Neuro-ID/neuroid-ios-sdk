@@ -131,7 +131,7 @@ extension NeuroID {
      in a LOG event (isAdvancedDevice setting: <true/false>.
      */
     @objc static func captureAdvancedDevice(
-        _ shouldCapture: Bool = NeuroID.isAdvancedDevice
+        _ shouldCapture: Bool
     ) {
         NeuroID.saveEventToDataStore(
             NIDEvent.createInfoLogEvent(

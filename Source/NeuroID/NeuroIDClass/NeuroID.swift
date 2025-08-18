@@ -65,7 +65,7 @@ public class NeuroID: NSObject {
     public var showLogs = true
     let showDebugLog = false
 
-    static var excludedViewsTestIDs = [String]()
+    var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
 
     var environment: String = Constants.environmentTest.rawValue
@@ -110,18 +110,18 @@ public class NeuroID: NSObject {
         task: NeuroID.collectGyroAccelEventTask
     )
 
-    static var observingInputs = false
-    static var observingKeyboard = false
-    static var didSwizzle: Bool = false
+    var observingInputs = false
+    var observingKeyboard = false
+    var didSwizzle: Bool = false
 
     public static var registeredTargets = [String]()
 
     var isRN: Bool = false
     var rnOptions: [RNConfigOptions: Any] = [:]
 
-    static var lowMemory: Bool = false
+    var lowMemory: Bool = false
 
-    static var isAdvancedDevice: Bool = false
+    var isAdvancedDevice: Bool = false
 
     var packetNumber: Int32 = 0
 
@@ -224,7 +224,7 @@ public class NeuroID: NSObject {
             return false
         }
         NeuroID.shared.advancedDeviceKey = advancedDeviceKey
-        NeuroID.isAdvancedDevice = isAdvancedDevice
+        NeuroID.shared.isAdvancedDevice = isAdvancedDevice
 
         if clientKey.contains("_live_") {
             NeuroID.shared.environment = Constants.environmentLive.rawValue
@@ -247,7 +247,7 @@ public class NeuroID: NSObject {
         NeuroID.shared.networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
-            captureAdvancedDevice()
+            captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
         }
 
         captureApplicationMetaData()
@@ -301,7 +301,7 @@ public class NeuroID: NSObject {
     }
 
     static func swizzle() {
-        if didSwizzle {
+        if NeuroID.shared.didSwizzle {
             return
         }
 
@@ -313,7 +313,7 @@ public class NeuroID: NSObject {
         // UIScrollView.startSwizzlingUIScroll()
         // UIButton.startSwizzling()
 
-        didSwizzle.toggle()
+        NeuroID.shared.didSwizzle.toggle()
     }
 
     /// Get the current SDK versión from bundle
