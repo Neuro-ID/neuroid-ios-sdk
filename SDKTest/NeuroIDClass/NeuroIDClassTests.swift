@@ -63,13 +63,13 @@ class NeuroIDClassTests: BaseTestClass {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        assert(NeuroID.environment == "\(Constants.environmentLive.rawValue)")
+        assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
     }
 
     func test_configure_invalidKey() {
         clearOutDataStore()
         // remove things configured in setup
-        NeuroID.environment = Constants.environmentTest.rawValue
+        NeuroID.shared.environment = Constants.environmentTest.rawValue
         NeuroID.shared.clientKey = nil
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
@@ -88,7 +88,7 @@ class NeuroIDClassTests: BaseTestClass {
         // 1 Log event should be in queue if the key fails validation
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
 
-        assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
+        assert(NeuroID.shared.environment == "\(Constants.environmentTest.rawValue)")
     }
 
     func test_start_failure() {

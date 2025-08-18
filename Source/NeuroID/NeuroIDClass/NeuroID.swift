@@ -62,13 +62,13 @@ public class NeuroID: NSObject {
     static var trackers = [String: NeuroIDTracker]()
 
     /// Turn on/off printing the SDK log to your console
-    public static var showLogs = true
+    public var showLogs = true
     let showDebugLog = false
 
     static var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
 
-    static var environment: String = Constants.environmentTest.rawValue
+    var environment: String = Constants.environmentTest.rawValue
 
     fileprivate static var _currentScreenName: String?
     static var currentScreenName: String? {
@@ -227,9 +227,9 @@ public class NeuroID: NSObject {
         NeuroID.isAdvancedDevice = isAdvancedDevice
 
         if clientKey.contains("_live_") {
-            environment = Constants.environmentLive.rawValue
+            NeuroID.shared.environment = Constants.environmentLive.rawValue
         } else {
-            environment = Constants.environmentTest.rawValue
+            NeuroID.shared.environment = Constants.environmentTest.rawValue
         }
 
         NeuroID.clearSessionVariables()
