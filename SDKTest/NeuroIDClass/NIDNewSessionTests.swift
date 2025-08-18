@@ -50,13 +50,13 @@ class NIDNewSessionTests: BaseTestClass {
     //    clearSessionVariables
     func test_clearSessionVariables() {
         NeuroID.shared.identifierService.sessionID = "myUserID"
-        NeuroID.registeredUserID = "myRegisteredUserID"
+        NeuroID.shared.identifierService.registeredUserID = "myRegisteredUserID"
         NeuroID.shared.linkedSiteID = "mySite"
 
         NeuroID.clearSessionVariables()
 
         assert(NeuroID.shared.sessionID == nil)
-        assert(NeuroID.registeredUserID == "")
+        assert(NeuroID.shared.registeredUserID == "")
         assert(NeuroID.shared.linkedSiteID == nil)
     }
 

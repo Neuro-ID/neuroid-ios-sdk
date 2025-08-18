@@ -58,7 +58,7 @@ class NIDUserTests: BaseTestClass {
 
         let value = NeuroID.getRegisteredUserID()
 
-        assert(NeuroID.registeredUserID == expectedValue)
+        assert(NeuroID.shared.registeredUserID == expectedValue)
         assert(value == expectedValue)
 
         NeuroID.shared.identifierService.registeredUserID = ""

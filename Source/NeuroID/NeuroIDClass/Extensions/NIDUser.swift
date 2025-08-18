@@ -31,7 +31,7 @@ public extension NeuroID {
     }
 
     static func getRegisteredUserID() -> String {
-        return NeuroID.registeredUserID
+        return NeuroID.shared.registeredUserID
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
