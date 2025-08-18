@@ -16,7 +16,7 @@ class NIDUserTests: BaseTestClass {
     }
 
     override func setUp() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         NeuroID._isTesting = true
         NeuroID.shared.datastore = dataStore
     }
@@ -73,7 +73,7 @@ class NIDUserTests: BaseTestClass {
     }
 
     func test_attemptedLoginWthUIDQueued() {
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         let validID = NeuroID.attemptedLogin("valid_user_id")
         assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
@@ -100,7 +100,7 @@ class NIDUserTests: BaseTestClass {
     }
 
     func test_attemptedLoginWithInvalidIDQueued() {
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         let invalidID = NeuroID.attemptedLogin("🤣")
 
         assertQueuedEventTypeAndCount(type: "LOG", count: 2)
@@ -120,7 +120,7 @@ class NIDUserTests: BaseTestClass {
     }
 
     func test_attemptedLoginWithNoUIDQueued() {
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         _ = NeuroID.attemptedLogin()
         assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)

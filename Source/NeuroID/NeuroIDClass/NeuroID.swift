@@ -76,11 +76,8 @@ public class NeuroID: NSObject {
         set { lock.withCriticalSection { _currentScreenName = newValue } }
     }
 
-    static var _isSDKStarted: Bool = false
-    public static var isSDKStarted: Bool {
-        get { _isSDKStarted }
-        set {}
-    }
+    var _isSDKStarted: Bool = false
+    public static var isSDKStarted: Bool { NeuroID.shared._isSDKStarted }
 
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
@@ -291,7 +288,7 @@ public class NeuroID: NSObject {
         }
 
         NeuroID.send(forceSend: true)
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID.shared.linkedSiteID = nil
 
         //  stop listening to changes in call status
@@ -300,7 +297,7 @@ public class NeuroID: NSObject {
     }
 
     public static func isStopped() -> Bool {
-        return _isSDKStarted != true
+        return NeuroID.shared._isSDKStarted != true
     }
 
     static func swizzle() {

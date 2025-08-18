@@ -41,7 +41,7 @@ public extension NeuroID {
         if NeuroID.sessionID.isEmptyOrNil, !NeuroID.isSDKStarted {
             return
         }
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         NeuroID.sendCollectionEventsJob.start()
         NeuroID.sendGyroAccelCollectionWorkItem.start()
     }
@@ -247,7 +247,7 @@ extension NeuroID {
             NeuroID.send(forceSend: true)
         }
 
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
 
         NeuroID.sendCollectionEventsJob.cancel()
         NeuroID.sendGyroAccelCollectionWorkItem.cancel()
@@ -273,7 +273,7 @@ extension NeuroID {
 
         NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
 
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
 
         NeuroID.setupListeners()
 

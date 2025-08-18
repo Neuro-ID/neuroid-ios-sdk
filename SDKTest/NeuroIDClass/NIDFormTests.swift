@@ -13,7 +13,7 @@ class NIDFormTests: BaseTestClass {
     }
 
     override func setUp() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
     }
 
     override func tearDown() {

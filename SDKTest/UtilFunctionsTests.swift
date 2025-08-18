@@ -25,7 +25,7 @@ final class UtilFunctionsTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -109,7 +109,7 @@ final class UtilFunctionsTests: XCTestCase {
     }
 
     func test_captureTextEvents_blur() {
-        NeuroID.isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         NeuroID._isTesting = true
         let uiView = UIView()
 

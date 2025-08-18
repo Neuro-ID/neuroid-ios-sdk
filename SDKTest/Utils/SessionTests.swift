@@ -14,7 +14,7 @@ class SessionTests: XCTestCase {
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
 
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         NeuroID.shared.datastore.removeSentEvents()
     }
 

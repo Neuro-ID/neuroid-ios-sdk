@@ -93,7 +93,7 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_start_failure() {
         tearDown()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID.shared.clientKey = nil
 
         // pre tests
@@ -110,7 +110,7 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_start_success() {
         tearDown()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID._isTesting = true
 //        NeuroID.isAdvancedDevice = false
 
@@ -131,7 +131,7 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_start_success_queuedEvent() {
         _ = NeuroID.stop()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID._isTesting = true
 
         // pre tests
@@ -154,7 +154,7 @@ class NeuroIDClassTests: BaseTestClass {
     }
 
     func test_stop() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
 
         let stopped = NeuroID.stop()

@@ -212,7 +212,7 @@ class NIDLog: LoggerProtocol {
     }
 
     func log(tag: String = "", _ strings: String) {
-        if NeuroID._isSDKStarted, NeuroID.showLogs {
+        if NeuroID.shared._isSDKStarted, NeuroID.showLogs {
             Swift.print("(NeuroID) \(tag) ", strings)
         }
     }
@@ -222,7 +222,7 @@ class NIDLog: LoggerProtocol {
     }
 
     func d(tag: String = "", _ strings: String) {
-        if NeuroID._isSDKStarted, NeuroID.showLogs {
+        if NeuroID.shared._isSDKStarted, NeuroID.showLogs {
             Swift.print("(NeuroID Debug) \(tag) ", strings)
         }
     }
