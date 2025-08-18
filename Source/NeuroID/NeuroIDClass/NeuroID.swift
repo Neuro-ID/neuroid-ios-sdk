@@ -42,7 +42,12 @@ public class NeuroID: NSObject {
     var isFPJSRunning = false
 
     var clientID: String?
-    static var sessionID: String? {
+    var sessionID: String? {
+        // Formerly known as userID, now within the mobile sdk ONLY sessionID
+        // setting should only be through our setIdentity/setUserId command
+        NeuroID.shared.identifierService.sessionID
+    }
+
         get {
             NeuroID.shared.identifierService.sessionID
         }

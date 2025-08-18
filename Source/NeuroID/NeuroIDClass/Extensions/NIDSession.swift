@@ -38,7 +38,9 @@ public extension NeuroID {
             NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
-        if NeuroID.sessionID.isEmptyOrNil, !NeuroID.isSDKStarted {
+        if NeuroID.shared.identifierService.sessionID.isEmptyOrNil,
+           !NeuroID.isSDKStarted
+        {
             return
         }
         NeuroID.shared._isSDKStarted = true
@@ -338,7 +340,7 @@ extension NeuroID {
         }
 
         // stop existing session if one is open
-        if NeuroID.sessionID != nil || NeuroID.isSDKStarted {
+        if !NeuroID.shared.identifierService.sessionID.isEmptyOrNil || NeuroID.isSDKStarted {
             _ = stopSession()
         }
 
