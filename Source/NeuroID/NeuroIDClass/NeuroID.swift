@@ -64,11 +64,7 @@ public class NeuroID: NSObject {
 
     var environment: String = Constants.environmentTest.rawValue
 
-    fileprivate static var _currentScreenName: String?
-    static var currentScreenName: String? {
-        get { lock.withCriticalSection { _currentScreenName } }
-        set { lock.withCriticalSection { _currentScreenName = newValue } }
-    }
+    var _currentScreenName: String?
 
     var _isSDKStarted: Bool = false
     public static var isSDKStarted: Bool { NeuroID.shared._isSDKStarted }

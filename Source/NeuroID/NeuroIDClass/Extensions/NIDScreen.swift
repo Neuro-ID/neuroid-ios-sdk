@@ -18,7 +18,7 @@ public extension NeuroID {
         }
 
         if let urlEncode = screen.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            currentScreenName = urlEncode
+            NeuroID.shared._currentScreenName = urlEncode
         } else {
             NeuroID.shared.logger.e("Invalid Screenname for NeuroID. \(screen) can't be encode")
             logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
@@ -31,9 +31,9 @@ public extension NeuroID {
     }
 
     static func getScreenName() -> String? {
-        if !currentScreenName.isEmptyOrNil {
-            return "\(currentScreenName ?? "")"
+        if !NeuroID.shared._currentScreenName.isEmptyOrNil {
+            return "\(NeuroID.shared._currentScreenName ?? "")"
         }
-        return currentScreenName
+        return NeuroID.shared._currentScreenName
     }
 }
