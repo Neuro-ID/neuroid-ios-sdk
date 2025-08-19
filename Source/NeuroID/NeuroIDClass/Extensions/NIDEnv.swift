@@ -8,11 +8,13 @@
 import Foundation
 
 public extension NeuroID {
-    static func getEnvironment() -> String {
-        return NeuroID.shared.environment
+    func getEnvironment() -> String {
+        return self.environment
     }
 
-    @available(*, deprecated, message: "setEnvironmentProduction is deprecated and no longer required")
+    @available(
+        *, deprecated, message: "setEnvironmentProduction is deprecated and no longer required"
+    )
     static func setEnvironmentProduction(_ value: Bool) {
         NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
     }

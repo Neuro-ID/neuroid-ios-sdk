@@ -66,7 +66,7 @@ extension NeuroID {
             NeuroID.shared.isFPJSRunning = true
         }
         NeuroID.shared.deviceSignalService.getAdvancedDeviceSignal(
-            NeuroID.getClientKey(),
+            NeuroID.shared.getClientKey(),
             clientID: NeuroID.shared.clientID,
             linkedSiteID: NeuroID.shared.linkedSiteID,
             advancedDeviceKey: NeuroID.shared.advancedDeviceKey

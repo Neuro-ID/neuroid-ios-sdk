@@ -51,7 +51,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             tabID: "\(tabId)",
             pageID: "\(pageid)",
             url: "ios://\(NeuroID.getScreenName() ?? "")",
-            packetNumber: NeuroID.getPacketNumber()
+            packetNumber: NeuroID.shared.getPacketNumber()
         )
     }
 

@@ -8,34 +8,24 @@
 import Foundation
 
 public extension NeuroID {
-    // Temporarily keeping this function for backwards compatibility
-    static func setUserID(_ userID: String) -> Bool {
-        return identify(userID)
-    }
-
-    // Temporarily keeping this function for backwards compatibility
-    static func getUserID() -> String {
-        return NeuroID.getSessionID()
-    }
-
     // This command replaces `setUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    static func identify(_ sessionID: String) -> Bool {
-        return NeuroID.shared.identifierService.setSessionID(sessionID, true)
+    func identify(_ sessionID: String) -> Bool {
+        return self.identifierService.setSessionID(sessionID, true)
     }
 
     // This command replaces `getUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    static func getSessionID() -> String {
-        return NeuroID.shared.identifierService.sessionID ?? ""
+    func getSessionID() -> String {
+        return self.identifierService.sessionID ?? ""
     }
 
-    static func getRegisteredUserID() -> String {
-        return NeuroID.shared.registeredUserID
+    func getRegisteredUserID() -> String {
+        return self.registeredUserID
     }
 
-    static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
-        return NeuroID.shared.identifierService.setRegisteredUserID(registeredUserID)
+    func setRegisteredUserID(_ registeredUserID: String) -> Bool {
+        return self.identifierService.setRegisteredUserID(registeredUserID)
     }
 
     /**

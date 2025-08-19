@@ -71,6 +71,7 @@
 		FF0E22292E4A649200DECB89 /* PayloadSendingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0E22282E4A648600DECB89 /* PayloadSendingService.swift */; };
 		FF0E222F2E4AA89100DECB89 /* PayloadSendingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0E222E2E4AA88A00DECB89 /* PayloadSendingServiceTests.swift */; };
 		FF0E22312E4BBD1A00DECB89 /* RepeatingTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0E22302E4BBD1A00DECB89 /* RepeatingTask.swift */; };
+		FF0E22382E54E5D600DECB89 /* NIDStatic.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0E22372E54E5D300DECB89 /* NIDStatic.swift */; };
 		FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */; };
 		FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770872E26DB8E007235A2 /* NIDNewSessionTests.swift */; };
 		FF1770AC2E26DB8E007235A2 /* MockNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770982E26DB8E007235A2 /* MockNetworkService.swift */; };
@@ -213,6 +214,7 @@
 		FF0E22282E4A648600DECB89 /* PayloadSendingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadSendingService.swift; sourceTree = "<group>"; };
 		FF0E222E2E4AA88A00DECB89 /* PayloadSendingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayloadSendingServiceTests.swift; sourceTree = "<group>"; };
 		FF0E22302E4BBD1A00DECB89 /* RepeatingTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTask.swift; sourceTree = "<group>"; };
+		FF0E22372E54E5D300DECB89 /* NIDStatic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDStatic.swift; sourceTree = "<group>"; };
 		FF1770802E26DB8E007235A2 /* MultiAppFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiAppFlowTests.swift; sourceTree = "<group>"; };
 		FF1770812E26DB8E007235A2 /* NeuroIDClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDClassTests.swift; sourceTree = "<group>"; };
 		FF1770822E26DB8E007235A2 /* NIDClientSiteIdTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDClientSiteIdTests.swift; sourceTree = "<group>"; };
@@ -455,6 +457,7 @@
 		F2AEE7352A27A5C8009690CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				FF0E22372E54E5D300DECB89 /* NIDStatic.swift */,
 				F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */,
 				F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */,
 				FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */,
@@ -806,6 +809,7 @@
 				6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
 				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
+				FF0E22382E54E5D600DECB89 /* NIDStatic.swift in Sources */,
 				FF0E22312E4BBD1A00DECB89 /* RepeatingTask.swift in Sources */,
 				FFAC96B92D358A9F004C2A25 /* UIView.swift in Sources */,
 				F25908DF2BEE62EF00B7A73D /* ConfigModels.swift in Sources */,
