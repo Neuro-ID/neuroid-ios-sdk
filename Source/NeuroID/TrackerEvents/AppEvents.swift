@@ -39,7 +39,7 @@ extension NeuroIDTracker {
         if !NeuroID.shared.lowMemory {
             NeuroID.clearDataStore()
 
-            NeuroID.send(
+            NeuroID.shared.send(
                 forceSend: true,
                 eventSubset: [
                     NIDEvent(

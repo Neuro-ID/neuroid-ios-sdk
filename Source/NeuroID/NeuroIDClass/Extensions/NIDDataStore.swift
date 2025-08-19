@@ -114,7 +114,7 @@ extension NeuroID {
 
         // send on immediate on certain events regardless of SDK running collection
         if immediateSendTypes.contains(event.type) {
-            send(forceSend: true)
+            NeuroID.shared.send(forceSend: true)
         }
     }
 

@@ -231,7 +231,7 @@ enum UtilFunctions {
                 attrParams: attrParams
             )
 
-            NeuroID.send()
+            NeuroID.shared.send()
         default:
             return
         }
