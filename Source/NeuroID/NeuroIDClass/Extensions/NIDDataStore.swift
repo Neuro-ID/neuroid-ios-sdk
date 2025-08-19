@@ -28,11 +28,11 @@ extension NeuroID {
     /**
         Save and event to the datastore (logic of queue or not contained in this function)
      */
-    static func saveEventToDataStore(_ event: NIDEvent, screen: String? = nil) {
-        if !NeuroID.shared.isSDKStarted {
-            NeuroID.shared.saveQueuedEventToLocalDataStore(event, screen: screen)
+    func saveEventToDataStore(_ event: NIDEvent, screen: String? = nil) {
+        if !self.isSDKStarted {
+            self.saveQueuedEventToLocalDataStore(event, screen: screen)
         } else {
-            NeuroID.shared.saveEventToLocalDataStore(event, screen: screen)
+            self.saveEventToLocalDataStore(event, screen: screen)
         }
     }
 

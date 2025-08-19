@@ -85,7 +85,7 @@ class NIDConfigService: ConfigServiceProtocol {
                 self.logger.e("Failed to retrieve NID Config \(error)")
                 self.configCache = ConfigResponseData()
                 self.cacheSetWithRemote = false
-                NeuroID.saveEventToDataStore(
+                NeuroID.shared.saveEventToDataStore(
                     NIDEvent.createErrorLogEvent(
                         "Failed to retrieve NID config: \(error). Default values will be used."
                     )
@@ -117,7 +117,7 @@ class NIDConfigService: ConfigServiceProtocol {
             }
         }
 
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateSampleSiteIDMap,
                 level: "INFO"
@@ -154,7 +154,7 @@ class NIDConfigService: ConfigServiceProtocol {
     
     func clearSiteIDMap() {
         siteIDMap.removeAll()
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.clearSampleSiteIDmap,
                 level: "INFO"
@@ -168,11 +168,11 @@ class NIDConfigService: ConfigServiceProtocol {
         guard let jsonData = try? encoder.encode(configData) else { return }
           
         if let jsonString = String(data: jsonData, encoding: .utf8) {
-            NeuroID.saveEventToDataStore(
+            NeuroID.shared.saveEventToDataStore(
                 NIDEvent(type: .configCached, v: jsonString)
             )
         } else {
-            NeuroID.saveEventToDataStore(
+            NeuroID.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to parse config")
             )
         }
@@ -182,7 +182,7 @@ class NIDConfigService: ConfigServiceProtocol {
         if let nonNullSiteID: String = siteID {
             if let nonNullFlag = siteIDMap[nonNullSiteID] {
                 _isSessionFlowSampled = nonNullFlag
-                NeuroID.saveEventToDataStore(
+                NeuroID.shared.saveEventToDataStore(
                     NIDEvent(
                         type: NIDEventName.updateIsSampledStatus,
                         m: "\(nonNullSiteID) : \(nonNullFlag)",
@@ -194,7 +194,7 @@ class NIDConfigService: ConfigServiceProtocol {
         }
         _isSessionFlowSampled = true
         
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateIsSampledStatus,
                 m: "\(siteID ?? "unknownSiteID") : \(false)",

@@ -134,7 +134,7 @@ public extension NeuroID {
                         if !startStatus.started {
                             completion(startStatus)
 
-                            saveEventToDataStore(
+                            NeuroID.shared.saveEventToDataStore(
                                 NIDEvent.createInfoLogEvent(
                                     "Failed to startAppFlow with inner startSession command"
                                 )
@@ -151,7 +151,7 @@ public extension NeuroID {
                                 SessionStartResult(started, NeuroID.getSessionID())
                             )
 
-                            saveEventToDataStore(
+                            NeuroID.shared.saveEventToDataStore(
                                 NIDEvent.createInfoLogEvent(
                                     "Failed to startAppFlow with inner start command"
                                 )
@@ -205,7 +205,7 @@ extension NeuroID {
     }
 
     static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
-        saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Close session attempt")
         )
 
@@ -300,7 +300,7 @@ extension NeuroID {
         siteID: String?,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
-        saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Start attempt with siteID: \(siteID ?? ""))")
         )
 

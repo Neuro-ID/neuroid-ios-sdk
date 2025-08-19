@@ -26,7 +26,7 @@ extension NeuroID {
                     onPacketIncrement: { self.incrementPacketNumber() },
                     onSuccess: completion,
                     onFailure: { error in
-                        NeuroID.saveEventToDataStore(
+                        self.saveEventToDataStore(
                             NIDEvent.createErrorLogEvent("Group and POST failure: \(error)")
                         )
 
