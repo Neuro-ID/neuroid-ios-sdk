@@ -30,10 +30,10 @@ public extension NeuroID {
         return true
     }
 
-    static func getScreenName() -> String? {
-        if !NeuroID.shared._currentScreenName.isEmptyOrNil {
-            return "\(NeuroID.shared._currentScreenName ?? "")"
+    func getScreenName() -> String? {
+        if !self._currentScreenName.isEmptyOrNil {
+            return "\(self._currentScreenName ?? "")"
         }
-        return NeuroID.shared._currentScreenName
+        return self._currentScreenName
     }
 }

@@ -21,9 +21,9 @@ extension NeuroID {
         if !NeuroID.isStopped() || forceSend {
             DispatchQueue.global(qos: .utility).async {
                 NeuroID.shared.payloadSendingService.cleanAndSendEvents(
-                    clientKey: NeuroID.getClientKey(),
+                    clientKey: NeuroID.shared.getClientKey(),
                     screenName: NeuroID.getScreenName(),
-                    onPacketIncrement: { NeuroID.incrementPacketNumber() },
+                    onPacketIncrement: { NeuroID.shared.incrementPacketNumber() },
                     onSuccess: completion,
                     onFailure: { error in
                         NeuroID.saveEventToDataStore(

@@ -37,14 +37,14 @@ public extension NeuroID {
 
 // Internal Only Functions
 extension NeuroID {
-    static func getClientKeyFromLocalStorage() -> String {
+    func getClientKeyFromLocalStorage() -> String {
         let key = getUserDefaultKeyString(Constants.storageClientKey.rawValue)
         return key ?? ""
     }
 
-    static func getClientKey() -> String {
-        guard let key = NeuroID.shared.clientKey else {
-            NeuroID.shared.logger.e("ClientKey is not set")
+    func getClientKey() -> String {
+        guard let key = self.clientKey else {
+            self.logger.e("ClientKey is not set")
             return ""
         }
         return key
@@ -55,8 +55,8 @@ extension NeuroID {
        is the "collection" site meaning the siteID that belongs to the clientKey given
        in the `configure` command
      */
-    static func isCollectionSite(siteID: String?) -> Bool {
-        return siteID == nil || siteID ?? "" == NeuroID.shared.configService.configCache.siteID ?? "noID"
+    func isCollectionSite(siteID: String?) -> Bool {
+        return siteID == nil || siteID ?? "" == self.configService.configCache.siteID ?? "noID"
     }
 
     static func addLinkedSiteID(_ siteID: String) {

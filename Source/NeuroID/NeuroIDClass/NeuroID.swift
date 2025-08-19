@@ -286,8 +286,8 @@ public class NeuroID: NSObject {
         return true
     }
 
-    public static func isStopped() -> Bool {
-        return NeuroID.shared._isSDKStarted != true
+    func isStopped() -> Bool {
+        return _isSDKStarted != true
     }
 
     static func swizzle() {
@@ -306,9 +306,9 @@ public class NeuroID: NSObject {
         NeuroID.shared.didSwizzle.toggle()
     }
 
-    /// Get the current SDK versión from bundle
+    /// Get the current SDK version from bundle
     /// - Returns: String with the version format
-    public static func getSDKVersion() -> String {
+    public func getSDKVersion() -> String {
         return ParamsCreator.getSDKVersion()
     }
 

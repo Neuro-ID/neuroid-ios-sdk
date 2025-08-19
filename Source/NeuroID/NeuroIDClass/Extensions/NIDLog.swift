@@ -24,8 +24,8 @@ extension NeuroID {
     /**
      Enable or disable the NeuroID debug logging
      */
-    public static func enableLogging(_ value: Bool) {
-        NeuroID.shared.showLogs = value
+    public func enableLogging(_ value: Bool) {
+        showLogs = value
     }
 
     static func logInfo(category: String = "default", content: Any...) {

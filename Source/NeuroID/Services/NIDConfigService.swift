@@ -67,7 +67,7 @@ class NIDConfigService: ConfigServiceProtocol {
             return
         }
         
-        let config_url = NIDConfigService.NID_CONFIG_URL + NeuroID.getClientKey() + ".json"
+        let config_url = NIDConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
         networkService.getRequest(
             url: URL(string: config_url)!,
             responseDecodableType: ConfigResponseData.self

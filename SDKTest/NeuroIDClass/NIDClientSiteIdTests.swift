@@ -45,7 +45,7 @@ class NIDClientSiteIdTests: BaseTestClass {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         let expectedValue = clientKey
 
-        let value = NeuroID.getClientKey()
+        let value = NeuroID.shared.getClientKey()
 
         assert(value == expectedValue)
     }
@@ -55,7 +55,7 @@ class NIDClientSiteIdTests: BaseTestClass {
 
         UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
 
-        let value = NeuroID.getClientKeyFromLocalStorage()
+        let value = NeuroID.shared.getClientKeyFromLocalStorage()
         assert(value == expectedValue)
     }
 

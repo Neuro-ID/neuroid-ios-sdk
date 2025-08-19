@@ -174,7 +174,7 @@ extension NeuroID {
     ) -> NIDEvent {
         return NIDEvent(
             type: sessionEvent,
-            f: NeuroID.getClientKey(),
+            f: NeuroID.shared.getClientKey(),
             cid: NeuroID.getClientID(),
             did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
