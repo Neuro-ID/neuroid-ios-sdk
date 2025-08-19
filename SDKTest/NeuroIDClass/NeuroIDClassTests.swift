@@ -97,14 +97,14 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.shared.clientKey = nil
 
         // pre tests
-        assert(!NeuroID.isSDKStarted)
+        assert(!NeuroID.shared.isSDKStarted)
         assert(NeuroID.shared.clientKey == nil)
 
         // action
         NeuroID.start { started in
             assert(!started)
             // post action test
-            assert(!NeuroID.isSDKStarted)
+            assert(!NeuroID.shared.isSDKStarted)
         }
     }
 
@@ -115,13 +115,13 @@ class NeuroIDClassTests: BaseTestClass {
 //        NeuroID.isAdvancedDevice = false
 
         // pre tests
-        assert(!NeuroID.isSDKStarted)
+        assert(!NeuroID.shared.isSDKStarted)
 
         // action
         NeuroID.start { started in
             // post action test
             assert(started)
-            assert(NeuroID.isSDKStarted)
+            assert(NeuroID.shared.isSDKStarted)
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
 
@@ -135,7 +135,7 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID._isTesting = true
 
         // pre tests
-        assert(!NeuroID.isSDKStarted)
+        assert(!NeuroID.shared.isSDKStarted)
 
         clearOutDataStore()
 
@@ -143,7 +143,7 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.start { started in
             // post action test
             assert(started)
-            assert(NeuroID.isSDKStarted)
+            assert(NeuroID.shared.isSDKStarted)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
@@ -155,11 +155,11 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_stop() {
         NeuroID.shared._isSDKStarted = true
-        assert(NeuroID.isSDKStarted)
+        assert(NeuroID.shared.isSDKStarted)
 
         let stopped = NeuroID.stop()
         assert(stopped)
-        assert(!NeuroID.isSDKStarted)
+        assert(!NeuroID.shared.isSDKStarted)
     }
 
     func test_getSDKVersion() {

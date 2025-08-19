@@ -12,7 +12,7 @@ public extension NeuroID {
      Set screen name. We ensure that this is a URL valid name by replacing non alphanumber chars with underscore
      */
     static func setScreenName(_ screen: String) -> Bool {
-        if !NeuroID.isSDKStarted {
+        if !NeuroID.shared.isSDKStarted {
             NeuroID.shared.logger.e(NIDError.sdkNotStarted.rawValue)
             return false
         }

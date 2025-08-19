@@ -67,7 +67,7 @@ public class NeuroID: NSObject {
     var _currentScreenName: String?
 
     var _isSDKStarted: Bool = false
-    public static var isSDKStarted: Bool { NeuroID.shared._isSDKStarted }
+    public var isSDKStarted: Bool { _isSDKStarted }
 
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
