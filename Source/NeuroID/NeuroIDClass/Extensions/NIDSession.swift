@@ -83,7 +83,9 @@ public extension NeuroID {
             message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
         )
 
-        if !NeuroID.verifyClientKeyExists() || !NeuroID.shared.validationService.validateSiteID(siteID) {
+        if !NeuroID.shared.verifyClientKeyExists()
+            || !NeuroID.shared.validationService.validateSiteID(siteID)
+        {
             let res = SessionStartResult(false, "")
 
             NeuroID.shared.linkedSiteID = nil
@@ -117,7 +119,7 @@ public extension NeuroID {
 
                 captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
-                NeuroID.addLinkedSiteID(siteID)
+                NeuroID.shared.addLinkedSiteID(siteID)
                 completion(
                     SessionStartResult(true, NeuroID.getSessionID())
                 )
@@ -139,7 +141,7 @@ public extension NeuroID {
                             )
                             return
                         }
-                        NeuroID.addLinkedSiteID(siteID)
+                        NeuroID.shared.addLinkedSiteID(siteID)
                         completion(startStatus)
                     }
                 } else {
@@ -157,7 +159,7 @@ public extension NeuroID {
                             return
                         }
 
-                        NeuroID.addLinkedSiteID(siteID)
+                        NeuroID.shared.addLinkedSiteID(siteID)
                         completion(
                             SessionStartResult(started, NeuroID.getSessionID())
                         )
@@ -234,7 +236,7 @@ extension NeuroID {
         ]
         saveEventToLocalDataStore(event)
 
-        captureApplicationMetaData()
+        NeuroID.shared.captureApplicationMetaData()
     }
 
     static func clearSessionVariables() {
@@ -302,7 +304,7 @@ extension NeuroID {
             NIDEvent.createInfoLogEvent("Start attempt with siteID: \(siteID ?? ""))")
         )
 
-        if !NeuroID.verifyClientKeyExists() {
+        if !NeuroID.shared.verifyClientKeyExists() {
             completion(false)
             return
         }
@@ -313,11 +315,11 @@ extension NeuroID {
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
-                if NSClassFromString("XCTest") == nil {
-                    NeuroID.sendCollectionEventsJob.start()
-                }
+                    if NSClassFromString("XCTest") == nil {
+                        NeuroID.sendCollectionEventsJob.start()
+                    }
                 #else
-                NeuroID.sendCollectionEventsJob.start()
+                    NeuroID.sendCollectionEventsJob.start()
                 #endif
                 NeuroID.sendGyroAccelCollectionWorkItem.start()
             }
@@ -332,7 +334,7 @@ extension NeuroID {
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        if !NeuroID.verifyClientKeyExists() {
+        if !NeuroID.shared.verifyClientKeyExists() {
             let res = SessionStartResult(false, "")
 
             completion(res)
@@ -370,11 +372,11 @@ extension NeuroID {
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
-                if NSClassFromString("XCTest") == nil {
-                    resumeCollection()
-                }
+                    if NSClassFromString("XCTest") == nil {
+                        resumeCollection()
+                    }
                 #else
-                resumeCollection()
+                    resumeCollection()
                 #endif
             }
         ) {

@@ -7,12 +7,12 @@
 
 import Foundation
 
-public extension NeuroID {
-    static func setIsRN() {
-        NeuroID.shared.isRN = true
+extension NeuroID {
+    func setIsRN() {
+        isRN = true
     }
 
-    static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
+    public static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
         let isAdvancedDevice = getOptionValueBool(
             rnOptions: rnOptions,
             configOptionKey: .isAdvancedDevice
@@ -22,13 +22,15 @@ public extension NeuroID {
             configOptionKey: .advancedDeviceKey
         )
 
-        let configured = configure(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey)
+        let configured = configure(
+            clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey
+        )
 
         if !configured {
             return false
         }
 
-        setIsRN()
+        NeuroID.shared.setIsRN()
 
         // Extract RN Options and put them in NeuroID Class Dict to be referenced
         let usingReactNavigation = getOptionValueBool(
@@ -41,7 +43,9 @@ public extension NeuroID {
         return true
     }
 
-    internal static func getOptionValueBool(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> Bool {
+    static func getOptionValueBool(
+        rnOptions: [String: Any], configOptionKey: RNConfigOptions
+    ) -> Bool {
         if let configValue = rnOptions[configOptionKey.rawValue] as? Bool {
             return configValue
         }
@@ -49,7 +53,9 @@ public extension NeuroID {
         return false
     }
 
-    internal static func getOptionValueString(rnOptions: [String: Any], configOptionKey: RNConfigOptions) -> String? {
+    static func getOptionValueString(
+        rnOptions: [String: Any], configOptionKey: RNConfigOptions
+    ) -> String? {
         guard let configValue = rnOptions[configOptionKey.rawValue] as? String else {
             return ""
         }

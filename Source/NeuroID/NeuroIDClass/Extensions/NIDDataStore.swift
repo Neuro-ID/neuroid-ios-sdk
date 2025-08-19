@@ -104,11 +104,11 @@ extension NeuroID {
         mutableEvent.gyro = sensorManager.getSensorData(sensor: .gyro)
         mutableEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
 
-        NeuroID.logDebug(
+        NeuroID.shared.logDebug(
             category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer)
         )
-        NeuroID.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
-        NeuroID.logDebug(category: "saveEvent", content: mutableEvent.toDict())
+        NeuroID.shared.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
+        NeuroID.shared.logDebug(category: "saveEvent", content: mutableEvent.toDict())
 
         NeuroID.shared.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
 

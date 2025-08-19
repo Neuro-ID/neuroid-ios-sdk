@@ -61,7 +61,7 @@ class NIDConfigService: ConfigServiceProtocol {
     }
     
     func retrieveConfig() {
-        if !NeuroID.verifyClientKeyExists() {
+        if !NeuroID.shared.verifyClientKeyExists() {
             cacheSetWithRemote = false
             configRetrievalCallback()
             return

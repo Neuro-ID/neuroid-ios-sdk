@@ -176,9 +176,9 @@ public class NeuroID: NSObject {
         )
     }
 
-    static func verifyClientKeyExists() -> Bool {
-        if NeuroID.shared.clientKey == nil || NeuroID.shared.clientKey == "" {
-            NeuroID.shared.logger.e("Missing Client Key - please call configure prior to calling start")
+    func verifyClientKeyExists() -> Bool {
+        if clientKey == nil || clientKey == "" {
+            logger.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -195,7 +195,7 @@ public class NeuroID: NSObject {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
-        if NeuroID.verifyClientKeyExists() {
+        if NeuroID.shared.verifyClientKeyExists() {
             NeuroID.shared.logger.e("You already configured the SDK")
             return false
         }
@@ -240,7 +240,7 @@ public class NeuroID: NSObject {
             captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
         }
 
-        captureApplicationMetaData()
+        NeuroID.shared.captureApplicationMetaData()
 
         NeuroID.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("isAdvancedDevice setting: \(isAdvancedDevice)")
@@ -312,10 +312,10 @@ public class NeuroID: NSObject {
         return ParamsCreator.getSDKVersion()
     }
 
-    static func captureApplicationMetaData() {
+    func captureApplicationMetaData() {
         let appMetaData = getAppMetaData()
 
-        saveEventToDataStore(
+        NeuroID.saveEventToDataStore(
             NIDEvent(
                 type: .applicationMetaData,
                 attrs: [
@@ -328,7 +328,7 @@ public class NeuroID: NSObject {
         )
     }
 
-    static func getAppMetaData() -> ApplicationMetaData? {
+    func getAppMetaData() -> ApplicationMetaData? {
         let bundleID: String
         if let bundleIdentifier = Bundle.main.bundleIdentifier {
             bundleID = bundleIdentifier

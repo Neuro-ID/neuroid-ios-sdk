@@ -7,36 +7,37 @@
 
 import Foundation
 
-public extension NeuroID {
+// Internal Only Functions
+extension NeuroID {
     /**
-     Public user facing getClientID function
+     Public user facing getClientID function via Static Instance
      */
-    static func getClientID() -> String {
+    func getClientID() -> String {
         let clientIdName = Constants.storageClientIDKey.rawValue
         var cid = getUserDefaultKeyString(clientIdName)
-        if NeuroID.shared.clientID != nil {
-            cid = NeuroID.shared.clientID
+        if self.clientID != nil {
+            cid = self.clientID
         }
         // Ensure we aren't on old client id
         if cid != nil && !cid!.contains("_") {
             return cid!
         } else {
             cid = ParamsCreator.generateID()
-            NeuroID.shared.clientID = cid
+            self.clientID = cid
             setUserDefaultKey(clientIdName, value: cid)
             return cid!
         }
     }
 
+    /**
+     Public user facing setSiteId function via Static Instance
+     */
     @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
-    static func setSiteId(siteId: String) {
-        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
-        self.shared.siteID = siteId
+    func setSiteId(siteId: String) {
+        self.logger.i("**** NOTE: THIS METHOD IS DEPRECATED")
+        self.siteID = siteId
     }
-}
 
-// Internal Only Functions
-extension NeuroID {
     func getClientKeyFromLocalStorage() -> String {
         let key = getUserDefaultKeyString(Constants.storageClientKey.rawValue)
         return key ?? ""
@@ -59,14 +60,14 @@ extension NeuroID {
         return siteID == nil || siteID ?? "" == self.configService.configCache.siteID ?? "noID"
     }
 
-    static func addLinkedSiteID(_ siteID: String) {
-        if !NeuroID.shared.validationService.validateSiteID(siteID) {
+    func addLinkedSiteID(_ siteID: String) {
+        if !self.validationService.validateSiteID(siteID) {
             return
         }
 
-        NeuroID.shared.linkedSiteID = siteID
+        self.linkedSiteID = siteID
 
-        saveEventToLocalDataStore(
+        NeuroID.saveEventToLocalDataStore(
             NIDEvent(type: .setLinkedSite, v: siteID)
         )
     }

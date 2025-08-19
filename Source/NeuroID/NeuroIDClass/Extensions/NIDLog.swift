@@ -28,27 +28,28 @@ extension NeuroID {
         showLogs = value
     }
 
-    static func logInfo(category: String = "default", content: Any...) {
+    // Instance methods for logging
+    func logInfo(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .info)
     }
 
-    static func logError(category: String = "default", content: Any...) {
+    func logError(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .error)
     }
 
-    static func logFault(category: String = "default", content: Any...) {
+    func logFault(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .fault)
     }
 
-    static func logDebug(category: String = "default", content: Any...) {
+    func logDebug(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .debug)
     }
 
-    static func logDefault(category: String = "default", content: Any...) {
+    func logDefault(category: String = "default", content: Any...) {
         osLog(category: category, content: content, type: .default)
     }
 
-    private static func osLog(category: String = "default", content: Any..., type: OSLogType) {
+    private func osLog(category: String = "default", content: Any..., type: OSLogType) {
         Log.log(category: category, contents: content, type: .info)
     }
 

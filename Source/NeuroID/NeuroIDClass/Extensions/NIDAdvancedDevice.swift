@@ -39,7 +39,7 @@ extension NeuroID {
         }
     }
 
-    static func getCachedADV() -> Bool {
+    func getCachedADV() -> Bool {
         if let storedADVKey = getUserDefaultKeyDict(
             Constants.storageAdvancedDeviceKey.rawValue)
         {
@@ -49,7 +49,7 @@ extension NeuroID {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
                 if currentTimeEpoch < exp {
-                    captureADVEvent(requestID, cached: true, latency: 0, message: "")
+                    NeuroID.captureADVEvent(requestID, cached: true, latency: 0, message: "")
                     return true
                 }
             }
@@ -146,7 +146,7 @@ extension NeuroID {
            NeuroID.shared.configService.isSessionFlowSampled
         {
             // call stored value, if expired then clear and get new one, else send existing
-            if !getCachedADV() {
+            if !NeuroID.shared.getCachedADV() {
                 getNewADV()
             }
         }

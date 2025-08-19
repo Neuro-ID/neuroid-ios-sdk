@@ -28,7 +28,7 @@ class NIDRNTests: XCTestCase {
 
     func test_isRN() {
         assert(!NeuroID.shared.isRN)
-        NeuroID.setIsRN()
+        NeuroID.shared.setIsRN()
 
         assert(NeuroID.shared.isRN)
     }
