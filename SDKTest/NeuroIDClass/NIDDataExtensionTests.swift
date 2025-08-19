@@ -43,7 +43,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
     func test_saveEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
-        NeuroID.currentScreenName = screen
+        NeuroID.shared._currentScreenName = screen
         NeuroID.shared.datastore = dataStore
 
         NeuroID.shared._isSDKStarted = true
@@ -58,7 +58,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
     func test_saveQueuedEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
-        NeuroID.currentScreenName = screen
+        NeuroID.shared._currentScreenName = screen
 
         let nidE = nidEvent
         assert(nidE.url == nil)

@@ -49,19 +49,19 @@ class NIDNewSessionTests: BaseTestClass {
 
     //    clearSessionVariables
     func test_clearSessionVariables() {
-        NeuroID.sessionID = "myUserID"
-        NeuroID.registeredUserID = "myRegisteredUserID"
+        NeuroID.shared.identifierService.sessionID = "myUserID"
+        NeuroID.shared.identifierService.registeredUserID = "myRegisteredUserID"
         NeuroID.shared.linkedSiteID = "mySite"
 
         NeuroID.clearSessionVariables()
 
-        assert(NeuroID.sessionID == nil)
-        assert(NeuroID.registeredUserID == "")
+        assert(NeuroID.shared.sessionID == nil)
+        assert(NeuroID.shared.registeredUserID == "")
         assert(NeuroID.shared.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
-        NeuroID.sessionID = nil
+        NeuroID.shared.identifierService.sessionID = nil
         NeuroID.shared._isSDKStarted = false
 
         let expectedValue = "mySessionID"
@@ -75,7 +75,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id() {
-        NeuroID.sessionID = nil
+        NeuroID.shared.identifierService.sessionID = nil
         NeuroID.shared._isSDKStarted = false
 
         let expectedValue = "mySessionID"
@@ -88,7 +88,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id_sdk_started() {
-        NeuroID.sessionID = nil
+        NeuroID.shared.identifierService.sessionID = nil
         NeuroID.shared._isSDKStarted = true
 
         let expectedValue = "mySessionID"
@@ -101,7 +101,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_id_sdk_started() {
-        NeuroID.sessionID = nil
+        NeuroID.shared.identifierService.sessionID = nil
         NeuroID.shared._isSDKStarted = true
 
         let expectedValue = "mySessionID"

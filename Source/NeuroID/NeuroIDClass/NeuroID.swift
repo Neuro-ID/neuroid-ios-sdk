@@ -42,21 +42,15 @@ public class NeuroID: NSObject {
     var isFPJSRunning = false
 
     var clientID: String?
-    static var sessionID: String? {
-        get {
-            NeuroID.shared.identifierService.sessionID
-        }
-        set {
-            // setting should not be possible unless through our setIdentity/setUserId command
-        }
-    } // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    static var registeredUserID: String {
-        get {
-            NeuroID.shared.identifierService.registeredUserID
-        }
-        set {
-            // setting should not be possible unless through our setRegisteredUserId command
-        }
+    var sessionID: String? {
+        // Formerly known as userID, now within the mobile sdk ONLY sessionID
+        // setting should only be through our setIdentity/setUserId command
+        NeuroID.shared.identifierService.sessionID
+    }
+
+    var registeredUserID: String {
+        // setting should only be through our setRegisteredUserId command
+        NeuroID.shared.identifierService.registeredUserID
     }
 
     static var trackers = [String: NeuroIDTracker]()
@@ -70,11 +64,7 @@ public class NeuroID: NSObject {
 
     var environment: String = Constants.environmentTest.rawValue
 
-    fileprivate static var _currentScreenName: String?
-    static var currentScreenName: String? {
-        get { lock.withCriticalSection { _currentScreenName } }
-        set { lock.withCriticalSection { _currentScreenName = newValue } }
-    }
+    var _currentScreenName: String?
 
     var _isSDKStarted: Bool = false
     public static var isSDKStarted: Bool { NeuroID.shared._isSDKStarted }

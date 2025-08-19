@@ -108,7 +108,9 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
                     }
 
                     // not collecting but a session is in progress we need to restart
-                    if !NeuroID.isSDKStarted, (NeuroID.sessionID?.isEmpty) != nil {
+                    if !NeuroID.isSDKStarted,
+                       !NeuroID.shared.identifierService.sessionID.isEmptyOrNil
+                    {
                         self.setupResumeNetworkTask()
 
                         DispatchQueue

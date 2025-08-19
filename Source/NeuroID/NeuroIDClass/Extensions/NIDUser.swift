@@ -27,11 +27,11 @@ public extension NeuroID {
     // This command replaces `getUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
     static func getSessionID() -> String {
-        return NeuroID.sessionID ?? ""
+        return NeuroID.shared.identifierService.sessionID ?? ""
     }
 
     static func getRegisteredUserID() -> String {
-        return NeuroID.registeredUserID
+        return NeuroID.shared.registeredUserID
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {

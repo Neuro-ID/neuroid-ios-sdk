@@ -36,7 +36,7 @@ class NIDUserTests: BaseTestClass {
 
         let value = NeuroID.getSessionID()
 
-        assert(NeuroID.sessionID == expectedValue)
+        assert(NeuroID.shared.sessionID == expectedValue)
         assert(value == expectedValue)
     }
 
@@ -48,7 +48,7 @@ class NIDUserTests: BaseTestClass {
         let value = NeuroID.getSessionID()
 
         assert(value == "")
-        assert(NeuroID.sessionID != expectedValue)
+        assert(NeuroID.shared.sessionID != expectedValue)
     }
 
     func test_getRegisteredUserID_objectLevel() {
@@ -58,7 +58,7 @@ class NIDUserTests: BaseTestClass {
 
         let value = NeuroID.getRegisteredUserID()
 
-        assert(NeuroID.registeredUserID == expectedValue)
+        assert(NeuroID.shared.registeredUserID == expectedValue)
         assert(value == expectedValue)
 
         NeuroID.shared.identifierService.registeredUserID = ""

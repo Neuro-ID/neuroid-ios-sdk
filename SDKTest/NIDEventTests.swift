@@ -21,7 +21,7 @@ class NIDEventTests: XCTestCase {
     override func setUp() {
         // Clear out the DataStore Events after each test
         NeuroID.shared.datastore.removeSentEvents()
-        NeuroID.currentScreenName = nil
+        NeuroID.shared._currentScreenName = nil
     }
  
     func dictionaryTests(dict: [String: Any?], expectedV: String) {

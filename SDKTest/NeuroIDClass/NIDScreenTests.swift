@@ -55,7 +55,7 @@ class NIDScreenTests: BaseTestClass {
     func test_setScreenName_not_started() {
         clearOutDataStore()
         NeuroID.shared._isSDKStarted = false
-        NeuroID.currentScreenName = ""
+        NeuroID.shared._currentScreenName = ""
         let expectedValue = "test Screen"
         let screenNameSet = NeuroID.setScreenName(expectedValue)
 

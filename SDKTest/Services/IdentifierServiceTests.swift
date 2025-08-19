@@ -209,7 +209,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setSessionID(expectedValue, true)
 
         assert(fnSuccess)
-        assert(NeuroID.sessionID == expectedValue)
+        assert(NeuroID.shared.sessionID == expectedValue)
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
@@ -224,7 +224,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setSessionID(expectedValue, true)
 
         assert(fnSuccess == true)
-        assert(NeuroID.sessionID == expectedValue)
+        assert(NeuroID.shared.sessionID == expectedValue)
 
         //        assert(DataStore.events.count == 0) "NETWORK_STATE" event present
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
@@ -240,7 +240,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setSessionID(expectedValue, false)
 
         assert(fnSuccess)
-        assert(NeuroID.sessionID == expectedValue)
+        assert(NeuroID.shared.sessionID == expectedValue)
 
         assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
@@ -258,7 +258,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setSessionID(expectedValue, false)
 
         assert(fnSuccess == true)
-        assert(NeuroID.sessionID == expectedValue)
+        assert(NeuroID.shared.sessionID == expectedValue)
         assert(dataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
         assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
@@ -274,7 +274,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
+        assert(NeuroID.shared.registeredUserID == expectedValue)
 
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
@@ -297,7 +297,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
+        assert(NeuroID.shared.registeredUserID == expectedValue)
 
 //        assert(DataStore.events.count == 0)
         assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
@@ -319,7 +319,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
+        assert(NeuroID.shared.registeredUserID == expectedValue)
 
         assertStoredEventTypeAndCount(type: "LOG", count: 2)
         assert(dataStore.queuedEvents.count == 0)
@@ -338,7 +338,7 @@ class IdentifierServiceTests: BaseTestClass {
         let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
 
         assert(fnSuccess == true)
-        assert(NeuroID.registeredUserID == expectedValue)
+        assert(NeuroID.shared.registeredUserID == expectedValue)
 
         assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
 

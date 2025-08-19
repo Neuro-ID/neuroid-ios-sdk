@@ -28,7 +28,7 @@ class NIDSessionTests: BaseTestClass {
 
     func test_getSessionID() {
         let expectedValue = ""
-        NeuroID.sessionID = expectedValue
+        NeuroID.shared.identifierService.sessionID = expectedValue
 
         let value = NeuroID.getSessionID()
 
