@@ -21,14 +21,21 @@ public extension NeuroID {
         return NeuroID.shared.isStopped()
     }
 
-    // Static method for backward compatibility
     static func getEnvironment() -> String {
         return NeuroID.shared.getEnvironment()
     }
 
-    // Static method for backward compatibility
     static func getScreenName() -> String? {
         return NeuroID.shared.getScreenName()
+    }
+
+    static func getClientID() -> String {
+        return NeuroID.shared.getClientID()
+    }
+
+    @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
+    static func setSiteId(siteId: String) {
+        NeuroID.shared.setSiteId(siteId: siteId)
     }
 
     // USER FUNCTIONS

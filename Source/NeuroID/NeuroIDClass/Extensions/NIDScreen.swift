@@ -21,7 +21,7 @@ public extension NeuroID {
             NeuroID.shared._currentScreenName = urlEncode
         } else {
             NeuroID.shared.logger.e("Invalid Screenname for NeuroID. \(screen) can't be encode")
-            logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
+            NeuroID.shared.logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
             return false
         }
 
