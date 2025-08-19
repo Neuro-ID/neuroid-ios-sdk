@@ -27,14 +27,14 @@ public extension NeuroID {
     }
 
     static func pauseCollection() {
-        saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("pause collection attempt")
         )
         pauseCollection(flushEventQueue: true)
     }
 
     static func resumeCollection() {
-        saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
@@ -49,11 +49,11 @@ public extension NeuroID {
     }
 
     static func stopSession() -> Bool {
-        saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Stop session attempt")
         )
 
-        saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         )
 
@@ -90,7 +90,7 @@ public extension NeuroID {
 
             NeuroID.shared.linkedSiteID = nil
 
-            saveEventToLocalDataStore(
+            NeuroID.shared.saveEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Failed to set invalid Linked Site \(siteID)"
                 )
@@ -114,7 +114,7 @@ public extension NeuroID {
                 NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
 
                 // capture CREATE_SESSION and METADATA events for new flow
-                saveEventToLocalDataStore(createNIDSessionEvent())
+                NeuroID.shared.saveEventToLocalDataStore(createNIDSessionEvent())
                 captureMobileMetadata()
 
                 captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
@@ -197,7 +197,7 @@ extension NeuroID {
 
     static func createSession() {
         NeuroID.shared.configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
-        saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             createNIDSessionEvent()
         )
 
@@ -217,7 +217,7 @@ extension NeuroID {
         }
 
         let closeEvent = NIDEvent(type: .closeSession, ct: "SDK_EVENT")
-        saveEventToLocalDataStore(closeEvent)
+        NeuroID.shared.saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
             return closeEvent
@@ -234,7 +234,7 @@ extension NeuroID {
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
             Attrs(n: "isRN", v: "\(NeuroID.shared.isRN)"),
         ]
-        saveEventToLocalDataStore(event)
+        NeuroID.shared.saveEventToLocalDataStore(event)
 
         NeuroID.shared.captureApplicationMetaData()
     }

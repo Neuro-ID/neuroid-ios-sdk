@@ -37,7 +37,7 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_saveEventToLocalDataStore_stoppedSDK() {
         _ = NeuroID.stop()
 
-        NeuroID.saveEventToLocalDataStore(nidEvent, screen: screenName)
+        NeuroID.shared.saveEventToLocalDataStore(nidEvent, screen: screenName)
         assert(dataStore.events.count == 0)
     }
 
@@ -51,7 +51,7 @@ class NIDDataExtensionTests: BaseTestClass {
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroID.saveEventToLocalDataStore(nidE, screen: screenName)
+        NeuroID.shared.saveEventToLocalDataStore(nidE, screen: screenName)
         assert(dataStore.events.count == 1)
         assert(dataStore.events[0].url == "ios://\(screen)")
     }

@@ -76,7 +76,7 @@ public class NeuroID: NSObject {
 
     static var collectGyroAccelEventTask: () -> Void = {
         if !NeuroID.isStopped(), NeuroID.shared.configService.configCache.gyroAccelCadence {
-            NeuroID.saveEventToLocalDataStore(
+            NeuroID.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .cadenceReadingAccel,
                     attrs: [
@@ -250,7 +250,7 @@ public class NeuroID: NSObject {
     }
 
     static func configSetupCompletion() {
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
         NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")

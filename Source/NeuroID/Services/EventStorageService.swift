@@ -23,10 +23,10 @@ struct EventStorageService: EventStorageServiceProtocol {
     }
 
     func saveEventToLocalDataStore(_ event: NIDEvent) {
-        NeuroID.saveEventToLocalDataStore(event)
+        NeuroID.shared.saveEventToLocalDataStore(event)
     }
 
     func saveEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
-        NeuroID.saveEventToLocalDataStore(event, screen: screen)
+        NeuroID.shared.saveEventToLocalDataStore(event, screen: screen)
     }
 }

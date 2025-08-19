@@ -30,7 +30,7 @@ public class NeuroIDTracker: NSObject {
         let newEvent = event
         // Make sure we have a valid url set
         newEvent.url = NeuroID.getScreenName()
-        NeuroID.saveEventToLocalDataStore(newEvent, screen: screenName)
+        NeuroID.shared.saveEventToLocalDataStore(newEvent, screen: screenName)
     }
     
     public static func registerSingleView(
