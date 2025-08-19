@@ -39,7 +39,7 @@ public extension NeuroID {
         )
         // Don't allow resume to be called if SDK has not been started
         if NeuroID.shared.identifierService.sessionID.isEmptyOrNil,
-           !NeuroID.isSDKStarted
+           !NeuroID.shared.isSDKStarted
         {
             return
         }
@@ -108,7 +108,7 @@ public extension NeuroID {
             // 3. Capture ADV (based on global config and lib installed)
 
             // If SDK is already started, update sampleStatus and continue
-            if NeuroID.isSDKStarted {
+            if NeuroID.shared.isSDKStarted {
                 NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
 
                 // capture CREATE_SESSION and METADATA events for new flow
@@ -207,7 +207,7 @@ extension NeuroID {
             NIDEvent.createInfoLogEvent("Close session attempt")
         )
 
-        if !NeuroID.isSDKStarted {
+        if !NeuroID.shared.isSDKStarted {
             saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent("Close attempt failed since SDK is not started")
             )
@@ -340,7 +340,7 @@ extension NeuroID {
         }
 
         // stop existing session if one is open
-        if !NeuroID.shared.identifierService.sessionID.isEmptyOrNil || NeuroID.isSDKStarted {
+        if !NeuroID.shared.identifierService.sessionID.isEmptyOrNil || NeuroID.shared.isSDKStarted {
             _ = stopSession()
         }
 

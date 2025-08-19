@@ -88,7 +88,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
             if connectionStatus != self.isConnected {
                 self.isConnected = connectionStatus
                 if !self.isConnected {
-                    if !NeuroID.isSDKStarted {
+                    if !NeuroID.shared.isSDKStarted {
                         return
                     }
 
@@ -103,12 +103,12 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
                 } else {
                     self.noNetworkTask.cancel()
 
-                    if NeuroID.isSDKStarted {
+                    if NeuroID.shared.isSDKStarted {
                         return
                     }
 
                     // not collecting but a session is in progress we need to restart
-                    if !NeuroID.isSDKStarted,
+                    if !NeuroID.shared.isSDKStarted,
                        !NeuroID.shared.identifierService.sessionID.isEmptyOrNil
                     {
                         self.setupResumeNetworkTask()
