@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 
 extension NeuroID {
-    static func send(
+    func send(
         forceSend: Bool = false,
         eventSubset: [NIDEvent]? = nil,
         completion: @escaping () -> Void = {}
@@ -18,12 +18,12 @@ extension NeuroID {
             return
         }
 
-        if !NeuroID.isStopped() || forceSend {
+        if !self.isStopped() || forceSend {
             DispatchQueue.global(qos: .utility).async {
-                NeuroID.shared.payloadSendingService.cleanAndSendEvents(
-                    clientKey: NeuroID.shared.getClientKey(),
-                    screenName: NeuroID.getScreenName(),
-                    onPacketIncrement: { NeuroID.shared.incrementPacketNumber() },
+                self.payloadSendingService.cleanAndSendEvents(
+                    clientKey: self.getClientKey(),
+                    screenName: self.getScreenName(),
+                    onPacketIncrement: { self.incrementPacketNumber() },
                     onSuccess: completion,
                     onFailure: { error in
                         NeuroID.saveEventToDataStore(

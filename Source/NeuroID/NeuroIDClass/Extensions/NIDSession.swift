@@ -248,7 +248,7 @@ extension NeuroID {
     static func pauseCollection(flushEventQueue: Bool = false) {
         if flushEventQueue {
             // flush all events immediately before pause
-            NeuroID.send(forceSend: true)
+            NeuroID.shared.send(forceSend: true)
         }
 
         NeuroID.shared._isSDKStarted = false
@@ -388,7 +388,7 @@ extension NeuroID {
         // if the session is being sampled we should send, else we don't want those events anyways
         if NeuroID.shared.configService.isSessionFlowSampled {
             // immediately flush events before anything else
-            NeuroID.send(forceSend: true) {
+            NeuroID.shared.send(forceSend: true) {
                 completion()
             }
             return

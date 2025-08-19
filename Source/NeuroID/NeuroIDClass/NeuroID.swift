@@ -71,7 +71,7 @@ public class NeuroID: NSObject {
 
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
-        NeuroID.send()
+        NeuroID.shared.send()
     }
 
     static var collectGyroAccelEventTask: () -> Void = {
@@ -277,7 +277,7 @@ public class NeuroID: NSObject {
             return false
         }
 
-        NeuroID.send(forceSend: true)
+        NeuroID.shared.send(forceSend: true)
         NeuroID.shared._isSDKStarted = false
         NeuroID.shared.linkedSiteID = nil
 
