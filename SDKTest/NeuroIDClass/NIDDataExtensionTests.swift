@@ -63,7 +63,7 @@ class NIDDataExtensionTests: BaseTestClass {
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroID.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
+        NeuroID.shared.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
         assert(dataStore.events.count == 0)
         assert(dataStore.queuedEvents.count == 1)
         assert(dataStore.queuedEvents[0].url == "ios://\(screen)")
@@ -73,7 +73,7 @@ class NIDDataExtensionTests: BaseTestClass {
         let nidE = nidEvent
         nidE.url = "RNScreensNavigationController"
 
-        NeuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
@@ -85,7 +85,7 @@ class NIDDataExtensionTests: BaseTestClass {
             "tgs": TargetValue.string(excludeId)
         ]
 
-        NeuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
@@ -96,7 +96,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
         nidE.tgs = excludeId
 
-        NeuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
@@ -107,7 +107,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
         nidE.en = excludeId
 
-        NeuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 }

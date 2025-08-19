@@ -202,7 +202,7 @@ public class NeuroID: NSObject {
 
         if !NeuroID.shared.validationService.validateClientKey(clientKey) {
             NeuroID.shared.logger.e("Invalid Client Key")
-            saveQueuedEventToLocalDataStore(
+            NeuroID.shared.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Invalid Client Key \(clientKey)"
                 )
@@ -250,7 +250,7 @@ public class NeuroID: NSObject {
     }
 
     static func configSetupCompletion() {
-        saveEventToLocalDataStore(
+        NeuroID.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
         NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")
