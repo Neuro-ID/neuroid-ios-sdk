@@ -54,7 +54,7 @@ class MultiAppFlowTests: XCTestCase {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
 
-            assert(!NeuroID.isAdvancedDevice)
+            assert(!NeuroID.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
@@ -68,7 +68,7 @@ class MultiAppFlowTests: XCTestCase {
             let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
-            assert(NeuroID.isAdvancedDevice)
+            assert(NeuroID.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
@@ -83,7 +83,7 @@ class MultiAppFlowTests: XCTestCase {
             let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
-            XCTAssert(!NeuroID.isAdvancedDevice)
+            XCTAssert(!NeuroID.shared.isAdvancedDevice)
             XCTAssertTrue(validEvent.count == 1)
         }
     }
@@ -98,7 +98,7 @@ class MultiAppFlowTests: XCTestCase {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
 
-            assert(NeuroID.isAdvancedDevice)
+            assert(NeuroID.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
@@ -113,7 +113,7 @@ class MultiAppFlowTests: XCTestCase {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
 
-            assert(NeuroID.isAdvancedDevice)
+            assert(NeuroID.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }

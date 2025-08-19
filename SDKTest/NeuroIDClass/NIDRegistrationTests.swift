@@ -26,15 +26,15 @@ class NIDRegistrationTests: BaseTestClass {
 
     func test_excludeViewByTestID() {
         clearOutDataStore()
-        NeuroID.excludedViewsTestIDs = []
+        NeuroID.shared.excludedViewsTestIDs = []
         let expectedValue = "testScreenName"
 
         NeuroID.excludeViewByTestID(excludedView: expectedValue)
 
-        let contains = NeuroID.excludedViewsTestIDs.contains(where: { $0 == expectedValue })
+        let contains = NeuroID.shared.excludedViewsTestIDs.contains(where: { $0 == expectedValue })
         assert(contains)
 
-        assert(NeuroID.excludedViewsTestIDs.count == 1)
+        assert(NeuroID.shared.excludedViewsTestIDs.count == 1)
     }
 
     func test_manuallyRegisterTarget_valid_type() {

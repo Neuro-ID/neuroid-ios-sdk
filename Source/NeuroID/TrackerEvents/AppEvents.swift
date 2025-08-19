@@ -36,7 +36,7 @@ extension NeuroIDTracker {
     @objc func appLowMemoryWarning() {
         // Reduce memory footprint
         // Only clear this event queue the first time as it might be triggered a few times in a row (dropping our low mem event)
-        if !NeuroID.lowMemory {
+        if !NeuroID.shared.lowMemory {
             NeuroID.clearDataStore()
 
             NeuroID.send(
@@ -49,13 +49,13 @@ extension NeuroIDTracker {
                 ]
             )
 
-            NeuroID.lowMemory = true
+            NeuroID.shared.lowMemory = true
         }
 
         let lowMembackOffTime = NeuroID.shared.configService.configCache.lowMemoryBackOff ?? NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
 
         DispatchQueue.main.asyncAfter(deadline: .now() + lowMembackOffTime) {
-            NeuroID.lowMemory = false
+            NeuroID.shared.lowMemory = false
         }
     }
 }

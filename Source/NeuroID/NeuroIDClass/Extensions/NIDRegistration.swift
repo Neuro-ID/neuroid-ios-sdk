@@ -11,7 +11,7 @@ import UIKit
 public extension NeuroID {
     static func excludeViewByTestID(_ excludedView: String) {
         NeuroID.shared.logger.i("Exclude view called - \(excludedView)")
-        NeuroID.excludedViewsTestIDs.append(excludedView)
+        NeuroID.shared.excludedViewsTestIDs.append(excludedView)
     }
 
     static func excludeViewByTestID(excludedView: String) {
@@ -121,8 +121,8 @@ public extension NeuroID {
     }
 
     internal static func registerKeyboardListener(className: String, view: UIViewController) {
-        if !self.observingKeyboard {
-            self.observingKeyboard.toggle()
+        if !NeuroID.shared.observingKeyboard {
+            NeuroID.shared.observingKeyboard.toggle()
 
             NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -130,8 +130,8 @@ public extension NeuroID {
     }
 
     internal static func removeKeyboardListener(className: String, view: UIViewController) {
-        if self.observingKeyboard {
-            self.observingKeyboard.toggle()
+        if NeuroID.shared.observingKeyboard {
+            NeuroID.shared.observingKeyboard.toggle()
 
             NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillHideNotification, object: nil)

@@ -247,8 +247,8 @@ extension NeuroIDTracker {
         }
 
         // Only run observations on first run
-        if !NeuroID.observingInputs {
-            NeuroID.observingInputs = true
+        if !NeuroID.shared.observingInputs {
+            NeuroID.shared.observingInputs = true
             observeTextInputEvents()
             observeAppEvents()
             observeRotation()
