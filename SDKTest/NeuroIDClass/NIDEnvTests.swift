@@ -10,12 +10,12 @@ import XCTest
 
 class NIDEnvTests: XCTestCase {
     func test_getEnvironment() {
-        NeuroID.environment = Constants.environmentTest.rawValue
+        NeuroID.shared.environment = Constants.environmentTest.rawValue
         assert(NeuroID.getEnvironment() == "TEST")
     }
 
     func test_setEnvironmentProduction_true() {
-        NeuroID.environment = ""
+        NeuroID.shared.environment = ""
         NeuroID.setEnvironmentProduction(true)
 
         // Should do nothing because deprecated
@@ -23,7 +23,7 @@ class NIDEnvTests: XCTestCase {
     }
 
     func test_setEnvironmentProduction_false() {
-        NeuroID.environment = ""
+        NeuroID.shared.environment = ""
         NeuroID.setEnvironmentProduction(false)
 
         // Should do nothing because deprecated

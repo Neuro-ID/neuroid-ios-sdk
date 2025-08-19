@@ -16,7 +16,7 @@ class TouchEventTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
     }
 
     override func tearDown() {

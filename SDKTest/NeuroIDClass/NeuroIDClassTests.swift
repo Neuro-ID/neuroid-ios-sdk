@@ -63,13 +63,13 @@ class NeuroIDClassTests: BaseTestClass {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        assert(NeuroID.environment == "\(Constants.environmentLive.rawValue)")
+        assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
     }
 
     func test_configure_invalidKey() {
         clearOutDataStore()
         // remove things configured in setup
-        NeuroID.environment = Constants.environmentTest.rawValue
+        NeuroID.shared.environment = Constants.environmentTest.rawValue
         NeuroID.shared.clientKey = nil
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
@@ -88,12 +88,12 @@ class NeuroIDClassTests: BaseTestClass {
         // 1 Log event should be in queue if the key fails validation
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
 
-        assert(NeuroID.environment == "\(Constants.environmentTest.rawValue)")
+        assert(NeuroID.shared.environment == "\(Constants.environmentTest.rawValue)")
     }
 
     func test_start_failure() {
         tearDown()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID.shared.clientKey = nil
 
         // pre tests
@@ -110,7 +110,7 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_start_success() {
         tearDown()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID._isTesting = true
 //        NeuroID.isAdvancedDevice = false
 
@@ -131,7 +131,7 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_start_success_queuedEvent() {
         _ = NeuroID.stop()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         NeuroID._isTesting = true
 
         // pre tests
@@ -154,7 +154,7 @@ class NeuroIDClassTests: BaseTestClass {
     }
 
     func test_stop() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         assert(NeuroID.isSDKStarted)
 
         let stopped = NeuroID.stop()

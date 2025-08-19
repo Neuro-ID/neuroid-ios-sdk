@@ -46,7 +46,7 @@ class NIDDataExtensionTests: BaseTestClass {
         NeuroID.currentScreenName = screen
         NeuroID.shared.datastore = dataStore
 
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
 
         let nidE = nidEvent
         assert(nidE.url == nil)

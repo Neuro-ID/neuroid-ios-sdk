@@ -11,12 +11,12 @@ class NIDLogTests: XCTestCase {
     func test_enableLogging_true() {
         NeuroID.enableLogging(true)
 
-        assert(NeuroID.showLogs)
+        assert(NeuroID.shared.showLogs)
     }
 
     func test_enableLogging_false() {
         NeuroID.enableLogging(false)
 
-        assert(!NeuroID.showLogs)
+        assert(!NeuroID.shared.showLogs)
     }
 }

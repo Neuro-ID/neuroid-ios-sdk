@@ -60,7 +60,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_logScrubbedIdentityAttempt() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         clearOutDataStore()
 
         let id = "123-23-4568"
@@ -74,7 +74,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_valid_id_started() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         clearOutDataStore()
 
         var successful = false
@@ -94,7 +94,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_valid_id_queued() {
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         clearOutDataStore()
 
         var successful = false
@@ -115,7 +115,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_valid_registered_id_started() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
 
         var successful = false
         let expectedValue = "myTestUserID"
@@ -135,7 +135,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_valid_registered_id_queued() {
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         clearOutDataStore()
 
         var successful = false
@@ -156,7 +156,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_invalid_id_started() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         clearOutDataStore()
 
         var successful = true
@@ -178,7 +178,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_invalid_id_queued() {
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         clearOutDataStore()
 
         var successful = true
@@ -202,7 +202,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setSessionID_started_customer_origin() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         identifierService.sessionID = nil
         let expectedValue = "test_uid"
 
@@ -234,7 +234,7 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setSessionID_started_nid_origin() {
         identifierService.sessionID = nil
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setSessionID(expectedValue, false)
@@ -246,7 +246,7 @@ class IdentifierServiceTests: BaseTestClass {
         assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
         assert(dataStore.queuedEvents.count == 0)
 
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
     }
 
     func test_setSessionID_pre_start_nid_origin() {
@@ -267,7 +267,7 @@ class IdentifierServiceTests: BaseTestClass {
 
     func test_setRegisteredUserID_started() {
         clearOutDataStore()
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         let expectedValue = "test_ruid"
         identifierService.registeredUserID = ""
 
@@ -283,12 +283,12 @@ class IdentifierServiceTests: BaseTestClass {
 
         identifierService.registeredUserID = ""
 
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
     }
 
     func test_setRegisteredUserID_pre_start() {
         _ = NeuroID.stop()
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
         clearOutDataStore()
         identifierService.registeredUserID = ""
 
@@ -306,12 +306,12 @@ class IdentifierServiceTests: BaseTestClass {
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
         identifierService.registeredUserID = ""
 
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
     }
 
     func test_setRegisteredUserID_already_set() {
         clearOutDataStore()
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         identifierService.registeredUserID = "setID"
 
         let expectedValue = "test_ruid"
@@ -328,7 +328,7 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setRegisteredUserID_same_value() {
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
         clearOutDataStore()
 
         let expectedValue = "test_ruid"

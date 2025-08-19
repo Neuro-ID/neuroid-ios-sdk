@@ -28,7 +28,7 @@ class DataStoreTests: XCTestCase {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.stop()
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
 
         dataStore = DataStore(logger: NIDLog())
     }

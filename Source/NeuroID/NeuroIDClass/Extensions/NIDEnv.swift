@@ -9,7 +9,7 @@ import Foundation
 
 public extension NeuroID {
     static func getEnvironment() -> String {
-        return environment
+        return NeuroID.shared.environment
     }
 
     @available(*, deprecated, message: "setEnvironmentProduction is deprecated and no longer required")

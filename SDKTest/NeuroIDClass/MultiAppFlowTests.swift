@@ -153,7 +153,7 @@ class MultiAppFlowTests: XCTestCase {
     func test_captureAdvancedDevice_throttle() {
         NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey)
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
 
         let service = getMockConfigService(
             shouldFail: false,
@@ -171,13 +171,13 @@ class MultiAppFlowTests: XCTestCase {
         assert(validEvent.count == 0)
 
         service._isSessionFlowSampled = true
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
     }
 
     func test_captureAdvancedDevice_no_throttle() {
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared.deviceSignalService = mockService
-        NeuroID._isSDKStarted = true
+        NeuroID.shared._isSDKStarted = true
 
         let service = getMockConfigService(
             shouldFail: false,
@@ -195,6 +195,6 @@ class MultiAppFlowTests: XCTestCase {
         }
         assert(validEvent.count == 1)
 
-        NeuroID._isSDKStarted = false
+        NeuroID.shared._isSDKStarted = false
     }
 }

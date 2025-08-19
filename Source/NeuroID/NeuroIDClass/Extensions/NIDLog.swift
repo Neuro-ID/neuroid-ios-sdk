@@ -25,7 +25,7 @@ extension NeuroID {
      Enable or disable the NeuroID debug logging
      */
     public static func enableLogging(_ value: Bool) {
-        showLogs = value
+        NeuroID.shared.showLogs = value
     }
 
     static func logInfo(category: String = "default", content: Any...) {
@@ -212,7 +212,7 @@ class NIDLog: LoggerProtocol {
     }
 
     func log(tag: String = "", _ strings: String) {
-        if NeuroID._isSDKStarted, NeuroID.showLogs {
+        if NeuroID.shared._isSDKStarted, NeuroID.shared.showLogs {
             Swift.print("(NeuroID) \(tag) ", strings)
         }
     }
@@ -222,7 +222,7 @@ class NIDLog: LoggerProtocol {
     }
 
     func d(tag: String = "", _ strings: String) {
-        if NeuroID._isSDKStarted, NeuroID.showLogs {
+        if NeuroID.shared._isSDKStarted, NeuroID.shared.showLogs {
             Swift.print("(NeuroID Debug) \(tag) ", strings)
         }
     }
@@ -232,7 +232,7 @@ class NIDLog: LoggerProtocol {
     }
 
     func i(tag: String = "", _ strings: String) {
-        if NeuroID.showLogs {
+        if NeuroID.shared.showLogs {
             Swift.print("(NeuroID Info) \(tag) ", strings)
         }
     }
@@ -242,7 +242,7 @@ class NIDLog: LoggerProtocol {
     }
 
     func e(tag: String = "", _ strings: String) {
-        if NeuroID.showLogs {
+        if NeuroID.shared.showLogs {
             Swift.print("****** NEUROID ERROR: ******\n\(tag) ", strings)
         }
     }
