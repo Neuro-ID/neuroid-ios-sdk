@@ -210,7 +210,7 @@ extension NeuroID {
         )
 
         if !NeuroID.shared.isSDKStarted {
-            saveQueuedEventToLocalDataStore(
+            NeuroID.shared.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent("Close attempt failed since SDK is not started")
             )
             throw NIDError.sdkNotStarted
@@ -288,7 +288,7 @@ extension NeuroID {
         //  this will be refactored once we bring start/startSession in alignment
         customFunctionality()
 
-        moveQueuedEventsToDataStore()
+        NeuroID.shared.moveQueuedEventsToDataStore()
 
         captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
