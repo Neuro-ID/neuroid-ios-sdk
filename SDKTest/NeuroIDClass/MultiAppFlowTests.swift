@@ -33,6 +33,8 @@ class MultiAppFlowTests: XCTestCase {
         NeuroID.shared.configService = mockedConfig
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
+
+        NeuroID.shared.deviceSignalService = mockService
         NeuroID._isTesting = true
     }
 
@@ -45,8 +47,8 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_adv_true() {
-        NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey)
+        NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.start(true) { _ in
@@ -60,8 +62,8 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_configure_adv_true() {
-        NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
+        NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.start { _ in
@@ -74,8 +76,8 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_session_adv_true() {
-        NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey)
+        NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.startSession("fake_user_session", true) { _ in
@@ -89,8 +91,8 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_session_configure_adv_true() {
-        NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
+        NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.startSession("fake_user_session") { _ in
@@ -104,8 +106,8 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_start_app_flow_configure_adv_true() {
-        NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
+        NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.startAppFlow(siteID: "form_dream102", sessionID: "jakeId") { _ in

@@ -40,6 +40,9 @@ class NeuroIDClassTests: BaseTestClass {
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
+
+        NeuroID.shared.configService = MockConfigService()
+
         NeuroID.start(true) { _ in
             self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
         }
@@ -94,6 +97,7 @@ class NeuroIDClassTests: BaseTestClass {
     func test_start_failure() {
         tearDown()
         NeuroID.shared._isSDKStarted = false
+        NeuroID.shared.configService = MockConfigService()
         NeuroID.shared.clientKey = nil
 
         // pre tests
@@ -111,6 +115,7 @@ class NeuroIDClassTests: BaseTestClass {
     func test_start_success() {
         tearDown()
         NeuroID.shared._isSDKStarted = false
+        NeuroID.shared.configService = MockConfigService()
         NeuroID._isTesting = true
 //        NeuroID.isAdvancedDevice = false
 
@@ -132,6 +137,7 @@ class NeuroIDClassTests: BaseTestClass {
     func test_start_success_queuedEvent() {
         _ = NeuroID.stop()
         NeuroID.shared._isSDKStarted = false
+        NeuroID.shared.configService = MockConfigService()
         NeuroID._isTesting = true
 
         // pre tests

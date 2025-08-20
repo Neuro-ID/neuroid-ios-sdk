@@ -144,7 +144,7 @@ public class NeuroID: NSObject {
                 ?? NIDConfigService(
                     logger: self.logger,
                     networkService: self.networkService,
-                    configRetrievalCallback: NeuroID.configSetupCompletion
+                    configRetrievalCallback: {} // callback is reconfigured on `configure` command
                 )
         self.identifierService =
             identifierService
@@ -234,6 +234,12 @@ public class NeuroID: NSObject {
         )
         NeuroID.shared.packetNumber = 0
 
+        NeuroID.shared.configService = NIDConfigService(
+            logger: NeuroID.shared.logger,
+            networkService: NeuroID.shared.networkService,
+            configRetrievalCallback: NeuroID.shared.configSetupCompletion
+        )
+
         NeuroID.shared.networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
@@ -249,13 +255,13 @@ public class NeuroID: NSObject {
         return true
     }
 
-    static func configSetupCompletion() {
-        NeuroID.shared.saveEventToLocalDataStore(
+    func configSetupCompletion() {
+        self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
-        NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")
+        self.logger.i("Remote Config Retrieval Attempt Completed")
 
-        NeuroID.shared.setupListeners()
+        self.setupListeners()
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
