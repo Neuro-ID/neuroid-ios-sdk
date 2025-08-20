@@ -158,7 +158,7 @@ enum UtilFunctions {
         // If RTS is set, set rts on focus events
         nidEvent.setRTS(rts)
 
-        NeuroID.saveEventToLocalDataStore(nidEvent)
+        NeuroID.shared.saveEventToLocalDataStore(nidEvent)
 
         NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "            Registered View: \(className) - \(id)")
     }
@@ -186,7 +186,7 @@ enum UtilFunctions {
         )
 
         let screenName = className ?? ParamsCreator.generateID()
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent(
                 type: type,
                 tg: eventTg,
@@ -266,14 +266,14 @@ enum UtilFunctions {
             event.pd = 0
         }
 
-        NeuroID.saveEventToLocalDataStore(event)
+        NeuroID.shared.saveEventToLocalDataStore(event)
     }
 
     static func captureFocusBlurEvent(
         eventType: NIDEventName,
         id: String
     ) {
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent(
                 type: eventType,
                 tg: [
@@ -289,7 +289,7 @@ enum UtilFunctions {
         id: String,
         className: String
     ) {
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent(
                 type: eventType,
                 tg: [

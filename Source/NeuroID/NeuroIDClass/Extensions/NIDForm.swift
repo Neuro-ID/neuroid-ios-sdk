@@ -14,7 +14,7 @@ public extension NeuroID {
     @available(*, deprecated, message: "formSubmit is deprecated and no longer required")
     static func formSubmit() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
-        NeuroID.saveEventToLocalDataStore(submitEvent)
+        NeuroID.shared.saveEventToLocalDataStore(submitEvent)
         NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }
@@ -22,7 +22,7 @@ public extension NeuroID {
     @available(*, deprecated, message: "formSubmitFailure is deprecated and no longer required")
     static func formSubmitFailure() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
-        NeuroID.saveEventToLocalDataStore(submitEvent)
+        NeuroID.shared.saveEventToLocalDataStore(submitEvent)
         NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }
@@ -30,7 +30,7 @@ public extension NeuroID {
     @available(*, deprecated, message: "formSubmitSuccess is deprecated and no longer required")
     static func formSubmitSuccess() -> NIDEvent {
         let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
-        NeuroID.saveEventToLocalDataStore(submitEvent)
+        NeuroID.shared.saveEventToLocalDataStore(submitEvent)
         NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }

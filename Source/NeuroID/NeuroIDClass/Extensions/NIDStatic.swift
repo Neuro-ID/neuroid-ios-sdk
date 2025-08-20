@@ -46,12 +46,20 @@ public extension NeuroID {
     }
 
     // Temporarily keeping this function for backwards compatibility
+    @available(*, deprecated, message: "setUserID is deprecated, please use `identify` instead.")
     static func setUserID(_ userID: String) -> Bool {
         return NeuroID.shared.identify(userID)
     }
 
     static func getSessionID() -> String {
         return NeuroID.shared.getSessionID()
+    }
+
+    //  Temporarily keeping this function for backwards compatibility, will be removed
+    // replaced with`getSessionID`
+    @available(*, deprecated, message: "getUserID is deprecated, please use `getSessionID` instead.")
+    static func getUserID() -> String {
+        return NeuroID.getSessionID()
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {

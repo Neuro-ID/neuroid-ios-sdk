@@ -457,7 +457,6 @@
 		F2AEE7352A27A5C8009690CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				FF0E22372E54E5D300DECB89 /* NIDStatic.swift */,
 				F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */,
 				F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */,
 				FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */,
@@ -471,6 +470,7 @@
 				F2AEE73C2A27A6AE009690CB /* NIDScreen.swift */,
 				F2AEE7462A27A84B009690CB /* NIDSend.swift */,
 				F2AEE7382A27A64E009690CB /* NIDSession.swift */,
+				FF0E22372E54E5D300DECB89 /* NIDStatic.swift */,
 				F2AEE73E2A27A6E9009690CB /* NIDUser.swift */,
 			);
 			path = Extensions;

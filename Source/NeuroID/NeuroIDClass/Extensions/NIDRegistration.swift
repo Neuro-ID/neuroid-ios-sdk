@@ -83,7 +83,7 @@ public extension NeuroID {
                                     )
                                 ])
 
-        NeuroID.saveEventToLocalDataStore(nidEvent)
+        NeuroID.shared.saveEventToLocalDataStore(nidEvent)
         return nidEvent
     }
 
@@ -116,7 +116,7 @@ public extension NeuroID {
             url: url
         )
 
-        saveEventToLocalDataStore(variableEvent)
+        NeuroID.shared.saveEventToLocalDataStore(variableEvent)
         return variableEvent
     }
 

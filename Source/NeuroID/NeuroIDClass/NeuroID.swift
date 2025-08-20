@@ -76,7 +76,7 @@ public class NeuroID: NSObject {
 
     static var collectGyroAccelEventTask: () -> Void = {
         if !NeuroID.isStopped(), NeuroID.shared.configService.configCache.gyroAccelCadence {
-            NeuroID.saveEventToLocalDataStore(
+            NeuroID.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .cadenceReadingAccel,
                     attrs: [
@@ -229,7 +229,7 @@ public class NeuroID: NSObject {
 
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-        saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Reset Tab Id")
         )
         NeuroID.shared.packetNumber = 0
@@ -242,7 +242,7 @@ public class NeuroID: NSObject {
 
         NeuroID.shared.captureApplicationMetaData()
 
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("isAdvancedDevice setting: \(isAdvancedDevice)")
         )
 
@@ -250,7 +250,7 @@ public class NeuroID: NSObject {
     }
 
     static func configSetupCompletion() {
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
         NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")
@@ -271,7 +271,7 @@ public class NeuroID: NSObject {
             _ = try closeSession(skipStop: true)
         } catch {
             NeuroID.shared.logger.e("Failed to Stop because \(error)")
-            saveEventToDataStore(
+            NeuroID.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
             return false
@@ -315,7 +315,7 @@ public class NeuroID: NSObject {
     func captureApplicationMetaData() {
         let appMetaData = getAppMetaData()
 
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: .applicationMetaData,
                 attrs: [

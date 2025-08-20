@@ -42,7 +42,7 @@ public extension NeuroID {
         )
 
         if !validID {
-            saveEventToDataStore(NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation"))
+            NeuroID.shared.saveEventToDataStore(NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation"))
         }
         return true
     }

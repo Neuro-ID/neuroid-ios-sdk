@@ -151,7 +151,7 @@ extension UITextField {
                 "location": TargetValue.string("UITextFieldSwizzle"),
             ])
 
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             UtilFunctions.createTouchEvent(
                 sender: sender,
                 eventName: eventName,

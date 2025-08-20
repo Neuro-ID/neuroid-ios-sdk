@@ -63,7 +63,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
     func startMonitoring() {
         monitor.start(queue: queue)
 
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent(
                 "Network Monitoring Started with starting status of connectionType:\(connectionType) connected:\(isConnected)"
             )
@@ -74,7 +74,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
 
             self.getConnectionType(path)
 
-            NeuroID.saveEventToLocalDataStore(
+            NeuroID.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .networkState,
                     attrs: [

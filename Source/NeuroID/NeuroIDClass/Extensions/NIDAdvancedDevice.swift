@@ -89,12 +89,12 @@ extension NeuroID {
                 )
                 NeuroID.shared.isFPJSRunning = false
             case .failure(let error):
-                NeuroID.saveEventToDataStore(
+                NeuroID.shared.saveEventToDataStore(
                     NIDEvent.createErrorLogEvent(
                         error.localizedDescription
                     )
                 )
-                NeuroID.saveEventToDataStore(
+                NeuroID.shared.saveEventToDataStore(
                     NIDEvent(
                         type: .advancedDeviceRequestFailed,
                         m: error.localizedDescription
@@ -109,7 +109,7 @@ extension NeuroID {
     static func captureADVEvent(
         _ requestID: String, cached: Bool, latency: Double, message: String
     ) {
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
                 ct: NeuroID.shared.networkMonitor.connectionType,
@@ -133,7 +133,7 @@ extension NeuroID {
     @objc static func captureAdvancedDevice(
         _ shouldCapture: Bool
     ) {
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             NIDEvent.createInfoLogEvent(
                 "shouldCapture setting: \(shouldCapture)"
             )

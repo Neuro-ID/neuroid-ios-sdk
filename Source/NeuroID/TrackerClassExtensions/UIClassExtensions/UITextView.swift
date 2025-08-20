@@ -138,7 +138,7 @@ extension UITextView {
     func touchEvent(sender: UIView, eventName: NIDEventName, touches: Set<UITouch>) {
         let touchArray = UtilFunctions.extractTouchInfoFromTouchArray(touches)
 
-        NeuroID.saveEventToDataStore(
+        NeuroID.shared.saveEventToDataStore(
             UtilFunctions.createTouchEvent(
                 sender: sender,
                 eventName: eventName,

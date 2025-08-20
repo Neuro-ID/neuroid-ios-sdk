@@ -194,7 +194,7 @@ extension UIViewController {
                 return
             }
 
-            NeuroID.saveEventToLocalDataStore(
+            NeuroID.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: NIDEventName.windowResize,
                     tgs: view.id,
@@ -222,7 +222,7 @@ extension UIViewController {
     @objc func keyboardWillHide(notification: Notification) {
         // Handle keyboard will hide event - Does not recieve any X, Y, W, H information
 
-        NeuroID.saveEventToLocalDataStore(
+        NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent(
                 type: NIDEventName.windowResize,
                 tgs: view.id,

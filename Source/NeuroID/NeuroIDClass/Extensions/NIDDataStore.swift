@@ -28,20 +28,20 @@ extension NeuroID {
     /**
         Save and event to the datastore (logic of queue or not contained in this function)
      */
-    static func saveEventToDataStore(_ event: NIDEvent, screen: String? = nil) {
-        if !NeuroID.shared.isSDKStarted {
-            NeuroID.shared.saveQueuedEventToLocalDataStore(event, screen: screen)
+    func saveEventToDataStore(_ event: NIDEvent, screen: String? = nil) {
+        if !self.isSDKStarted {
+            self.saveQueuedEventToLocalDataStore(event, screen: screen)
         } else {
-            NeuroID.saveEventToLocalDataStore(event, screen: screen)
+            self.saveEventToLocalDataStore(event, screen: screen)
         }
     }
 
-    static func saveEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
-        if NeuroID.isStopped() {
+    func saveEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
+        if self.isStopped() {
             return
         }
 
-        NeuroID.shared.cleanAndStoreEvent(screen: screen ?? event.type, event: event, storeType: "event")
+        self.cleanAndStoreEvent(screen: screen ?? event.type, event: event, storeType: "event")
     }
 
     func saveQueuedEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
@@ -125,7 +125,7 @@ extension NeuroID {
     func moveQueuedEventsToDataStore() {
         let queuedEvents = self.datastore.getAndRemoveAllQueuedEvents()
         for event in queuedEvents {
-            NeuroID.saveEventToLocalDataStore(event)
+            self.saveEventToLocalDataStore(event)
         }
     }
 }
