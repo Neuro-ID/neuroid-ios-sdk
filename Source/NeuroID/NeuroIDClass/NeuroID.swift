@@ -90,12 +90,12 @@ public class NeuroID: NSObject {
         }
     }
 
-    static var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
+    var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
         interval: Double(5), // default 5, will be recreated on `configure` command
         task: NeuroID.sendCollectionEventsTask
     )
 
-    static var sendGyroAccelCollectionWorkItem: RepeatingTaskProtocol = RepeatingTask(
+    var collectGyroAccelEventJob: RepeatingTaskProtocol = RepeatingTask(
         interval: Double(5), // default 5, will be recreated on `configure` command
         task: NeuroID.collectGyroAccelEventTask
     )
@@ -165,12 +165,12 @@ public class NeuroID: NSObject {
         self.callObserver = callObserver
         self.locationManager = locationManager
 
-        NeuroID.sendCollectionEventsJob = RepeatingTask(
+        self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
             task: NeuroID.sendCollectionEventsTask
         )
 
-        NeuroID.sendGyroAccelCollectionWorkItem = RepeatingTask(
+        self.collectGyroAccelEventJob = RepeatingTask(
             interval: Double(self.configService.configCache.gyroAccelCadenceTime),
             task: NeuroID.collectGyroAccelEventTask
         )
@@ -255,7 +255,7 @@ public class NeuroID: NSObject {
         )
         NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")
 
-        setupListeners()
+        NeuroID.shared.setupListeners()
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
