@@ -67,7 +67,7 @@ public class NeuroID: NSObject {
     var _currentScreenName: String?
 
     var _isSDKStarted: Bool = false
-    public var isSDKStarted: Bool { _isSDKStarted }
+    public var isSDKStarted: Bool { self._isSDKStarted }
 
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
@@ -177,8 +177,8 @@ public class NeuroID: NSObject {
     }
 
     func verifyClientKeyExists() -> Bool {
-        if clientKey == nil || clientKey == "" {
-            logger.e("Missing Client Key - please call configure prior to calling start")
+        if self.clientKey == nil || self.clientKey == "" {
+            self.logger.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -265,29 +265,29 @@ public class NeuroID: NSObject {
         NeuroID.start(siteID: nil, completion: completion)
     }
 
-    public static func stop() -> Bool {
-        NeuroID.shared.logger.i("NeuroID Stopped")
+    func stop() -> Bool {
+        self.logger.i("NeuroID Stopped")
         do {
-            _ = try closeSession(skipStop: true)
+            _ = try self.closeSession(skipStop: true)
         } catch {
-            NeuroID.shared.logger.e("Failed to Stop because \(error)")
-            NeuroID.shared.saveEventToDataStore(
+            self.logger.e("Failed to Stop because \(error)")
+            self.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
             return false
         }
 
-        NeuroID.shared.send(forceSend: true)
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.linkedSiteID = nil
+        self.send(forceSend: true)
+        self._isSDKStarted = false
+        self.linkedSiteID = nil
 
         //  stop listening to changes in call status
-        NeuroID.shared.callObserver?.stopListeningToCallStatus()
+        self.callObserver?.stopListeningToCallStatus()
         return true
     }
 
     func isStopped() -> Bool {
-        return _isSDKStarted != true
+        return self._isSDKStarted != true
     }
 
     static func swizzle() {
@@ -313,7 +313,7 @@ public class NeuroID: NSObject {
     }
 
     func captureApplicationMetaData() {
-        let appMetaData = getAppMetaData()
+        let appMetaData = self.getAppMetaData()
 
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(

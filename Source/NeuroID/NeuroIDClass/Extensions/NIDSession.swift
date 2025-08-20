@@ -204,20 +204,20 @@ extension NeuroID {
         captureMobileMetadata()
     }
 
-    static func closeSession(skipStop: Bool = false) throws -> NIDEvent {
-        NeuroID.shared.saveEventToDataStore(
+     func closeSession(skipStop: Bool = false) throws -> NIDEvent {
+        self.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Close session attempt")
         )
 
-        if !NeuroID.shared.isSDKStarted {
-            NeuroID.shared.saveQueuedEventToLocalDataStore(
+        if !self.isSDKStarted {
+            self.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent("Close attempt failed since SDK is not started")
             )
             throw NIDError.sdkNotStarted
         }
 
         let closeEvent = NIDEvent(type: .closeSession, ct: "SDK_EVENT")
-        NeuroID.shared.saveEventToLocalDataStore(closeEvent)
+        self.saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
             return closeEvent

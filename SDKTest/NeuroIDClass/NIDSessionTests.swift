@@ -57,7 +57,7 @@ class NIDSessionTests: BaseTestClass {
     func test_closeSession() {
         clearOutDataStore()
         do {
-            let closeSession = try NeuroID.closeSession()
+            let closeSession = try NeuroID.shared.closeSession()
             assert(closeSession.ct == "SDK_EVENT")
         } catch {
             NIDLog().e("Threw on Close Session that shouldn't")
@@ -72,7 +72,7 @@ class NIDSessionTests: BaseTestClass {
         clearOutDataStore()
 
         XCTAssertThrowsError(
-            try NeuroID.closeSession(),
+            try NeuroID.shared.closeSession(),
             "Close Session throws an error when SDK is already stopped"
         )
     }
