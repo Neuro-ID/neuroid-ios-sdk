@@ -42,6 +42,16 @@ public extension NeuroID {
         NeuroID.shared.setSiteId(siteId: siteId)
     }
 
+    // Functions do the same thing, but call signature is different
+    static func excludeViewByTestID(_ excludedView: String) {
+        NeuroID.shared.excludeViewByTestID(excludedView)
+    }
+
+    @available(*, deprecated, message: "excludeViewByTestID(excludedView: String) is deprecated, please use `excludeViewByTestID(_ excludedView: String)` instead.")
+    static func excludeViewByTestID(excludedView: String) {
+        NeuroID.shared.excludeViewByTestID(excludedView)
+    }
+
     // USER FUNCTIONS
     // This command replaces `setUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID

@@ -9,13 +9,13 @@ import Foundation
 import UIKit
 
 public extension NeuroID {
-    static func excludeViewByTestID(_ excludedView: String) {
-        NeuroID.shared.logger.i("Exclude view called - \(excludedView)")
-        NeuroID.shared.excludedViewsTestIDs.append(excludedView)
+    func excludeViewByTestID(_ excludedView: String) {
+        self.logger.i("Exclude view called - \(excludedView)")
+        self.excludedViewsTestIDs.append(excludedView)
     }
 
-    static func excludeViewByTestID(excludedView: String) {
-        NeuroID.excludeViewByTestID(excludedView)
+    func excludeViewByTestID(excludedView: String) {
+        self.excludeViewByTestID(excludedView)
     }
 
     /**
