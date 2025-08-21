@@ -68,28 +68,28 @@ class NIDRNTests: XCTestCase {
 
     func test_getOptionValueBool_true() {
         assert(!NeuroID.shared.isRN)
-        let value = NeuroID.getOptionValueBool(rnOptions: configOptionsTrue, configOptionKey: .usingReactNavigation)
+        let value = NeuroID.shared.getOptionValueBool(rnOptions: configOptionsTrue, configOptionKey: .usingReactNavigation)
 
         assert(value)
     }
 
     func test_getOptionValueBool_false() {
         assert(!NeuroID.shared.isRN)
-        let value = NeuroID.getOptionValueBool(rnOptions: configOptionsFalse, configOptionKey: .usingReactNavigation)
+        let value = NeuroID.shared.getOptionValueBool(rnOptions: configOptionsFalse, configOptionKey: .usingReactNavigation)
 
         assert(!value)
     }
 
     func test_getOptionValueBool_invalid() {
         assert(!NeuroID.shared.isRN)
-        let value = NeuroID.getOptionValueBool(rnOptions: configOptionsInvalid, configOptionKey: .usingReactNavigation)
+        let value = NeuroID.shared.getOptionValueBool(rnOptions: configOptionsInvalid, configOptionKey: .usingReactNavigation)
 
         assert(!value)
     }
 
     func test_getOptionValueString_nonNil() {
         assert(!NeuroID.shared.isRN)
-        let value = NeuroID.getOptionValueString(rnOptions: configOptionsNonNil, configOptionKey: .advancedDeviceKey)
+        let value = NeuroID.shared.getOptionValueString(rnOptions: configOptionsNonNil, configOptionKey: .advancedDeviceKey)
 
         assert(value == "testkey")
     }
@@ -97,7 +97,7 @@ class NIDRNTests: XCTestCase {
     func test_getOptionValueString_nil() {
         assert(!NeuroID.shared.isRN)
         // does not contain advanced device key, therfore nil
-        let value = NeuroID.getOptionValueString(rnOptions: configOptionsFalse, configOptionKey: .advancedDeviceKey)
+        let value = NeuroID.shared.getOptionValueString(rnOptions: configOptionsFalse, configOptionKey: .advancedDeviceKey)
 
         assert(value == "")
     }
