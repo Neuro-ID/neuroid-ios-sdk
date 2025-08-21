@@ -12,7 +12,7 @@ class NIDSendTests: BaseTestClass {
         NeuroID.shared.networkService = MockNetworkService()
         NeuroID.shared.configService = MockConfigService()
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-        NeuroID.sendCollectionEventsJob.cancel()
+        NeuroID.shared.sendCollectionEventsJob.cancel()
         NeuroID._isTesting = true
 
         clearOutDataStore()
@@ -30,9 +30,9 @@ class NIDSendTests: BaseTestClass {
         let expectations1 = XCTestExpectation(description: "Wait for 3 seconds pt 1")
         let expectations2 = XCTestExpectation(description: "Wait for 3 seconds pt 2")
 
-        NeuroID.sendCollectionEventsJob.cancel()
+        NeuroID.shared.sendCollectionEventsJob.cancel()
 
-        NeuroID.sendCollectionEventsJob = RepeatingTask(
+        NeuroID.shared.sendCollectionEventsJob = RepeatingTask(
             interval: 3,
             task: {
                 valueChanged += 1
@@ -47,7 +47,7 @@ class NIDSendTests: BaseTestClass {
             }
         )
 
-        NeuroID.sendCollectionEventsJob.start()
+        NeuroID.shared.sendCollectionEventsJob.start()
 
         wait(for: [expectations1], timeout: 7)
         assert(valueChanged == 1)
@@ -55,6 +55,6 @@ class NIDSendTests: BaseTestClass {
         wait(for: [expectations2], timeout: 7)
         assert(valueChanged == 2)
 
-        NeuroID.sendCollectionEventsJob.cancel()
+        NeuroID.shared.sendCollectionEventsJob.cancel()
     }
 }

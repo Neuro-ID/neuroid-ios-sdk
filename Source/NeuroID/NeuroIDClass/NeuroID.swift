@@ -67,7 +67,7 @@ public class NeuroID: NSObject {
     var _currentScreenName: String?
 
     var _isSDKStarted: Bool = false
-    public var isSDKStarted: Bool { _isSDKStarted }
+    public var isSDKStarted: Bool { self._isSDKStarted }
 
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
@@ -90,12 +90,12 @@ public class NeuroID: NSObject {
         }
     }
 
-    static var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
+    var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
         interval: Double(5), // default 5, will be recreated on `configure` command
         task: NeuroID.sendCollectionEventsTask
     )
 
-    static var sendGyroAccelCollectionWorkItem: RepeatingTaskProtocol = RepeatingTask(
+    var collectGyroAccelEventJob: RepeatingTaskProtocol = RepeatingTask(
         interval: Double(5), // default 5, will be recreated on `configure` command
         task: NeuroID.collectGyroAccelEventTask
     )
@@ -144,7 +144,7 @@ public class NeuroID: NSObject {
                 ?? NIDConfigService(
                     logger: self.logger,
                     networkService: self.networkService,
-                    configRetrievalCallback: NeuroID.configSetupCompletion
+                    configRetrievalCallback: {} // callback is reconfigured on `configure` command
                 )
         self.identifierService =
             identifierService
@@ -165,20 +165,20 @@ public class NeuroID: NSObject {
         self.callObserver = callObserver
         self.locationManager = locationManager
 
-        NeuroID.sendCollectionEventsJob = RepeatingTask(
+        self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
             task: NeuroID.sendCollectionEventsTask
         )
 
-        NeuroID.sendGyroAccelCollectionWorkItem = RepeatingTask(
+        self.collectGyroAccelEventJob = RepeatingTask(
             interval: Double(self.configService.configCache.gyroAccelCadenceTime),
             task: NeuroID.collectGyroAccelEventTask
         )
     }
 
     func verifyClientKeyExists() -> Bool {
-        if clientKey == nil || clientKey == "" {
-            logger.e("Missing Client Key - please call configure prior to calling start")
+        if self.clientKey == nil || self.clientKey == "" {
+            self.logger.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -234,6 +234,12 @@ public class NeuroID: NSObject {
         )
         NeuroID.shared.packetNumber = 0
 
+        NeuroID.shared.configService = NIDConfigService(
+            logger: NeuroID.shared.logger,
+            networkService: NeuroID.shared.networkService,
+            configRetrievalCallback: NeuroID.shared.configSetupCompletion
+        )
+
         NeuroID.shared.networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
@@ -249,13 +255,13 @@ public class NeuroID: NSObject {
         return true
     }
 
-    static func configSetupCompletion() {
-        NeuroID.shared.saveEventToLocalDataStore(
+    func configSetupCompletion() {
+        self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
-        NeuroID.shared.logger.i("Remote Config Retrieval Attempt Completed")
+        self.logger.i("Remote Config Retrieval Attempt Completed")
 
-        setupListeners()
+        self.setupListeners()
     }
 
     // When start is called, enable swizzling, as well as dispatch queue to send to API
@@ -265,29 +271,29 @@ public class NeuroID: NSObject {
         NeuroID.start(siteID: nil, completion: completion)
     }
 
-    public static func stop() -> Bool {
-        NeuroID.shared.logger.i("NeuroID Stopped")
+    func stop() -> Bool {
+        self.logger.i("NeuroID Stopped")
         do {
-            _ = try closeSession(skipStop: true)
+            _ = try self.closeSession(skipStop: true)
         } catch {
-            NeuroID.shared.logger.e("Failed to Stop because \(error)")
-            NeuroID.shared.saveEventToDataStore(
+            self.logger.e("Failed to Stop because \(error)")
+            self.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
             return false
         }
 
-        NeuroID.shared.send(forceSend: true)
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.linkedSiteID = nil
+        self.send(forceSend: true)
+        self._isSDKStarted = false
+        self.linkedSiteID = nil
 
         //  stop listening to changes in call status
-        NeuroID.shared.callObserver?.stopListeningToCallStatus()
+        self.callObserver?.stopListeningToCallStatus()
         return true
     }
 
     func isStopped() -> Bool {
-        return _isSDKStarted != true
+        return self._isSDKStarted != true
     }
 
     static func swizzle() {
@@ -313,7 +319,7 @@ public class NeuroID: NSObject {
     }
 
     func captureApplicationMetaData() {
-        let appMetaData = getAppMetaData()
+        let appMetaData = self.getAppMetaData()
 
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(

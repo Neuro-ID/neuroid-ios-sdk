@@ -69,4 +69,9 @@ public extension NeuroID {
     static func getRegisteredUserID() -> String {
         return NeuroID.shared.getRegisteredUserID()
     }
+
+    // SESSION FUNCTIONS
+    static func stop() -> Bool {
+        return NeuroID.shared.stop()
+    }
 }

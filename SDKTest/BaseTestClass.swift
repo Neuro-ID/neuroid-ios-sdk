@@ -27,8 +27,8 @@ class BaseTestClass: XCTestCase {
     
     override func setUpWithError() throws {
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-        NeuroID.sendCollectionEventsJob.cancel()
-        NeuroID.sendGyroAccelCollectionWorkItem.cancel()
+        NeuroID.shared.sendCollectionEventsJob.cancel()
+        NeuroID.shared.collectGyroAccelEventJob.cancel()
     }
     
     override func setUp() {

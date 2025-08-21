@@ -8,41 +8,41 @@
 import Foundation
 
 extension NeuroID {
-    static func setupListeners() {
+    func setupListeners() {
         // We will always cancel the collection job and then recreate with new interval and start
-        sendCollectionEventsJob.cancel()
-        sendCollectionEventsJob = RepeatingTask(
-            interval: Double(NeuroID.shared.configService.configCache.eventQueueFlushInterval),
+        self.sendCollectionEventsJob.cancel()
+        self.sendCollectionEventsJob = RepeatingTask(
+            interval: Double(self.configService.configCache.eventQueueFlushInterval),
             task: NeuroID.sendCollectionEventsTask
         )
-        sendCollectionEventsJob.start()
+        self.sendCollectionEventsJob.start()
 
-        if NeuroID.shared.configService.configCache.callInProgress {
-            NeuroID.shared.callObserver = NIDCallStatusObserverService(
-                eventStorageService: NeuroID.shared.eventStorageService,
-                configService: NeuroID.shared.configService
+        if self.configService.configCache.callInProgress {
+            self.callObserver = NIDCallStatusObserverService(
+                eventStorageService: self.eventStorageService,
+                configService: self.configService
             )
-            NeuroID.shared.callObserver?.startListeningToCallStatus()
+            self.callObserver?.startListeningToCallStatus()
         } else {
-            NeuroID.shared.callObserver = nil
+            self.callObserver = nil
         }
 
-        if NeuroID.shared.configService.configCache.geoLocation {
-            NeuroID.shared.locationManager = LocationManagerService()
+        if self.configService.configCache.geoLocation {
+            self.locationManager = LocationManagerService()
         } else {
-            NeuroID.shared.locationManager = nil
+            self.locationManager = nil
         }
 
         // We will always cancel the current gyro job and then if the config allows we will recreate and start
         //  with new interval value
-        NeuroID.sendGyroAccelCollectionWorkItem.cancel()
-        if NeuroID.shared.configService.configCache.gyroAccelCadence {
-            NeuroID.sendGyroAccelCollectionWorkItem = RepeatingTask(
-                interval: Double(NeuroID.shared.configService.configCache.gyroAccelCadenceTime),
+        self.collectGyroAccelEventJob.cancel()
+        if self.configService.configCache.gyroAccelCadence {
+            self.collectGyroAccelEventJob = RepeatingTask(
+                interval: Double(self.configService.configCache.gyroAccelCadenceTime),
                 task: NeuroID.collectGyroAccelEventTask
             )
 
-            NeuroID.sendGyroAccelCollectionWorkItem.start()
+            self.collectGyroAccelEventJob.start()
         }
     }
 }
