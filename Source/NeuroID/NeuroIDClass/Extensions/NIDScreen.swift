@@ -25,7 +25,7 @@ public extension NeuroID {
             return false
         }
 
-        captureMobileMetadata()
+        NeuroID.shared.captureMobileMetadata()
 
         return true
     }

@@ -48,7 +48,7 @@ class NIDSessionTests: BaseTestClass {
         clearOutDataStore()
         NeuroID.shared.datastore.removeSentEvents()
 
-        NeuroID.createSession()
+        NeuroID.shared.createSession()
 
         assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
         assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
@@ -80,7 +80,7 @@ class NIDSessionTests: BaseTestClass {
     func test_captureMobileMetadata() {
         clearOutDataStore()
 
-        NeuroID.captureMobileMetadata()
+        NeuroID.shared.captureMobileMetadata()
 
         assertStoredEventTypeAndCount(type: NIDEventName.mobileMetadataIOS.rawValue, count: 1)
     }

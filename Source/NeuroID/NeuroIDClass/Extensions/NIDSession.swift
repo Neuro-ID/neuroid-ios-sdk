@@ -114,8 +114,10 @@ public extension NeuroID {
                 NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
 
                 // capture CREATE_SESSION and METADATA events for new flow
-                NeuroID.shared.saveEventToLocalDataStore(createNIDSessionEvent())
-                captureMobileMetadata()
+                NeuroID.shared.saveEventToLocalDataStore(
+                    NeuroID.shared.createNIDSessionEvent()
+                )
+                NeuroID.shared.captureMobileMetadata()
 
                 NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
@@ -171,7 +173,7 @@ public extension NeuroID {
 }
 
 extension NeuroID {
-    static func createNIDSessionEvent(
+    func createNIDSessionEvent(
         sessionEvent: NIDEventName = .createSession
     ) -> NIDEvent {
         return NIDEvent(
@@ -195,29 +197,29 @@ extension NeuroID {
         )
     }
 
-    static func createSession() {
-        NeuroID.shared.configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
-        NeuroID.shared.saveEventToLocalDataStore(
+    func createSession() {
+        configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
+        saveEventToLocalDataStore(
             createNIDSessionEvent()
         )
 
         captureMobileMetadata()
     }
 
-     func closeSession(skipStop: Bool = false) throws -> NIDEvent {
-        self.saveEventToDataStore(
+    func closeSession(skipStop: Bool = false) throws -> NIDEvent {
+        saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Close session attempt")
         )
 
-        if !self.isSDKStarted {
-            self.saveQueuedEventToLocalDataStore(
+        if !isSDKStarted {
+            saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent("Close attempt failed since SDK is not started")
             )
             throw NIDError.sdkNotStarted
         }
 
         let closeEvent = NIDEvent(type: .closeSession, ct: "SDK_EVENT")
-        self.saveEventToLocalDataStore(closeEvent)
+        saveEventToLocalDataStore(closeEvent)
 
         if skipStop {
             return closeEvent
@@ -227,7 +229,7 @@ extension NeuroID {
         return closeEvent
     }
 
-    static func captureMobileMetadata() {
+    func captureMobileMetadata() {
         let event = createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
 
         event.attrs = [
@@ -281,7 +283,7 @@ extension NeuroID {
 
         NeuroID.shared.setupListeners()
 
-        NeuroID.createSession()
+        NeuroID.shared.createSession()
         swizzle()
 
         // custom functionality = the different timer starts (start vs. startSession)
