@@ -18,7 +18,7 @@ extension NeuroID {
                 return
             }
 
-            captureAdvancedDevice(advancedDeviceSignals)
+            NeuroID.shared.captureAdvancedDevice(advancedDeviceSignals)
             completion(started)
         }
     }
@@ -34,22 +34,20 @@ extension NeuroID {
                 return
             }
 
-            captureAdvancedDevice(advancedDeviceSignals)
+            NeuroID.shared.captureAdvancedDevice(advancedDeviceSignals)
             completion(sessionRes)
         }
     }
 
     func getCachedADV() -> Bool {
-        if let storedADVKey = getUserDefaultKeyDict(
-            Constants.storageAdvancedDeviceKey.rawValue)
-        {
+        if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
             if let exp = storedADVKey["exp"] as? Double,
                let requestID = storedADVKey["key"] as? String
             {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
                 if currentTimeEpoch < exp {
-                    NeuroID.captureADVEvent(requestID, cached: true, latency: 0, message: "")
+                    self.captureADVEvent(requestID, cached: true, latency: 0, message: "")
                     return true
                 }
             }
@@ -58,58 +56,59 @@ extension NeuroID {
         return false
     }
 
-    static func getNewADV() {
+    func getNewADV() {
         // run one at a time, drop any other instances
-        if NeuroID.shared.isFPJSRunning == true {
+        if self.isFPJSRunning == true {
             return
         } else {
-            NeuroID.shared.isFPJSRunning = true
+            self.isFPJSRunning = true
         }
-        NeuroID.shared.deviceSignalService.getAdvancedDeviceSignal(
-            NeuroID.shared.getClientKey(),
-            clientID: NeuroID.shared.clientID,
-            linkedSiteID: NeuroID.shared.linkedSiteID,
-            advancedDeviceKey: NeuroID.shared.advancedDeviceKey
+        self.deviceSignalService.getAdvancedDeviceSignal(
+            self.getClientKey(),
+            clientID: self.clientID,
+            linkedSiteID: self.linkedSiteID,
+            advancedDeviceKey: self.advancedDeviceKey
         ) { request in
             switch request {
             case .success((let requestID, let duration)):
 
-                captureADVEvent(requestID, cached: false,
-                                latency: duration,
-                                message: NeuroID.shared.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
+                self.captureADVEvent(requestID,
+                                     cached: false,
+                                     latency: duration,
+                                     message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
 
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
                     value: [
                         "exp": UtilFunctions.getFutureTimeStamp(
-                            NeuroID.shared.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
+                            self.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
                         ),
                         "key": requestID,
                     ] as [String: Any]
                 )
-                NeuroID.shared.isFPJSRunning = false
+                self.isFPJSRunning = false
             case .failure(let error):
-                NeuroID.shared.saveEventToDataStore(
+                self.saveEventToDataStore(
                     NIDEvent.createErrorLogEvent(
                         error.localizedDescription
                     )
                 )
-                NeuroID.shared.saveEventToDataStore(
+                self.saveEventToDataStore(
                     NIDEvent(
                         type: .advancedDeviceRequestFailed,
                         m: error.localizedDescription
                     )
                 )
-                NeuroID.shared.isFPJSRunning = false
+                self.isFPJSRunning = false
                 return
             }
         }
     }
 
-    static func captureADVEvent(
+    func captureADVEvent(
         _ requestID: String, cached: Bool, latency: Double, message: String
     ) {
-        NeuroID.shared.saveEventToDataStore(
+        self.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
                 ct: NeuroID.shared.networkMonitor.connectionType,
@@ -130,10 +129,10 @@ extension NeuroID {
      Because of the reflection we use an array with a boolean instead of just boolean. Log the shouldCapture flag
      in a LOG event (isAdvancedDevice setting: <true/false>.
      */
-    @objc static func captureAdvancedDevice(
+    @objc func captureAdvancedDevice(
         _ shouldCapture: Bool
     ) {
-        NeuroID.shared.saveEventToDataStore(
+        self.saveEventToDataStore(
             NIDEvent.createInfoLogEvent(
                 "shouldCapture setting: \(shouldCapture)"
             )
@@ -143,11 +142,11 @@ extension NeuroID {
         //  is NOT being restricted/throttled prior to calling for an ADV event
 
         if shouldCapture,
-           NeuroID.shared.configService.isSessionFlowSampled
+           self.configService.isSessionFlowSampled
         {
             // call stored value, if expired then clear and get new one, else send existing
-            if !NeuroID.shared.getCachedADV() {
-                getNewADV()
+            if !self.getCachedADV() {
+                self.getNewADV()
             }
         }
     }

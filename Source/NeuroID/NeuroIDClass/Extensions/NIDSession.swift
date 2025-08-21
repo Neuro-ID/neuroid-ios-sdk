@@ -59,7 +59,7 @@ public extension NeuroID {
 
         pauseCollection()
 
-        clearSessionVariables()
+        NeuroID.shared.clearSessionVariables()
 
         // Stop listening to changes in call status
         NeuroID.shared.callObserver?.stopListeningToCallStatus()
@@ -117,7 +117,7 @@ public extension NeuroID {
                 NeuroID.shared.saveEventToLocalDataStore(createNIDSessionEvent())
                 captureMobileMetadata()
 
-                captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
+                NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
                 NeuroID.shared.addLinkedSiteID(siteID)
                 completion(
@@ -239,10 +239,10 @@ extension NeuroID {
         NeuroID.shared.captureApplicationMetaData()
     }
 
-    static func clearSessionVariables() {
-        NeuroID.shared.identifierService.clearIDs()
+    func clearSessionVariables() {
+        identifierService.clearIDs()
 
-        NeuroID.shared.linkedSiteID = nil
+        linkedSiteID = nil
     }
 
     static func pauseCollection(flushEventQueue: Bool = false) {
@@ -290,7 +290,7 @@ extension NeuroID {
 
         NeuroID.shared.moveQueuedEventsToDataStore()
 
-        captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
+        NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
 
         completion()
     }

@@ -222,7 +222,7 @@ public class NeuroID: NSObject {
             NeuroID.shared.environment = Constants.environmentTest.rawValue
         }
 
-        NeuroID.clearSessionVariables()
+        NeuroID.shared.clearSessionVariables()
 
         NeuroID.shared.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
@@ -243,7 +243,7 @@ public class NeuroID: NSObject {
         NeuroID.shared.networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
-            captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
+            NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
         }
 
         NeuroID.shared.captureApplicationMetaData()
