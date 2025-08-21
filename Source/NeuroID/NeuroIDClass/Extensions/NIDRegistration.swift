@@ -88,7 +88,7 @@ public extension NeuroID {
     }
 
     @available(*, deprecated, message: "setCustomVariable is deprecated, use `setVariable` instead")
-    static func setCustomVariable(key: String, v: String) -> NIDEvent {
+    func setCustomVariable(key: String, v: String) -> NIDEvent {
         return self.setVariable(key: key, value: v)
     }
 
@@ -100,8 +100,8 @@ public extension NeuroID {
         - Returns: An `NIDEvent` object of type `SET_VARIABLE`
 
      */
-    static func setVariable(key: String, value: String) -> NIDEvent {
-        let myKeys: [String] = trackers.map { String($0.key) }
+    func setVariable(key: String, value: String) -> NIDEvent {
+        let myKeys: [String] = NeuroID.trackers.map { String($0.key) }
 
         // If we don't have a valid URL, that means this was called before any views were tracked. Use "AppDelegate" as default
         var url = myKeys.last
@@ -116,7 +116,7 @@ public extension NeuroID {
             url: url
         )
 
-        NeuroID.shared.saveEventToLocalDataStore(variableEvent)
+        self.saveEventToLocalDataStore(variableEvent)
         return variableEvent
     }
 
