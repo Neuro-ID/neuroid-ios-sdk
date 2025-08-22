@@ -7,25 +7,25 @@
 
 import Foundation
 
-public extension NeuroID {
+extension NeuroID {
     /**
      Set screen name. We ensure that this is a URL valid name by replacing non alphanumber chars with underscore
      */
-    static func setScreenName(_ screen: String) -> Bool {
-        if !NeuroID.shared.isSDKStarted {
-            NeuroID.shared.logger.e(NIDError.sdkNotStarted.rawValue)
+    func setScreenName(_ screen: String) -> Bool {
+        if !self.isSDKStarted {
+            self.logger.e(NIDError.sdkNotStarted.rawValue)
             return false
         }
 
         if let urlEncode = screen.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
-            NeuroID.shared._currentScreenName = urlEncode
+            self._currentScreenName = urlEncode
         } else {
-            NeuroID.shared.logger.e("Invalid Screenname for NeuroID. \(screen) can't be encode")
-            NeuroID.shared.logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
+            self.logger.e("Invalid Screenname for NeuroID. \(screen) can't be encode")
+            self.logError(content: "Invalid Screenname for NeuroID. \(screen) can't be encode")
             return false
         }
 
-        captureMobileMetadata()
+        self.captureMobileMetadata()
 
         return true
     }

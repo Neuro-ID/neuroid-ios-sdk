@@ -29,6 +29,10 @@ public extension NeuroID {
         return NeuroID.shared.getScreenName()
     }
 
+    static func setScreenName(_ screen: String) -> Bool {
+        return NeuroID.shared.setScreenName(screen)
+    }
+
     static func getClientID() -> String {
         return NeuroID.shared.getClientID()
     }

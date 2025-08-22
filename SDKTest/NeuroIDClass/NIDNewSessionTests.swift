@@ -53,7 +53,7 @@ class NIDNewSessionTests: BaseTestClass {
         NeuroID.shared.identifierService.registeredUserID = "myRegisteredUserID"
         NeuroID.shared.linkedSiteID = "mySite"
 
-        NeuroID.clearSessionVariables()
+        NeuroID.shared.clearSessionVariables()
 
         assert(NeuroID.shared.sessionID == nil)
         assert(NeuroID.shared.registeredUserID == "")
