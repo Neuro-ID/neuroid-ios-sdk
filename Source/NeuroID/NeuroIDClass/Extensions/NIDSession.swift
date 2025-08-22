@@ -30,7 +30,7 @@ public extension NeuroID {
         NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("pause collection attempt")
         )
-        pauseCollection(flushEventQueue: true)
+        self.pauseCollection(flushEventQueue: true)
     }
 
     static func resumeCollection() {
@@ -57,7 +57,7 @@ public extension NeuroID {
             NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         )
 
-        pauseCollection()
+        self.pauseCollection()
 
         NeuroID.shared.clearSessionVariables()
 
@@ -101,7 +101,7 @@ public extension NeuroID {
         }
 
         // Clear or Send events based on sample rate
-        NeuroID.clearSendOldFlowEvents {
+        NeuroID.shared.clearSendOldFlowEvents {
             // The following events have to happen for either
             //  an existing session that begins a new flow OR
             //  a new session with a new flow
@@ -198,12 +198,12 @@ extension NeuroID {
     }
 
     func createSession() {
-        configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
+        self.configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
         saveEventToLocalDataStore(
-            createNIDSessionEvent()
+            self.createNIDSessionEvent()
         )
 
-        captureMobileMetadata()
+        self.captureMobileMetadata()
     }
 
     func closeSession(skipStop: Bool = false) throws -> NIDEvent {
@@ -230,7 +230,7 @@ extension NeuroID {
     }
 
     func captureMobileMetadata() {
-        let event = createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
+        let event = self.createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
 
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
@@ -269,30 +269,30 @@ extension NeuroID {
      - Will move queued events into main queue
      - Will make call to check/capture ADV event
      */
-    static func setupSession(
+    func setupSession(
         siteID: String?,
         customFunctionality: @escaping () -> Void = {},
         completion: @escaping () -> Void = {}
     ) {
         // Use config cache or if first time, retrieve from server
-        NeuroID.shared.configService.retrieveOrRefreshCache()
+        self.configService.retrieveOrRefreshCache()
 
-        NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
+        self.configService.updateIsSampledStatus(siteID: siteID)
 
-        NeuroID.shared._isSDKStarted = true
+        self._isSDKStarted = true
 
-        NeuroID.shared.setupListeners()
+        self.setupListeners()
 
-        NeuroID.shared.createSession()
-        swizzle()
+        self.createSession()
+        self.swizzle()
 
         // custom functionality = the different timer starts (start vs. startSession)
         //  this will be refactored once we bring start/startSession in alignment
         customFunctionality()
 
-        NeuroID.shared.moveQueuedEventsToDataStore()
+        self.moveQueuedEventsToDataStore()
 
-        NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
+        self.captureAdvancedDevice(self.isAdvancedDevice)
 
         completion()
     }
@@ -313,7 +313,7 @@ extension NeuroID {
 
         // Setup Session with old start timer logic
         // TO-DO - Refactor to behave like startSession
-        NeuroID.setupSession(
+        NeuroID.shared.setupSession(
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
@@ -345,7 +345,7 @@ extension NeuroID {
 
         // stop existing session if one is open
         if !NeuroID.shared.identifierService.sessionID.isEmptyOrNil || NeuroID.shared.isSDKStarted {
-            _ = stopSession()
+            _ = self.stopSession()
         }
 
         // If sessionID is nil, set origin as NID here
@@ -370,15 +370,15 @@ extension NeuroID {
             return
         }
 
-        NeuroID.setupSession(
+        NeuroID.shared.setupSession(
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
                     if NSClassFromString("XCTest") == nil {
-                        resumeCollection()
+                        self.resumeCollection()
                     }
                 #else
-                    resumeCollection()
+                    self.resumeCollection()
                 #endif
             }
         ) {
@@ -386,17 +386,17 @@ extension NeuroID {
         }
     }
 
-    static func clearSendOldFlowEvents(completion: @escaping () -> Void = {}) {
+    func clearSendOldFlowEvents(completion: @escaping () -> Void = {}) {
         // if the session is being sampled we should send, else we don't want those events anyways
-        if NeuroID.shared.configService.isSessionFlowSampled {
+        if self.configService.isSessionFlowSampled {
             // immediately flush events before anything else
-            NeuroID.shared.send(forceSend: true) {
+            self.send(forceSend: true) {
                 completion()
             }
             return
         } else {
             // if not sampled clear any events that might have slipped through
-            _ = NeuroID.shared.datastore.getAndRemoveAllEvents()
+            _ = self.datastore.getAndRemoveAllEvents()
 
             completion()
 
