@@ -19,43 +19,36 @@ public struct SessionStartResult {
 }
 
 public extension NeuroID {
-    static func startSession(
-        _ sessionID: String? = nil,
-        completion: @escaping (SessionStartResult) -> Void = { _ in }
-    ) {
-        NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
-    }
-
-    static func resumeCollection() {
-        NeuroID.shared.saveEventToLocalDataStore(
+    func resumeCollection() {
+        self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
-        if NeuroID.shared.identifierService.sessionID.isEmptyOrNil,
-           !NeuroID.shared.isSDKStarted
+        if self.identifierService.sessionID.isEmptyOrNil,
+           !self.isSDKStarted
         {
             return
         }
-        NeuroID.shared._isSDKStarted = true
-        NeuroID.shared.sendCollectionEventsJob.start()
-        NeuroID.shared.collectGyroAccelEventJob.start()
+        self._isSDKStarted = true
+        self.sendCollectionEventsJob.start()
+        self.collectGyroAccelEventJob.start()
     }
 
-    static func stopSession() -> Bool {
-        NeuroID.shared.saveEventToLocalDataStore(
+    func stopSession() -> Bool {
+        self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Stop session attempt")
         )
 
-        NeuroID.shared.saveEventToLocalDataStore(
+        self.saveEventToLocalDataStore(
             NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         )
 
         self.pauseCollection()
 
-        NeuroID.shared.clearSessionVariables()
+        self.clearSessionVariables()
 
         // Stop listening to changes in call status
-        NeuroID.shared.callObserver?.stopListeningToCallStatus()
+        self.callObserver?.stopListeningToCallStatus()
 
         return true
     }
@@ -125,7 +118,7 @@ public extension NeuroID {
 
                 // if sessionID passed then startSession should be used
                 if sessionID != nil {
-                    NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
+                    NeuroID.shared.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
                         if !startStatus.started {
                             completion(startStatus)
 
@@ -324,20 +317,20 @@ extension NeuroID {
     }
 
     // Internal implementation that allows a siteID
-    static func startSession(
+    func startSession(
         siteID: String?,
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        if !NeuroID.shared.verifyClientKeyExists() {
-            let res = SessionStartResult(false, "")
-
-            completion(res)
+        if !self.verifyClientKeyExists() {
+            completion(
+                SessionStartResult(false, "")
+            )
             return
         }
 
         // stop existing session if one is open
-        if !NeuroID.shared.identifierService.sessionID.isEmptyOrNil || NeuroID.shared.isSDKStarted {
+        if !self.identifierService.sessionID.isEmptyOrNil || self.isSDKStarted {
             _ = self.stopSession()
         }
 
@@ -346,24 +339,24 @@ extension NeuroID {
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
 
-        _ = NeuroID.shared.identifierService.logScrubbedIdentityAttempt(
+        _ = self.identifierService.logScrubbedIdentityAttempt(
             identifier: finalSessionID,
             message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
         )
 
-        let validSessionID = NeuroID.shared.identifierService.setSessionID(
+        let validSessionID = self.identifierService.setSessionID(
             finalSessionID,
             userGenerated
         )
 
         if !validSessionID {
-            let res = SessionStartResult(false, "")
-
-            completion(res)
+            completion(
+                SessionStartResult(false, "")
+            )
             return
         }
 
-        NeuroID.shared.setupSession(
+        self.setupSession(
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
