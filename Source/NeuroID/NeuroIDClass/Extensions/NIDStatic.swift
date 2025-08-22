@@ -5,6 +5,8 @@
 //  Created by Kevin Sites on 8/19/25.
 //
 
+import UIKit
+
 // All Static Methods that need to be available for integrations will be available
 //  in this file. Internally all of them will call the class instance method.
 
@@ -93,8 +95,56 @@ public extension NeuroID {
         return NeuroID.shared.getRegisteredUserID()
     }
 
+    /**
+     This should be called the moment a user trys to login. Returns true always
+     @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
+     */
+    static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
+        return NeuroID.shared.attemptedLogin(attemptedRegisteredUserId)
+    }
+
     // SESSION FUNCTIONS
+    static func start(
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) {
+        NeuroID.shared.start(siteID: nil, completion: completion)
+    }
+
     static func stop() -> Bool {
         return NeuroID.shared.stop()
+    }
+
+    static func pauseCollection() {
+        NeuroID.shared.saveEventToLocalDataStore(
+            NIDEvent.createInfoLogEvent("pause collection attempt")
+        )
+        NeuroID.shared.pauseCollection(flushEventQueue: true)
+    }
+
+    // RN Functions
+    static func registerPageTargets() {
+        NeuroID.shared.registerPageTargets()
+    }
+
+    /** Public API for manually registering a target. This should only be used when automatic fails. */
+    @available(*, deprecated, message: "manuallyRegisterTarget is deprecated and no longer used")
+    static func manuallyRegisterTarget(view: UIView) {
+        NeuroID.shared.manuallyRegisterTarget(view: view)
+    }
+
+    /** React Native API for manual registration - DEPRECATED */
+    @available(*, deprecated, message: "manuallyRegisterRNTarget is deprecated and no longer used")
+    static func manuallyRegisterRNTarget(
+        id: String,
+        className: String,
+        screenName: String,
+        placeHolder: String
+    ) -> NIDEvent {
+        return NeuroID.shared.manuallyRegisterRNTarget(
+            id: id, className:
+            className,
+            screenName: screenName,
+            placeHolder: placeHolder
+        )
     }
 }

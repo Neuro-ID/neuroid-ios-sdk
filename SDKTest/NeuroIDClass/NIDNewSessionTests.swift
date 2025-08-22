@@ -198,7 +198,7 @@ class NIDNewSessionTests: BaseTestClass {
         dataStore.events.append(NIDEvent(rawType: "test"))
         NeuroID.shared.configService = MockConfigService()
 
-        NeuroID.clearSendOldFlowEvents {
+        NeuroID.shared.clearSendOldFlowEvents {
             assert(self.dataStore.events.count == 0)
 
             NeuroID.shared._isSDKStarted = false
@@ -214,7 +214,7 @@ class NIDNewSessionTests: BaseTestClass {
 
         NeuroID.shared._isSDKStarted = true
 
-        NeuroID.clearSendOldFlowEvents {
+        NeuroID.shared.clearSendOldFlowEvents {
             assert(self.dataStore.events.count == 0)
 
             NeuroID.shared._isSDKStarted = false
