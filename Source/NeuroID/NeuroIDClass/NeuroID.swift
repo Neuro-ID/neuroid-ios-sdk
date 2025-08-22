@@ -264,13 +264,6 @@ public class NeuroID: NSObject {
         self.setupListeners()
     }
 
-    // When start is called, enable swizzling, as well as dispatch queue to send to API
-    public static func start(
-        completion: @escaping (Bool) -> Void = { _ in }
-    ) {
-        NeuroID.start(siteID: nil, completion: completion)
-    }
-
     func stop() -> Bool {
         self.logger.i("NeuroID Stopped")
         do {

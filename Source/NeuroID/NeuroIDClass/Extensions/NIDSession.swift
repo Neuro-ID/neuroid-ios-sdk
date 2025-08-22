@@ -26,13 +26,6 @@ public extension NeuroID {
         NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
     }
 
-    static func pauseCollection() {
-        NeuroID.shared.saveEventToLocalDataStore(
-            NIDEvent.createInfoLogEvent("pause collection attempt")
-        )
-        self.pauseCollection(flushEventQueue: true)
-    }
-
     static func resumeCollection() {
         NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("resume collection attempt")
@@ -147,7 +140,7 @@ public extension NeuroID {
                         completion(startStatus)
                     }
                 } else {
-                    NeuroID.start(siteID: siteID) { started in
+                    NeuroID.shared.start(siteID: siteID) { started in
                         if !started {
                             completion(
                                 SessionStartResult(started, NeuroID.getSessionID())
@@ -247,18 +240,18 @@ extension NeuroID {
         linkedSiteID = nil
     }
 
-    static func pauseCollection(flushEventQueue: Bool = false) {
+    func pauseCollection(flushEventQueue: Bool = false) {
         if flushEventQueue {
             // flush all events immediately before pause
-            NeuroID.shared.send(forceSend: true)
+            self.send(forceSend: true)
         }
 
-        NeuroID.shared._isSDKStarted = false
+        self._isSDKStarted = false
 
-        NeuroID.shared.sendCollectionEventsJob.cancel()
-        NeuroID.shared.collectGyroAccelEventJob.cancel()
+        self.sendCollectionEventsJob.cancel()
+        self.collectGyroAccelEventJob.cancel()
 
-        NeuroID.shared.configService.clearSiteIDMap()
+        self.configService.clearSiteIDMap()
     }
 
     /**
@@ -298,32 +291,32 @@ extension NeuroID {
     }
 
     // Internal implementation that allows a siteID
-    static func start(
+    func start(
         siteID: String?,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
-        NeuroID.shared.saveEventToDataStore(
+        self.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Start attempt with siteID: \(siteID ?? ""))")
         )
 
-        if !NeuroID.shared.verifyClientKeyExists() {
+        if !self.verifyClientKeyExists() {
             completion(false)
             return
         }
 
         // Setup Session with old start timer logic
         // TO-DO - Refactor to behave like startSession
-        NeuroID.shared.setupSession(
+        self.setupSession(
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
                     if NSClassFromString("XCTest") == nil {
-                        NeuroID.shared.sendCollectionEventsJob.start()
+                        self.sendCollectionEventsJob.start()
                     }
                 #else
-                    NeuroID.sendCollectionEventsJob.start()
+                    self.sendCollectionEventsJob.start()
                 #endif
-                NeuroID.shared.collectGyroAccelEventJob.start()
+                self.collectGyroAccelEventJob.start()
             }
         ) {
             completion(true)

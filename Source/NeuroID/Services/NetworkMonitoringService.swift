@@ -46,7 +46,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
             }
 
             // pause collection but don't flush events
-            NeuroID.pauseCollection(flushEventQueue: false)
+            NeuroID.shared.pauseCollection(flushEventQueue: false)
         }
     }
 

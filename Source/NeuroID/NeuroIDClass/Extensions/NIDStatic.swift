@@ -104,8 +104,21 @@ public extension NeuroID {
     }
 
     // SESSION FUNCTIONS
+    static func start(
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) {
+        NeuroID.shared.start(siteID: nil, completion: completion)
+    }
+
     static func stop() -> Bool {
         return NeuroID.shared.stop()
+    }
+
+    static func pauseCollection() {
+        NeuroID.shared.saveEventToLocalDataStore(
+            NIDEvent.createInfoLogEvent("pause collection attempt")
+        )
+        NeuroID.shared.pauseCollection(flushEventQueue: true)
     }
 
     // RN Functions
