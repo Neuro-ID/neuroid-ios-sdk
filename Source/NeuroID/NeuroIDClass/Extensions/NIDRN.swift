@@ -13,11 +13,11 @@ extension NeuroID {
     }
 
     public static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
-        let isAdvancedDevice = getOptionValueBool(
+        let isAdvancedDevice = NeuroID.shared.getOptionValueBool(
             rnOptions: rnOptions,
             configOptionKey: .isAdvancedDevice
         )
-        let advancedDeviceKey = getOptionValueString(
+        let advancedDeviceKey = NeuroID.shared.getOptionValueString(
             rnOptions: rnOptions,
             configOptionKey: .advancedDeviceKey
         )
@@ -33,7 +33,7 @@ extension NeuroID {
         NeuroID.shared.setIsRN()
 
         // Extract RN Options and put them in NeuroID Class Dict to be referenced
-        let usingReactNavigation = getOptionValueBool(
+        let usingReactNavigation = NeuroID.shared.getOptionValueBool(
             rnOptions: rnOptions,
             configOptionKey: .usingReactNavigation
         )
@@ -43,7 +43,7 @@ extension NeuroID {
         return true
     }
 
-    static func getOptionValueBool(
+    func getOptionValueBool(
         rnOptions: [String: Any], configOptionKey: RNConfigOptions
     ) -> Bool {
         if let configValue = rnOptions[configOptionKey.rawValue] as? Bool {
@@ -53,7 +53,7 @@ extension NeuroID {
         return false
     }
 
-    static func getOptionValueString(
+    func getOptionValueString(
         rnOptions: [String: Any], configOptionKey: RNConfigOptions
     ) -> String? {
         guard let configValue = rnOptions[configOptionKey.rawValue] as? String else {
