@@ -149,7 +149,7 @@ extension UIViewController {
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
-        NeuroID.removeKeyboardListener(className: nidClassName, view: self)
+        NeuroID.shared.removeKeyboardListener(className: nidClassName, view: self)
     }
 
     @objc func registerPageTargets() {
@@ -168,7 +168,7 @@ extension UIViewController {
         UtilFunctions.registerSubViewsTargets(controller: self)
         registerViews = view.subviewsDescriptions
 
-        NeuroID.registerKeyboardListener(className: nidClassName, view: self)
+        NeuroID.shared.registerKeyboardListener(className: nidClassName, view: self)
 
         UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: nidClassName)
     }

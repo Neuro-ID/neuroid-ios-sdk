@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public extension NeuroID {
+extension NeuroID {
     func excludeViewByTestID(_ excludedView: String) {
         self.logger.i("Exclude view called - \(excludedView)")
         self.excludedViewsTestIDs.append(excludedView)
@@ -21,7 +21,7 @@ public extension NeuroID {
     /**
         Specifically available for the React Native SDK to call and register all page targets due to lifecycle event delays
      */
-    static func registerPageTargets() {
+    func registerPageTargets() {
         if let viewController = UIApplication.shared.keyWindow?.rootViewController {
             DispatchQueue.main.async {
                 viewController.registerPageTargets()
@@ -29,9 +29,7 @@ public extension NeuroID {
         }
     }
 
-    /** Public API for manually registering a target. This should only be used when automatic fails. */
-    @available(*, deprecated, message: "manuallyRegisterTarget is deprecated and no longer used")
-    static func manuallyRegisterTarget(view: UIView) {
+    func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
         let guid = ParamsCreator.generateID()
         NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view: \(screenName)")
@@ -54,9 +52,12 @@ public extension NeuroID {
         }
     }
 
-    /** React Native API for manual registration - DEPRECATED */
-    @available(*, deprecated, message: "manuallyRegisterRNTarget is deprecated and no longer used")
-    static func manuallyRegisterRNTarget(id: String, className: String, screenName: String, placeHolder: String) -> NIDEvent {
+    func manuallyRegisterRNTarget(
+        id: String,
+        className: String,
+        screenName: String,
+        placeHolder: String
+    ) -> NIDEvent {
         let guid = ParamsCreator.generateID()
         let fullViewString = screenName
 
@@ -83,7 +84,7 @@ public extension NeuroID {
                                     )
                                 ])
 
-        NeuroID.shared.saveEventToLocalDataStore(nidEvent)
+        self.saveEventToLocalDataStore(nidEvent)
         return nidEvent
     }
 
@@ -120,18 +121,18 @@ public extension NeuroID {
         return variableEvent
     }
 
-    internal static func registerKeyboardListener(className: String, view: UIViewController) {
-        if !NeuroID.shared.observingKeyboard {
-            NeuroID.shared.observingKeyboard.toggle()
+     func registerKeyboardListener(className: String, view: UIViewController) {
+        if !self.observingKeyboard {
+            self.observingKeyboard.toggle()
 
             NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.addObserver(view, selector: #selector(view.keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         }
     }
 
-    internal static func removeKeyboardListener(className: String, view: UIViewController) {
-        if NeuroID.shared.observingKeyboard {
-            NeuroID.shared.observingKeyboard.toggle()
+     func removeKeyboardListener(className: String, view: UIViewController) {
+        if self.observingKeyboard {
+            self.observingKeyboard.toggle()
 
             NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.removeObserver(view, name: UIResponder.keyboardWillHideNotification, object: nil)

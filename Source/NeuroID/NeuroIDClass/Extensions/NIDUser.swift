@@ -28,12 +28,8 @@ public extension NeuroID {
         return self.identifierService.setRegisteredUserID(registeredUserID)
     }
 
-    /**
-     This should be called the moment a user trys to login. Returns true always
-     @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
-     */
-    static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
-        let validID = NeuroID.shared.identifierService.setGenericIdentifier(
+    func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
+        let validID = self.identifierService.setGenericIdentifier(
             identifier: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation",
             type: .attemptedLogin,
             userGenerated: attemptedRegisteredUserId != nil,
@@ -42,7 +38,9 @@ public extension NeuroID {
         )
 
         if !validID {
-            NeuroID.shared.saveEventToDataStore(NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation"))
+            self.saveEventToDataStore(
+                NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation")
+            )
         }
         return true
     }
