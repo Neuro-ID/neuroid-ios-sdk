@@ -9,7 +9,9 @@
 import XCTest
 
 class NeuroIDClassTests: BaseTestClass {
+    var mockIdentifierService = MockIdentifierService()
     let mockService = MockDeviceSignalService()
+    var neuroID = NeuroID()
 
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
@@ -20,10 +22,14 @@ class NeuroIDClassTests: BaseTestClass {
     }
 
     override func setUp() {
+        mockIdentifierService = MockIdentifierService()
+        neuroID = NeuroID(identifierService: mockIdentifierService)
+
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
         NeuroID._isTesting = true
         NeuroID.shared.datastore = dataStore
+        NeuroID.shared.identifierService = mockIdentifierService
     }
 
     override func tearDown() {
@@ -46,6 +52,20 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.start(true) { _ in
             self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
         }
+    }
+
+    func test_class_var_sessionID_get() {
+        let expectedValue = "testID"
+        mockIdentifierService.sessionID = expectedValue
+
+        assert(neuroID.sessionID == expectedValue)
+    }
+
+    func test_class_var_registeredUserID_get() {
+        let expectedValue = "testID"
+        mockIdentifierService.registeredUserID = expectedValue
+
+        assert(neuroID.registeredUserID == expectedValue)
     }
 
     func test_configure_success() {
