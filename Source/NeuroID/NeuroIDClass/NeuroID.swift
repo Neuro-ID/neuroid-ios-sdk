@@ -187,7 +187,7 @@ public class NeuroID: NSObject {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    public static func configure(
+    func configure(
         clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
     ) -> Bool {
         // set last install time if not already set.
@@ -195,14 +195,14 @@ public class NeuroID: NSObject {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
-        if NeuroID.shared.verifyClientKeyExists() {
-            NeuroID.shared.logger.e("You already configured the SDK")
+        if self.verifyClientKeyExists() {
+            self.logger.e("You already configured the SDK")
             return false
         }
 
-        if !NeuroID.shared.validationService.validateClientKey(clientKey) {
-            NeuroID.shared.logger.e("Invalid Client Key")
-            NeuroID.shared.saveQueuedEventToLocalDataStore(
+        if !self.validationService.validateClientKey(clientKey) {
+            self.logger.e("Invalid Client Key")
+            self.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Invalid Client Key \(clientKey)"
                 )
@@ -213,42 +213,42 @@ public class NeuroID: NSObject {
 
             return false
         }
-        NeuroID.shared.advancedDeviceKey = advancedDeviceKey
-        NeuroID.shared.isAdvancedDevice = isAdvancedDevice
+        self.advancedDeviceKey = advancedDeviceKey
+        self.isAdvancedDevice = isAdvancedDevice
 
         if clientKey.contains("_live_") {
-            NeuroID.shared.environment = Constants.environmentLive.rawValue
+            self.environment = Constants.environmentLive.rawValue
         } else {
-            NeuroID.shared.environment = Constants.environmentTest.rawValue
+            self.environment = Constants.environmentTest.rawValue
         }
 
-        NeuroID.shared.clearSessionVariables()
+        self.clearSessionVariables()
 
-        NeuroID.shared.clientKey = clientKey
+        self.clientKey = clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
-        NeuroID.shared.saveEventToDataStore(
+        self.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Reset Tab Id")
         )
-        NeuroID.shared.packetNumber = 0
+        self.packetNumber = 0
 
-        NeuroID.shared.configService = NIDConfigService(
-            logger: NeuroID.shared.logger,
-            networkService: NeuroID.shared.networkService,
-            configRetrievalCallback: NeuroID.shared.configSetupCompletion
+        self.configService = NIDConfigService(
+            logger: self.logger,
+            networkService: self.networkService,
+            configRetrievalCallback: self.configSetupCompletion
         )
 
-        NeuroID.shared.networkMonitor.startMonitoring()
+        self.networkMonitor.startMonitoring()
 
         if isAdvancedDevice {
-            NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
+            self.captureAdvancedDevice(self.isAdvancedDevice)
         }
 
-        NeuroID.shared.captureApplicationMetaData()
+        self.captureApplicationMetaData()
 
-        NeuroID.shared.saveEventToDataStore(
+        self.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("isAdvancedDevice setting: \(isAdvancedDevice)")
         )
 

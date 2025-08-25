@@ -11,6 +11,16 @@ import UIKit
 //  in this file. Internally all of them will call the class instance method.
 
 public extension NeuroID {
+    static func configure(
+        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
+    ) -> Bool {
+        NeuroID.shared.configure(
+            clientKey: clientKey,
+            isAdvancedDevice: isAdvancedDevice,
+            advancedDeviceKey: advancedDeviceKey
+        )
+    }
+
     static func enableLogging(_ value: Bool) {
         NeuroID.shared.enableLogging(value)
     }
@@ -150,7 +160,27 @@ public extension NeuroID {
         NeuroID.shared.startAppFlow(siteID: siteID, sessionID: sessionID, completion: completion)
     }
 
+    // AdvancedDevice Functions
+    static func start(
+        _ advancedDeviceSignals: Bool,
+        completion: @escaping (Bool) -> Void = { _ in }
+    ) {
+        NeuroID.shared.start(advancedDeviceSignals, completion: completion)
+    }
+
+    static func startSession(
+        _ sessionID: String? = nil,
+        _ advancedDeviceSignals: Bool,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
+        NeuroID.shared.startSession(sessionID, advancedDeviceSignals, completion: completion)
+    }
+
     // RN Functions
+    static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
+        return NeuroID.shared.configure(clientKey: clientKey, rnOptions: rnOptions)
+    }
+
     static func registerPageTargets() {
         NeuroID.shared.registerPageTargets()
     }

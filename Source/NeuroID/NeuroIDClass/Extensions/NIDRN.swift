@@ -12,17 +12,17 @@ extension NeuroID {
         isRN = true
     }
 
-    public static func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
-        let isAdvancedDevice = NeuroID.shared.getOptionValueBool(
+    func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
+        let isAdvancedDevice = self.getOptionValueBool(
             rnOptions: rnOptions,
             configOptionKey: .isAdvancedDevice
         )
-        let advancedDeviceKey = NeuroID.shared.getOptionValueString(
+        let advancedDeviceKey = self.getOptionValueString(
             rnOptions: rnOptions,
             configOptionKey: .advancedDeviceKey
         )
 
-        let configured = configure(
+        let configured = self.configure(
             clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey
         )
 
@@ -30,15 +30,15 @@ extension NeuroID {
             return false
         }
 
-        NeuroID.shared.setIsRN()
+        self.setIsRN()
 
         // Extract RN Options and put them in NeuroID Class Dict to be referenced
-        let usingReactNavigation = NeuroID.shared.getOptionValueBool(
+        let usingReactNavigation = self.getOptionValueBool(
             rnOptions: rnOptions,
             configOptionKey: .usingReactNavigation
         )
 
-        NeuroID.shared.rnOptions[.usingReactNavigation] = usingReactNavigation
+        self.rnOptions[.usingReactNavigation] = usingReactNavigation
 
         return true
     }
