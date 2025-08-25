@@ -8,33 +8,33 @@
 import Foundation
 
 extension NeuroID {
-    public static func start(
+    func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
-        NeuroID.start { started in
+        self.start(siteID: nil) { started in
             if !started {
                 completion(started)
                 return
             }
 
-            NeuroID.shared.captureAdvancedDevice(advancedDeviceSignals)
+            self.captureAdvancedDevice(advancedDeviceSignals)
             completion(started)
         }
     }
 
-    public static func startSession(
+    func startSession(
         _ sessionID: String? = nil,
         _ advancedDeviceSignals: Bool,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        NeuroID.startSession(sessionID) { sessionRes in
+        self.startSession(siteID: nil, sessionID: sessionID) { sessionRes in
             if !sessionRes.started {
                 completion(sessionRes)
                 return
             }
 
-            NeuroID.shared.captureAdvancedDevice(advancedDeviceSignals)
+            self.captureAdvancedDevice(advancedDeviceSignals)
             completion(sessionRes)
         }
     }

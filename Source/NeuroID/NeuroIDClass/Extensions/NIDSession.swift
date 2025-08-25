@@ -18,7 +18,7 @@ public struct SessionStartResult {
     }
 }
 
-public extension NeuroID {
+extension NeuroID {
     func resumeCollection() {
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("resume collection attempt")
@@ -156,9 +156,7 @@ public extension NeuroID {
             }
         }
     }
-}
 
-extension NeuroID {
     func createNIDSessionEvent(
         sessionEvent: NIDEventName = .createSession
     ) -> NIDEvent {
