@@ -21,7 +21,7 @@ extension NeuroID {
     }
 
     func getRegisteredUserID() -> String {
-        return self.registeredUserID
+        return self.identifierService.registeredUserID
     }
 
     func setRegisteredUserID(_ registeredUserID: String) -> Bool {

@@ -108,6 +108,8 @@
 		FF1770CC2E26DB8E007235A2 /* UtilFunctionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */; };
 		FF88597C2D481B3A00A91902 /* AdvancedDeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */; };
 		FF88597E2D481B4300A91902 /* ValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597D2D481B4300A91902 /* ValidationService.swift */; };
+		FFAA66CF2E5CDB5F003C0FF1 /* MockEventStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAA66CE2E5CDB59003C0FF1 /* MockEventStorageService.swift */; };
+		FFAA66D32E5CE994003C0FF1 /* MockValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAA66D22E5CE98E003C0FF1 /* MockValidationService.swift */; };
 		FFAC96B92D358A9F004C2A25 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96B82D358A9F004C2A25 /* UIView.swift */; };
 		FFAC96BB2D358AA7004C2A25 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BA2D358AA7004C2A25 /* UITextView.swift */; };
 		FFAC96BD2D358AB5004C2A25 /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BC2D358AB5004C2A25 /* UITableView.swift */; };
@@ -252,6 +254,8 @@
 		FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilFunctionsTests.swift; sourceTree = "<group>"; };
 		FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceService.swift; sourceTree = "<group>"; };
 		FF88597D2D481B4300A91902 /* ValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationService.swift; sourceTree = "<group>"; };
+		FFAA66CE2E5CDB59003C0FF1 /* MockEventStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEventStorageService.swift; sourceTree = "<group>"; };
+		FFAA66D22E5CE98E003C0FF1 /* MockValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockValidationService.swift; sourceTree = "<group>"; };
 		FFAC96B52D358978004C2A25 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		FFAC96B82D358A9F004C2A25 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		FFAC96BA2D358AA7004C2A25 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
@@ -513,6 +517,8 @@
 		FF1770992E26DB8E007235A2 /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
+				FFAA66D22E5CE98E003C0FF1 /* MockValidationService.swift */,
+				FFAA66CE2E5CDB59003C0FF1 /* MockEventStorageService.swift */,
 				FF1770962E26DB8E007235A2 /* MockConfigService.swift */,
 				FF1770972E26DB8E007235A2 /* MockDeviceSignalService.swift */,
 				FF1770982E26DB8E007235A2 /* MockNetworkService.swift */,
@@ -867,6 +873,7 @@
 				FF1770B12E26DB8E007235A2 /* SessionTests.swift in Sources */,
 				FF1770B22E26DB8E007235A2 /* NIDRegistrationTests.swift in Sources */,
 				FF1770B32E26DB8E007235A2 /* NIDClientSiteIdTests.swift in Sources */,
+				FFAA66D32E5CE994003C0FF1 /* MockValidationService.swift in Sources */,
 				FF1770B42E26DB8E007235A2 /* TouchEventsTests.swift in Sources */,
 				FF1770B52E26DB8E007235A2 /* MultiAppFlowTests.swift in Sources */,
 				FF1770B62E26DB8E007235A2 /* PayloadTest.swift in Sources */,
@@ -881,6 +888,7 @@
 				FF0E222F2E4AA89100DECB89 /* PayloadSendingServiceTests.swift in Sources */,
 				FF1770BF2E26DB8E007235A2 /* MockDeviceSignalService.swift in Sources */,
 				FF1770C02E26DB8E007235A2 /* ValidationServiceTests.swift in Sources */,
+				FFAA66CF2E5CDB5F003C0FF1 /* MockEventStorageService.swift in Sources */,
 				FF1770C12E26DB8E007235A2 /* NIDLogTests.swift in Sources */,
 				FF1770C22E26DB8E007235A2 /* NIDFormTests.swift in Sources */,
 				FF1770C42E26DB8E007235A2 /* NIDScreenTests.swift in Sources */,
