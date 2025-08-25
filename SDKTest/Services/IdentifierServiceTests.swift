@@ -10,10 +10,11 @@ import Foundation
 import XCTest
 
 class IdentifierServiceTests: BaseTestClass {
+    var mockEventStorageService = MockEventStorageService()
     var identifierService = IdentifierService(
         logger: NIDLog(),
         validationService: ValidationService(logger: NIDLog()),
-        eventStorageService: EventStorageService()
+        eventStorageService: MockEventStorageService()
     )
 
     override func setUpWithError() throws {
@@ -21,16 +22,12 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     override func setUp() {
-        clearOutDataStore()
-        NeuroID._isTesting = true
+        mockEventStorageService = MockEventStorageService()
         identifierService = IdentifierService(
             logger: NIDLog(),
             validationService: ValidationService(logger: NIDLog()),
-            eventStorageService: EventStorageService()
+            eventStorageService: mockEventStorageService
         )
-
-        NeuroID.shared.identifierService = identifierService
-        NeuroID.shared.datastore = dataStore
     }
 
     override func tearDown() {
@@ -38,31 +35,204 @@ class IdentifierServiceTests: BaseTestClass {
         NeuroID._isTesting = false
     }
 
-    func test_scrubEmailId() {
-        let id = "tt@test.com"
-        let expectedId = "t*@test.com"
-        let scrubbedId = identifierService.scrubIdentifier(id)
-        XCTAssertEqual(scrubbedId, expectedId)
+    // setSessionID
+    func test_setSessionID_started_customer_origin() {
+        identifierService.sessionID = nil
+        let expectedValue = "test_uid"
+        let fnSuccess = identifierService.setSessionID(expectedValue, true)
+
+        assert(fnSuccess)
+        assert(identifierService.sessionID == expectedValue)
     }
 
-    func test_unScrubbedID() {
-        let id = "123_testing123"
-        let expectedId = "123_testing123"
-        let unscrubbedId = identifierService.scrubIdentifier(id)
-        XCTAssertEqual(unscrubbedId, expectedId)
+    func test_setSessionID_started_nid_origin() {
+        identifierService.sessionID = nil
+        let expectedValue = "test_uid"
+
+        let fnSuccess = identifierService.setSessionID(expectedValue, false)
+
+        assert(fnSuccess)
+        assert(identifierService.sessionID == expectedValue)
     }
 
-    func test_scrubSSN() {
-        let id = "123-23-4568"
-        let expectedId = "***-**-****"
-        let scrubbedId = identifierService.scrubIdentifier(id)
-        XCTAssertEqual(scrubbedId, expectedId)
+    // setRegisteredUserID
+    func test_setRegisteredUserID_valid_not_set() {
+        let expectedValue = "test_ruid"
+        identifierService.registeredUserID = ""
+
+        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
+
+        assert(fnSuccess == true)
+        assert(identifierService.registeredUserID == expectedValue)
     }
 
+    func test_setRegisteredUserID_valid_already_set() {
+        let expectedValue = "test_ruid"
+        identifierService.registeredUserID = "setID"
+
+        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
+
+        assert(fnSuccess == true)
+        assert(identifierService.registeredUserID == expectedValue)
+
+        let warnLogMessages = mockEventStorageService.mockEventStore.filter {
+            $0.type == NIDEventName.log.rawValue && $0.level == "WARN"
+        }
+        assert(warnLogMessages.count == 1)
+    }
+
+    func test_setRegisteredUserID_valid_same_value() {
+        let expectedValue = "test_ruid"
+        identifierService.registeredUserID = expectedValue
+
+        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
+
+        assert(fnSuccess == true)
+        assert(identifierService.registeredUserID == expectedValue)
+
+        let warnLogMessages = mockEventStorageService.mockEventStore.filter {
+            $0.type == NIDEventName.log.rawValue && $0.level == "WARN"
+        }
+        assert(warnLogMessages.count == 0)
+    }
+
+    // setGenericIdentifier
+    func test_setGenericIdentifier_valid_sessionID_duplicatesAllowed() {
+        var successful = false
+        let expectedValue = "myTestUserID"
+
+        let result = identifierService.setGenericIdentifier(
+            identifier: expectedValue,
+            type: .sessionID,
+            userGenerated: true,
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: { successful = true }
+        )
+
+        assert(result == true)
+        assert(successful == true)
+
+        let userIDEvents = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.setUserId.rawValue,
+            count: 1
+        )
+        assert(userIDEvents[0].uid == expectedValue)
+    }
+
+    func test_setGenericIdentifier_valid_sessionID_duplicatesNotAllowed() {
+        var successful = false
+        let expectedValue = "myTestUserID"
+
+        let result = identifierService.setGenericIdentifier(
+            identifier: expectedValue,
+            type: .sessionID,
+            userGenerated: true,
+            duplicatesAllowedCheck: { _ in false },
+            validIDFunction: { successful = true }
+        )
+
+        assert(result == false)
+        assert(successful == false)
+
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.setUserId.rawValue,
+            count: 0
+        )
+        assert(mockEventStorageService.mockEventStore.count == 1) // 1 for the scrub identifier fn
+    }
+
+    func test_setGenericIdentifier_invalid_sessionID_duplicatesAllowed() {
+        let mockValidationService = MockValidationService()
+        mockValidationService.validIdentifier = false
+        identifierService = IdentifierService(
+            logger: NIDLog(),
+            validationService: mockValidationService,
+            eventStorageService: mockEventStorageService
+        )
+        var successful = false
+        let expectedValue = "myTestUserID"
+
+        let result = identifierService.setGenericIdentifier(
+            identifier: expectedValue,
+            type: .sessionID,
+            userGenerated: true,
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: { successful = true }
+        )
+
+        assert(result == false)
+        assert(successful == false)
+
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.setUserId.rawValue,
+            count: 0
+        )
+
+        let errorLogMessages = mockEventStorageService.mockEventStore.filter {
+            $0.type == NIDEventName.log.rawValue && $0.level == "ERROR"
+        }
+
+        assert(errorLogMessages.count == 1)
+    }
+
+    func test_setGenericIdentifier_valid_registeredID_duplicatesAllowed() {
+        var successful = false
+        let expectedValue = "myTestUserID"
+        let result = identifierService.setGenericIdentifier(
+            identifier: expectedValue,
+            type: .registeredUserID,
+            userGenerated: true,
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: { successful = true }
+        )
+
+        assert(result == true)
+        assert(successful == true)
+
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.setRegisteredUserId.rawValue,
+            count: 1
+        )
+    }
+
+    func test_setGenericIdentifier_valid_attemptedLogin_duplicatesAllowed() {
+        var successful = false
+        let expectedValue = "myTestUserID"
+        let result = identifierService.setGenericIdentifier(
+            identifier: expectedValue,
+            type: .attemptedLogin,
+            userGenerated: true,
+            duplicatesAllowedCheck: { _ in true },
+            validIDFunction: { successful = true }
+        )
+
+        assert(result == true)
+        assert(successful == true)
+
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.attemptedLogin.rawValue,
+            count: 1
+        )
+    }
+
+    // clearIDs
+    func test_clearIDs() {
+        identifierService.sessionID = "testSession"
+        identifierService.registeredUserID = "testRegistered"
+
+        identifierService.clearIDs()
+
+        assert(identifierService.sessionID == nil)
+        assert(identifierService.registeredUserID == "")
+    }
+
+    // logScrubbedIdentityAttempt
     func test_logScrubbedIdentityAttempt() {
-        NeuroID.shared._isSDKStarted = true
-        clearOutDataStore()
-
         let id = "123-23-4568"
         let expectedId = "***-**-****"
         let scrubbedId = identifierService.logScrubbedIdentityAttempt(
@@ -70,278 +240,98 @@ class IdentifierServiceTests: BaseTestClass {
             message: "Message Test"
         )
         XCTAssertEqual(scrubbedId, expectedId)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.log.rawValue,
+            count: 1
+        )
     }
 
-    func test_setGenericIdentifier_valid_id_started() {
-        NeuroID.shared._isSDKStarted = true
-        clearOutDataStore()
+    // scrubIdentifier
+    func test_scrubIdentifier_scrubEmailId() {
+        let id = "tt@test.com"
+        let expectedId = "t*@test.com"
+        let scrubbedId = identifierService.scrubIdentifier(id)
+        XCTAssertEqual(scrubbedId, expectedId)
+    }
 
-        var successful = false
-        let expectedValue = "myTestUserID"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .sessionID,
-            userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: { successful = true }
+    func test_scrubIdentifier_unScrubbedID() {
+        let id = "123_testing123"
+        let expectedId = "123_testing123"
+        let unscrubbedId = identifierService.scrubIdentifier(id)
+        XCTAssertEqual(unscrubbedId, expectedId)
+    }
+
+    func test_scrubIdentifier_scrubSSN() {
+        let id = "123-23-4568"
+        let expectedId = "***-**-****"
+        let scrubbedId = identifierService.scrubIdentifier(id)
+        XCTAssertEqual(scrubbedId, expectedId)
+    }
+
+    // sendOriginEvent
+    func test_sendOriginEvent() {
+        let testOrigin = SessionIDOriginalResult(
+            origin: "origin", originCode: "originCode", idValue: "idValue",
+            idType: .sessionID
         )
 
-        assert(result == true)
-        assert(successful == true)
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-    }
+        identifierService.sendOriginEvent(testOrigin)
 
-    func test_setGenericIdentifier_valid_id_queued() {
-        NeuroID.shared._isSDKStarted = false
-        clearOutDataStore()
-
-        var successful = false
-        let expectedValue = "myTestUserID"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .sessionID,
-            userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: { successful = true }
+        let originEvents = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.setVariable.rawValue,
+            count: 4
         )
 
-        assert(result == true)
-        assert(successful == true)
-        assert(dataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
+        assert(mockEventStorageService.saveEventToDataStoreCount == 4)
+
+        assert(originEvents[0].key == "sessionIdCode")
+        assert(originEvents[0].v == testOrigin.originCode)
+
+        assert(originEvents[1].key == "sessionIdSource")
+        assert(originEvents[1].v == testOrigin.origin)
+
+        assert(originEvents[2].key == "sessionId")
+        assert(originEvents[2].v == testOrigin.idValue)
+
+        assert(originEvents[3].key == "sessionIdType")
+        assert(originEvents[3].v == testOrigin.idType.rawValue)
     }
 
-    func test_setGenericIdentifier_valid_registered_id_started() {
-        NeuroID.shared._isSDKStarted = true
-
-        var successful = false
-        let expectedValue = "myTestUserID"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .registeredUserID,
+    func test_getOriginResult_valid_userGenerated() {
+        let result = identifierService.getOriginResult(
+            idValue: "idValue",
+            validID: true,
             userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: { successful = true }
+            idType: .sessionID
         )
 
-        assert(result == true)
-        assert(successful == true)
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assert(dataStore.queuedEvents.count == 0)
+        assert(result.origin == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
+        assert(result.originCode == SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue)
     }
 
-    func test_setGenericIdentifier_valid_registered_id_queued() {
-        NeuroID.shared._isSDKStarted = false
-        clearOutDataStore()
-
-        var successful = false
-        let expectedValue = "myTestUserID"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .registeredUserID,
-            userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: { successful = true }
+    func test_getOriginResult_valid_nidGenerated() {
+        let result = identifierService.getOriginResult(
+            idValue: "idValue",
+            validID: true,
+            userGenerated: false,
+            idType: .sessionID
         )
 
-        assert(result == true)
-        assert(successful == true)
-        assert(dataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
+        assert(result.origin == SessionOrigin.NID_ORIGIN_NID_SET.rawValue)
+        assert(result.originCode == SessionOrigin.NID_ORIGIN_CODE_NID.rawValue)
     }
 
-    func test_setGenericIdentifier_invalid_id_started() {
-        NeuroID.shared._isSDKStarted = true
-        clearOutDataStore()
-
-        var successful = true
-        let expectedValue = "$!&*"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .sessionID,
-            userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: {
-                successful = false
-                assert(successful == false)
-            }
+    func test_getOriginResult_invalid_nidGenerated() {
+        let result = identifierService.getOriginResult(
+            idValue: "idValue",
+            validID: false,
+            userGenerated: false,
+            idType: .sessionID
         )
 
-        assert(result == false)
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-    }
-
-    func test_setGenericIdentifier_invalid_id_queued() {
-        NeuroID.shared._isSDKStarted = false
-        clearOutDataStore()
-
-        var successful = true
-        let expectedValue = "$!&*"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .sessionID,
-            userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: {
-                successful = false
-                assert(successful == false)
-            }
-        )
-
-        assert(result == false)
-        assert(dataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 0, skipType: true)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-    }
-
-    func test_setSessionID_started_customer_origin() {
-        NeuroID.shared._isSDKStarted = true
-        identifierService.sessionID = nil
-        let expectedValue = "test_uid"
-
-        let fnSuccess = identifierService.setSessionID(expectedValue, true)
-
-        assert(fnSuccess)
-        assert(NeuroID.shared.sessionID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-    }
-
-    func test_setSessionID_pre_start_customer_origin() {
-        _ = NeuroID.stop()
-        identifierService.sessionID = nil
-
-        let expectedValue = "test_uid"
-
-        let fnSuccess = identifierService.setSessionID(expectedValue, true)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.shared.sessionID == expectedValue)
-
-        //        assert(DataStore.events.count == 0) "NETWORK_STATE" event present
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
-    }
-
-    func test_setSessionID_started_nid_origin() {
-        identifierService.sessionID = nil
-        NeuroID.shared._isSDKStarted = true
-        let expectedValue = "test_uid"
-
-        let fnSuccess = identifierService.setSessionID(expectedValue, false)
-
-        assert(fnSuccess)
-        assert(NeuroID.shared.sessionID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assert(dataStore.queuedEvents.count == 0)
-
-        NeuroID.shared._isSDKStarted = false
-    }
-
-    func test_setSessionID_pre_start_nid_origin() {
-        _ = NeuroID.stop()
-        identifierService.sessionID = nil
-
-        let expectedValue = "test_uid"
-
-        let fnSuccess = identifierService.setSessionID(expectedValue, false)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.shared.sessionID == expectedValue)
-        assert(dataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue, queued: true)
-    }
-
-    func test_setRegisteredUserID_started() {
-        clearOutDataStore()
-        NeuroID.shared._isSDKStarted = true
-        let expectedValue = "test_ruid"
-        identifierService.registeredUserID = ""
-
-        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.shared.registeredUserID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
-        assert(dataStore.queuedEvents.count == 0)
-
-        identifierService.registeredUserID = ""
-
-        NeuroID.shared._isSDKStarted = false
-    }
-
-    func test_setRegisteredUserID_pre_start() {
-        _ = NeuroID.stop()
-        NeuroID.shared._isSDKStarted = false
-        clearOutDataStore()
-        identifierService.registeredUserID = ""
-
-        let expectedValue = "test_ruid"
-
-        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.shared.registeredUserID == expectedValue)
-
-//        assert(DataStore.events.count == 0)
-        assertQueuedEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-        assertQueuedEventTypeAndCount(type: "SET_VARIABLE", count: 4)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
-        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
-        identifierService.registeredUserID = ""
-
-        NeuroID.shared._isSDKStarted = true
-    }
-
-    func test_setRegisteredUserID_already_set() {
-        clearOutDataStore()
-        NeuroID.shared._isSDKStarted = true
-        identifierService.registeredUserID = "setID"
-
-        let expectedValue = "test_ruid"
-
-        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.shared.registeredUserID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
-        assert(dataStore.queuedEvents.count == 0)
-
-        identifierService.registeredUserID = ""
-    }
-
-    func test_setRegisteredUserID_same_value() {
-        NeuroID.shared._isSDKStarted = true
-        clearOutDataStore()
-
-        let expectedValue = "test_ruid"
-
-        identifierService.registeredUserID = expectedValue
-
-        let fnSuccess = identifierService.setRegisteredUserID(expectedValue)
-
-        assert(fnSuccess == true)
-        assert(NeuroID.shared.registeredUserID == expectedValue)
-
-        assertStoredEventTypeAndCount(type: "SET_REGISTERED_USER_ID", count: 1)
-
-        identifierService.registeredUserID = ""
+        assert(result.origin == SessionOrigin.NID_ORIGIN_NID_SET.rawValue)
+        assert(result.originCode == SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue)
     }
 }

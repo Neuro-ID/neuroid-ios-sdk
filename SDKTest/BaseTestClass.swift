@@ -64,6 +64,22 @@ class BaseTestClass: XCTestCase {
             XCTAssertEqual(validEvent[0].type, type, "Expected event type '\(type)' but found '\(validEvent[0].type)'")
         }
     }
+    
+    func assertStoredEventTypeAndCount(
+        dataStoreEvents: [NIDEvent],
+        type: String,
+        count: Int,
+        skipType: Bool? = false
+    ) -> [NIDEvent] {
+        let allEvents = dataStoreEvents
+        let validEvents = allEvents.filter { $0.type == type }
+        XCTAssertEqual(validEvents.count, count, "Expected \(count) events of type '\(type)' but found \(validEvents.count)")
+        
+        if !skipType! && validEvents.count > 0 {
+            XCTAssertEqual(validEvents[0].type, type, "Expected event type '\(type)' but found '\(validEvents[0].type)'")
+        }
+        return validEvents
+    }
 
     func assertQueuedEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
         let allEvents = dataStore.queuedEvents
