@@ -114,11 +114,40 @@ public extension NeuroID {
         return NeuroID.shared.stop()
     }
 
+    static func startSession(
+        _ sessionID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
+        NeuroID.shared.startSession(siteID: nil, sessionID: sessionID, completion: completion)
+    }
+
     static func pauseCollection() {
         NeuroID.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("pause collection attempt")
         )
         NeuroID.shared.pauseCollection(flushEventQueue: true)
+    }
+
+    static func resumeCollection() {
+        NeuroID.shared.resumeCollection()
+    }
+
+    static func stopSession() -> Bool {
+        return NeuroID.shared.stopSession()
+    }
+
+    /*
+      Function to allow multiple use cases/flows within a single application
+      Can be used as the original starting function and then use continuously
+       throughout the rest of the session
+      i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
+     */
+    static func startAppFlow(
+        siteID: String,
+        sessionID: String? = nil,
+        completion: @escaping (SessionStartResult) -> Void = { _ in }
+    ) {
+        NeuroID.shared.startAppFlow(siteID: siteID, sessionID: sessionID, completion: completion)
     }
 
     // RN Functions

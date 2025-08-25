@@ -19,43 +19,36 @@ public struct SessionStartResult {
 }
 
 public extension NeuroID {
-    static func startSession(
-        _ sessionID: String? = nil,
-        completion: @escaping (SessionStartResult) -> Void = { _ in }
-    ) {
-        NeuroID.startSession(siteID: nil, sessionID: sessionID, completion: completion)
-    }
-
-    static func resumeCollection() {
-        NeuroID.shared.saveEventToLocalDataStore(
+    func resumeCollection() {
+        self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
-        if NeuroID.shared.identifierService.sessionID.isEmptyOrNil,
-           !NeuroID.shared.isSDKStarted
+        if self.identifierService.sessionID.isEmptyOrNil,
+           !self.isSDKStarted
         {
             return
         }
-        NeuroID.shared._isSDKStarted = true
-        NeuroID.shared.sendCollectionEventsJob.start()
-        NeuroID.shared.collectGyroAccelEventJob.start()
+        self._isSDKStarted = true
+        self.sendCollectionEventsJob.start()
+        self.collectGyroAccelEventJob.start()
     }
 
-    static func stopSession() -> Bool {
-        NeuroID.shared.saveEventToLocalDataStore(
+    func stopSession() -> Bool {
+        self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Stop session attempt")
         )
 
-        NeuroID.shared.saveEventToLocalDataStore(
+        self.saveEventToLocalDataStore(
             NIDEvent(type: .closeSession, ct: "SDK_EVENT")
         )
 
         self.pauseCollection()
 
-        NeuroID.shared.clearSessionVariables()
+        self.clearSessionVariables()
 
         // Stop listening to changes in call status
-        NeuroID.shared.callObserver?.stopListeningToCallStatus()
+        self.callObserver?.stopListeningToCallStatus()
 
         return true
     }
@@ -66,24 +59,24 @@ public extension NeuroID {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
-    static func startAppFlow(
+    func startAppFlow(
         siteID: String,
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        _ = NeuroID.shared.identifierService.logScrubbedIdentityAttempt(
+        _ = self.identifierService.logScrubbedIdentityAttempt(
             identifier: sessionID ?? "null",
             message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
         )
 
-        if !NeuroID.shared.verifyClientKeyExists()
-            || !NeuroID.shared.validationService.validateSiteID(siteID)
+        if !self.verifyClientKeyExists()
+            || !self.validationService.validateSiteID(siteID)
         {
             let res = SessionStartResult(false, "")
 
-            NeuroID.shared.linkedSiteID = nil
+            self.linkedSiteID = nil
 
-            NeuroID.shared.saveEventToLocalDataStore(
+            self.saveEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Failed to set invalid Linked Site \(siteID)"
                 )
@@ -94,7 +87,7 @@ public extension NeuroID {
         }
 
         // Clear or Send events based on sample rate
-        NeuroID.shared.clearSendOldFlowEvents {
+        self.clearSendOldFlowEvents {
             // The following events have to happen for either
             //  an existing session that begins a new flow OR
             //  a new session with a new flow
@@ -103,20 +96,20 @@ public extension NeuroID {
             // 3. Capture ADV (based on global config and lib installed)
 
             // If SDK is already started, update sampleStatus and continue
-            if NeuroID.shared.isSDKStarted {
-                NeuroID.shared.configService.updateIsSampledStatus(siteID: siteID)
+            if self.isSDKStarted {
+                self.configService.updateIsSampledStatus(siteID: siteID)
 
                 // capture CREATE_SESSION and METADATA events for new flow
-                NeuroID.shared.saveEventToLocalDataStore(
-                    NeuroID.shared.createNIDSessionEvent()
+                self.saveEventToLocalDataStore(
+                    self.createNIDSessionEvent()
                 )
-                NeuroID.shared.captureMobileMetadata()
+                self.captureMobileMetadata()
 
-                NeuroID.shared.captureAdvancedDevice(NeuroID.shared.isAdvancedDevice)
+                self.captureAdvancedDevice(self.isAdvancedDevice)
 
-                NeuroID.shared.addLinkedSiteID(siteID)
+                self.addLinkedSiteID(siteID)
                 completion(
-                    SessionStartResult(true, NeuroID.getSessionID())
+                    SessionStartResult(true, self.getSessionID())
                 )
 
             } else {
@@ -125,28 +118,28 @@ public extension NeuroID {
 
                 // if sessionID passed then startSession should be used
                 if sessionID != nil {
-                    NeuroID.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
+                    self.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
                         if !startStatus.started {
                             completion(startStatus)
 
-                            NeuroID.shared.saveEventToDataStore(
+                            self.saveEventToDataStore(
                                 NIDEvent.createInfoLogEvent(
                                     "Failed to startAppFlow with inner startSession command"
                                 )
                             )
                             return
                         }
-                        NeuroID.shared.addLinkedSiteID(siteID)
+                        self.addLinkedSiteID(siteID)
                         completion(startStatus)
                     }
                 } else {
-                    NeuroID.shared.start(siteID: siteID) { started in
+                    self.start(siteID: siteID) { started in
                         if !started {
                             completion(
-                                SessionStartResult(started, NeuroID.getSessionID())
+                                SessionStartResult(started, self.getSessionID())
                             )
 
-                            NeuroID.shared.saveEventToDataStore(
+                            self.saveEventToDataStore(
                                 NIDEvent.createInfoLogEvent(
                                     "Failed to startAppFlow with inner start command"
                                 )
@@ -154,9 +147,9 @@ public extension NeuroID {
                             return
                         }
 
-                        NeuroID.shared.addLinkedSiteID(siteID)
+                        self.addLinkedSiteID(siteID)
                         completion(
-                            SessionStartResult(started, NeuroID.getSessionID())
+                            SessionStartResult(started, self.getSessionID())
                         )
                     }
                 }
@@ -324,20 +317,20 @@ extension NeuroID {
     }
 
     // Internal implementation that allows a siteID
-    static func startSession(
+    func startSession(
         siteID: String?,
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        if !NeuroID.shared.verifyClientKeyExists() {
-            let res = SessionStartResult(false, "")
-
-            completion(res)
+        if !self.verifyClientKeyExists() {
+            completion(
+                SessionStartResult(false, "")
+            )
             return
         }
 
         // stop existing session if one is open
-        if !NeuroID.shared.identifierService.sessionID.isEmptyOrNil || NeuroID.shared.isSDKStarted {
+        if !self.identifierService.sessionID.isEmptyOrNil || self.isSDKStarted {
             _ = self.stopSession()
         }
 
@@ -346,24 +339,24 @@ extension NeuroID {
 
         let finalSessionID = sessionID ?? ParamsCreator.generateID()
 
-        _ = NeuroID.shared.identifierService.logScrubbedIdentityAttempt(
+        _ = self.identifierService.logScrubbedIdentityAttempt(
             identifier: finalSessionID,
             message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
         )
 
-        let validSessionID = NeuroID.shared.identifierService.setSessionID(
+        let validSessionID = self.identifierService.setSessionID(
             finalSessionID,
             userGenerated
         )
 
         if !validSessionID {
-            let res = SessionStartResult(false, "")
-
-            completion(res)
+            completion(
+                SessionStartResult(false, "")
+            )
             return
         }
 
-        NeuroID.shared.setupSession(
+        self.setupSession(
             siteID: siteID,
             customFunctionality: {
                 #if DEBUG
