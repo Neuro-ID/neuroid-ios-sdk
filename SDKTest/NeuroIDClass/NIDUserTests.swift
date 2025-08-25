@@ -9,136 +9,125 @@
 import XCTest
 
 class NIDUserTests: BaseTestClass {
-    override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-        // Clear out the DataStore Events after each test
-        clearOutDataStore()
-    }
+    var mockIdentifierService = MockIdentifierService()
+    var mockEventStorageService = MockEventStorageService()
+    var neuroID = NeuroID()
 
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
-        NeuroID._isTesting = true
-        NeuroID.shared.datastore = dataStore
+        mockIdentifierService = MockIdentifierService()
+        mockEventStorageService = MockEventStorageService()
+        neuroID = NeuroID(
+            eventStorageService: mockEventStorageService,
+            identifierService: mockIdentifierService
+        )
     }
 
     override func tearDown() {
-        _ = NeuroID.stop()
-
-        // Clear out the DataStore Events after each test
-        clearOutDataStore()
-        NeuroID._isTesting = false
+        mockIdentifierService.clearMocks()
     }
 
-    func test_getSessionID_objectLevel() {
+    // identify
+    func test_identify_success() {
+        let expectedValue = true
+        mockIdentifierService.setSessionIDResponse = expectedValue
+
+        let response = neuroID.identify("")
+
+        assert(response == expectedValue)
+        assert(mockIdentifierService.setSessionIDCount == 1)
+    }
+
+    func test_identify_failure() {
+        let expectedValue = false
+        mockIdentifierService.setSessionIDResponse = expectedValue
+
+        let response = neuroID.identify("")
+
+        assert(response == expectedValue)
+        assert(mockIdentifierService.setSessionIDCount == 1)
+    }
+
+    // getSessionID
+    func test_getSessionID_exists() {
         let expectedValue = "test_uid"
+        mockIdentifierService.sessionID = expectedValue
 
-        NeuroID.shared.identifierService.sessionID = expectedValue
+        let value = neuroID.getSessionID()
 
-        let value = NeuroID.getSessionID()
-
-        assert(NeuroID.shared.sessionID == expectedValue)
         assert(value == expectedValue)
     }
 
-    func test_getSessionID_dataStore() {
-        let expectedValue = "test_uid"
+    func test_getSessionID_not_exists() {
+        let expectedValue = ""
+        mockIdentifierService.sessionID = nil
 
-        NeuroID.shared.identifierService.sessionID = nil
+        let value = neuroID.getSessionID()
 
-        let value = NeuroID.getSessionID()
-
-        assert(value == "")
-        assert(NeuroID.shared.sessionID != expectedValue)
-    }
-
-    func test_getRegisteredUserID_objectLevel() {
-        let expectedValue = "test_uid"
-
-        NeuroID.shared.identifierService.registeredUserID = expectedValue
-
-        let value = NeuroID.getRegisteredUserID()
-
-        assert(NeuroID.shared.registeredUserID == expectedValue)
         assert(value == expectedValue)
-
-        NeuroID.shared.identifierService.registeredUserID = ""
     }
 
-    func test_attemptedLoginWthUID() {
-        let validID = NeuroID.attemptedLogin("valid_user_id")
+    // setRegisteredUserID
+    func test_setRegisteredUserID_success() {
+        let expectedValue = true
+        mockIdentifierService.setRegisteredIDResponse = expectedValue
 
-        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
-        XCTAssertTrue(validID)
+        let response = neuroID.setRegisteredUserID("")
+
+        assert(response == expectedValue)
+        assert(mockIdentifierService.setRegisteredUserIDCount == 1)
     }
 
-    func test_attemptedLoginWthUIDQueued() {
-        NeuroID.shared._isSDKStarted = false
-        let validID = NeuroID.attemptedLogin("valid_user_id")
-        assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
-        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue, queued: true)
+    func test_setRegisteredUserID_failure() {
+        let expectedValue = false
+        mockIdentifierService.setRegisteredIDResponse = expectedValue
 
-        let allEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
-        let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
+        let response = neuroID.setRegisteredUserID("")
 
-        XCTAssertTrue(validID)
-        XCTAssertNotNil(event[0].uid!)
-        // Value shoould be hashed/salted/prefixed
-        XCTAssertEqual("valid_user_id", event[0].uid!)
+        assert(response == expectedValue)
+        assert(mockIdentifierService.setRegisteredUserIDCount == 1)
     }
 
-    func test_attemptedLoginWithInvalidID() {
-        let invalidID = NeuroID.attemptedLogin("🤣")
-        let allEvents = NeuroID.shared.datastore.getAllEvents()
-        let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
+    // getRegisteredUserID
+    func test_getRegisteredUserID_exists() {
+        let expectedValue = "test_uid"
+        mockIdentifierService.registeredUserID = expectedValue
 
-        XCTAssert(event.count == 1)
-        XCTAssertTrue(invalidID)
-        XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
+        let value = neuroID.getRegisteredUserID()
+
+        assert(value == expectedValue)
     }
 
-    func test_attemptedLoginWithInvalidIDQueued() {
-        NeuroID.shared._isSDKStarted = false
-        let invalidID = NeuroID.attemptedLogin("🤣")
+    func test_getRegisteredUserID_not_exists() {
+        let expectedValue = ""
+        mockIdentifierService.registeredUserID = expectedValue
 
-        assertQueuedEventTypeAndCount(type: "LOG", count: 2)
-        assertDatastoreEventOrigin(type: "SET_VARIABLE", origin: SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue, originCode: SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue, queued: true)
-        let allEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
-        let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
-        XCTAssert(event.count == 1)
-        XCTAssertTrue(invalidID)
-        XCTAssertEqual(event[0].uid, "scrubbed-id-failed-validation")
+        let value = neuroID.getRegisteredUserID()
+
+        assert(value == expectedValue)
     }
 
-    func test_attemptedLoginWithNoUID() {
-        _ = NeuroID.attemptedLogin()
+    // attemptedLogin
+    func test_attemptedLogin_valid() {
+        let expectedValue = true
+        mockIdentifierService.setGenericIdentifierResponse = expectedValue
 
-        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
-        assertStoredEventTypeAndCount(type: "LOG", count: 1)
+        let response = neuroID.attemptedLogin()
+
+        assert(response == expectedValue)
+        assert(mockIdentifierService.setGenericIdentifierCount == 1)
+        assert(mockEventStorageService.saveEventToDataStoreCount == 0)
     }
 
-    func test_attemptedLoginWithNoUIDQueued() {
-        NeuroID.shared._isSDKStarted = false
-        _ = NeuroID.attemptedLogin()
-        assertQueuedEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 1)
-        assertQueuedEventTypeAndCount(type: "LOG", count: 1)
-        assertDatastoreEventOrigin(
-            type: "SET_VARIABLE",
-            origin: SessionOrigin.NID_ORIGIN_NID_SET.rawValue,
-            originCode: SessionOrigin.NID_ORIGIN_CODE_NID.rawValue,
-            queued: true
-        )
-        let allEvents = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
-        let event = allEvents.filter { $0.type == "ATTEMPTED_LOGIN" }
-        XCTAssertEqual(event.last!.uid, "scrubbed-id-failed-validation")
-    }
+    func test_attemptedLogin_invalid() {
+        let expectedValue = true
+        mockIdentifierService.setGenericIdentifierResponse = false
 
-    func test_multipleAttemptedLogins() {
-        _ = NeuroID.attemptedLogin()
-        _ = NeuroID.attemptedLogin()
-        assertStoredEventTypeAndCount(type: "ATTEMPTED_LOGIN", count: 2)
-        assertStoredEventTypeAndCount(type: "LOG", count: 2)
+        let response = neuroID.attemptedLogin()
+
+        assert(response == expectedValue)
+        assert(mockIdentifierService.setGenericIdentifierCount == 1)
+        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
+        assert(mockEventStorageService.mockEventStore[0].type == NIDEventName.attemptedLogin.rawValue)
+        assert(mockEventStorageService.mockEventStore[0].uid == "scrubbed-id-failed-validation")
     }
 }

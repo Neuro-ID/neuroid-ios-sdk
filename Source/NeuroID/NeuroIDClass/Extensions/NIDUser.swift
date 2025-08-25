@@ -20,12 +20,12 @@ extension NeuroID {
         return self.identifierService.sessionID ?? ""
     }
 
-    func getRegisteredUserID() -> String {
-        return self.identifierService.registeredUserID
-    }
-
     func setRegisteredUserID(_ registeredUserID: String) -> Bool {
         return self.identifierService.setRegisteredUserID(registeredUserID)
+    }
+
+    func getRegisteredUserID() -> String {
+        return self.identifierService.registeredUserID
     }
 
     func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
@@ -38,7 +38,7 @@ extension NeuroID {
         )
 
         if !validID {
-            self.saveEventToDataStore(
+            self.eventStorageService.saveEventToDataStore(
                 NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation")
             )
         }
