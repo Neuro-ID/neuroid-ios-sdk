@@ -9,6 +9,85 @@
 import XCTest
 
 class NIDClientSiteIdTests: BaseTestClass {
+    var neuroID = NeuroID()
+
+    override func setUp() {
+        neuroID = NeuroID()
+    }
+
+    // getClientID
+
+    // user default does not exist and clientID is empty - generate new one
+    func test_getClientID_no_ud_no_cid() {
+        UserDefaults.standard.setValue(nil, forKey: clientIdKey)
+        neuroID.clientID = nil
+
+        let result = neuroID.getClientID()
+
+        assert(result == neuroID.clientID)
+    }
+
+    // user default does not exist and clientID is not empty - use clientID
+    func test_getClientID_no_ud_cid() {
+        let expectedValue = "testID"
+        UserDefaults.standard.setValue(nil, forKey: clientIdKey)
+        neuroID.clientID = expectedValue
+
+        let result = neuroID.getClientID()
+
+        assert(result == expectedValue)
+        assert(result == neuroID.clientID)
+    }
+
+    // user default exists and clientID is empty - use UD
+    func test_getClientID_ud_no_cid() {
+        let expectedValue = "testID"
+        UserDefaults.standard.setValue(expectedValue, forKey: clientIdKey)
+        neuroID.clientID = nil
+
+        let result = neuroID.getClientID()
+
+        assert(result == expectedValue)
+        assert(result != neuroID.clientID)
+        assert(neuroID.clientID == nil)
+    }
+
+    // UD exists and clientID is not empty - use clientID
+    func test_getClientID_ud_cid() {
+        let expectedValue = "testID"
+        UserDefaults.standard.setValue("uid", forKey: clientIdKey)
+        neuroID.clientID = expectedValue
+
+        let result = neuroID.getClientID()
+
+        assert(result == expectedValue)
+        assert(result == neuroID.clientID)
+    }
+
+    // UD exists and clientID is empty BUT UD has _ - generate new one
+    func test_getClientID_bad_ud_no_cid() {
+        let expectedValue = "test_ID"
+        UserDefaults.standard.setValue(expectedValue, forKey: clientIdKey)
+        neuroID.clientID = nil
+
+        let result = neuroID.getClientID()
+
+        assert(result != expectedValue)
+        assert(result == neuroID.clientID)
+    }
+
+    // UD not exist and clientID is not empty BUT has _ - generate new one
+    func test_getClientID_no_ud_bad_cid() {
+        let expectedValue = "test_ID"
+        UserDefaults.standard.setValue(nil, forKey: clientIdKey)
+        neuroID.clientID = expectedValue
+
+        let result = neuroID.getClientID()
+
+        assert(result != expectedValue)
+        assert(result == neuroID.clientID)
+    }
+
     func test_getClientID() {
         UserDefaults.standard.setValue("test-cid", forKey: clientIdKey)
         NeuroID.shared.clientID = nil
