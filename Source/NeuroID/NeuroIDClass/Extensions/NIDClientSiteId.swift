@@ -52,15 +52,6 @@ extension NeuroID {
         return key
     }
 
-    /**
-     Takes an optional string, if the string is nil or matches the cached config siteID then it
-       is the "collection" site meaning the siteID that belongs to the clientKey given
-       in the `configure` command
-     */
-    func isCollectionSite(siteID: String?) -> Bool {
-        return siteID == nil || siteID ?? "" == self.configService.configCache.siteID ?? "noID"
-    }
-
     func addLinkedSiteID(_ siteID: String) {
         if !self.validationService.validateSiteID(siteID) {
             return
@@ -68,7 +59,7 @@ extension NeuroID {
 
         self.linkedSiteID = siteID
 
-        self.saveEventToLocalDataStore(
+        self.eventStorageService.saveEventToLocalDataStore(
             NIDEvent(type: .setLinkedSite, v: siteID)
         )
     }

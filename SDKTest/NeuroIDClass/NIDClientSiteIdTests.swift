@@ -9,14 +9,23 @@
 import XCTest
 
 class NIDClientSiteIdTests: BaseTestClass {
+    var mockEventStorageService = MockEventStorageService()
+    var mockValidationService = MockValidationService()
+    var mockConfigService = MockConfigService()
     var neuroID = NeuroID()
 
     override func setUp() {
-        neuroID = NeuroID()
+        mockEventStorageService = MockEventStorageService()
+        mockValidationService = MockValidationService()
+        mockConfigService = MockConfigService()
+        neuroID = NeuroID(
+            eventStorageService: mockEventStorageService,
+            validationService: mockValidationService,
+            configService: mockConfigService
+        )
     }
 
     // getClientID
-
     // user default does not exist and clientID is empty - generate new one
     func test_getClientID_no_ud_no_cid() {
         UserDefaults.standard.setValue(nil, forKey: clientIdKey)
@@ -88,59 +97,82 @@ class NIDClientSiteIdTests: BaseTestClass {
         assert(result == neuroID.clientID)
     }
 
-    func test_getClientID() {
-        UserDefaults.standard.setValue("test-cid", forKey: clientIdKey)
-        NeuroID.shared.clientID = nil
-        let value = NeuroID.getClientID()
+    // setSiteId - DEPRECATED
+    func test_setSiteId() {
+        neuroID.siteID = ""
+        neuroID.setSiteId(siteId: "test_site")
 
-        assert(value == "test-cid")
+        assert(neuroID.siteID == "test_site")
     }
 
-    func test_getClientId_existing() {
-        let expectedValue = "test-cid"
-
-        NeuroID.shared.clientID = expectedValue
-        UserDefaults.standard.set(expectedValue, forKey: clientIdKey)
-
-        let value = NeuroID.getClientID()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getClientId_random() {
-        let expectedValue = "test_cid"
-
-        UserDefaults.standard.set(expectedValue, forKey: clientIdKey)
-
-        let value = NeuroID.getClientID()
-
-        assert(value != expectedValue)
-        // ENG-8455 nid prefix should only exist for session id
-        assert(value.prefix(3) != "nid")
-    }
-
-    func test_getClientKey() {
-        NeuroID.shared.clientKey = nil
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-        let expectedValue = clientKey
-
-        let value = NeuroID.shared.getClientKey()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getClientKeyFromLocalStorage() {
+    // getClientKeyFromLocalStorage
+    func test_getClientKeyFromLocalStorage_existing() {
         let expectedValue = "testClientKey"
 
         UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
 
-        let value = NeuroID.shared.getClientKeyFromLocalStorage()
+        let value = neuroID.getClientKeyFromLocalStorage()
         assert(value == expectedValue)
     }
 
-    func test_setSiteId() {
-        NeuroID.setSiteId(siteId: "test_site")
+    func test_getClientKeyFromLocalStorage_nil() {
+        let expectedValue: String? = nil
 
-        assert(NeuroID.shared.siteID == "test_site")
+        UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
+
+        let value = neuroID.getClientKeyFromLocalStorage()
+        assert(value != expectedValue)
+        assert(value == "")
+    }
+
+    // getClientKey
+    func test_getClientKey_nil() {
+        neuroID.clientKey = nil
+        let expectedValue = ""
+
+        let value = neuroID.getClientKey()
+
+        assert(value == expectedValue)
+        assert(neuroID.clientKey == nil)
+    }
+
+    func test_getClientKey_existing() {
+        let expectedValue = "existing"
+        neuroID.clientKey = expectedValue
+
+        let value = neuroID.getClientKey()
+
+        assert(value == expectedValue)
+        assert(neuroID.clientKey == expectedValue)
+    }
+
+    // addLinkedSiteID
+    func test_addLinkedSiteID_invalid_siteID() {
+        mockValidationService.validSiteID = false
+        neuroID.linkedSiteID = nil
+
+        neuroID.addLinkedSiteID("invalidID")
+
+        assert(neuroID.linkedSiteID == nil)
+        assert(mockEventStorageService.mockEventStore.isEmpty)
+    }
+
+    func test_addLinkedSiteID_valid_siteID() {
+        mockValidationService.validSiteID = true
+        neuroID.linkedSiteID = nil
+
+        let expectedValue = "validID"
+
+        neuroID.addLinkedSiteID(expectedValue)
+
+        assert(neuroID.linkedSiteID == expectedValue)
+        assert(mockEventStorageService.mockEventStore.count == 1)
+        let linkedSiteEvents = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.setLinkedSite.rawValue,
+            count: 1
+        )
+
+        assert(linkedSiteEvents[0].v == expectedValue)
     }
 }

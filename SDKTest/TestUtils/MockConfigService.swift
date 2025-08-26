@@ -9,10 +9,18 @@ import Foundation
 @testable import NeuroID
 
 class MockConfigService: ConfigServiceProtocol {
-    var configCache: ConfigResponseData = .init()
+    var mockConfigCache: ConfigResponseData = .init()
+
+    func resetMocks() {
+        mockConfigCache = .init()
+    }
+
+    // Protocol Implementation
+    var configCache: ConfigResponseData {
+        mockConfigCache
+    }
 
     func retrieveOrRefreshCache() {}
-
     var siteIDMap: [String: Bool] = [:]
     func clearSiteIDMap() { siteIDMap.removeAll() }
     var isSessionFlowSampled: Bool { return true }
