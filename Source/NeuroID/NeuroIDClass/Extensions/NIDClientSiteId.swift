@@ -13,20 +13,21 @@ extension NeuroID {
      Public user facing getClientID function via Static Instance
      */
     func getClientID() -> String {
-        let clientIdName = Constants.storageClientIDKey.rawValue
-        var cid = getUserDefaultKeyString(clientIdName)
-        if self.clientID != nil {
-            cid = self.clientID
+        if self.clientID != nil, !self.clientID!.contains("_") {
+            return self.clientID!
         }
-        // Ensure we aren't on old client id
-        if cid != nil && !cid!.contains("_") {
-            return cid!
-        } else {
-            cid = ParamsCreator.generateID()
-            self.clientID = cid
-            setUserDefaultKey(clientIdName, value: cid)
-            return cid!
+
+        let storedClientID = getUserDefaultKeyString(Constants.storageClientIDKey.rawValue)
+        if let tempClientID = storedClientID, !tempClientID.contains("_") {
+            // NOTE: This returns the clientID that is stored, but the self.clientID attribute will still be nil
+            return tempClientID
         }
+
+        let newClientID = ParamsCreator.generateID()
+        self.clientID = newClientID
+        setUserDefaultKey(Constants.storageClientIDKey.rawValue, value: newClientID)
+
+        return newClientID
     }
 
     /**
@@ -51,15 +52,6 @@ extension NeuroID {
         return key
     }
 
-    /**
-     Takes an optional string, if the string is nil or matches the cached config siteID then it
-       is the "collection" site meaning the siteID that belongs to the clientKey given
-       in the `configure` command
-     */
-    func isCollectionSite(siteID: String?) -> Bool {
-        return siteID == nil || siteID ?? "" == self.configService.configCache.siteID ?? "noID"
-    }
-
     func addLinkedSiteID(_ siteID: String) {
         if !self.validationService.validateSiteID(siteID) {
             return
@@ -67,7 +59,7 @@ extension NeuroID {
 
         self.linkedSiteID = siteID
 
-        self.saveEventToLocalDataStore(
+        self.eventStorageService.saveEventToLocalDataStore(
             NIDEvent(type: .setLinkedSite, v: siteID)
         )
     }
