@@ -13,20 +13,21 @@ extension NeuroID {
      Public user facing getClientID function via Static Instance
      */
     func getClientID() -> String {
-        let clientIdName = Constants.storageClientIDKey.rawValue
-        var cid = getUserDefaultKeyString(clientIdName)
-        if self.clientID != nil {
-            cid = self.clientID
+        if self.clientID != nil, !self.clientID!.contains("_") {
+            return self.clientID!
         }
-        // Ensure we aren't on old client id
-        if cid != nil && !cid!.contains("_") {
-            return cid!
-        } else {
-            cid = ParamsCreator.generateID()
-            self.clientID = cid
-            setUserDefaultKey(clientIdName, value: cid)
-            return cid!
+
+        let storedClientID = getUserDefaultKeyString(Constants.storageClientIDKey.rawValue)
+        if let tempClientID = storedClientID, !tempClientID.contains("_") {
+            // NOTE: This returns the clientID that is stored, but the self.clientID attribute will still be nil
+            return tempClientID
         }
+
+        let newClientID = ParamsCreator.generateID()
+        self.clientID = newClientID
+        setUserDefaultKey(Constants.storageClientIDKey.rawValue, value: newClientID)
+
+        return newClientID
     }
 
     /**
