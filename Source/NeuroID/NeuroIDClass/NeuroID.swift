@@ -45,12 +45,12 @@ public class NeuroID: NSObject {
     var sessionID: String? {
         // Formerly known as userID, now within the mobile sdk ONLY sessionID
         // setting should only be through our setIdentity/setUserId command
-        NeuroID.shared.identifierService.sessionID
+        self.identifierService.sessionID
     }
 
     var registeredUserID: String {
         // setting should only be through our setRegisteredUserId command
-        NeuroID.shared.identifierService.registeredUserID
+        self.identifierService.registeredUserID
     }
 
     static var trackers = [String: NeuroIDTracker]()
