@@ -220,9 +220,9 @@ extension NeuroID {
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
             Attrs(n: "isRN", v: "\(NeuroID.shared.isRN)"),
         ]
-        NeuroID.shared.saveEventToLocalDataStore(event)
+        self.eventStorageService.saveEventToLocalDataStore(event)
 
-        NeuroID.shared.captureApplicationMetaData()
+        self.captureApplicationMetaData()
     }
 
     func clearSessionVariables() {
