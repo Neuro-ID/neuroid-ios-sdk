@@ -252,6 +252,8 @@ public class NeuroID: NSObject {
             NIDEvent.createInfoLogEvent("isAdvancedDevice setting: \(isAdvancedDevice)")
         )
 
+        self.configService.retrieveOrRefreshCache()
+        
         return true
     }
 
