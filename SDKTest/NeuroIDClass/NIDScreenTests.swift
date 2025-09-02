@@ -9,62 +9,100 @@
 import XCTest
 
 class NIDScreenTests: BaseTestClass {
-    override func setUpWithError() throws {
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
-    }
+    var mockEventStorageService = MockEventStorageService()
+    var neuroID = NeuroID()
 
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
-        NeuroID._isTesting = true
+        mockEventStorageService = MockEventStorageService()
+        neuroID = NeuroID(eventStorageService: mockEventStorageService)
     }
 
-    override func tearDown() {
-        _ = NeuroID.stop()
-
-        // Clear out the DataStore Events after each test
-        clearOutDataStore()
-        NeuroID._isTesting = false
-    }
-
-    func test_setScreenName_getScreenName() {
-        clearOutDataStore()
-        let expectedValue = "testScreen"
-        let screenNameSet = NeuroID.setScreenName(expectedValue)
-
-        let value = NeuroID.getScreenName()
-
-        assert(value == expectedValue)
-        assert(screenNameSet == true)
-
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
-    }
-
-    func test_setScreenName_getScreenName_withSpace() {
-        clearOutDataStore()
-        let expectedValue = "test Screen"
-        let screenNameSet = NeuroID.setScreenName(expectedValue)
-
-        let value = NeuroID.getScreenName()
-
-        assert(value == "test%20Screen")
-        assert(screenNameSet == true)
-
-        assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
-    }
-
+    // setScreenName
+    // not started
     func test_setScreenName_not_started() {
-        clearOutDataStore()
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared._currentScreenName = ""
-        let expectedValue = "test Screen"
+        neuroID._isSDKStarted = false
+        let expectedValue = "testScreen"
+
         let screenNameSet = NeuroID.setScreenName(expectedValue)
 
-        let value = NeuroID.getScreenName()
+        assert(!screenNameSet)
+        assert(neuroID._currentScreenName != expectedValue)
+        assert(mockEventStorageService.saveEventToLocalDataStoreCount == 0)
+    }
 
-        assert(value != "test%20Screen")
-        assert(screenNameSet == false)
+    // started, url encode ok, mobile metadata captured
+    func test_setScreenName_started_urlEncode() {
+        neuroID._isSDKStarted = true
+        let expectedValue = "testScreen"
 
-        let allEvents = NeuroID.shared.datastore.getAllEvents()
-        assert(allEvents.count == 0)
+        let screenNameSet = neuroID.setScreenName(expectedValue)
+
+        assert(screenNameSet)
+        assert(neuroID._currentScreenName == expectedValue)
+
+        assert(mockEventStorageService.saveEventToLocalDataStoreCount == 1)
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.mobileMetadataIOS.rawValue,
+            count: 1
+        )
+
+        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.applicationMetaData.rawValue,
+            count: 1
+        )
+    }
+
+    func test_setScreenName_started_urlEncode_value() {
+        neuroID._isSDKStarted = true
+        let expectedValue = "test%20Screen"
+        let screenNameSet = neuroID.setScreenName("test Screen")
+
+        assert(screenNameSet)
+        assert(neuroID._currentScreenName == expectedValue)
+
+        assert(mockEventStorageService.saveEventToLocalDataStoreCount == 1)
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.mobileMetadataIOS.rawValue,
+            count: 1
+        )
+
+        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
+        _ = assertStoredEventTypeAndCount(
+            dataStoreEvents: mockEventStorageService.mockEventStore,
+            type: NIDEventName.applicationMetaData.rawValue,
+            count: 1
+        )
+    }
+
+    // getScreenName
+    func test_getScreenName_exists() {
+        let expectedValue = "testScreen"
+        neuroID._currentScreenName = expectedValue
+
+        let screenName = neuroID.getScreenName()
+
+        assert(screenName == expectedValue)
+    }
+
+    func test_getScreenName_not_exists() {
+        let expectedValue: String? = nil
+        neuroID._currentScreenName = nil
+
+        let screenName = neuroID.getScreenName()
+
+        assert(screenName == expectedValue)
+    }
+
+    func test_getScreenName_empty() {
+        let expectedValue: String? = ""
+        neuroID._currentScreenName = ""
+
+        let screenName = neuroID.getScreenName()
+
+        assert(screenName == expectedValue)
     }
 }

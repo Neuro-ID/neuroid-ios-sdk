@@ -316,7 +316,7 @@ public class NeuroID: NSObject {
     func captureApplicationMetaData() {
         let appMetaData = self.getAppMetaData()
 
-        NeuroID.shared.saveEventToDataStore(
+        self.eventStorageService.saveEventToDataStore(
             NIDEvent(
                 type: .applicationMetaData,
                 attrs: [
