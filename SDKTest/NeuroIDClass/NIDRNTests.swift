@@ -9,15 +9,12 @@
 import XCTest
 
 class NIDRNTests: XCTestCase {
-    override func setUp() {
-        NeuroID.shared.isRN = false
-        NeuroID.shared.clientKey = nil
-    }
+    var neuroID = NeuroID()
 
-    let configOptionsTrue = [RNConfigOptions.usingReactNavigation.rawValue: true, RNConfigOptions.isAdvancedDevice.rawValue: false]
-    let configOptionsFalse = [RNConfigOptions.usingReactNavigation.rawValue: false]
-    let configOptionsInvalid = ["foo": "bar"]
-    let configOptionsNonNil = [RNConfigOptions.advancedDeviceKey.rawValue: "testkey"]
+    override func setUp() {
+        neuroID = NeuroID()
+        neuroID.isRN = false
+    }
 
     func assertConfigureTests(defaultValue: Bool, expectedValue: Bool) {
         assert(NeuroID.shared.isRN)
@@ -26,78 +23,168 @@ class NIDRNTests: XCTestCase {
         assert(NeuroID.shared.rnOptions.count == 1)
     }
 
+    // setIsRN
     func test_isRN() {
-        assert(!NeuroID.shared.isRN)
-        NeuroID.shared.setIsRN()
+        assert(!neuroID.isRN)
+        neuroID.setIsRN()
 
-        assert(NeuroID.shared.isRN)
+        assert(neuroID.isRN)
     }
 
-    func test_configure_usingReactNavigation_true() {
-        assert(!NeuroID.shared.isRN)
-        let configured = NeuroID.configure(
+    // configure
+    // configure - clientKey, not advanced, not adv key, not React nav
+    func test_configure_noAdv_noAdvKey_noRNav() {
+        let configured = neuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
-            rnOptions: configOptionsTrue
+            rnOptions: [:]
         )
 
         assert(configured)
-        assertConfigureTests(defaultValue: false, expectedValue: true)
+        assert(!neuroID.isAdvancedDevice)
+        assert(neuroID.advancedDeviceKey == "")
+        assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == false)
     }
 
-    func test_configure_usingReactNavigation_false() {
-        assert(!NeuroID.shared.isRN)
-        let configured = NeuroID.configure(
+    // configure - client key, advanced, not adv key, not react nav
+    func test_configure_Adv_noAdvKey_noRNav() {
+        let configured = neuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
-            rnOptions: configOptionsFalse
+            rnOptions: [
+                RNConfigOptions.isAdvancedDevice.rawValue: true
+            ]
         )
 
         assert(configured)
-        assertConfigureTests(defaultValue: true, expectedValue: false)
+        assert(neuroID.isAdvancedDevice)
+        assert(neuroID.advancedDeviceKey == "")
+        assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == false)
     }
 
-    func test_configure_invalid_key() {
-        assert(!NeuroID.shared.isRN)
-        let configured = NeuroID.configure(
+    // configure - client key, advanced, adv key, not react nav
+    func test_configure_Adv_AdvKey_noRNav() {
+        let expected = "testKey"
+        let configured = neuroID.configure(
             clientKey: "key_test_XXXXXXXXXXX",
-            rnOptions: configOptionsInvalid
+            rnOptions: [
+                RNConfigOptions.isAdvancedDevice.rawValue: true,
+                RNConfigOptions.advancedDeviceKey.rawValue: expected
+            ]
         )
 
         assert(configured)
-        assertConfigureTests(defaultValue: true, expectedValue: false)
+        assert(neuroID.isAdvancedDevice)
+        assert(neuroID.advancedDeviceKey == expected)
+        assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == false)
     }
 
+    // configure - client key, advanced, adv key, react nav
+    func test_configure_Adv_AdvKey_RNav() {
+        let expected = "testKey"
+        let configured = neuroID.configure(
+            clientKey: "key_test_XXXXXXXXXXX",
+            rnOptions: [
+                RNConfigOptions.isAdvancedDevice.rawValue: true,
+                RNConfigOptions.advancedDeviceKey.rawValue: expected,
+                RNConfigOptions.usingReactNavigation.rawValue: true
+            ]
+        )
+
+        assert(configured)
+        assert(neuroID.isAdvancedDevice)
+        assert(neuroID.advancedDeviceKey == expected)
+        assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == true)
+    }
+
+    // configure - invalid client key
+    func test_configure_invalid_clientKey() {
+        let expected = "testKey"
+        let configured = neuroID.configure(
+            clientKey: "invalidKey",
+            rnOptions: [
+                RNConfigOptions.isAdvancedDevice.rawValue: true,
+                RNConfigOptions.advancedDeviceKey.rawValue: expected,
+                RNConfigOptions.usingReactNavigation.rawValue: true
+            ]
+        )
+
+        assert(!configured)
+        assert(!neuroID.isAdvancedDevice)
+        assert(neuroID.advancedDeviceKey == nil)
+        assert(neuroID.rnOptions.count == 0)
+    }
+
+    // configure - client key, not advanced, not adv key, react nav
+    func test_configure_no_Adv_no_AdvKey_RNav() {
+        let configured = neuroID.configure(
+            clientKey: "key_test_XXXXXXXXXXX",
+            rnOptions: [
+                RNConfigOptions.usingReactNavigation.rawValue: true
+            ]
+        )
+
+        assert(configured)
+        assert(!neuroID.isAdvancedDevice)
+        assert(neuroID.advancedDeviceKey == "")
+        assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == true)
+    }
+
+    // getOptionValueBool
     func test_getOptionValueBool_true() {
-        assert(!NeuroID.shared.isRN)
-        let value = NeuroID.shared.getOptionValueBool(rnOptions: configOptionsTrue, configOptionKey: .usingReactNavigation)
+        let value = neuroID.getOptionValueBool(
+            rnOptions: [
+                RNConfigOptions.usingReactNavigation.rawValue: true,
+                RNConfigOptions.isAdvancedDevice.rawValue: false
+            ],
+            configOptionKey: .usingReactNavigation
+        )
 
         assert(value)
     }
 
     func test_getOptionValueBool_false() {
-        assert(!NeuroID.shared.isRN)
-        let value = NeuroID.shared.getOptionValueBool(rnOptions: configOptionsFalse, configOptionKey: .usingReactNavigation)
+        let value = neuroID.getOptionValueBool(
+            rnOptions: [RNConfigOptions.usingReactNavigation.rawValue: false],
+            configOptionKey: .usingReactNavigation
+        )
 
         assert(!value)
     }
 
     func test_getOptionValueBool_invalid() {
-        assert(!NeuroID.shared.isRN)
-        let value = NeuroID.shared.getOptionValueBool(rnOptions: configOptionsInvalid, configOptionKey: .usingReactNavigation)
+        let value = neuroID.getOptionValueBool(
+            rnOptions: ["foo": "bar"],
+            configOptionKey: .usingReactNavigation
+        )
 
         assert(!value)
     }
 
+    // getOptionValueString
     func test_getOptionValueString_nonNil() {
-        assert(!NeuroID.shared.isRN)
-        let value = NeuroID.shared.getOptionValueString(rnOptions: configOptionsNonNil, configOptionKey: .advancedDeviceKey)
+        let value = neuroID.getOptionValueString(
+            rnOptions: [RNConfigOptions.advancedDeviceKey.rawValue: "testkey"],
+            configOptionKey: .advancedDeviceKey
+        )
 
         assert(value == "testkey")
     }
 
     func test_getOptionValueString_nil() {
-        assert(!NeuroID.shared.isRN)
         // does not contain advanced device key, therfore nil
-        let value = NeuroID.shared.getOptionValueString(rnOptions: configOptionsFalse, configOptionKey: .advancedDeviceKey)
+        let value = neuroID.getOptionValueString(
+            rnOptions: [:],
+            configOptionKey: .advancedDeviceKey
+        )
+
+        assert(value == "")
+    }
+
+    func test_getOptionValueString_invalid() {
+        // does not contain advanced device key, therfore nil
+        let value = neuroID.getOptionValueString(
+            rnOptions: [RNConfigOptions.advancedDeviceKey.rawValue: false],
+            configOptionKey: .advancedDeviceKey
+        )
 
         assert(value == "")
     }
