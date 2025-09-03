@@ -47,6 +47,10 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_adv_true() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
@@ -62,6 +66,11 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_configure_adv_true() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
+        NeuroID.shared.isAdvancedDevice = true
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
@@ -76,6 +85,11 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_session_adv_true() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
+        NeuroID.shared.isAdvancedDevice = false
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
@@ -91,6 +105,11 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_session_configure_adv_true() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
+        NeuroID.shared.isAdvancedDevice = true
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
@@ -106,6 +125,10 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_start_start_app_flow_configure_adv_true() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: true)
         NeuroID.shared.configService = mockedConfig
         clearOutDataStore()
@@ -153,6 +176,11 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_captureAdvancedDevice_throttle() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
+        _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared._isSDKStarted = true
@@ -177,6 +205,10 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     func test_captureAdvancedDevice_no_throttle() {
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false,
+            randomGenerator: MockedNIDRandomGenerator(0)
+        )
         _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared.deviceSignalService = mockService
         NeuroID.shared._isSDKStarted = true

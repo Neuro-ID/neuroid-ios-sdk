@@ -9,7 +9,7 @@
 import XCTest
 
 class BaseTestClass: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
+    var clientKey = "key_live_vtotrandom_form_mobilesandbox"
     
     // Keys for storage:
     let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue

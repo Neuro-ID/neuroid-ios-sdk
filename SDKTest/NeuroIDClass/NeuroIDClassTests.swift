@@ -13,18 +13,60 @@ class NeuroIDClassTests: BaseTestClass {
     let mockService = MockDeviceSignalService()
     var neuroID = NeuroID()
 
+    func getMockResponseData() -> ConfigResponseData {
+        var config = ConfigResponseData()
+        config.linkedSiteOptions = [
+            "test0": LinkedSiteOption(sampleRate: 0),
+            "test10": LinkedSiteOption(sampleRate: 10),
+            "test30": LinkedSiteOption(sampleRate: 30),
+            "test50": LinkedSiteOption(sampleRate: 50),
+        ]
+        config.sampleRate = 100
+        config.siteID = "test100"
+        return config
+    }
+
+    func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) -> NIDConfigService {
+        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+
+        let mockedData = try! JSONEncoder().encode(getMockResponseData())
+
+        let mockedNetwork = MockNetworkService()
+        mockedNetwork.mockResponse = mockedData
+        mockedNetwork.mockResponseResult = getMockResponseData()
+        mockedNetwork.shouldMockFalse = shouldFail
+
+        let configService = NIDConfigService(
+            logger: NIDLog(),
+            networkService: mockedNetwork,
+            randomGenerator: randomGenerator,
+            configRetrievalCallback: {}
+        )
+        return configService
+    }
+    
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
 //        throw XCTSkip("Skipping all tests in this class.")
+//        NeuroID.shared.configService = getMockConfigService(
+//            shouldFail: false, randomGenerator: MockedNIDRandomGenerator(1000)
+//        )
+        NeuroID.shared.configService = MockConfigService()
+        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
         _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         // Clear out the DataStore Events after each test
         clearOutDataStore()
     }
 
     override func setUp() {
+        clearOutDataStore()
         mockIdentifierService = MockIdentifierService()
         neuroID = NeuroID(identifierService: mockIdentifierService)
-
+        NeuroID.shared.configService = getMockConfigService(
+            shouldFail: false, randomGenerator: MockedNIDRandomGenerator(1000)
+        )
+        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
         NeuroID._isTesting = true
@@ -41,14 +83,13 @@ class NeuroIDClassTests: BaseTestClass {
     }
 
     func test_getAdvDeviceLatency() {
-        let mockService = MockDeviceSignalService()
+        // start test!
+        //let mockService = MockDeviceSignalService()
         NeuroID.shared.deviceSignalService = mockService
-        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        // _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
-
         NeuroID.shared.configService = MockConfigService()
-
         NeuroID.start(true) { _ in
             self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
         }
@@ -75,7 +116,9 @@ class NeuroIDClassTests: BaseTestClass {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        neuroID.configService = MockConfigService()
+        neuroID.clientKey = ""
+        let configured = neuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
         assert(configured)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -86,7 +129,7 @@ class NeuroIDClassTests: BaseTestClass {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
+        assert(neuroID.environment == "\(Constants.environmentLive.rawValue)")
     }
 
     func test_configure_invalidKey() {
