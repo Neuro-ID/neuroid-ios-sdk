@@ -106,6 +106,7 @@
 		FF1770CA2E26DB8E007235A2 /* BaseClassExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF17709A2E26DB8E007235A2 /* BaseClassExtensionTests.swift */; };
 		FF1770CB2E26DB8E007235A2 /* ConfigServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770902E26DB8E007235A2 /* ConfigServiceTests.swift */; };
 		FF1770CC2E26DB8E007235A2 /* UtilFunctionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */; };
+		FF68D7C82E68CDF900CC4E05 /* UtilFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF68D7C72E68CDF300CC4E05 /* UtilFunctions.swift */; };
 		FF88597C2D481B3A00A91902 /* AdvancedDeviceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */; };
 		FF88597E2D481B4300A91902 /* ValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF88597D2D481B4300A91902 /* ValidationService.swift */; };
 		FFAA66CF2E5CDB5F003C0FF1 /* MockEventStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAA66CE2E5CDB59003C0FF1 /* MockEventStorageService.swift */; };
@@ -253,6 +254,7 @@
 		FF1770A52E26DB8E007235A2 /* NIDEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDEventTests.swift; sourceTree = "<group>"; };
 		FF1770A62E26DB8E007235A2 /* UIViewExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionTests.swift; sourceTree = "<group>"; };
 		FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilFunctionsTests.swift; sourceTree = "<group>"; };
+		FF68D7C72E68CDF300CC4E05 /* UtilFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilFunctions.swift; sourceTree = "<group>"; };
 		FF88597B2D481B3A00A91902 /* AdvancedDeviceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceService.swift; sourceTree = "<group>"; };
 		FF88597D2D481B4300A91902 /* ValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationService.swift; sourceTree = "<group>"; };
 		FFAA66CE2E5CDB59003C0FF1 /* MockEventStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEventStorageService.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 		FF1770992E26DB8E007235A2 /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
+				FF68D7C72E68CDF300CC4E05 /* UtilFunctions.swift */,
 				FFAA66D42E5D065D003C0FF1 /* MockIdentifierService.swift */,
 				FFAA66D22E5CE98E003C0FF1 /* MockValidationService.swift */,
 				FFAA66CE2E5CDB59003C0FF1 /* MockEventStorageService.swift */,
@@ -904,6 +907,7 @@
 				FF1770CA2E26DB8E007235A2 /* BaseClassExtensionTests.swift in Sources */,
 				FF1770CB2E26DB8E007235A2 /* ConfigServiceTests.swift in Sources */,
 				FF1770CC2E26DB8E007235A2 /* UtilFunctionsTests.swift in Sources */,
+				FF68D7C82E68CDF900CC4E05 /* UtilFunctions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,9 +19,14 @@ class MockNetworkService: NetworkServiceProtocol {
     var mockedRetryableRequestSuccess = 0
     var mockedRetryableRequestFailure = 0
 
+    var mockedGetRequestSuccessCount = 0
+    var mockedGetRequestFailureCount = 0
+
     func resetMockCounts() {
         mockedRetryableRequestSuccess = 0
         mockedRetryableRequestFailure = 0
+        mockedGetRequestSuccessCount = 0
+        mockedGetRequestFailureCount = 0
     }
 
     // Mock Class Utils
@@ -108,6 +113,7 @@ class MockNetworkService: NetworkServiceProtocol {
 
             completion(finalRes)
 
+            mockedGetRequestFailureCount += 1
             shouldMockFalse = false
             return
         } else {
@@ -128,6 +134,7 @@ class MockNetworkService: NetworkServiceProtocol {
 
             completion(finalRes)
 
+            mockedGetRequestSuccessCount += 1
             shouldMockFalse = false
             return
         }

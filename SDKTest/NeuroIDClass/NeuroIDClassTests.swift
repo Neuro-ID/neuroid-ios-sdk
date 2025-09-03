@@ -9,6 +9,7 @@
 import XCTest
 
 class NeuroIDClassTests: BaseTestClass {
+    var mockedNetworkService = MockNetworkService()
     var mockIdentifierService = MockIdentifierService()
     let mockService = MockDeviceSignalService()
     var neuroID = NeuroID()
@@ -30,11 +31,17 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID._isTesting = true
         NeuroID.shared.datastore = dataStore
         NeuroID.shared.identifierService = mockIdentifierService
+
+        mockedNetworkService = MockNetworkService()
+        mockedNetworkService.mockResponse = try! JSONEncoder().encode(getMockResponseData())
+        mockedNetworkService.mockResponseResult = getMockResponseData()
+        NeuroID.shared.networkService = mockedNetworkService
     }
 
     override func tearDown() {
         _ = NeuroID.stop()
 
+        mockedNetworkService.resetMockCounts()
         // Clear out the DataStore Events after each test
         clearOutDataStore()
         NeuroID._isTesting = false
@@ -75,7 +82,10 @@ class NeuroIDClassTests: BaseTestClass {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        let configured = NeuroID.configure(
+            clientKey: clientKey,
+            isAdvancedDevice: false
+        )
         assert(configured)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -87,6 +97,9 @@ class NeuroIDClassTests: BaseTestClass {
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
         assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
+
+        assert(mockedNetworkService.mockedGetRequestSuccessCount == 1)
+        assert(mockedNetworkService.mockedGetRequestFailureCount == 0)
     }
 
     func test_configure_invalidKey() {
