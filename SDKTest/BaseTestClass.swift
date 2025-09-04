@@ -33,7 +33,13 @@ class BaseTestClass: XCTestCase {
     
     override func setUp() {
         NeuroID.shared.datastore = dataStore
-        NeuroID.shared.networkService = MockNetworkService()
+        
+        let mockedNetworkService = MockNetworkService()
+        mockedNetworkService.mockResponse = try! JSONEncoder().encode(getMockResponseData())
+        mockedNetworkService.mockResponseResult = getMockResponseData()
+
+        NeuroID.shared.networkService = mockedNetworkService
+        
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
     }
     
