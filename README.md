@@ -11,17 +11,17 @@ NeuroID's iOS Mobile SDK makes it simple to embed behavioral analytics inside yo
 
 ## Installation and Requirements
 
-For installation instructions and minimum project requirements, please read our [iOS Installation Guide](https://neuro-id.readme.io/docs/ios-installation).
+For installation instructions and minimum project requirements, please read our [iOS Installation Guide](https://neuro-id.readme.io/docs/ios-sdk-3_4_x).
 
 ## Usage
 
 To use the NeuroID iOS Mobile SDK there are 3 basic steps:
 
-1. [Installation](https://neuro-id.readme.io/docs/ios-installation#installation)
-1. [Configuration/Initialization of the SDK](https://neuro-id.readme.io/docs/ios-installation#2-initialize-the-sdk)
-1. [Linking People to Data](https://neuro-id.readme.io/docs/ios-installation#3-link-people-to-data)
+1. [Installation](https://neuro-id.readme.io/docs/ios-sdk-3_4_x#installation)
+1. [Configuration/Initialization of the SDK](https://neuro-id.readme.io/docs/ios-sdk-3_4_x#initialize-the-sdk)
+1. [Linking People to Data](https://neuro-id.readme.io/docs/ios-sdk-3_4_x#collection--link-people-to-data)
 
-For full instructions, available API commands, and documentation please visit our [iOS Installation Guide](https://neuro-id.readme.io/docs/ios-installation).
+For full instructions, available API commands, and documentation please visit our [iOS Installation Guide](https://neuro-id.readme.io/docs/ios-sdk-3_4_x).
 
 ## Examples
 
