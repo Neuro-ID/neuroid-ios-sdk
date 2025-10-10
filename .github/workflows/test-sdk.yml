@@ -2,7 +2,7 @@
 # This workflow will trigger once a PR opens to main
 # ******************************************************************
 
-name: SDK Testing
+name: SDK Build and Test
 
 on:
   pull_request:
@@ -10,16 +10,13 @@ on:
       - main
 
 jobs:
-  test:
-    runs-on: macos-13
+  build:
+    name: Build and Test
+    runs-on: macos-26
     steps:
-      - name: Select Xcode 15
-        run: xcodebuild -downloadPlatform iOS && sudo xcode-select -s /Applications/Xcode_15.0.1.app
+      - uses: actions/checkout@v5
 
-      - name: Branch Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up ruby env
+      - name: Set up Ruby env for CocoaPods
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7.6
@@ -45,3 +42,15 @@ jobs:
 
       - name: Run iOS Unit Testing for Dev SDK
         run: bundle exec fastlane test
+      
+      - name: Show current version of Xcode
+        run: xcodebuild -version
+
+      - name: Build and Test
+        run: |
+          xcodebuild \
+          -workspace "NeuroID.xcworkspace" \
+          -scheme "NeuroID" \
+          -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+          -enableCodeCoverage YES \
+          clean test
