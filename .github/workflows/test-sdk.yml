@@ -40,9 +40,6 @@ jobs:
           path: Pods
           key: ${{ runner.os }}-pods-test-apps-${{ hashFiles('**/Podfile.lock') }}
 
-      - name: Run iOS Unit Testing for Dev SDK
-        run: bundle exec fastlane test
-      
       - name: Show current version of Xcode
         run: xcodebuild -version
 
@@ -52,5 +49,9 @@ jobs:
           -workspace "NeuroID.xcworkspace" \
           -scheme "NeuroID" \
           -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
-          -enableCodeCoverage YES \
+          -resultBundlePath TestResults.xcresult \
           clean test
+
+      - name: Run iOS Unit Testing for Dev SDK
+        run: bundle exec fastlane test
+      
