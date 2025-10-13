@@ -20,8 +20,8 @@ jobs:
       - name: Build and Test
         run: |
           xcodebuild \
-          -workspace "NeuroID.xcworkspace" \
-          -scheme "NeuroID" \
+          -project NeuroID.xcodeproj \
+          -scheme NeuroID \
           -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
           -resultBundlePath TestResults.xcresult \
           clean test
