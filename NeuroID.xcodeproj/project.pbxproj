@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F4F2E9D906C0042B0DD /* FingerprintPro */; };
+		01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F522E9D907E0042B0DD /* Alamofire */; };
+		01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */; };
+		01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F582E9D90F10042B0DD /* JSONSchema */; };
 		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
 		01E5B4742EBD0C94007C9B2B /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */; };
 		01E5B4782EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */; };
@@ -21,18 +25,12 @@
 		4B0AA7F92B646D50001F26B3 /* NIDCallStatusObserverService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */; };
 		6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */; };
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
-		6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */; };
 		6F47B9AF2B7E80360047DFCB /* NIDNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */; };
-		6F543ED32BAA060A00920A7C /* Pods_NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; };
-		6F543ED42BAA060A00920A7C /* Pods_NeuroID.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
-		6F6B75512A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
 		6F709ED72BC5905A00F18895 /* NIDMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A05C2028B91B4D00509509 /* NIDMetadata.swift */; };
 		6FE77FE62937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
 		6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
-		6FE77FE82937B3F700357284 /* NIDErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE77FE52937B3F700357284 /* NIDErrors.swift */; };
-		E494C0748D7A30D17CC3E764 /* Pods_SDKTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */; };
 		F216C4022A718AEA001DDABB /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4012A718AEA001DDABB /* Optional.swift */; };
 		F216C4042A718B0A001DDABB /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */; };
 		F216C4082A71BE19001DDABB /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = F216C4072A71BE19001DDABB /* Date.swift */; };
@@ -143,7 +141,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6F543ED42BAA060A00920A7C /* Pods_NeuroID.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,8 +153,6 @@
 		01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceServiceTests.swift; sourceTree = "<group>"; };
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
 		07A05C2028B91B4D00509509 /* NIDMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDMetadata.swift; sourceTree = "<group>"; };
-		0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		153C967454B5320D895ADE13 /* Pods-SDKTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDKTest.debug.xcconfig"; path = "Target Support Files/Pods-SDKTest/Pods-SDKTest.debug.xcconfig"; sourceTree = "<group>"; };
 		1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPacketNumber.swift; sourceTree = "<group>"; };
 		26BCF33C268DA3C40002C289 /* NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		26BCF33F268DA3C40002C289 /* NeuroID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NeuroID.h; sourceTree = "<group>"; };
@@ -167,22 +162,13 @@
 		26BCF34B268DA7CF0002C289 /* NIDEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIDEvent.swift; sourceTree = "<group>"; };
 		26BCF358268DAC530002C289 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		26BCF35A268DAC5A0002C289 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		3AFA17D1FB9CF9E866313997 /* Pods-SDKTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDKTest.release.xcconfig"; path = "Target Support Files/Pods-SDKTest/Pods-SDKTest.release.xcconfig"; sourceTree = "<group>"; };
-		47EAD830ADF3CCE22244EE89 /* Pods-NeuroID.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.staging.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.staging.xcconfig"; sourceTree = "<group>"; };
 		4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDCallStatusObserverService.swift; sourceTree = "<group>"; };
 		6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPreferences.swift; sourceTree = "<group>"; };
 		6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKUITest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKUITest.swift; sourceTree = "<group>"; };
-		6F39E8DC26CEAA0C00BE9834 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkService.swift; sourceTree = "<group>"; };
 		6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTextFieldUtils.swift; sourceTree = "<group>"; };
 		6FE77FE52937B3F700357284 /* NIDErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDErrors.swift; sourceTree = "<group>"; };
-		90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SDKTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		91F02E629A22E34E06D2AF87 /* Pods-NeuroID.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.release.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.release.xcconfig"; sourceTree = "<group>"; };
-		ADF6B1D19ADA519BE68B6047 /* Pods-SDKTest.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SDKTest.staging.xcconfig"; path = "Target Support Files/Pods-SDKTest/Pods-SDKTest.staging.xcconfig"; sourceTree = "<group>"; };
-		EF519CD46811BD283A2D1533 /* Pods-NeuroID.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NeuroID.debug.xcconfig"; path = "Target Support Files/Pods-NeuroID/Pods-NeuroID.debug.xcconfig"; sourceTree = "<group>"; };
 		F216C4012A718AEA001DDABB /* Optional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		F216C4072A71BE19001DDABB /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
@@ -282,8 +268,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F543ED32BAA060A00920A7C /* Pods_NeuroID.framework in Frameworks */,
 				26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */,
+				01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */,
+				01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */,
 				26BCF359268DAC530002C289 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,14 +280,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */,
-				E494C0748D7A30D17CC3E764 /* Pods_SDKTest.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6F39E8D526CEAA0C00BE9834 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */,
+				01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,11 +294,8 @@
 				FFAC96B52D358978004C2A25 /* Package.swift */,
 				FFAC96B42D358967004C2A25 /* Source */,
 				FF1770A82E26DB8E007235A2 /* SDKTest */,
-				6F39E8D926CEAA0C00BE9834 /* SDKUITest */,
 				26BCF33D268DA3C40002C289 /* Products */,
 				26BCF357268DAC530002C289 /* Frameworks */,
-				6FCA77C328BF40E700E06DC1 /* Recovered References */,
-				28A707D16F5F22FB53823CEE /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -326,7 +304,6 @@
 			children = (
 				26BCF33C268DA3C40002C289 /* NeuroID.framework */,
 				6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */,
-				6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -357,39 +334,8 @@
 			children = (
 				26BCF35A268DAC5A0002C289 /* Foundation.framework */,
 				26BCF358268DAC530002C289 /* Security.framework */,
-				0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */,
-				90304BED0DA33798E4F66EB6 /* Pods_SDKTest.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		28A707D16F5F22FB53823CEE /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				EF519CD46811BD283A2D1533 /* Pods-NeuroID.debug.xcconfig */,
-				91F02E629A22E34E06D2AF87 /* Pods-NeuroID.release.xcconfig */,
-				47EAD830ADF3CCE22244EE89 /* Pods-NeuroID.staging.xcconfig */,
-				153C967454B5320D895ADE13 /* Pods-SDKTest.debug.xcconfig */,
-				3AFA17D1FB9CF9E866313997 /* Pods-SDKTest.release.xcconfig */,
-				ADF6B1D19ADA519BE68B6047 /* Pods-SDKTest.staging.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		6F39E8D926CEAA0C00BE9834 /* SDKUITest */ = {
-			isa = PBXGroup;
-			children = (
-				6F39E8DA26CEAA0C00BE9834 /* SDKUITest.swift */,
-				6F39E8DC26CEAA0C00BE9834 /* Info.plist */,
-			);
-			path = SDKUITest;
-			sourceTree = "<group>";
-		};
-		6FCA77C328BF40E700E06DC1 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		F217029729D4C4BE00133A1C /* TrackerClassExtensions */ = {
@@ -615,7 +561,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 26BCF344268DA3C40002C289 /* Build configuration list for PBXNativeTarget "NeuroID" */;
 			buildPhases = (
-				4B0A71FBCF24C81A3D48483D /* [CP] Check Pods Manifest.lock */,
 				26BCF337268DA3C40002C289 /* Headers */,
 				26BCF338268DA3C40002C289 /* Sources */,
 				6F543ED52BAA060A00920A7C /* Embed Frameworks */,
@@ -635,11 +580,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6F39E8D326CEA9A800BE9834 /* Build configuration list for PBXNativeTarget "SDKTest" */;
 			buildPhases = (
-				F8D1C2CFB4F4A41D8D4CAAA9 /* [CP] Check Pods Manifest.lock */,
 				6F39E8C526CEA9A800BE9834 /* Sources */,
 				6F39E8C626CEA9A800BE9834 /* Frameworks */,
 				6F39E8C726CEA9A800BE9834 /* Resources */,
-				737E9226198837C078C67497 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -650,23 +593,6 @@
 			productName = SDKTest;
 			productReference = 6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		6F39E8D726CEAA0C00BE9834 /* SDKUITest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6F39E8DD26CEAA0C00BE9834 /* Build configuration list for PBXNativeTarget "SDKUITest" */;
-			buildPhases = (
-				6F39E8D426CEAA0C00BE9834 /* Sources */,
-				6F39E8D526CEAA0C00BE9834 /* Frameworks */,
-				6F39E8D626CEAA0C00BE9834 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SDKUITest;
-			productName = SDKUITest;
-			productReference = 6F39E8D826CEAA0C00BE9834 /* SDKUITest.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -688,9 +614,6 @@
 					6F39E8C826CEA9A800BE9834 = {
 						CreatedOnToolsVersion = 12.5.1;
 					};
-					6F39E8D726CEAA0C00BE9834 = {
-						CreatedOnToolsVersion = 12.5.1;
-					};
 				};
 			};
 			buildConfigurationList = 26BCF336268DA3C40002C289 /* Build configuration list for PBXProject "NeuroID" */;
@@ -702,13 +625,18 @@
 				Base,
 			);
 			mainGroup = 26BCF332268DA3C40002C289;
+			packageReferences = (
+				01D31F4E2E9D906C0042B0DD /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */,
+				01D31F512E9D907E0042B0DD /* XCRemoteSwiftPackageReference "Alamofire" */,
+				01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */,
+				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */,
+			);
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				26BCF33B268DA3C40002C289 /* NeuroID */,
 				6F39E8C826CEA9A800BE9834 /* SDKTest */,
-				6F39E8D726CEAA0C00BE9834 /* SDKUITest */,
 			);
 		};
 /* End PBXProject section */
@@ -729,82 +657,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6F39E8D626CEAA0C00BE9834 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		4B0A71FBCF24C81A3D48483D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NeuroID-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		737E9226198837C078C67497 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F8D1C2CFB4F4A41D8D4CAAA9 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SDKTest-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		26BCF338268DA3C40002C289 /* Sources */ = {
@@ -927,16 +780,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6F39E8D426CEAA0C00BE9834 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6FE77FE82937B3F700357284 /* NIDErrors.swift in Sources */,
-				6F39E8DB26CEAA0C00BE9834 /* SDKUITest.swift in Sources */,
-				6F6B75512A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1014,7 +857,6 @@
 		};
 		07BB4F642890438300910665 /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 47EAD830ADF3CCE22244EE89 /* Pods-NeuroID.staging.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
@@ -1055,7 +897,6 @@
 		};
 		07BB4F652890438300910665 /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ADF6B1D19ADA519BE68B6047 /* Pods-SDKTest.staging.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1071,28 +912,6 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Staging;
-		};
-		07BB4F662890438300910665 /* Staging */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
-				INFOPLIST_FILE = SDKUITest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_CFLAGS = "-DNDEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKUITest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1233,7 +1052,6 @@
 		};
 		26BCF345268DA3C40002C289 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EF519CD46811BD283A2D1533 /* Pods-NeuroID.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
@@ -1277,7 +1095,6 @@
 		};
 		26BCF346268DA3C40002C289 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 91F02E629A22E34E06D2AF87 /* Pods-NeuroID.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
@@ -1318,7 +1135,6 @@
 		};
 		6F39E8D126CEA9A800BE9834 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 153C967454B5320D895ADE13 /* Pods-SDKTest.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1346,7 +1162,6 @@
 		};
 		6F39E8D226CEA9A800BE9834 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AFA17D1FB9CF9E866313997 /* Pods-SDKTest.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
@@ -1362,54 +1177,6 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		6F39E8DE26CEAA0C00BE9834 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = SDKUITest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_CFLAGS = "-DNDEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKUITest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		6F39E8DF26CEAA0C00BE9834 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
-				INFOPLIST_FILE = SDKUITest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_CFLAGS = "-DNDEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.neuroid.SDKUITest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1448,17 +1215,65 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6F39E8DD26CEAA0C00BE9834 /* Build configuration list for PBXNativeTarget "SDKUITest" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6F39E8DE26CEAA0C00BE9834 /* Debug */,
-				6F39E8DF26CEAA0C00BE9834 /* Release */,
-				07BB4F662890438300910665 /* Staging */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		01D31F4E2E9D906C0042B0DD /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fingerprintjs/fingerprintjs-pro-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.0;
+			};
+		};
+		01D31F512E9D907E0042B0DD /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dashpay/JSONSchemaValidation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.7;
+			};
+		};
+		01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kylef/JSONSchema.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		01D31F4F2E9D906C0042B0DD /* FingerprintPro */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01D31F4E2E9D906C0042B0DD /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */;
+			productName = FingerprintPro;
+		};
+		01D31F522E9D907E0042B0DD /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01D31F512E9D907E0042B0DD /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */;
+			productName = DSJSONSchemaValidation;
+		};
+		01D31F582E9D90F10042B0DD /* JSONSchema */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */;
+			productName = JSONSchema;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 26BCF333268DA3C40002C289 /* Project object */;
 }
