@@ -6,9 +6,8 @@ name: SDK Build and Test
 
 on:
   pull_request:
-    branches:
-      - main
-      - 'eng-*' # TODO: Remove this before merging
+    # branches: TODO: Re-add this before merging
+      # - main 
 
 jobs:
   build:
