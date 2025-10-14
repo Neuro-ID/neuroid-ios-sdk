@@ -17,11 +17,16 @@ jobs:
       - name: Show current version of Xcode
         run: xcodebuild -version
 
+        # Technically Optional, would resolve in Build + Test
+      - name: Resolve Packages 
+        run: xcodebuild -resolvePackageDependencies -project NeuroID.xcodeproj
+
       - name: Build and Test
         run: |
           xcodebuild \
           -project NeuroID.xcodeproj \
           -scheme NeuroID \
-          -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+          -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
+          -configuration Debug \
           -resultBundlePath TestResults.xcresult \
           clean test
