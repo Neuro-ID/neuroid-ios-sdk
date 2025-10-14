@@ -58,7 +58,7 @@ class PayloadTest: XCTestCase {
             if let JSONString = String(data: data, encoding: String.Encoding.utf8) {
                 print(JSONString)
             }
-            let validate = try JSONSchema.validate(object, schema: self.schema)
+            let validate = JSONSchema.validate(object, schema: self.schema)
             switch validate {
             case .valid:
                 XCTAssert(true)
