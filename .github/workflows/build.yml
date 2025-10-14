@@ -25,10 +25,19 @@ jobs:
 
       - name: Build and Test
         run: |
+          set -o pipefail
           xcodebuild \
-          -project NeuroID.xcodeproj \
-          -scheme NeuroID \
-          -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
-          -configuration Debug \
-          -resultBundlePath TestResults.xcresult \
-          clean test
+            -project NeuroID.xcodeproj \
+            -scheme NeuroID \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
+            -configuration Debug \
+            -resultBundlePath TestResults.xcresult \
+            clean test 2>&1 | tee xcodebuild.log
+
+      - name: Upload xcodebuild logs and test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-test-artifacts
+          path: |
+            TestResults.xcresult
+            xcodebuild.log
