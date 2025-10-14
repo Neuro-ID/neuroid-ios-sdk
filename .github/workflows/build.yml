@@ -34,6 +34,9 @@ jobs:
             -resultBundlePath TestResults.xcresult \
             clean test 2>&1 | tee xcodebuild.log
 
+      - name: Convert Coverage for Sonar
+        run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
+
       - name: Upload xcodebuild logs and test results
         uses: actions/upload-artifact@v4
         with:
@@ -41,3 +44,8 @@ jobs:
           path: |
             TestResults.xcresult
             xcodebuild.log
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
