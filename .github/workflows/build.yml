@@ -35,7 +35,7 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             -configuration Debug \
             -resultBundlePath TestResults.xcresult \
-            clean test 2>&1 | tee xcodebuild.log
+            clean test > xcodebuild.log
 
       - name: Convert Coverage for Sonar
         run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
