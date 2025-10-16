@@ -14,93 +14,36 @@ on:
 
 jobs:
   build-test:
-    name: Build and Test (Xcode ${{ matrix.xcode }})
-    runs-on: macos-${{ matrix.macos }}
-    env:
-      DEVELOPER_DIR: "/Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Latest
-          # - macos: 26
-          #   xcode: '26.0'    # Swift 6.2
-          #   ios-simulator: 'iPhone 17 Pro,OS=26.0'
-
-          # Legacy
-          - macos: 15
-            xcode: '16.4'    # Swift 6.1
-            ios-simulator: 'iPhone 16 Pro,OS=18.5'
-            run_sonar: true # TODO: Move this to Xcode 26
-          - macos: 15
-            xcode: '16.0'    # Swift 6.0
-            ios-simulator: 'iPhone 16 Pro,OS=18.6'
-          - macos: 14
-            xcode: '15.0'    # Swift 5.9
-            ios-simulator: "iPhone 15 Pro,OS=17.5"
-
+    name: Build and Test
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v5
 
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Setup Xcode ${{ matrix.xcode }}
-        run: |
-          ls /Applications/
-          sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
-          xcodebuild -version
-          xcrun simctl list devices
-
-      - name: Resolve Packages
-        run: xcodebuild -project NeuroID.xcodeproj -scheme NeuroID -resolvePackageDependencies
-
       - name: Build and Test (Simulator)
         run: |
           set -o pipefail
-          # Capture both raw and prettified logs (no ANSI colors) so artifacts are consistent across matrix runs
           xcodebuild clean test \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
+            -destination "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6" \
             -configuration Debug \
-            -resultBundlePath TestResults.xcresult \
-            SUPPORTED_PLATFORMS=iphonesimulator \
-            VALID_ARCHS=arm64 \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            PROVISIONING_PROFILE_SPECIFIER="" | \
+            -resultBundlePath TestResults.xcresult | \
           xcbeautify --disable-colored-output --renderer github-actions > xcodebuild.log
-
+          
+      - name: Convert Coverage for Sonar
+        run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
+          
       - name: Upload xcodebuild logs and test results
         uses: actions/upload-artifact@v4
         with:
-          name: xcode-test-artifacts-macos-${{ matrix.macos }}-xcode-${{ matrix.xcode }}
+          name: xcode-test-artifacts
           path: |
             TestResults.xcresult
             xcodebuild.log
-      
-      - name: Convert Coverage for Sonar (only on latest)
-        if: ${{ matrix.run_sonar == true }}
-        run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
-
-      - name: Upload coverage for Sonar (only on latest)
-        if: ${{ matrix.run_sonar == true }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-artifact
-          path: Coverage.xml
-
-  sonar:
-    name: Sonar Scan
-    needs: build-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-artifact
+            Coverage.xml
 
       - name: Sonar Scan
         uses: SonarSource/sonarqube-scan-action@v6
