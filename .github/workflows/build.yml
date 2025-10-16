@@ -25,19 +25,19 @@ jobs:
           # Latest
           # - macos: 26
           #   xcode: '26.0'    # Swift 6.2
-          #   ios-simulator: 'iPhone 17 Pro,OS=latest'
+          #   ios-simulator: 'iPhone 17 Pro,OS=26.0'
 
           # Legacy
           - macos: 15
-            xcode: '16.3'    # Swift 6.1
-            ios-simulator: 'iPhone 16 Pro,OS=latest'
+            xcode: '16.4'    # Swift 6.1
+            ios-simulator: 'iPhone 16 Pro,OS=18.5'
             run_sonar: true # TODO: Move this to Xcode 26
           - macos: 15
             xcode: '16.0'    # Swift 6.0
-            ios-simulator: 'iPhone 15 Pro,OS=latest'
+            ios-simulator: 'iPhone 15 Pro,OS=18.0'
           - macos: 14
             xcode: '15.0'    # Swift 5.9
-            ios-simulator: "iPhone 15 Pro,OS=latest"
+            ios-simulator: "iPhone 15 Pro,OS=17.0"
 
     steps:
       - uses: actions/checkout@v5
@@ -87,7 +87,7 @@ jobs:
           path: Coverage.xml
 
   sonar:
-    name: SonarQube Scan (aggregate)
+    name: Sonar Scan
     needs: build-test
     runs-on: ubuntu-latest
     steps:
@@ -96,7 +96,7 @@ jobs:
         with:
           name: coverage-artifact
 
-      - name: SonarQube Scan
+      - name: Sonar Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
