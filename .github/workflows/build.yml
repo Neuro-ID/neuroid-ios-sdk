@@ -22,19 +22,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Latest
+          # - macos: 26
+          #   xcode: '26.0'    # Swift 6.2
+          #   ios-simulator: 'iPhone 17 Pro,OS=latest'
+
+          # Legacy
           - macos: 15
             xcode: '16.3'    # Swift 6.1
             ios-simulator: 'iPhone 16 Pro,OS=latest'
-            run_sonar: true
+            run_sonar: true # TODO: Move this to Xcode 26
           - macos: 15
             xcode: '16.0'    # Swift 6.0
-            ios-simulator: 'iPhone 16 Pro,OS=latest'
+            ios-simulator: 'iPhone 15 Pro,OS=latest'
           - macos: 14
             xcode: '15.0'    # Swift 5.9
             ios-simulator: "iPhone 15 Pro,OS=latest"
-          - macos: 13
-            xcode: '14.3'    # Swift 5.8
-            ios-simulator: "iPhone 14 Pro,OS=latest"
 
     steps:
       - uses: actions/checkout@v5
