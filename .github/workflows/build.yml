@@ -23,15 +23,18 @@ jobs:
       matrix:
         include:
           - macos: 15
-            xcode: '16.3'    # Swift 6.0
+            xcode: '16.3'    # Swift 6.1
             ios-simulator: 'iPhone 16 Pro,OS=latest'
-            run_sonar: true            
+            run_sonar: true
           - macos: 15
-            xcode: '15.0'
-            ios-simulator: "iPhone 15 Pro,OS=latest"
+            xcode: '16.0'    # Swift 6.0
+            ios-simulator: 'iPhone 16 Pro,OS=latest'
           - macos: 14
-            xcode: '14.2'
-            ios-simulator: "=iPhone 14 Pro,OS=latest"
+            xcode: '15.0'    # Swift 5.9
+            ios-simulator: "iPhone 15 Pro,OS=latest"
+          - macos: 13
+            xcode: '14.3'    # Swift 5.8
+            ios-simulator: "iPhone 14 Pro,OS=latest"
 
     steps:
       - uses: actions/checkout@v5
@@ -54,9 +57,8 @@ jobs:
             -scheme NeuroID \
             -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
             -configuration Debug \
-            -resultBundlePath TestResults.xcresult 2>&1 | \
-            tee xcodebuild_raw.log | \
-            xcbeautify --color=never --renderer github-actions > xcodebuild.log
+            -resultBundlePath TestResults.xcresult > xcodebuild_raw.log | \
+          xcbeautify --disable-colored-output --renderer github-actions > xcodebuild.log
 
       - name: Upload xcodebuild logs and test results
         uses: actions/upload-artifact@v4
