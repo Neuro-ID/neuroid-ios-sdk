@@ -7,7 +7,7 @@ name: SDK Build and Test
 on:
   pull_request:
     # branches: TODO: Re-add this before merging
-      # - main 
+    # - main
   push:
     branches:
       - main
@@ -19,23 +19,22 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
       - name: Show current version of Xcode
         run: xcodebuild -version
-
-        # Technically Optional, would resolve in Build + Test
-      - name: Resolve Packages 
-        run: xcodebuild -resolvePackageDependencies -project NeuroID.xcodeproj
 
       - name: Build and Test
         run: |
           set -o pipefail
-          xcodebuild \
+          xcodebuild clean test \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             -configuration Debug \
-            -resultBundlePath TestResults.xcresult \
-            clean test > xcodebuild.log
+            -resultBundlePath TestResults.xcresult |
+            xcbeautify --renderer github-actions > xcodebuild.log
 
       - name: Convert Coverage for Sonar
         run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
