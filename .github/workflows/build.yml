@@ -50,6 +50,7 @@ jobs:
           ls /Applications/
           sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
           xcodebuild -version
+          xcrun simctl list devices
 
       - name: Resolve Packages
         run: xcodebuild -project NeuroID.xcodeproj -scheme NeuroID -resolvePackageDependencies
@@ -63,7 +64,9 @@ jobs:
             -scheme NeuroID \
             -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
             -configuration Debug \
-            -resultBundlePath TestResults.xcresult > xcodebuild_raw.log | \
+            -resultBundlePath TestResults.xcresult 
+            SUPPORTED_PLATFORMS=iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO | \
           xcbeautify --disable-colored-output --renderer github-actions > xcodebuild.log
 
       - name: Upload xcodebuild logs and test results
@@ -73,7 +76,6 @@ jobs:
           path: |
             TestResults.xcresult
             xcodebuild.log
-            xcodebuild_raw.log
       
       - name: Convert Coverage for Sonar (only on latest)
         if: ${{ matrix.run_sonar == true }}
