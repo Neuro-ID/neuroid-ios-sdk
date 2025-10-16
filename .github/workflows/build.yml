@@ -19,9 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
       - name: Build and Test (Simulator)
         run: |
           set -o pipefail
