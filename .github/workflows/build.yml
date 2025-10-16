@@ -2,7 +2,7 @@
 # This workflow will trigger once a PR opens to main
 # ******************************************************************
 
-name: SDK Build and Test
+name: Build and Test
 
 on:
   pull_request:
@@ -47,6 +47,9 @@ jobs:
           ls /Applications/
           sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
           xcodebuild -version
+
+      - name: Resolve Packages
+        run: xcodebuild -project NeuroID.xcodeproj -scheme NeuroID -resolvePackageDependencies
 
       - name: Build and Test (Simulator)
         run: |
