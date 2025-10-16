@@ -13,40 +13,77 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build and Test
-    runs-on: macos-15
+  build-test:
+    name: Build and Test (Xcode ${{ matrix.xcode }})
+    runs-on: macos-${{ matrix.macos }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - macos: 15
+            xcode: '16.3'    # Swift 6.0
+            ios-simulator: 'iPhone 16 Pro,OS=latest'
+            run_sonar: true            
+          - macos: 15
+            xcode: '15.0'
+            ios-simulator: "iPhone 15 Pro,OS=latest"
+          - macos: 14
+            xcode: '14.2'
+            ios-simulator: "=iPhone 14 Pro,OS=latest"
+
     steps:
       - uses: actions/checkout@v5
 
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Show current version of Xcode
-        run: xcodebuild -version
+      - name: Setup Xcode ${{ matrix.xcode }}
+        run: |
+          sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+          xcodebuild -version
 
-      - name: Build and Test
+      - name: Build and Test (Simulator)
         run: |
           set -o pipefail
+          # Capture both raw and prettified logs (no ANSI colors) so artifacts are consistent across matrix runs
           xcodebuild clean test \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
+            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
             -configuration Debug \
-            -resultBundlePath TestResults.xcresult |
-            xcbeautify --renderer github-actions > xcodebuild.log
-
-      - name: Convert Coverage for Sonar
-        run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
+            -resultBundlePath TestResults.xcresult 2>&1 | \
+            tee xcodebuild_raw.log | \
+            xcbeautify --color=never --renderer github-actions > xcodebuild.log
 
       - name: Upload xcodebuild logs and test results
         uses: actions/upload-artifact@v4
         with:
-          name: xcode-test-artifacts
+          name: xcode-test-artifacts-macos-${{ matrix.macos }}-xcode-${{ matrix.xcode }}
           path: |
             TestResults.xcresult
             xcodebuild.log
-            Coverage.xml
+            xcodebuild_raw.log
+      
+      - name: Convert Coverage for Sonar (only on latest)
+        if: ${{ matrix.run_sonar == true }}
+        run: ./Scripts/xccov-to-sonarqube-generic.sh TestResults.xcresult > Coverage.xml
+
+      - name: Upload coverage for Sonar (only on latest)
+        if: ${{ matrix.run_sonar == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-artifact
+          path: Coverage.xml
+
+  sonar:
+    name: SonarQube Scan (aggregate)
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-artifact
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
