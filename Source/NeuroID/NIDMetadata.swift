@@ -120,11 +120,14 @@ extension NIDMetadata {
     }
 
     static func hasJailbreak() -> Bool {
-        if Device.current.isSimulator { return false }
-        if self.isCydiaAppInstalled() { return true }
-        if self.isContainsSuspiciousApps() { return true }
-        if self.isSuspiciousSystemPathsExists() { return true }
-        return self.canEditSystemFiles()
+        // Never report jailbreak on simulator
+        guard !Device.current.isSimulator else { return false }
+
+        // Any of these checks indicate a jailbreak
+        return self.isCydiaAppInstalled()
+            || self.isContainsSuspiciousApps()
+            || self.isSuspiciousSystemPathsExists()
+            || self.canEditSystemFiles()
     }
 
     static func isSimulator() -> Bool {
