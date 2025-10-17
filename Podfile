@@ -7,9 +7,9 @@ target 'NeuroID' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-
   pod 'FingerprintPro', '2.10.0'
   pod 'Alamofire'
+  pod 'DeviceKit', '5.7.0'
 end
 target 'SDKTest' do
   use_frameworks!
