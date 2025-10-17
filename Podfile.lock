@@ -1,11 +1,13 @@
 PODS:
   - Alamofire (5.10.2)
+  - DeviceKit (5.7.0)
   - DSJSONSchemaValidation (2.0.7)
   - FingerprintPro (2.10.0)
   - JSONSchema (0.5.0)
 
 DEPENDENCIES:
   - Alamofire
+  - DeviceKit (= 5.7.0)
   - DSJSONSchemaValidation
   - FingerprintPro (= 2.10.0)
   - JSONSchema (= 0.5.0)
@@ -13,16 +15,18 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
+    - DeviceKit
     - DSJSONSchemaValidation
     - FingerprintPro
     - JSONSchema
 
 SPEC CHECKSUMS:
   Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  DeviceKit: d1a956e25b957efb60a87bfe70be4e00ef36846d
   DSJSONSchemaValidation: 46e30ccfa9908c49d184f453d556f55aa0aac1ff
   FingerprintPro: f72cfc225731a66d53dd8be3545fbbbd4f4c4777
   JSONSchema: 52453ed2f570370b5e3ccd1c943afdfa5ea70db5
 
-PODFILE CHECKSUM: feaf6bebaaef109f759744f0c318d7712b3adbdb
+PODFILE CHECKSUM: 451bd1dc8c84f8e30b10cc83c642f62130852d79
 
 COCOAPODS: 1.16.2
