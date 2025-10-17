@@ -19,12 +19,16 @@ let package = Package(
         .package(url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", from: "2.11.0"),
         .package(url: "https://github.com/dashpay/JSONSchemaValidation", from: "2.0.7"),
         .package(url: "https://github.com/kylef/JSONSchema.swift", from: "0.6.0")
+        .package(name: "FingerprintPro", url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", from: "2.10.0"),
+        .package(url: "https://github.com/devicekit/DeviceKit.git", from: "4.0.0"),
+        .package(name:"DSJSONSchemaValidation", url: "https://github.com/dashpay/JSONSchemaValidation", from: "2.0.7"),
+        .package(name: "JSONSchema", url:"https://github.com/kylef/JSONSchema.swift", from:"0.6.0")
     ],
     targets: [
         .target(
             name: "NeuroID",
             dependencies: [
-                .product(name: "FingerprintPro", package: "fingerprintjs-pro-ios"),
+                .product(name: "FingerprintPro", "DeviceKit", package: "fingerprintjs-pro-ios"),
                 .product(name: "Alamofire", package: "Alamofire")
             ],
             path: "Source/NeuroID",
