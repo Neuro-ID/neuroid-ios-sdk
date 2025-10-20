@@ -17,6 +17,7 @@ s.source_files = "Source/NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
 s.dependency 'Alamofire'
 s.dependency 'FingerprintPro', '2.7.0'
+s.dependency 'DeviceKit', '5.7.0'
 
 s.default_subspecs = 'Core'
 s.subspec 'Core' do |core|

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01888C022EA697CF0064DE3A /* DeviceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01888C012EA697CF0064DE3A /* DeviceKit */; };
 		01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F4F2E9D906C0042B0DD /* FingerprintPro */; };
 		01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F522E9D907E0042B0DD /* Alamofire */; };
 		01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */; };
@@ -263,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */,
+				01888C022EA697CF0064DE3A /* DeviceKit in Frameworks */,
 				01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */,
 				01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */,
 				26BCF359268DAC530002C289 /* Security.framework in Frameworks */,
@@ -621,6 +623,7 @@
 				01D31F512E9D907E0042B0DD /* XCRemoteSwiftPackageReference "Alamofire" */,
 				01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */,
 				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */,
+				01888C002EA697CF0064DE3A /* XCRemoteSwiftPackageReference "DeviceKit" */,
 			);
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
 			projectDirPath = "";
@@ -1206,6 +1209,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		01888C002EA697CF0064DE3A /* XCRemoteSwiftPackageReference "DeviceKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devicekit/DeviceKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.0;
+			};
+		};
 		01D31F4E2E9D906C0042B0DD /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/fingerprintjs/fingerprintjs-pro-ios";
@@ -1241,6 +1252,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		01888C012EA697CF0064DE3A /* DeviceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01888C002EA697CF0064DE3A /* XCRemoteSwiftPackageReference "DeviceKit" */;
+			productName = DeviceKit;
+		};
 		01D31F4F2E9D906C0042B0DD /* FingerprintPro */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 01D31F4E2E9D906C0042B0DD /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */;
