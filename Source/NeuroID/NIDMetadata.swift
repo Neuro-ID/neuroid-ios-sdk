@@ -122,7 +122,7 @@ extension NIDMetadata {
 
     static func hasJailbreak() -> Bool {
         // Never report jailbreak on simulator
-        guard !Device.current.isSimulator else { return false }
+        guard !UIDevice.current.isSimulator else { return false }
 
         // Any of these checks indicate a jailbreak
         return self.isCydiaAppInstalled()
