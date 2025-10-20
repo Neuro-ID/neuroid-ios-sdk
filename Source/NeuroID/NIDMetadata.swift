@@ -63,7 +63,8 @@ struct NIDMetadata: Codable {
 
 extension NIDMetadata {
     static func getDeviceName() -> String {
-        return Device.current.name ?? ""
+        // Intentionally returns an empty string to avoid collecting PII
+        return ""
     }
 
     static func getDeviceModel() -> String {
@@ -131,7 +132,7 @@ extension NIDMetadata {
     }
 
     static func isSimulator() -> Bool {
-        return Device.current.isSimulator
+        return UIDevice.current.isSimulator
     }
 
     static func isWifiEnable() -> Bool {
@@ -211,6 +212,16 @@ extension NIDMetadata {
                 "/etc/apt",
                 "/bin/bash",
                 "/Library/MobileSubstrate/MobileSubstrate.dylib"]
+    }
+}
+
+extension UIDevice {
+    var isSimulator: Bool {
+        #if targetEnvironment(simulator)
+            return true
+        #else
+            return false
+        #endif
     }
 }
 
