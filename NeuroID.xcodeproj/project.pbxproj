@@ -10,6 +10,9 @@
 		01219BBE2ED77175008F3D71 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01219BBD2ED77175008F3D71 /* Alamofire */; };
 		01219BC12ED77183008F3D71 /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01219BC02ED77183008F3D71 /* FingerprintPro */; };
 		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
+		01888C022EA697CF0064DE3A /* DeviceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01888C012EA697CF0064DE3A /* DeviceKit */; };
+		01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F4F2E9D906C0042B0DD /* FingerprintPro */; };
+		01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F522E9D907E0042B0DD /* Alamofire */; };
 		01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */; };
 		01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F582E9D90F10042B0DD /* JSONSchema */; };
 		01E5B4742EBD0C94007C9B2B /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */; };
@@ -268,6 +271,11 @@
 			files = (
 				01219BBE2ED77175008F3D71 /* Alamofire in Frameworks */,
 				01219BC12ED77183008F3D71 /* FingerprintPro in Frameworks */,
+				26BCF35B268DAC5A0002C289 /* Foundation.framework in Frameworks */,
+				01888C022EA697CF0064DE3A /* DeviceKit in Frameworks */,
+				01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */,
+				01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */,
+				26BCF359268DAC530002C289 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,6 +633,7 @@
 				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */,
 				01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */,
+				01888C002EA697CF0064DE3A /* XCRemoteSwiftPackageReference "DeviceKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
@@ -1220,7 +1229,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		01888C002EA697CF0064DE3A /* XCRemoteSwiftPackageReference "DeviceKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devicekit/DeviceKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.0;
+			};
+		};
+		01D31F4E2E9D906C0042B0DD /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -1255,7 +1272,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		01219BBD2ED77175008F3D71 /* Alamofire */ = {
+		01888C012EA697CF0064DE3A /* DeviceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01888C002EA697CF0064DE3A /* XCRemoteSwiftPackageReference "DeviceKit" */;
+			productName = DeviceKit;
+		};
+		01D31F4F2E9D906C0042B0DD /* FingerprintPro */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
