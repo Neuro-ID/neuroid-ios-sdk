@@ -72,10 +72,12 @@ extension NeuroID {
             switch request {
             case .success((let requestID, let duration)):
 
-                self.captureADVEvent(requestID,
-                                     cached: false,
-                                     latency: duration,
-                                     message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
+                self.captureADVEvent(
+                    requestID,
+                    cached: false,
+                    latency: duration,
+                    message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key"
+                )
 
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
@@ -140,14 +142,12 @@ extension NeuroID {
 
         // Verify the command is called with a true value (want to capture) AND that the session
         //  is NOT being restricted/throttled prior to calling for an ADV event
-
-        if shouldCapture,
-           self.configService.isSessionFlowSampled
-        {
-            // call stored value, if expired then clear and get new one, else send existing
-            if !self.getCachedADV() {
+                
+       if shouldCapture, self.configService.isSessionFlowSampled {
+           // call stored value, if expired then clear and get new one, else send existing
+           if !self.getCachedADV() {
                 self.getNewADV()
-            }
-        }
+           }
+       }
     }
 }

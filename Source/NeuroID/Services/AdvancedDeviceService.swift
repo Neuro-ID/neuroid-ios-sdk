@@ -21,7 +21,10 @@ protocol AdvancedDeviceServiceProtocol {
 
 class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     public func getAdvancedDeviceSignal(
-        _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
+        _ apiKey: String,
+        clientID: String?,
+        linkedSiteID: String?,
+        advancedDeviceKey: String?,
         completion: @escaping (Result<(String, Double), Error>) -> Void
     ) {
         // normalize empty advanced device keys to nil for use below
@@ -157,39 +160,70 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         _ apiKey: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        if #available(iOS 13.0, *) {
-            let region: Region = .custom(
-                domain: "https://advanced.neuro-id.com"
-            )
-            let configuration = Configuration(apiKey: apiKey, region: region)
-            let client = FingerprintProFactory.getInstance(configuration)
-            client.getVisitorIdResponse { result in
-                switch result {
-                case .success(let fResponse):
-                    completion(.success(fResponse.requestId))
-                case .failure(let error):
-                    completion(
-                        .failure(
-                            createError(
-                                code: 6,
-                                description:
-                                "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
-                            )
+        let primaryRate = NeuroID.shared.configService.configCache.proxyPrimaryEndpointSampleRate ?? 20
+        let canaryRate = NeuroID.shared.configService.configCache.proxyRCEndpointSampleRate ?? 20
+        
+        NeuroID.shared.logger.d("Primary Rate: \(primaryRate)")
+        NeuroID.shared.logger.d("Canary Rate: \(canaryRate)")
+        
+        // Determine which endpoint to use based on sample rates
+        let endpoint = determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
+        
+        NeuroID.shared.logger.d("Using endpoint: \(endpoint)")
+        
+        let region: Region = .custom(domain: endpoint)
+        // let region: Region = .custom(
+            // domain: "https://advanced.neuro-id.com"
+            // )
+        let configuration = Configuration(apiKey: apiKey, region: region)
+        let client = FingerprintProFactory.getInstance(configuration)
+        
+        client.getVisitorIdResponse { result in
+            switch result {
+            case .success(let fResponse):
+                completion(.success(fResponse.requestId))
+            case .failure(let error):
+                completion(
+                    .failure(
+                        createError(
+                            code: 6,
+                            description:
+                            "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
                         )
                     )
-                }
-            }
-        } else {
-            completion(
-                .failure(
-                    createError(
-                        code: 7,
-                        description:
-                        "Fingerprint Response Failure (code 7): Method Not Available"
-                    )
                 )
-            )
+            }
         }
+
+    }
+    
+    static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> String {
+        let DEFAULT_ADVANCED_DEVICE_ENDPOINT = "https://advanced.neuro-id.com"
+        let PRIMARY_FPJS_PROXY_IDENTIFICATION_ENDPOINT = "https://dn.neuroid.cloud/iynlfqcb0t"
+        let RC_FPJS_PROXY_IDENTIFICATION_ENDPOINT = "https://rc.dn.neuroid.cloud/iynlfqcb0t"
+        
+        // If both rates are zero, use default endpoint
+        if primaryRate == 0 && canaryRate == 0 {
+            return DEFAULT_ADVANCED_DEVICE_ENDPOINT
+        }
+        
+        // Generate random number between 1-100 for sampling decision
+        let randomValue = Int.random(in: 1...100)
+        
+        // Primary takes priority (capped at 100%)
+        let effectivePrimaryRate = min(primaryRate, 100)
+        if randomValue <= effectivePrimaryRate {
+            return PRIMARY_FPJS_PROXY_IDENTIFICATION_ENDPOINT
+        }
+        
+        // Canary gets remaining capacity
+        let canaryThreshold = effectivePrimaryRate + min(canaryRate, 100 - effectivePrimaryRate)
+        if randomValue <= canaryThreshold {
+            return RC_FPJS_PROXY_IDENTIFICATION_ENDPOINT
+        }
+        
+        // Everything else goes to default
+        return DEFAULT_ADVANCED_DEVICE_ENDPOINT
     }
 
     static func retryAPICall(
