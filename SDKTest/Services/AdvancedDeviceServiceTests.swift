@@ -37,14 +37,12 @@ class AdvancedDeviceServiceTests: XCTestCase {
         for _ in 1...iterations {
             let result = AdvancedDeviceService.determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
             switch result {
-            case "https://dn.neuroid.cloud/iynlfqcb0t":
+            case .primaryProxy:
                 primaryCount += 1
-            case "https://rc.dn.neuroid.cloud/iynlfqcb0t":
+            case .canaryProxy:
                 canaryCount += 1
-            case "https://advanced.neuro-id.com":
+            case .standard:
                 defaultCount += 1
-            default:
-                XCTFail("Unexpected endpoint: \(result)")
             }
         }
         
@@ -72,21 +70,15 @@ class AdvancedDeviceServiceTests: XCTestCase {
                           line: UInt = #line) {
         XCTAssertTrue(
             abs(distribution.primaryPercentage - expectedPrimary) < tolerance,
-            "Primary should be ~\(expectedPrimary)%, got \(distribution.primaryPercentage)%",
-            file: file,
-            line: line
+            "Primary should be ~\(expectedPrimary)%, got \(distribution.primaryPercentage)%"
         )
         XCTAssertTrue(
             abs(distribution.canaryPercentage - expectedCanary) < tolerance,
-            "Canary should be ~\(expectedCanary)%, got \(distribution.canaryPercentage)%",
-            file: file,
-            line: line
+            "Canary should be ~\(expectedCanary)%, got \(distribution.canaryPercentage)%"
         )
         XCTAssertTrue(
             abs(distribution.defaultPercentage - expectedDefault) < tolerance,
-            "Default should be ~\(expectedDefault)%, got \(distribution.defaultPercentage)%",
-            file: file,
-            line: line
+            "Default should be ~\(expectedDefault)%, got \(distribution.defaultPercentage)%"
         )
     }
     
@@ -95,7 +87,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
         let primaryRate = 0
         let canaryRate = 0
         let result = AdvancedDeviceService.determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
-        XCTAssertEqual(result, "https://advanced.neuro-id.com", "Should return default endpoint when both rates are 0")
+        XCTAssertEqual(result.url, "https://advanced.neuro-id.com", "Should return default endpoint when both rates are 0")
     }
     
     func test_determineEndpoint_primaryRate10_canaryRate10() {
@@ -143,7 +135,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
     
     func test_determineEndpoint_negativeRates() {
         let result = AdvancedDeviceService.determineEndpoint(primaryRate: -10, canaryRate: -5)
-        XCTAssertEqual(result, "https://advanced.neuro-id.com", "Negative rates should default to default endpoint")
+        XCTAssertEqual(result.url, "https://advanced.neuro-id.com", "Negative rates should default to default endpoint")
     }
     
     func test_determineEndpoint_veryHighRates() {
@@ -217,7 +209,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
         let endpoint = AdvancedDeviceService.determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
         
         // Then - Should use default endpoint when both rates are 0
-        XCTAssertEqual(endpoint, "https://advanced.neuro-id.com", "Should use default endpoint when both rates are 0")
+        XCTAssertEqual(endpoint.url, "https://advanced.neuro-id.com", "Should use default endpoint when both rates are 0")
         
         // Cleanup
         NeuroID.shared.configService = originalConfigService

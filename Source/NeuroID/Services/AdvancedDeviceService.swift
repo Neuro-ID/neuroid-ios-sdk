@@ -171,10 +171,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         
         NeuroID.shared.logger.d("Using endpoint: \(endpoint)")
         
-        let region: Region = .custom(domain: endpoint)
-        // let region: Region = .custom(
-            // domain: "https://advanced.neuro-id.com"
-            // )
+        let region: Region = .custom(domain: endpoint.url)
         let configuration = Configuration(apiKey: apiKey, region: region)
         let client = FingerprintProFactory.getInstance(configuration)
         
@@ -197,14 +194,26 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
     }
     
-    static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> String {
-        let DEFAULT_ADVANCED_DEVICE_ENDPOINT = "https://advanced.neuro-id.com"
-        let PRIMARY_FPJS_PROXY_IDENTIFICATION_ENDPOINT = "https://dn.neuroid.cloud/iynlfqcb0t"
-        let RC_FPJS_PROXY_IDENTIFICATION_ENDPOINT = "https://rc.dn.neuroid.cloud/iynlfqcb0t"
+    enum FingerprintEndpoint {
         
+        case standard, primaryProxy, canaryProxy
+        
+        var url: String {
+            switch self {
+            case .standard:
+                return "https://advanced.neuro-id.com"
+            case .primaryProxy:
+                return "https://dn.neuroid.cloud/iynlfqcb0t"
+            case .canaryProxy:
+                return "https://rc.dn.neuroid.cloud/iynlfqcb0t"
+            }
+        }
+    }
+    
+    static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> FingerprintEndpoint {
         // If both rates are zero, use default endpoint
         if primaryRate == 0 && canaryRate == 0 {
-            return DEFAULT_ADVANCED_DEVICE_ENDPOINT
+            return .standard
         }
         
         // Generate random number between 1-100 for sampling decision
@@ -213,17 +222,17 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         // Primary takes priority (capped at 100%)
         let effectivePrimaryRate = min(primaryRate, 100)
         if randomValue <= effectivePrimaryRate {
-            return PRIMARY_FPJS_PROXY_IDENTIFICATION_ENDPOINT
+            return .primaryProxy
         }
         
         // Canary gets remaining capacity
         let canaryThreshold = effectivePrimaryRate + min(canaryRate, 100 - effectivePrimaryRate)
         if randomValue <= canaryThreshold {
-            return RC_FPJS_PROXY_IDENTIFICATION_ENDPOINT
+            return .canaryProxy
         }
         
         // Everything else goes to default
-        return DEFAULT_ADVANCED_DEVICE_ENDPOINT
+        return .standard
     }
 
     static func retryAPICall(
