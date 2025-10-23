@@ -102,7 +102,7 @@ extension NeuroID {
                     self.createNIDSessionEvent()
                 )
                 self.captureMobileMetadata()
-                
+
                 self.captureAdvancedDevice(self.isAdvancedDevice)
 
                 self.addLinkedSiteID(siteID)

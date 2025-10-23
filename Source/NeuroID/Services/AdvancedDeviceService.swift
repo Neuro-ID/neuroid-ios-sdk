@@ -189,7 +189,6 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                 )
             }
         }
-
     }
     
     static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> FingerprintEndpoint {

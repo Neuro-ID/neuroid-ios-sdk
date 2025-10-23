@@ -142,7 +142,6 @@ extension NeuroID {
 
         // Verify the command is called with a true value (want to capture) AND that the session
         //  is NOT being restricted/throttled prior to calling for an ADV event
-        // call stored value, if expired then clear and get new one, else send existing
         if shouldCapture && self.configService.isSessionFlowSampled && !self.getCachedADV() {
             self.getNewADV()
         }
