@@ -158,16 +158,14 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
     static func getRequestID(
         _ apiKey: String,
+        endpointOverride: FingerprintEndpoint?,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let primaryRate = NeuroID.shared.configService.configCache.proxyPrimaryEndpointSampleRate ?? 20
-        let canaryRate = NeuroID.shared.configService.configCache.proxyRCEndpointSampleRate ?? 20
-        
-        NeuroID.shared.logger.d("Primary Rate: \(primaryRate)")
-        NeuroID.shared.logger.d("Canary Rate: \(canaryRate)")
+        let primaryRate = NeuroID.shared.configService.configCache.proxyPrimaryEndpointSampleRate ?? 0
+        let canaryRate = NeuroID.shared.configService.configCache.proxyRCEndpointSampleRate ?? 0
         
         // Determine which endpoint to use based on sample rates
-        let endpoint = determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
+        let endpoint = endpointOverride ?? determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
         
         NeuroID.shared.logger.d("Using endpoint: \(endpoint)")
         
@@ -194,29 +192,12 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
     }
     
-    enum FingerprintEndpoint {
-        
-        case standard, primaryProxy, canaryProxy
-        
-        var url: String {
-            switch self {
-            case .standard:
-                return "https://advanced.neuro-id.com"
-            case .primaryProxy:
-                return "https://dn.neuroid.cloud/iynlfqcb0t"
-            case .canaryProxy:
-                return "https://rc.dn.neuroid.cloud/iynlfqcb0t"
-            }
-        }
-    }
-    
     static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> FingerprintEndpoint {
         // If both rates are zero, use default endpoint
         if primaryRate == 0 && canaryRate == 0 {
             return .standard
         }
         
-        // Generate random number between 1-100 for sampling decision
         let randomValue = Int.random(in: 1...100)
         
         // Primary takes priority (capped at 100%)
@@ -243,21 +224,17 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     ) {
         var currentRetry = 0
 
-        func attemptAPICall() {
+        func attemptAPICall(endpointOverride: FingerprintEndpoint? = nil) {
             let startTime = Date()
 
-            getRequestID(apiKey) { result in
+            getRequestID(apiKey, endpointOverride: endpointOverride) { result in
                 if case .failure(let error) = result {
-                    if error.localizedDescription.contains(
-                        "Method not available")
-                    {
+                    if error.localizedDescription.contains("Method not available") {
                         completion(.failure(error))
                     } else if currentRetry < maxRetries {
                         currentRetry += 1
-                        DispatchQueue.global().asyncAfter(
-                            deadline: .now() + delay
-                        ) {
-                            attemptAPICall()
+                        DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                            attemptAPICall(endpointOverride: .standard)
                         }
                     } else {
                         completion(.failure(error))
@@ -280,5 +257,24 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                 NSLocalizedDescriptionKey: description
             ]
         )
+    }
+}
+
+extension AdvancedDeviceService {
+    
+    // Options for Fingerprint endpoints
+    enum FingerprintEndpoint {
+        case standard, primaryProxy, canaryProxy
+        
+        var url: String {
+            switch self {
+            case .standard:
+                return "https://advanced.neuro-id.com"
+            case .primaryProxy:
+                return "https://dn.neuroid.cloud/iynlfqcb0t"
+            case .canaryProxy:
+                return "https://rc.dn.neuroid.cloud/iynlfqcb0t"
+            }
+        }
     }
 }
