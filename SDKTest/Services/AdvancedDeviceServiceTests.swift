@@ -10,13 +10,7 @@ import XCTest
 
 class AdvancedDeviceServiceTests: XCTestCase {
     
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+    let fpDefaultEndpoint = "https://advanced.neuro-id.com"
     
     // MARK: - Helper Functions
     struct EndpointDistribution {
@@ -83,41 +77,41 @@ class AdvancedDeviceServiceTests: XCTestCase {
     }
     
     // MARK: - determineEndpoint() Tests
-    func test_determineEndpoint_bothRatesZero_returnsDefault() {
+    func testDetermineEndpointBothRatesZeroReturnsDefault() {
         let primaryRate = 0
         let canaryRate = 0
         let result = AdvancedDeviceService.determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
-        XCTAssertEqual(result.url, "https://advanced.neuro-id.com", "Should return default endpoint when both rates are 0")
+        XCTAssertEqual(result.url, fpDefaultEndpoint, "Should return default endpoint when both rates are 0")
     }
     
-    func test_determineEndpoint_primaryRate10_canaryRate10() {
+    func testDetermineEndpointPrimaryRate10CanaryRate10() {
         let distribution = measureEndpointDistribution(primaryRate: 10, canaryRate: 10)
         assertDistribution(distribution, expectedPrimary: 10.0, expectedCanary: 10.0, expectedDefault: 80.0)
     }
     
-    func test_determineEndpoint_primaryRate90_canaryRate10() {
+    func testDetermineEndpointPrimaryRate90CanaryRate10() {
         let distribution = measureEndpointDistribution(primaryRate: 90, canaryRate: 10)
         assertDistribution(distribution, expectedPrimary: 90.0, expectedCanary: 10.0, expectedDefault: 0.0, tolerance: 1.0)
     }
     
-    func test_determineEndpoint_primaryRate100_canaryRate10() {
+    func testDetermineEndpointPrimaryRate100CanaryRate10() {
         let distribution = measureEndpointDistribution(primaryRate: 100, canaryRate: 10, iterations: 1000)
         assertDistribution(distribution, expectedPrimary: 100.0, expectedCanary: 0.0, expectedDefault: 0.0, tolerance: 0.5)
     }
     
     // Deterministic case: exactly 100% primary (capped), 0% others
-    func test_determineEndpoint_primaryRate250_canaryRate10() {
+    func testDetermineEndpointPrimaryRate250CanaryRate10() {
         let distribution = measureEndpointDistribution(primaryRate: 250, canaryRate: 10, iterations: 1000)
         assertDistribution(distribution, expectedPrimary: 100.0, expectedCanary: 0.0, expectedDefault: 0.0, tolerance: 0.5)
     }
     
-    func test_determineEndpoint_primaryRate50_canaryRate50() {
+    func testDetermineEndpointPrimaryRate50CanaryRate50() {
         let distribution = measureEndpointDistribution(primaryRate: 50, canaryRate: 50)
         assertDistribution(distribution, expectedPrimary: 50.0, expectedCanary: 50.0, expectedDefault: 0.0, tolerance: 1.0)
     }
     
     // MARK: - Edge Cases
-    func test_determineEndpoint_primaryRateOnly() {
+    func testDetermineEndpointPrimaryRateOnly() {
         let distribution = measureEndpointDistribution(primaryRate: 30, canaryRate: 0)
         
         // Then - Canary should be exactly 0% (deterministic), others probabilistic
@@ -125,7 +119,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
         XCTAssertEqual(distribution.canaryCount, 0, "Canary should be exactly 0 when rate is 0")
     }
     
-    func test_determineEndpoint_canaryRateOnly() {
+    func testDetermineEndpointCanaryRateOnly() {
         let distribution = measureEndpointDistribution(primaryRate: 0, canaryRate: 40)
         
         // Then - Primary should be exactly 0% (deterministic), others probabilistic  
@@ -133,17 +127,17 @@ class AdvancedDeviceServiceTests: XCTestCase {
         XCTAssertEqual(distribution.primaryCount, 0, "Primary should be exactly 0 when rate is 0")
     }
     
-    func test_determineEndpoint_negativeRates() {
+    func testDetermineEndpointNegativeRates() {
         let result = AdvancedDeviceService.determineEndpoint(primaryRate: -10, canaryRate: -5)
-        XCTAssertEqual(result.url, "https://advanced.neuro-id.com", "Negative rates should default to default endpoint")
+        XCTAssertEqual(result.url, fpDefaultEndpoint, "Negative rates should default to default endpoint")
     }
     
-    func test_determineEndpoint_veryHighRates() {
+    func testDetermineEndpointVeryHighRates() {
         let distribution = measureEndpointDistribution(primaryRate: 200, canaryRate: 300, iterations: 1000)
         assertDistribution(distribution, expectedPrimary: 100.0, expectedCanary: 0.0, expectedDefault: 0.0, tolerance: 0.1)
     }
       
-    func test_determineEndpoint_primaryRate80_canaryRate30() {
+    func testDetermineEndpointPrimaryRate80CanaryRate30() {
         let distribution = measureEndpointDistribution(primaryRate: 80, canaryRate: 30)
         assertDistribution(distribution, expectedPrimary: 80.0, expectedCanary: 20.0, expectedDefault: 0.0, tolerance: 1.0)
     }
@@ -152,7 +146,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
     // Note: getRequestID integration with FingerprintPro SDK is difficult to test without extensive mocking.
     // These tests verify the config service integration that getRequestID relies on.
     
-    func test_configService_readsProxySampleRates() {
+    func testConfigServiceReadsProxySampleRates() {
         // Given
         let mockConfigService = MockConfigService()
         mockConfigService.mockConfigCache.proxyPrimaryEndpointSampleRate = 50
@@ -173,7 +167,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
         NeuroID.shared.configService = originalConfigService
     }
     
-    func test_configService_handlesNilSampleRates() {
+    func testConfigServiceHandlesNilSampleRates() {
         // Given
         let mockConfigService = MockConfigService()
         mockConfigService.mockConfigCache.proxyPrimaryEndpointSampleRate = nil
@@ -194,7 +188,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
         NeuroID.shared.configService = originalConfigService
     }
     
-    func test_endpointSelection_integratesWithConfigService_zeroRates() {
+    func testEndpointSelectionIntegratesWithConfigServiceZeroRates() {
         // Given
         let mockConfigService = MockConfigService()
         mockConfigService.mockConfigCache.proxyPrimaryEndpointSampleRate = 0
@@ -209,7 +203,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
         let endpoint = AdvancedDeviceService.determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
         
         // Then - Should use default endpoint when both rates are 0
-        XCTAssertEqual(endpoint.url, "https://advanced.neuro-id.com", "Should use default endpoint when both rates are 0")
+        XCTAssertEqual(endpoint.url, fpDefaultEndpoint, "Should use default endpoint when both rates are 0")
         
         // Cleanup
         NeuroID.shared.configService = originalConfigService
