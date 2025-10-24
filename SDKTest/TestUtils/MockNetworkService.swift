@@ -121,7 +121,14 @@ class MockNetworkService: NetworkServiceProtocol {
             let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
 
             var result: Result<T, AFError>
-            result = .success(mockResponseResult as! T)
+            
+            if let typed = mockResponseResult as? T {
+                result = .success(typed)
+            } else {
+                print("MockNetworkService: Unable to cast mockResponseResult to expected type \(T.self). Actual value: \(String(describing: mockResponseResult))")
+                let error = AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
+                result = .failure(error)
+            }
 
             let finalRes: DataResponse<T, AFError> = .init(
                 request: request,
