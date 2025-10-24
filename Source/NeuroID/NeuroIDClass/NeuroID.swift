@@ -241,10 +241,6 @@ public class NeuroID: NSObject {
 
         self.networkMonitor.startMonitoring()
 
-        if isAdvancedDevice {
-            self.captureAdvancedDevice(self.isAdvancedDevice)
-        }
-
         self.captureApplicationMetaData()
 
         self.saveEventToDataStore(
@@ -263,6 +259,10 @@ public class NeuroID: NSObject {
         self.logger.i("Remote Config Retrieval Attempt Completed")
 
         self.setupListeners()
+        
+        if isAdvancedDevice {
+            self.captureAdvancedDevice(self.isAdvancedDevice)
+        }
     }
 
     func stop() -> Bool {
