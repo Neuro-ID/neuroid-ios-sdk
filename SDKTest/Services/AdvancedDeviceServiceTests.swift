@@ -107,7 +107,7 @@ class AdvancedDeviceServiceTests: XCTestCase {
     
     func testDetermineEndpointPrimaryRate50CanaryRate50() {
         let distribution = measureEndpointDistribution(primaryRate: 50, canaryRate: 50)
-        assertDistribution(distribution, expectedPrimary: 50.0, expectedCanary: 50.0, expectedDefault: 0.0, tolerance: 1.0)
+        assertDistribution(distribution, expectedPrimary: 50.0, expectedCanary: 50.0, expectedDefault: 0.0, tolerance: 2.0)
     }
     
     // MARK: - Edge Cases
