@@ -21,7 +21,10 @@ protocol AdvancedDeviceServiceProtocol {
 
 class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     public func getAdvancedDeviceSignal(
-        _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
+        _ apiKey: String,
+        clientID: String?,
+        linkedSiteID: String?,
+        advancedDeviceKey: String?,
         completion: @escaping (Result<(String, Double), Error>) -> Void
     ) {
         // normalize empty advanced device keys to nil for use below
@@ -155,41 +158,61 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
     static func getRequestID(
         _ apiKey: String,
+        endpointOverride: FingerprintEndpoint?,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        if #available(iOS 13.0, *) {
-            let region: Region = .custom(
-                domain: "https://advanced.neuro-id.com"
-            )
-            let configuration = Configuration(apiKey: apiKey, region: region)
-            let client = FingerprintProFactory.getInstance(configuration)
-            client.getVisitorIdResponse { result in
-                switch result {
-                case .success(let fResponse):
-                    completion(.success(fResponse.requestId))
-                case .failure(let error):
-                    completion(
-                        .failure(
-                            createError(
-                                code: 6,
-                                description:
-                                "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
-                            )
+        let primaryRate = NeuroID.shared.configService.configCache.proxyPrimaryEndpointSampleRate ?? 0
+        let canaryRate = NeuroID.shared.configService.configCache.proxyRCEndpointSampleRate ?? 0
+        
+        // Determine which endpoint to use based on sample rates
+        let endpoint = endpointOverride ?? determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
+        
+        NeuroID.shared.logger.d("Using endpoint: \(endpoint)")
+        
+        let region: Region = .custom(domain: endpoint.url)
+        let configuration = Configuration(apiKey: apiKey, region: region)
+        let client = FingerprintProFactory.getInstance(configuration)
+        
+        client.getVisitorIdResponse { result in
+            switch result {
+            case .success(let fResponse):
+                completion(.success(fResponse.requestId))
+            case .failure(let error):
+                completion(
+                    .failure(
+                        createError(
+                            code: 6,
+                            description:
+                            "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
                         )
                     )
-                }
-            }
-        } else {
-            completion(
-                .failure(
-                    createError(
-                        code: 7,
-                        description:
-                        "Fingerprint Response Failure (code 7): Method Not Available"
-                    )
                 )
-            )
+            }
         }
+    }
+    
+    static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> FingerprintEndpoint {
+        // If both rates are zero, use default endpoint
+        if primaryRate == 0 && canaryRate == 0 {
+            return .standard
+        }
+        
+        let randomValue = Int.random(in: 1...100)
+        
+        // Primary takes priority (capped at 100%)
+        let effectivePrimaryRate = min(primaryRate, 100)
+        if randomValue <= effectivePrimaryRate {
+            return .primaryProxy
+        }
+        
+        // Canary gets remaining capacity
+        let canaryThreshold = effectivePrimaryRate + min(canaryRate, 100 - effectivePrimaryRate)
+        if randomValue <= canaryThreshold {
+            return .canaryProxy
+        }
+        
+        // Everything else goes to default
+        return .standard
     }
 
     static func retryAPICall(
@@ -200,21 +223,17 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     ) {
         var currentRetry = 0
 
-        func attemptAPICall() {
+        func attemptAPICall(endpointOverride: FingerprintEndpoint? = nil) {
             let startTime = Date()
 
-            getRequestID(apiKey) { result in
+            getRequestID(apiKey, endpointOverride: endpointOverride) { result in
                 if case .failure(let error) = result {
-                    if error.localizedDescription.contains(
-                        "Method not available")
-                    {
+                    if error.localizedDescription.contains("Method not available") {
                         completion(.failure(error))
                     } else if currentRetry < maxRetries {
                         currentRetry += 1
-                        DispatchQueue.global().asyncAfter(
-                            deadline: .now() + delay
-                        ) {
-                            attemptAPICall()
+                        DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                            attemptAPICall(endpointOverride: .standard)
                         }
                     } else {
                         completion(.failure(error))

@@ -82,3 +82,21 @@ enum CallInProgressMetaData: String {
     case ONHOLD = "onhold"
     case RINGING = "ringing"
 }
+
+// Options for Fingerprint endpoints
+extension AdvancedDeviceService {
+    enum FingerprintEndpoint {
+        case standard, primaryProxy, canaryProxy
+        
+        var url: String {
+            switch self {
+            case .standard:
+                return "https://advanced.neuro-id.com"
+            case .primaryProxy:
+                return "https://dn.neuroid.cloud/iynlfqcb0t"
+            case .canaryProxy:
+                return "https://rc.dn.neuroid.cloud/iynlfqcb0t"
+            }
+        }
+    }
+}
