@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01888C072EA924590064DE3A /* AdvancedDeviceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01888C062EA924590064DE3A /* AdvancedDeviceServiceTests.swift */; };
 		076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076252EE2876294400FBA209 /* NeuroIDSensors.swift */; };
 		1FD6E6BB2C4598DF00C8017E /* NIDPacketNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */; };
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,7 +148,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		01888C062EA924590064DE3A /* AdvancedDeviceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceServiceTests.swift; sourceTree = "<group>"; };
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
 		07A05C2028B91B4D00509509 /* NIDMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDMetadata.swift; sourceTree = "<group>"; };
 		0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -516,7 +514,6 @@
 				FF1770912E26DB8E007235A2 /* IdentifierServiceTests.swift */,
 				FF1770922E26DB8E007235A2 /* NetworkMonitoringServiceTests.swift */,
 				FF1770942E26DB8E007235A2 /* ValidationServiceTests.swift */,
-				01888C062EA924590064DE3A /* AdvancedDeviceServiceTests.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -763,13 +760,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -876,7 +869,6 @@
 			files = (
 				6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */,
 				6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
-				01888C072EA924590064DE3A /* AdvancedDeviceServiceTests.swift in Sources */,
 				FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */,
 				FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */,
 				FF1770AC2E26DB8E007235A2 /* MockNetworkService.swift in Sources */,
@@ -1016,7 +1008,7 @@
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9B7FQ8D7B8;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1051,7 +1043,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SDKTest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1072,7 +1064,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SDKUITest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1235,7 +1227,7 @@
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9B7FQ8D7B8;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1279,7 +1271,7 @@
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9B7FQ8D7B8;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1314,7 +1306,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9B7FQ8D7B8;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1342,7 +1334,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Distribution: NEURO-ID, INC. (9B7FQ8D7B8)";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SDKTest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1363,7 +1355,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1389,7 +1381,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X9986UAU23;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SDKUITest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (

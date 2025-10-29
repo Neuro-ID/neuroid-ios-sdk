@@ -25,8 +25,6 @@ struct ConfigResponseData: Codable {
     var gyroAccelCadenceTime: Int = 200
     var lowMemoryBackOff: Double? = NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
     var advancedCookieExpiration: Int? = NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
-    var proxyPrimaryEndpointSampleRate: Int? = 0
-    var proxyRCEndpointSampleRate: Int? = 0
 
     // could exist for parent site or could be null meaning 100%
     var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
@@ -47,7 +45,5 @@ struct ConfigResponseData: Codable {
         case linkedSiteOptions = "linked_site_options"
         case lowMemoryBackOff = "low_memory_back_off"
         case advancedCookieExpiration = "advanced_cookie_expires"
-        case proxyPrimaryEndpointSampleRate = "proxy_primary_endpoint_sample_rate"
-        case proxyRCEndpointSampleRate = "proxy_rc_endpoint_sample_rate"
     }
 }
