@@ -18,12 +18,13 @@ public extension NeuroID {
     
     @available(*, deprecated, renamed: "configure(_:)", message: "Use `NeuroID.configure(_ configuration: NeuroID.Configuration)` instead.")
     static func configure(
-        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
+        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil, useProxy: Bool = false
     ) -> Bool {
         let configuration = NeuroID.Configuration(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,
-            advancedDeviceKey: advancedDeviceKey
+            advancedDeviceKey: advancedDeviceKey,
+            useProxy: useProxy
         )
         return NeuroID.shared.configure(configuration)
     }

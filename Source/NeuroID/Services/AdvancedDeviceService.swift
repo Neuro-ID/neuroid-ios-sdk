@@ -158,18 +158,13 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
     static func getRequestID(
         _ apiKey: String,
-        endpointOverride: FingerprintEndpoint?,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
-        let primaryRate = NeuroID.shared.configService.configCache.proxyPrimaryEndpointSampleRate ?? 0
-        let canaryRate = NeuroID.shared.configService.configCache.proxyRCEndpointSampleRate ?? 0
-        
-        // Determine which endpoint to use based on sample rates
-        let endpoint = endpointOverride ?? determineEndpoint(primaryRate: primaryRate, canaryRate: canaryRate)
-        
-        NeuroID.shared.logger.d("Using endpoint: \(endpoint)")
-        
-        let region: Region = .custom(domain: endpoint.url)
+        // Select the region once based on the useProxy flag
+        let region: Region = NeuroID.shared.useProxy
+            ? .custom(domain: FingerprintEndpoint.proxy.url, fallback: [FingerprintEndpoint.standard.url])
+            : .custom(domain: FingerprintEndpoint.standard.url)
+
         let configuration = Configuration(apiKey: apiKey, region: region)
         let client = FingerprintProFactory.getInstance(configuration)
         
@@ -191,30 +186,6 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         }
     }
     
-    static func determineEndpoint(primaryRate: Int, canaryRate: Int) -> FingerprintEndpoint {
-        // If both rates are zero, use default endpoint
-        if primaryRate == 0 && canaryRate == 0 {
-            return .standard
-        }
-        
-        let randomValue = Int.random(in: 1...100)
-        
-        // Primary takes priority (capped at 100%)
-        let effectivePrimaryRate = min(primaryRate, 100)
-        if randomValue <= effectivePrimaryRate {
-            return .primaryProxy
-        }
-        
-        // Canary gets remaining capacity
-        let canaryThreshold = effectivePrimaryRate + min(canaryRate, 100 - effectivePrimaryRate)
-        if randomValue <= canaryThreshold {
-            return .canaryProxy
-        }
-        
-        // Everything else goes to default
-        return .standard
-    }
-
     static func retryAPICall(
         apiKey: String,
         maxRetries: Int,
@@ -223,17 +194,17 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     ) {
         var currentRetry = 0
 
-        func attemptAPICall(endpointOverride: FingerprintEndpoint? = nil) {
+        func attemptAPICall() {
             let startTime = Date()
 
-            getRequestID(apiKey, endpointOverride: endpointOverride) { result in
+            getRequestID(apiKey) { result in
                 if case .failure(let error) = result {
                     if error.localizedDescription.contains("Method not available") {
                         completion(.failure(error))
                     } else if currentRetry < maxRetries {
                         currentRetry += 1
                         DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
-                            attemptAPICall(endpointOverride: .standard)
+                            attemptAPICall()
                         }
                     } else {
                         completion(.failure(error))
