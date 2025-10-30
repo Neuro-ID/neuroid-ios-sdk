@@ -11,10 +11,13 @@ on:
 
 jobs:
   test:
-    runs-on: macos-13
+    runs-on: macos-26
     steps:
-      - name: Select Xcode 15
-        run: xcodebuild -downloadPlatform iOS && sudo xcode-select -s /Applications/Xcode_15.0.1.app
+      - name: List Available Versions
+        run: ls /Applications
+
+      - name: Select Xcode 26
+        run: xcodebuild -downloadPlatform iOS && sudo xcode-select -s /Applications/Xcode_26.0.0.app
 
       - name: Branch Checkout
         uses: actions/checkout@v3
