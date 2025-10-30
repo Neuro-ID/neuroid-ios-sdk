@@ -27,7 +27,7 @@ class NeuroIDClassTests: BaseTestClass {
         neuroID = NeuroID(identifierService: mockIdentifierService)
 
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
-        mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
+        mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000)), nil))
         NeuroID._isTesting = true
         NeuroID.shared.datastore = dataStore
         NeuroID.shared.identifierService = mockIdentifierService
@@ -52,7 +52,7 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.shared.deviceSignalService = mockService
         _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
-        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
+        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds, nil))
 
         NeuroID.shared.configService = MockConfigService()
 
