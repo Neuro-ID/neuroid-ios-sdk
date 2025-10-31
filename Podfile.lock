@@ -1,13 +1,13 @@
 PODS:
   - Alamofire (5.10.2)
   - DSJSONSchemaValidation (2.0.7)
-  - FingerprintPro (2.10.0)
+  - FingerprintPro (2.11.0)
   - JSONSchema (0.5.0)
 
 DEPENDENCIES:
   - Alamofire
   - DSJSONSchemaValidation
-  - FingerprintPro (= 2.10.0)
+  - FingerprintPro (= 2.11.0)
   - JSONSchema (= 0.5.0)
 
 SPEC REPOS:
@@ -20,9 +20,9 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   DSJSONSchemaValidation: 46e30ccfa9908c49d184f453d556f55aa0aac1ff
-  FingerprintPro: f72cfc225731a66d53dd8be3545fbbbd4f4c4777
+  FingerprintPro: 2fbd0cda75fbab32055f7cb38bc5fc9d17168979
   JSONSchema: 52453ed2f570370b5e3ccd1c943afdfa5ea70db5
 
-PODFILE CHECKSUM: feaf6bebaaef109f759744f0c318d7712b3adbdb
+PODFILE CHECKSUM: c6538fea816ddac0f80a49a4297d8a99e0c06f7b
 
 COCOAPODS: 1.16.2
