@@ -81,15 +81,17 @@ extension NeuroID {
                     sealedClientResults: sealedClientResults
                 )
 
+                let storedKey : [String: Any?] = [
+                    "exp": UtilFunctions.getFutureTimeStamp(
+                        self.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
+                    ),
+                    "key": requestID,
+                    "scr": sealedClientResults
+                ]
+                
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
-                    value: [
-                        "exp": UtilFunctions.getFutureTimeStamp(
-                            self.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
-                        ),
-                        "key": requestID,
-                        "scr": sealedClientResults,
-                    ] as [String: Any?]
+                    value: storedKey.compactMapValues { $0 }
                 )
 
                 self.isFPJSRunning = false
