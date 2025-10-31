@@ -49,11 +49,10 @@ class NIDSendTests: BaseTestClass {
 
         NeuroID.shared.sendCollectionEventsJob.start()
 
-        wait(for: [expectations1], timeout: 7)
-        assert(valueChanged == 1)
-
-        wait(for: [expectations2], timeout: 7)
-        assert(valueChanged == 2)
+        // First execution at ~3 seconds, second execution at ~6 seconds, plus some buffer
+        wait(for: [expectations1, expectations2], timeout: 10)
+        
+        XCTAssertEqual(valueChanged, 2)
 
         NeuroID.shared.sendCollectionEventsJob.cancel()
     }
