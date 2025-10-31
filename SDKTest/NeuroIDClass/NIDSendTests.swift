@@ -33,7 +33,7 @@ class NIDSendTests: BaseTestClass {
         NeuroID.shared.sendCollectionEventsJob.cancel()
 
         NeuroID.shared.sendCollectionEventsJob = RepeatingTask(
-            interval: 3,
+            interval: 0.5,
             task: {
                 valueChanged += 1
                 if valueChanged == 1 {
@@ -49,7 +49,6 @@ class NIDSendTests: BaseTestClass {
 
         NeuroID.shared.sendCollectionEventsJob.start()
 
-        // First execution at ~3 seconds, second execution at ~6 seconds, plus some buffer
         wait(for: [expectations1, expectations2], timeout: 10)
         
         XCTAssertEqual(valueChanged, 2)
