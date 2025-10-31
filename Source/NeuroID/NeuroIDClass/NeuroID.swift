@@ -68,7 +68,7 @@ public class NeuroID: NSObject {
 
     var _isSDKStarted: Bool = false
     public var isSDKStarted: Bool { self._isSDKStarted }
-
+    
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
         NeuroID.shared.send()
@@ -114,6 +114,9 @@ public class NeuroID: NSObject {
     var isAdvancedDevice: Bool = false
 
     var packetNumber: Int32 = 0
+    
+    // Fingerprint Proxy Usage Flag
+    var useFingerprintProxy: Bool = false
 
     // Testing Purposes Only
     static var _isTesting = false
@@ -188,7 +191,10 @@ public class NeuroID: NSObject {
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
     func configure(
-        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
+        clientKey: String, 
+        isAdvancedDevice: Bool = false, 
+        advancedDeviceKey: String? = nil, 
+        useFingerprintProxy: Bool = false
     ) -> Bool {
         // set last install time if not already set.
         if getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0 {
@@ -215,6 +221,7 @@ public class NeuroID: NSObject {
         }
         self.advancedDeviceKey = advancedDeviceKey
         self.isAdvancedDevice = isAdvancedDevice
+        self.useFingerprintProxy = useFingerprintProxy
 
         if clientKey.contains("_live_") {
             self.environment = Constants.environmentLive.rawValue

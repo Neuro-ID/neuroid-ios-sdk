@@ -12,12 +12,13 @@ import UIKit
 
 public extension NeuroID {
     static func configure(
-        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
+        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil, useFingerprintProxy: Bool = false
     ) -> Bool {
         NeuroID.shared.configure(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,
-            advancedDeviceKey: advancedDeviceKey
+            advancedDeviceKey: advancedDeviceKey,
+            useFingerprintProxy: useFingerprintProxy
         )
     }
 
