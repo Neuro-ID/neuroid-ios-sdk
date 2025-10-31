@@ -21,7 +21,7 @@ platform :ios do
     run_tests(
       scheme: "NeuroID",
       clean: true,
-      devices: ["iPhone 17 Pro"],
+      devices: ["iPhone 17 Pro (26.0)"],
       xcargs: "CODE_SIGNING_ALLOWED=NO",
     )
   end
