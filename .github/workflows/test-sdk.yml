@@ -25,15 +25,22 @@ jobs:
           ruby-version: 2.7.6
           bundler-cache: true
 
-      - name: Cache CocoaPods
-        uses: actions/cache@v4
+      - name: Restore cached Pods
+        uses: actions/cache/restore@v3
         with:
           path: |
             Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
 
       - name: CocoaPod Install
-        run: pod install
+        run: pod cache clean —-all && pod repo update && pod install
+
+      - name: Save Updated Pods
+        id: cache-pods-save
+        uses: actions/cache/save@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-test-apps-${{ hashFiles('**/Podfile.lock') }}
 
       - name: Run iOS Unit Testing for Dev SDK
         run: bundle exec fastlane test
