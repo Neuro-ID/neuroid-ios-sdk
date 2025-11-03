@@ -11,10 +11,10 @@ on:
 
 jobs:
   test:
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
-      - name: Select Xcode 15
-        run: xcodebuild -downloadPlatform iOS && sudo xcode-select -s /Applications/Xcode_15.0.1.app
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app
 
       - name: Branch Checkout
         uses: actions/checkout@v3
@@ -25,23 +25,15 @@ jobs:
           ruby-version: 2.7.6
           bundler-cache: true
 
-      - name: Restore cached Pods
-        uses: actions/cache/restore@v3
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
         with:
-          path: Pods
-          key: ${{ runner.os }}-pods-test-apps-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-test-apps
+          path: |
+            Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
 
       - name: CocoaPod Install
-        run: pod cache clean —-all && pod repo update && pod install
-
-      - name: Save Updated Pods
-        id: cache-pods-save
-        uses: actions/cache/save@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-test-apps-${{ hashFiles('**/Podfile.lock') }}
+        run: pod install
 
       - name: Run iOS Unit Testing for Dev SDK
         run: bundle exec fastlane test
