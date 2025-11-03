@@ -55,7 +55,7 @@ class NIDParamsCreatorTests: XCTestCase {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + timeout) {
             sleep.fulfill()
         }
-        wait(for: [sleep], timeout: timeout + 5)
+        wait(for: [sleep], timeout: timeout + 1)
     }
 
     func createStringTargetValue(v: String) -> TargetValue {
