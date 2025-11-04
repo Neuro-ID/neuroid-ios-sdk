@@ -34,7 +34,7 @@ class NIDSendTests: BaseTestClass {
         NeuroID.shared.sendCollectionEventsJob.cancel()
 
         NeuroID.shared.sendCollectionEventsJob = RepeatingTask(
-            interval: 3,
+            interval: 0.5,
             task: {
                 valueChanged += 1
                 if valueChanged == 1 {
