@@ -96,7 +96,7 @@ class NIDConfigService: ConfigServiceProtocol {
     }
     
     func initSiteIDSampleMap(config: RemoteConfiguration) {
-        if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions {
+        if let linkedSiteOptions: [String: RemoteConfiguration.LinkedSiteOption] = config.linkedSiteOptions {
             for siteID in linkedSiteOptions.keys {
                 if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
                     if sampleRate == 0 {

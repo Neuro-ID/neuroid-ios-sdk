@@ -48,10 +48,12 @@ class ConfigServiceTests: XCTestCase {
     
     func getMockResponseData() -> RemoteConfiguration {
         var config = RemoteConfiguration()
-        config.linkedSiteOptions = ["test0": LinkedSiteOption(sampleRate: 0),
-                                    "test10": LinkedSiteOption(sampleRate: 10),
-                                    "test30": LinkedSiteOption(sampleRate: 30),
-                                    "test50": LinkedSiteOption(sampleRate: 50)]
+        config.linkedSiteOptions = [
+            "test0": RemoteConfiguration.LinkedSiteOption(sampleRate: 0),
+            "test10": RemoteConfiguration.LinkedSiteOption(sampleRate: 10),
+            "test30": RemoteConfiguration.LinkedSiteOption(sampleRate: 30),
+            "test50": RemoteConfiguration.LinkedSiteOption(sampleRate: 50)
+        ]
         config.sampleRate = 100
         config.siteID = "test100"
         return config

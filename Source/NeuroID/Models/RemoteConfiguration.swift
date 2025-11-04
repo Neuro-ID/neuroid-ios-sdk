@@ -38,12 +38,12 @@ struct RemoteConfiguration: Codable {
         case lowMemoryBackOff = "low_memory_back_off"
         case advancedCookieExpiration = "advanced_cookie_expires"
     }
-}
+    
+    struct LinkedSiteOption: Codable {
+        var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
 
-struct LinkedSiteOption: Codable {
-    var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
-
-    enum CodingKeys: String, CodingKey {
-        case sampleRate = "sample_rate"
+        enum CodingKeys: String, CodingKey {
+            case sampleRate = "sample_rate"
+        }
     }
 }
