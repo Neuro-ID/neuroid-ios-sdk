@@ -46,8 +46,8 @@ class ConfigServiceTests: XCTestCase {
         configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork)
     }
     
-    func getMockResponseData() -> ConfigResponseData {
-        var config = ConfigResponseData()
+    func getMockResponseData() -> RemoteConfiguration {
+        var config = RemoteConfiguration()
         config.linkedSiteOptions = ["test0": LinkedSiteOption(sampleRate: 0),
                                     "test10": LinkedSiteOption(sampleRate: 10),
                                     "test30": LinkedSiteOption(sampleRate: 30),
@@ -172,7 +172,7 @@ class ConfigServiceTests: XCTestCase {
     func test_setCache() {
         configService.configCache.callInProgress = false
         
-        let newConfig = ConfigResponseData()
+        let newConfig = RemoteConfiguration()
         
         configService.setCache(newConfig)
         

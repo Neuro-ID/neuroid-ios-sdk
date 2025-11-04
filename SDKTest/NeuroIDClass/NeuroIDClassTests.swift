@@ -17,7 +17,8 @@ class NeuroIDClassTests: BaseTestClass {
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
 //        throw XCTSkip("Skipping all tests in this class.")
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(configuration)
         // Clear out the DataStore Events after each test
         clearOutDataStore()
     }
@@ -50,7 +51,8 @@ class NeuroIDClassTests: BaseTestClass {
     func test_getAdvDeviceLatency() {
         let mockService = MockDeviceSignalService()
         NeuroID.shared.deviceSignalService = mockService
-        _ = NeuroID.configure(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        let configuration = NeuroID.Configuration(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        _ = NeuroID.configure(configuration)
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
 
@@ -82,10 +84,11 @@ class NeuroIDClassTests: BaseTestClass {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(
+        let configuration = NeuroID.Configuration(
             clientKey: clientKey,
             isAdvancedDevice: false
         )
+        let configured = NeuroID.configure(configuration)
         assert(configured)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
@@ -110,7 +113,8 @@ class NeuroIDClassTests: BaseTestClass {
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
-        let configured = NeuroID.configure(clientKey: "invalid_key", isAdvancedDevice: false)
+        let configuration = NeuroID.Configuration(clientKey: "invalid_key", isAdvancedDevice: false)
+        let configured = NeuroID.configure(configuration)
         assert(configured == false)
 
         let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)

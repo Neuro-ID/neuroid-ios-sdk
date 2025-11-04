@@ -26,7 +26,8 @@ class DataStoreTests: XCTestCase {
 
     override func setUpWithError() throws {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(configuration)
         _ = NeuroID.stop()
         NeuroID.shared._isSDKStarted = true
 

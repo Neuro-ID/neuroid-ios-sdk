@@ -6,7 +6,7 @@ import Alamofire
 import Foundation
 
 protocol ConfigServiceProtocol {
-    var configCache: ConfigResponseData { get }
+    var configCache: RemoteConfiguration { get }
     var siteIDMap: [String: Bool] { get }
     var isSessionFlowSampled: Bool { get }
     
@@ -46,7 +46,7 @@ class NIDConfigService: ConfigServiceProtocol {
     
     var isSessionFlowSampled: Bool { _isSessionFlowSampled }
     
-    public var configCache: ConfigResponseData = .init()
+    public var configCache: RemoteConfiguration = .init()
     
     init(
         logger: LoggerProtocol,
@@ -70,7 +70,7 @@ class NIDConfigService: ConfigServiceProtocol {
         let config_url = NIDConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
         networkService.getRequest(
             url: URL(string: config_url)!,
-            responseDecodableType: ConfigResponseData.self
+            responseDecodableType: RemoteConfiguration.self
         ) { response in
             switch response.result {
             case .success(let responseData):
@@ -83,7 +83,7 @@ class NIDConfigService: ConfigServiceProtocol {
                 self.configRetrievalCallback()
             case .failure(let error):
                 self.logger.e("Failed to retrieve NID Config \(error)")
-                self.configCache = ConfigResponseData()
+                self.configCache = RemoteConfiguration()
                 self.cacheSetWithRemote = false
                 NeuroID.shared.saveEventToDataStore(
                     NIDEvent.createErrorLogEvent(
@@ -95,7 +95,7 @@ class NIDConfigService: ConfigServiceProtocol {
         }
     }
     
-    func initSiteIDSampleMap(config: ConfigResponseData) {
+    func initSiteIDSampleMap(config: RemoteConfiguration) {
         if let linkedSiteOptions: [String: LinkedSiteOption] = config.linkedSiteOptions {
             for siteID in linkedSiteOptions.keys {
                 if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
@@ -125,7 +125,7 @@ class NIDConfigService: ConfigServiceProtocol {
         )
     }
     
-    func setCache(_ newCache: ConfigResponseData) {
+    func setCache(_ newCache: RemoteConfiguration) {
         configCache = newCache
     }
     
@@ -162,7 +162,7 @@ class NIDConfigService: ConfigServiceProtocol {
         )
     }
     
-    func captureConfigEvent(configData: ConfigResponseData) {
+    func captureConfigEvent(configData: RemoteConfiguration) {
         let encoder = JSONEncoder()
         
         guard let jsonData = try? encoder.encode(configData) else { return }

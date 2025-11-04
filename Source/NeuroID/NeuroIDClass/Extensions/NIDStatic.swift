@@ -11,14 +11,21 @@ import UIKit
 //  in this file. Internally all of them will call the class instance method.
 
 public extension NeuroID {
+    
+    static func configure(_ configuration: NeuroID.Configuration) -> Bool {
+        return NeuroID.shared.configure(configuration)
+    }
+    
+    @available(*, deprecated, renamed: "configure(_:)", message: "Use `NeuroID.configure(_ configuration: NeuroID.Configuration)` instead.")
     static func configure(
         clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
     ) -> Bool {
-        NeuroID.shared.configure(
+        let configuration = NeuroID.Configuration(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,
             advancedDeviceKey: advancedDeviceKey
         )
+        return NeuroID.shared.configure(configuration)
     }
 
     static func enableLogging(_ value: Bool) {

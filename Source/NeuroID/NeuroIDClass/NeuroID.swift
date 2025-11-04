@@ -68,7 +68,7 @@ public class NeuroID: NSObject {
 
     var _isSDKStarted: Bool = false
     public var isSDKStarted: Bool { self._isSDKStarted }
-
+    
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
         NeuroID.shared.send()
@@ -114,7 +114,7 @@ public class NeuroID: NSObject {
     var isAdvancedDevice: Bool = false
 
     var packetNumber: Int32 = 0
-
+    
     // Testing Purposes Only
     static var _isTesting = false
 
@@ -187,9 +187,7 @@ public class NeuroID: NSObject {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB every `SEND_INTERVAL`
-    func configure(
-        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
-    ) -> Bool {
+    func configure(_ configuration: Configuration) -> Bool {
         // set last install time if not already set.
         if getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0 {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
@@ -200,11 +198,11 @@ public class NeuroID: NSObject {
             return false
         }
 
-        if !self.validationService.validateClientKey(clientKey) {
+        if !self.validationService.validateClientKey(configuration.clientKey) {
             self.logger.e("Invalid Client Key")
             self.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
-                    "Invalid Client Key \(clientKey)"
+                    "Invalid Client Key \(configuration.clientKey)"
                 )
             )
             setUserDefaultKey(
@@ -213,10 +211,11 @@ public class NeuroID: NSObject {
 
             return false
         }
-        self.advancedDeviceKey = advancedDeviceKey
-        self.isAdvancedDevice = isAdvancedDevice
+        
+        self.advancedDeviceKey = configuration.advancedDeviceKey
+        self.isAdvancedDevice = configuration.isAdvancedDevice
 
-        if clientKey.contains("_live_") {
+        if configuration.clientKey.contains("_live_") {
             self.environment = Constants.environmentLive.rawValue
         } else {
             self.environment = Constants.environmentTest.rawValue
@@ -224,7 +223,7 @@ public class NeuroID: NSObject {
 
         self.clearSessionVariables()
 
-        self.clientKey = clientKey
+        self.clientKey = configuration.clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id / packet number on configure

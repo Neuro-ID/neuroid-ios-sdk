@@ -14,12 +14,12 @@ final class NIDPerformanceTests: XCTestCase {
     let childSiteID = "form_weeee"
 
     override func setUpWithError() throws {
-        mockedConfigService.mockConfigCache = ConfigResponseData()
+        mockedConfigService.mockConfigCache = RemoteConfiguration()
         NeuroID.shared.configService = mockedConfigService
     }
     
     func test_remote_backoff_overrides_default() {
-        mockedConfigService.mockConfigCache = ConfigResponseData(lowMemoryBackOff: 0)
+        mockedConfigService.mockConfigCache = RemoteConfiguration(lowMemoryBackOff: 0)
         assert(mockedConfigService.configCache.lowMemoryBackOff != NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF)
     }
     
@@ -45,7 +45,7 @@ final class NIDPerformanceTests: XCTestCase {
     func testLowMemoryFlagChangesAfterDefaultOverrideToZeroSeconds() {
         NeuroID.shared.lowMemory = false
         
-        mockedConfigService.mockConfigCache = ConfigResponseData(lowMemoryBackOff: 0)
+        mockedConfigService.mockConfigCache = RemoteConfiguration(lowMemoryBackOff: 0)
         
         let expectation = self.expectation(description: "LowMemory flag should be true and then false after 0 seconds")
         

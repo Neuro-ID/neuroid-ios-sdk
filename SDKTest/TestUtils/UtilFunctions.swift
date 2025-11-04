@@ -6,8 +6,8 @@
 //
 @testable import NeuroID
 
-func getMockResponseData() -> ConfigResponseData {
-    var config = ConfigResponseData()
+func getMockResponseData() -> RemoteConfiguration {
+    var config = RemoteConfiguration()
     config.linkedSiteOptions = [
         "test0": LinkedSiteOption(sampleRate: 0),
         "test10": LinkedSiteOption(sampleRate: 10),

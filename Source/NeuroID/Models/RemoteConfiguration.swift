@@ -1,5 +1,5 @@
 //
-//  ConfigModels.swift
+//  RemoteConfiguration.swift
 //  NeuroID
 //
 //  Created by Kevin Sites on 5/10/24.
@@ -7,15 +7,7 @@
 
 import Foundation
 
-struct LinkedSiteOption: Codable {
-    var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
-
-    enum CodingKeys: String, CodingKey {
-        case sampleRate = "sample_rate"
-    }
-}
-
-struct ConfigResponseData: Codable {
+struct RemoteConfiguration: Codable {
     var callInProgress: Bool = true
     var geoLocation: Bool = false
     var eventQueueFlushInterval: Int = 5
@@ -45,5 +37,13 @@ struct ConfigResponseData: Codable {
         case linkedSiteOptions = "linked_site_options"
         case lowMemoryBackOff = "low_memory_back_off"
         case advancedCookieExpiration = "advanced_cookie_expires"
+    }
+}
+
+struct LinkedSiteOption: Codable {
+    var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
+
+    enum CodingKeys: String, CodingKey {
+        case sampleRate = "sample_rate"
     }
 }

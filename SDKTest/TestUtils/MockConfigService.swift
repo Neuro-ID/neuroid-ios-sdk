@@ -9,14 +9,14 @@ import Foundation
 @testable import NeuroID
 
 class MockConfigService: ConfigServiceProtocol {
-    var mockConfigCache: ConfigResponseData = .init()
+    var mockConfigCache: RemoteConfiguration = .init()
 
     func resetMocks() {
         mockConfigCache = .init()
     }
 
     // Protocol Implementation
-    var configCache: ConfigResponseData {
+    var configCache: RemoteConfiguration {
         mockConfigCache
     }
 

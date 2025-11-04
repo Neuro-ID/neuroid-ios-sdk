@@ -21,7 +21,8 @@ final class UtilFunctionsTests: XCTestCase {
 
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(configuration)
     }
 
     override func setUp() {
