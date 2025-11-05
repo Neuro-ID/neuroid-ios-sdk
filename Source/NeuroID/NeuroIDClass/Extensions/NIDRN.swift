@@ -22,9 +22,9 @@ extension NeuroID {
             configOptionKey: .advancedDeviceKey
         )
 
-        let configured = self.configure(
-            clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey
-        )
+        let configuration = Configuration(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey)
+            
+        let configured = self.configure(configuration)
 
         if !configured {
             return false

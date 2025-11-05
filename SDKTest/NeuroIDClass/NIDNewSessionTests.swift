@@ -14,7 +14,8 @@ class NIDNewSessionTests: BaseTestClass {
 //        throw XCTSkip("Skipping all tests in this class.")
 
         NeuroID.shared.configService = MockConfigService()
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(configuration)
         NeuroID._isTesting = true
 
         clearOutDataStore()

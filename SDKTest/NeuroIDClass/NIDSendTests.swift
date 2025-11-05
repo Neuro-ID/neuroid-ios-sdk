@@ -11,7 +11,8 @@ class NIDSendTests: BaseTestClass {
     override func setUpWithError() throws {
         NeuroID.shared.networkService = MockNetworkService()
         NeuroID.shared.configService = MockConfigService()
-        _ = NeuroID.configure(clientKey: clientKey, isAdvancedDevice: false)
+        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
+        _ = NeuroID.configure(configuration)
         NeuroID.shared.sendCollectionEventsJob.cancel()
         NeuroID._isTesting = true
 
