@@ -17,12 +17,24 @@ extension NeuroID {
             rnOptions: rnOptions,
             configOptionKey: .isAdvancedDevice
         )
+        
         let advancedDeviceKey = self.getOptionValueString(
             rnOptions: rnOptions,
             configOptionKey: .advancedDeviceKey
         )
+        
+        let useFingerprintProxy: Bool = self.getOptionValueBool(
+            rnOptions: rnOptions,
+            configOptionKey: .useFingerprintProxy
+        )
 
-        let configuration = Configuration(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey)
+
+        let configuration = Configuration(
+            clientKey: clientKey,
+            isAdvancedDevice: isAdvancedDevice,
+            advancedDeviceKey: advancedDeviceKey,
+            useFingerprintProxy: useFingerprintProxy
+        )
             
         let configured = self.configure(configuration)
 
@@ -67,4 +79,5 @@ public enum RNConfigOptions: String, Hashable {
     case usingReactNavigation
     case isAdvancedDevice
     case advancedDeviceKey
+    case useFingerprintProxy
 }

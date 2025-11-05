@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
 		076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076252EE2876294400FBA209 /* NeuroIDSensors.swift */; };
 		1FD6E6BB2C4598DF00C8017E /* NIDPacketNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */; };
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -762,9 +763,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SDKTest/Pods-SDKTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
