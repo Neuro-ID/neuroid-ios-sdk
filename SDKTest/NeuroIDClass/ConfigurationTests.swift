@@ -20,14 +20,7 @@ class ConfigurationTests: XCTestCase {
         NeuroID._isTesting = true
     }
     
-    override func tearDown() {
-        // Reset state to prevent test pollution
-        NeuroID.shared.useFingerprintProxy = false
-        NeuroID.shared.deviceSignalService = AdvancedDeviceService()
-        super.tearDown()
-    }
-    
-    // MARK: - Configuration Propagation Tests
+    // MARK: - `useFingerprintProxy` Tests
     
     // Test that Configuration properly sets the proxy flag
     func testConfigureWithFingerprintProxyEnabled() {
@@ -67,4 +60,5 @@ class ConfigurationTests: XCTestCase {
         
         XCTAssertFalse(NeuroID.shared.useFingerprintProxy, "Reconfiguration should disable proxy")
     }
+
 }
