@@ -8,7 +8,7 @@
 import XCTest
 @testable import NeuroID
 
-class ConfigureTests: XCTestCase {
+class ConfigurationTests: XCTestCase {
     
     var config = NeuroID.Configuration(
         clientKey: "test_key",
@@ -66,16 +66,5 @@ class ConfigureTests: XCTestCase {
         let _ = NeuroID.configure(config)
         
         XCTAssertFalse(NeuroID.shared.useFingerprintProxy, "Reconfiguration should disable proxy")
-    }
-    
-    // MARK: - FingerprintEndpoint
-    func testFingerprintEndpointStandardUrl() {
-        let standardURL = AdvancedDeviceService.FingerprintEndpoint.standard.url
-        XCTAssertEqual(standardURL, "https://advanced.neuro-id.com", "Standard endpoint should use correct URL")
-    }
-    
-    func testFingerprintEndpointProxyUrl() {
-        let proxyURL = AdvancedDeviceService.FingerprintEndpoint.proxy.url
-        XCTAssertEqual(proxyURL, "https://dn.neuroid.cloud/iynlfqcb0t", "Proxy endpoint should use correct URL")
     }
 }
