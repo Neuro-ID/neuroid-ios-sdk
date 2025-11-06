@@ -60,9 +60,7 @@ extension NeuroID {
         }
 
         // If queue has more than config event queue size (default 2000), send a queue full event and return
-        if self.datastore.getAllEventCount()
-            > self.configService.configCache.eventQueueFlushSize
-        {
+        if self.datastore.getAllEventCount() > self.configService.configCache.eventQueueFlushSize {
             if self.datastore.checkLastEventType(type: NIDEventName.bufferFull.rawValue) {
                 self.datastore.insertCleanedEvent(
                     event: NIDEvent(type: NIDEventName.bufferFull),

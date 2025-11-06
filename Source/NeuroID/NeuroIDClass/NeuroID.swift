@@ -196,6 +196,8 @@ public class NeuroID: NSObject {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
+        self.useFingerprintProxy = configuration.useFingerprintProxy
+        
         if self.verifyClientKeyExists() {
             self.logger.e("You already configured the SDK")
             return false
@@ -217,7 +219,6 @@ public class NeuroID: NSObject {
         
         self.advancedDeviceKey = configuration.advancedDeviceKey
         self.isAdvancedDevice = configuration.isAdvancedDevice
-        self.useFingerprintProxy = configuration.useFingerprintProxy
 
         if configuration.clientKey.contains("_live_") {
             self.environment = Constants.environmentLive.rawValue

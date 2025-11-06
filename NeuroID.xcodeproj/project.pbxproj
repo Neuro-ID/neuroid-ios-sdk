@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
+		01E5B4742EBD0C94007C9B2B /* ConfigureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4732EBD0C94007C9B2B /* ConfigureTests.swift */; };
 		076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076252EE2876294400FBA209 /* NeuroIDSensors.swift */; };
 		1FD6E6BB2C4598DF00C8017E /* NIDPacketNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */; };
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -150,6 +151,7 @@
 
 /* Begin PBXFileReference section */
 		015C01622EBA46F900077E22 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		01E5B4732EBD0C94007C9B2B /* ConfigureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigureTests.swift; sourceTree = "<group>"; };
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
 		07A05C2028B91B4D00509509 /* NIDMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDMetadata.swift; sourceTree = "<group>"; };
 		0BE81C58F8FE6463D8FCF793 /* Pods_NeuroID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NeuroID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -505,6 +507,7 @@
 				FF17708C2E26DB8E007235A2 /* NIDSendTests.swift */,
 				FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */,
 				FF17708E2E26DB8E007235A2 /* NIDUserTests.swift */,
+				01E5B4732EBD0C94007C9B2B /* ConfigureTests.swift */,
 			);
 			path = NeuroIDClass;
 			sourceTree = "<group>";
@@ -877,6 +880,7 @@
 			files = (
 				6FE77FE72937B3F700357284 /* NIDErrors.swift in Sources */,
 				6F6B75502A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
+				01E5B4742EBD0C94007C9B2B /* ConfigureTests.swift in Sources */,
 				FF1770AA2E26DB8E007235A2 /* NIDSessionTests.swift in Sources */,
 				FF1770AB2E26DB8E007235A2 /* NIDNewSessionTests.swift in Sources */,
 				FF1770AC2E26DB8E007235A2 /* MockNetworkService.swift in Sources */,
