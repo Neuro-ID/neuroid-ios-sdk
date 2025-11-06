@@ -30,7 +30,7 @@ class ConfigureTests: XCTestCase {
     // MARK: - Configuration Propagation Tests
     
     // Test that Configuration properly sets the proxy flag
-    func test_configure_with_fingerprint_proxy_enabled() {
+    func testConfigureWithFingerprintProxyEnabled() {
         config.useFingerprintProxy = true
         let _ = NeuroID.configure(config)
         
@@ -38,7 +38,7 @@ class ConfigureTests: XCTestCase {
     }
     
     // Test explicit proxy disabled
-    func test_configure_with_fingerprint_proxy_disabled() {
+    func testConfigureWithFingerprintProxyDisabled() {
         config.useFingerprintProxy = false
         let _ = NeuroID.configure(config)
         
@@ -46,7 +46,7 @@ class ConfigureTests: XCTestCase {
     }
 
     // Test default value when not specified
-    func test_configure_fingerprint_proxy_defaults_to_false() {
+    func testConfigureFingerprintProxyDefaultsToFalse() {
         let _ = NeuroID.configure(config)
         
         XCTAssertFalse(NeuroID.shared.useFingerprintProxy, "Proxy flag should default to false when not specified")
@@ -54,7 +54,7 @@ class ConfigureTests: XCTestCase {
     
     
     // Test that the value changes on reconfigure
-    func test_reconfigure_changes_proxy_setting() {
+    func testReconfigureChangesProxySetting() {
         // First configure with proxy enabled
         config.useFingerprintProxy = true
         let _ = NeuroID.configure(config)
@@ -69,12 +69,12 @@ class ConfigureTests: XCTestCase {
     }
     
     // MARK: - FingerprintEndpoint
-    func test_fingerprint_endpoint_standard_url() {
+    func testFingerprintEndpointStandardUrl() {
         let standardURL = AdvancedDeviceService.FingerprintEndpoint.standard.url
         XCTAssertEqual(standardURL, "https://advanced.neuro-id.com", "Standard endpoint should use correct URL")
     }
     
-    func test_fingerprint_endpoint_proxy_url() {
+    func testFingerprintEndpointProxyUrl() {
         let proxyURL = AdvancedDeviceService.FingerprintEndpoint.proxy.url
         XCTAssertEqual(proxyURL, "https://dn.neuroid.cloud/iynlfqcb0t", "Proxy endpoint should use correct URL")
     }
