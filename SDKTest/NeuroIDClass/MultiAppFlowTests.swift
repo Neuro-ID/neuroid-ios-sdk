@@ -150,9 +150,9 @@ class MultiAppFlowTests: XCTestCase {
             shouldFail: false,
             randomGenerator: MockedNIDRandomGenerator(0)
         )
-        service._isSessionFlowSampled = false // setting to false indicating we are throttling
+        service._isSessionFlowSampled = false
         service.retrieveConfig()
-        NeuroID.shared.configService = service
+        NeuroID.shared.configService = service // setting to false indicating we are throttling
 
         NeuroID.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
 
@@ -170,19 +170,19 @@ class MultiAppFlowTests: XCTestCase {
         let configuration = NeuroID.Configuration(clientKey: clientKey)
         _ = NeuroID.configure(configuration)
         NeuroID.shared.deviceSignalService = mockService
-        _ = NeuroID.configure(clientKey: clientKey)
         NeuroID.shared._isSDKStarted = true
 
         let service = getMockConfigService(
             shouldFail: false,
             randomGenerator: MockedNIDRandomGenerator(0)
         )
+
         service._isSessionFlowSampled = true // setting to true indicating we are NOT throttling
-        service.retrieveConfig()
         NeuroID.shared.configService = service
 
         NeuroID.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
-        
+        service.retrieveConfig()
+
         let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
             $0.type == "ADVANCED_DEVICE_REQUEST"
         }

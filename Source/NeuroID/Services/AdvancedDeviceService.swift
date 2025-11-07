@@ -8,8 +8,8 @@
 import FingerprintPro
 import Foundation
 
-// Reusable tuple for fingerprint results (requestId, calculated duration in ms, sealedResult)
-typealias FingerprintResult = (requestId: String, duration: Double, sealedResult: String?)
+// Reusable tuple for Advanced Device Results (requestId, calculated duration in ms, sealedResult)
+typealias AdvancedDeviceResult = (requestId: String, duration: Double, sealedResult: String?)
 
 struct NIDADVKeyResponse: Codable {
     let key: String
@@ -21,7 +21,7 @@ protocol AdvancedDeviceServiceProtocol {
         clientID: String?,
         linkedSiteID: String?,
         advancedDeviceKey: String?,
-        completion: @escaping (Result<FingerprintResult, Error>) -> Void
+        completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     )
 }
 
@@ -31,7 +31,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         clientID: String?,
         linkedSiteID: String?,
         advancedDeviceKey: String?,
-        completion: @escaping (Result<FingerprintResult, Error>) -> Void
+        completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     ) {
         // normalize empty advanced device keys to nil for use below
         var advKey = advancedDeviceKey
@@ -145,17 +145,12 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         }
         task.resume()
     }
-
-    static func getFingerprintResult(
+    
+    static func getAdvancedDeviceResult(
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        // Select the region once based on the useFingerprintProxy flag
-        let region: Region = NeuroID.shared.useFingerprintProxy
-            ? .custom(domain: FingerprintEndpoint.proxy.url, fallback: [FingerprintEndpoint.standard.url])
-            : .custom(domain: FingerprintEndpoint.standard.url)
-
-        let configuration = Configuration(apiKey: apiKey, region: region)
+        let configuration = Configuration(apiKey: apiKey, region: endpoint)
         let client = FingerprintProFactory.getInstance(configuration)
         
         client.getVisitorIdResponse { result in
@@ -176,18 +171,25 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         }
     }
     
+    // Selects the endpoint to use based on the `useAdvancedDeviceProxy` flag
+    static var endpoint: FingerprintPro.Region {
+        return NeuroID.shared.useAdvancedDeviceProxy
+            ? .custom(domain: Endpoints.proxy.url, fallback: [Endpoints.standard.url])
+            : .custom(domain: Endpoints.standard.url)
+    }
+    
     static func retryAPICall(
         apiKey: String,
         maxRetries: Int,
         delay: TimeInterval,
-        completion: @escaping (Result<FingerprintResult, Error>) -> Void
+        completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     ) {
         var currentRetry = 0
 
         func attemptAPICall() {
             let startTime = Date()
 
-            getFingerprintResult(apiKey) { result in
+            getAdvancedDeviceResult(apiKey) { result in
                 switch result {
                 case .success(let (requestID, sealedResults)):
                     let duration = Date().timeIntervalSince(startTime) * 1000

@@ -115,8 +115,8 @@ public class NeuroID: NSObject {
 
     var packetNumber: Int32 = 0
     
-    // Fingerprint Proxy Usage Flag
-    var useFingerprintProxy: Bool = false
+    // Use Advanced Device Proxy 
+    var useAdvancedDeviceProxy: Bool = false
 
     // Testing Purposes Only
     static var _isTesting = false
@@ -196,7 +196,7 @@ public class NeuroID: NSObject {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
-        self.useFingerprintProxy = configuration.useFingerprintProxy
+        self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
         
         if self.verifyClientKeyExists() {
             self.logger.e("You already configured the SDK")

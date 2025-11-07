@@ -45,7 +45,7 @@ extension NeuroID {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
                 if currentTimeEpoch < exp {
-                    // If there is sealed results from Fingerprint proxy, include those
+                    // If there is sealed results from proxy, include those
                     let storedSealedResults: String? = storedADVKey["scr"] as? String
 
                     self.captureADVEvent(requestID, cached: true, latency: 0, message: "", sealedClientResults: storedSealedResults)

@@ -83,9 +83,9 @@ enum CallInProgressMetaData: String {
     case RINGING = "ringing"
 }
 
-// Options for Fingerprint endpoints
+// Options for Endpoints
 extension AdvancedDeviceService {
-    enum FingerprintEndpoint {
+    enum Endpoints {
         case standard, proxy
         
         var url: String {

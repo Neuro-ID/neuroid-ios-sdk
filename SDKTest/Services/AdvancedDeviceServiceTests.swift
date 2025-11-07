@@ -7,17 +7,40 @@
 
 import XCTest
 @testable import NeuroID
+import FingerprintPro
 
 class AdvancedDeviceServiceTests: XCTestCase {
+
+    var defaultConfig = NeuroID.Configuration(
+        clientKey: "test_key",
+        isAdvancedDevice: true
+    )
     
-    // MARK: - FingerprintEndpoint
-    func testFingerprintEndpointStandardUrl() {
-        let standardURL = AdvancedDeviceService.FingerprintEndpoint.standard.url
-        XCTAssertEqual(standardURL, "https://advanced.neuro-id.com", "Standard endpoint should use correct URL")
+    // MARK: - AdvancedDeviceService endpoint selection
+
+    // When `useAdvancedDeviceProxy` is disabled it should select the standard endpoint domain only
+    func testEndpointUsesStandardWhenProxyDisabled() {
+        let _ = NeuroID.configure(defaultConfig)
+
+        XCTAssertEqual(
+            AdvancedDeviceService.endpoint,
+            .custom(domain: AdvancedDeviceService.Endpoints.standard.url),
+            "Standard endpoint configuration should match"
+        )
     }
-    
-    func testFingerprintEndpointProxyUrl() {
-        let proxyURL = AdvancedDeviceService.FingerprintEndpoint.proxy.url
-        XCTAssertEqual(proxyURL, "https://dn.neuroid.cloud/iynlfqcb0t", "Proxy endpoint should use correct URL")
+
+    // When `useAdvancedDeviceProxy` is enabled it should select the proxy domain with the standard domain as a fallback
+    func testEndpointUsesProxyWhenEnabled() {
+        defaultConfig.useAdvancedDeviceProxy = true
+        let _ = NeuroID.configure(defaultConfig)
+
+        XCTAssertEqual(
+            AdvancedDeviceService.endpoint,
+            .custom(
+                domain: AdvancedDeviceService.Endpoints.proxy.url,
+                fallback: [AdvancedDeviceService.Endpoints.standard.url]
+            ),
+            "Proxy endpoint configuration should match"
+        )
     }
 }

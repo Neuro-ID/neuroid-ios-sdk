@@ -344,7 +344,7 @@ public class NIDEvent: Codable {
     var iswifi: Bool?
     var isconnected: Bool?
 
-    // Sealed results from Fingerprint
+    // Sealed results from Advanced Device Proxy
     var sealedClientResults: String?
 
     // Generic Event Init instead of one off inits
