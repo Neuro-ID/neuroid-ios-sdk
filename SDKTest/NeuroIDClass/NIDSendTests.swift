@@ -27,35 +27,35 @@ class NIDSendTests: BaseTestClass {
     }
 
     func test_sendCollectionEventsJob() {
+        let exp = expectation(description: "D")
+        exp.expectedFulfillmentCount = 2
+        exp.assertForOverFulfill = true
+        
+        let counterQ = DispatchQueue(label: "nid.tests.counter")
         var valueChanged = 0
-        let expectations1 = XCTestExpectation(description: "Wait for 3 seconds pt 1")
-        let expectations2 = XCTestExpectation(description: "Wait for 3 seconds pt 2")
-
+        
         NeuroID.shared.sendCollectionEventsJob.cancel()
 
         NeuroID.shared.sendCollectionEventsJob = RepeatingTask(
             interval: 0.5,
             task: {
-                valueChanged += 1
-                if valueChanged == 1 {
-                    expectations1.fulfill()
-                } else if valueChanged == 2 {
-                    expectations2.fulfill()
-                } else {
-                    print("ERROR - Unknown Expectation")
-                    XCTAssertThrowsError("Unknown Expectation - sendCollectionEventsJob")
+                let newValue = counterQ.sync {
+                    valueChanged += 1
+                    return valueChanged
+                }
+                exp.fulfill()
+                
+                if newValue == 2 {
+                    NeuroID.shared.sendCollectionEventsJob.cancel()
                 }
             }
         )
 
         NeuroID.shared.sendCollectionEventsJob.start()
 
-        wait(for: [expectations1], timeout: 7)
-        assert(valueChanged == 1)
+        wait(for: [exp], timeout: 7)
 
-        wait(for: [expectations2], timeout: 7)
-        assert(valueChanged == 2)
-
-        NeuroID.shared.sendCollectionEventsJob.cancel()
+        let finalCount = counterQ.sync { valueChanged }
+        XCTAssertEqual(finalCount, 2)
     }
 }
