@@ -150,7 +150,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        let configuration = Configuration(apiKey: apiKey, region: endpoint)
+        let configuration = Configuration(apiKey: apiKey, region: endpoint(useProxy: NeuroID.shared.useAdvancedDeviceProxy))
         let client = FingerprintProFactory.getInstance(configuration)
         
         client.getVisitorIdResponse { result in
@@ -172,8 +172,8 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     }
     
     // Selects the endpoint to use based on the `useAdvancedDeviceProxy` flag
-    static var endpoint: FingerprintPro.Region {
-        return NeuroID.shared.useAdvancedDeviceProxy
+    static func endpoint(useProxy: Bool) -> FingerprintPro.Region {
+        return useProxy
             ? .custom(domain: Endpoints.proxy.url, fallback: [Endpoints.standard.url])
             : .custom(domain: Endpoints.standard.url)
     }

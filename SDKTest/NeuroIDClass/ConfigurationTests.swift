@@ -15,9 +15,11 @@ class ConfigurationTests: XCTestCase {
         isAdvancedDevice: true
     )
     
+    var neuroID: NeuroID = NeuroID()
+    
     override func setUp() {
         super.setUp()
-        NeuroID._isTesting = true
+        neuroID = NeuroID()
     }
     
     // MARK: - `useAdvancedDeviceProxy` Tests
@@ -25,24 +27,24 @@ class ConfigurationTests: XCTestCase {
     // Test that Configuration properly sets the proxy flag
     func testConfigureWithFingerprintProxyEnabled() {
         config.useAdvancedDeviceProxy = true
-        let _ = NeuroID.configure(config)
+        let _ = neuroID.configure(config)
         
-        XCTAssertTrue(NeuroID.shared.useAdvancedDeviceProxy, "Proxy flag should be enabled after configuration")
+        XCTAssertTrue(neuroID.useAdvancedDeviceProxy, "Proxy flag should be enabled after configuration")
     }
     
     // Test explicit proxy disabled
     func testConfigureWithFingerprintProxyDisabled() {
         config.useAdvancedDeviceProxy = false
-        let _ = NeuroID.configure(config)
+        let _ = neuroID.configure(config)
         
-        XCTAssertFalse(NeuroID.shared.useAdvancedDeviceProxy, "Proxy flag should be disabled when explicitly set to false")
+        XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Proxy flag should be disabled when explicitly set to false")
     }
 
     // Test default value when not specified
     func testConfigureFingerprintProxyDefaultsToFalse() {
-        let _ = NeuroID.configure(config)
+        let _ = neuroID.configure(config)
         
-        XCTAssertFalse(NeuroID.shared.useAdvancedDeviceProxy, "Proxy flag should default to false when not specified")
+        XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Proxy flag should default to false when not specified")
     }
     
     
@@ -50,15 +52,15 @@ class ConfigurationTests: XCTestCase {
     func testReconfigureChangesProxySetting() {
         // First configure with proxy enabled
         config.useAdvancedDeviceProxy = true
-        let _ = NeuroID.configure(config)
+        let _ = neuroID.configure(config)
         
-        XCTAssertTrue(NeuroID.shared.useAdvancedDeviceProxy, "Initial configuration should enable proxy")
+        XCTAssertTrue(neuroID.useAdvancedDeviceProxy, "Initial configuration should enable proxy")
         
         // Reconfigure with proxy disabled
         config.useAdvancedDeviceProxy = false
-        let _ = NeuroID.configure(config)
+        let _ = neuroID.configure(config)
         
-        XCTAssertFalse(NeuroID.shared.useAdvancedDeviceProxy, "Reconfiguration should disable proxy")
+        XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Reconfiguration should disable proxy")
     }
 
 }
