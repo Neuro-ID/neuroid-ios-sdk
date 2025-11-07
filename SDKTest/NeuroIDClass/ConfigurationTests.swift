@@ -25,7 +25,7 @@ class ConfigurationTests: XCTestCase {
     // MARK: - `useAdvancedDeviceProxy` Tests
     
     // Test that Configuration properly sets the proxy flag
-    func testConfigureWithFingerprintProxyEnabled() {
+    func testConfigureWithProxyEnabled() {
         config.useAdvancedDeviceProxy = true
         let _ = neuroID.configure(config)
         
@@ -33,7 +33,7 @@ class ConfigurationTests: XCTestCase {
     }
     
     // Test explicit proxy disabled
-    func testConfigureWithFingerprintProxyDisabled() {
+    func testConfigureWithProxyDisabled() {
         config.useAdvancedDeviceProxy = false
         let _ = neuroID.configure(config)
         
@@ -41,7 +41,7 @@ class ConfigurationTests: XCTestCase {
     }
 
     // Test default value when not specified
-    func testConfigureFingerprintProxyDefaultsToFalse() {
+    func testConfigureProxyDefaultsToFalse() {
         let _ = neuroID.configure(config)
         
         XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Proxy flag should default to false when not specified")
