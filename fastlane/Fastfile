@@ -23,7 +23,6 @@ platform :ios do
       devices: ["iPhone 17 Pro (26.0)"],
       clean: true,
       xcargs: "CODE_SIGNING_ALLOWED=NO",
-      prelaunch_simulator: true,
       parallel_testing: false
     )
   end
