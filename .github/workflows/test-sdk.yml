@@ -35,5 +35,24 @@ jobs:
       - name: CocoaPod Install
         run: pod install
 
-      - name: Run iOS Unit Testing for Dev SDK
-        run: bundle exec fastlane test
+      # - name: Run iOS Unit Testing for Dev SDK
+      #   run: bundle exec fastlane test
+
+      - name: Build and Test
+        run: |
+          set -o pipefail
+          xcodebuild clean build test \
+            CODE_SIGNING_ALLOWED=NO \
+            -workspace ./NeuroID.xcworkspace \
+            -scheme NeuroID \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest" \
+            -resultBundlePath TestResults.xcresult | \
+          xcbeautify
+
+      - name: Upload xcresult + logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-test-artifacts
+          path: |
+            TestResults.xcresult
