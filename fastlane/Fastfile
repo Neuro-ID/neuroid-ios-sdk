@@ -20,10 +20,11 @@ platform :ios do
   lane :test do
     scan(
       scheme: "NeuroID",
+      devices: ["iPhone 17 Pro (26.0)"],
       clean: true,
-      destination: "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest",
       xcargs: "CODE_SIGNING_ALLOWED=NO",
-      prelaunch_simulator: true
+      prelaunch_simulator: true,
+      parallel_testing: false
     )
   end
 
