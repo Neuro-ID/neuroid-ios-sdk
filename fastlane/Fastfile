@@ -21,7 +21,7 @@ platform :ios do
     scan(
       scheme: "NeuroID",
       clean: true,
-      devices: ["iPhone 17 Pro (26.0)"],
+      destination: "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest",
       xcargs: "CODE_SIGNING_ALLOWED=NO",
       prelaunch_simulator: true
     )
