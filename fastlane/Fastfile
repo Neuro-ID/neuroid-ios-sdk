@@ -18,11 +18,12 @@ default_platform(:ios)
 platform :ios do
   desc "Run Schema Tests"
   lane :test do
-    run_tests(
+    scan(
       scheme: "NeuroID",
       clean: true,
       devices: ["iPhone 17 Pro (26.0)"],
       xcargs: "CODE_SIGNING_ALLOWED=NO",
+      prelaunch_simulator: true
     )
   end
 
