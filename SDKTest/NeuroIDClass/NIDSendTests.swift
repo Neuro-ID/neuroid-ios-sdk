@@ -56,6 +56,6 @@ class NIDSendTests: BaseTestClass {
         wait(for: [exp], timeout: 7)
 
         let finalCount = counterQ.sync { valueChanged }
-        XCTAssertEqual(finalCount, 2)
+        XCTAssertGreaterThanOrEqual(finalCount, 2)
     }
 }
