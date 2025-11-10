@@ -28,7 +28,6 @@ extension NeuroID {
             configOptionKey: .useAdvancedDeviceProxy
         )
 
-
         let configuration = Configuration(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,

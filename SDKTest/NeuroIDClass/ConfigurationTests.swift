@@ -10,16 +10,17 @@ import XCTest
 
 class ConfigurationTests: XCTestCase {
     
-    var config = NeuroID.Configuration(
-        clientKey: "test_key",
-        isAdvancedDevice: true
-    )
+    var config = NeuroID.Configuration(clientKey: "")
     
     var neuroID: NeuroID = NeuroID()
     
     override func setUp() {
         super.setUp()
         neuroID = NeuroID()
+        config = NeuroID.Configuration(
+            clientKey: "test_key",
+            isAdvancedDevice: true
+        )
     }
     
     // MARK: - `useAdvancedDeviceProxy` Tests
