@@ -82,3 +82,19 @@ enum CallInProgressMetaData: String {
     case ONHOLD = "onhold"
     case RINGING = "ringing"
 }
+
+// Options for Endpoints
+extension AdvancedDeviceService {
+    enum Endpoints {
+        case standard, proxy
+        
+        var url: String {
+            switch self {
+            case .standard:
+                return "https://advanced.neuro-id.com"
+            case .proxy:
+                return "https://dn.neuroid.cloud/iynlfqcb0t"
+            }
+        }
+    }
+}

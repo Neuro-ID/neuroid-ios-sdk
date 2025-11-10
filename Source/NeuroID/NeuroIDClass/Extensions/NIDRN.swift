@@ -17,12 +17,23 @@ extension NeuroID {
             rnOptions: rnOptions,
             configOptionKey: .isAdvancedDevice
         )
+        
         let advancedDeviceKey = self.getOptionValueString(
             rnOptions: rnOptions,
             configOptionKey: .advancedDeviceKey
         )
+        
+        let useAdvancedDeviceProxy: Bool = self.getOptionValueBool(
+            rnOptions: rnOptions,
+            configOptionKey: .useAdvancedDeviceProxy
+        )
 
-        let configuration = Configuration(clientKey: clientKey, isAdvancedDevice: isAdvancedDevice, advancedDeviceKey: advancedDeviceKey)
+        let configuration = Configuration(
+            clientKey: clientKey,
+            isAdvancedDevice: isAdvancedDevice,
+            advancedDeviceKey: advancedDeviceKey,
+            useAdvancedDeviceProxy: useAdvancedDeviceProxy
+        )
             
         let configured = self.configure(configuration)
 
@@ -67,4 +78,5 @@ public enum RNConfigOptions: String, Hashable {
     case usingReactNavigation
     case isAdvancedDevice
     case advancedDeviceKey
+    case useAdvancedDeviceProxy
 }

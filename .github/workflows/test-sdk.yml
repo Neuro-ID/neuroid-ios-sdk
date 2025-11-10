@@ -22,7 +22,7 @@ jobs:
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.6
+          ruby-version: 3.4.7
           bundler-cache: true
 
       - name: Cache CocoaPods
@@ -35,5 +35,14 @@ jobs:
       - name: CocoaPod Install
         run: pod install
 
-      - name: Run iOS Unit Testing for Dev SDK
-        run: bundle exec fastlane test
+      - name: Build and Test
+        run: |
+          set -o pipefail
+          xcodebuild clean build test \
+            CODE_SIGNING_ALLOWED=NO \
+            -workspace ./NeuroID.xcworkspace \
+            -scheme NeuroID \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest" \
+            -resultBundlePath TestResults.xcresult | \
+          xcbeautify

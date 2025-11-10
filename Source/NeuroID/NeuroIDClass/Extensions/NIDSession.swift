@@ -69,9 +69,7 @@ extension NeuroID {
             message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
         )
 
-        if !self.verifyClientKeyExists()
-            || !self.validationService.validateSiteID(siteID)
-        {
+        if !self.verifyClientKeyExists() || !self.validationService.validateSiteID(siteID) {
             let res = SessionStartResult(false, "")
 
             self.linkedSiteID = nil

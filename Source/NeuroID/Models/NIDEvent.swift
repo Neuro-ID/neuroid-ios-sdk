@@ -344,6 +344,9 @@ public class NIDEvent: Codable {
     var iswifi: Bool?
     var isconnected: Bool?
 
+    // Sealed results from Advanced Device Proxy
+    var sealedClientResults: String?
+
     // Generic Event Init instead of one off inits
     init(
         type: NIDEventName,
@@ -396,7 +399,8 @@ public class NIDEvent: Codable {
         m: String? = nil,
         level: String? = nil,
         iswifi: Bool? = nil,
-        isconnected: Bool? = nil
+        isconnected: Bool? = nil,
+        sealedClientResults: String? = nil
     ) {
         self.type = type.rawValue
         self.tg = tg
@@ -449,6 +453,63 @@ public class NIDEvent: Codable {
         self.level = level
         self.iswifi = iswifi
         self.isconnected = isconnected
+        self.sealedClientResults = sealedClientResults
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case type
+        case tg
+        case tgs
+        case key
+        case ct
+        case v
+        case hv
+        case en
+        case etn
+        case et
+        case ec
+        case eid
+        case ts
+        case x
+        case y
+        case h
+        case w
+        case f
+        case l
+        case lsid
+        case sid
+        case cid
+        case did
+        case rid
+        case loc
+        case ua
+        case tzo
+        case lng
+        case p
+        case dnt
+        case tch
+        case url
+        case ns
+        case jsl
+        case jsv
+        case uid
+        case sm
+        case pd
+        case attrs
+        case gyro
+        case accel
+        case touches
+        case metadata
+        case sh
+        case sw
+        case rts
+        case c
+        case cp
+        case m
+        case level
+        case iswifi
+        case isconnected
+        case sealedClientResults = "scr"
     }
 
     init(rawType: String) {
@@ -552,6 +613,7 @@ public class NIDEvent: Codable {
         copy.cp = self.cp
         copy.iswifi = self.iswifi
         copy.isconnected = self.isconnected
+        copy.sealedClientResults = self.sealedClientResults
 
         return copy
     }

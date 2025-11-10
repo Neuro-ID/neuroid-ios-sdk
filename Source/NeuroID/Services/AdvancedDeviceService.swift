@@ -8,21 +8,30 @@
 import FingerprintPro
 import Foundation
 
+// Reusable tuple for Advanced Device Results (requestId, calculated duration in ms, sealedResult)
+typealias AdvancedDeviceResult = (requestId: String, duration: Double, sealedResult: String?)
+
 struct NIDADVKeyResponse: Codable {
     let key: String
 }
 
 protocol AdvancedDeviceServiceProtocol {
     func getAdvancedDeviceSignal(
-        _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
-        completion: @escaping (Result<(String, Double), Error>) -> Void
+        _ apiKey: String,
+        clientID: String?,
+        linkedSiteID: String?,
+        advancedDeviceKey: String?,
+        completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     )
 }
 
 class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     public func getAdvancedDeviceSignal(
-        _ apiKey: String, clientID: String?, linkedSiteID: String?, advancedDeviceKey: String?,
-        completion: @escaping (Result<(String, Double), Error>) -> Void
+        _ apiKey: String,
+        clientID: String?,
+        linkedSiteID: String?,
+        advancedDeviceKey: String?,
+        completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     ) {
         // normalize empty advanced device keys to nil for use below
         var advKey = advancedDeviceKey
@@ -32,38 +41,23 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         guard let notNilFPJSKey = advKey else {
             // FPJS key not passed in, Retrieve Key from NID Server for Request
             AdvancedDeviceService.getAPIKey(
-                apiKey, clientID: clientID, linkedSiteID: linkedSiteID
+                apiKey,
+                clientID: clientID,
+                linkedSiteID: linkedSiteID
             ) { result in
                 switch result {
                 case .success(let fAPiKey):
                     // Retrieve ADV Data using Request Key
-                    AdvancedDeviceService.retryAPICall(
-                        apiKey: fAPiKey, maxRetries: 3, delay: 2
-                    ) { result in
-                        switch result {
-                        case .success(let (value, duration)):
-                            completion(.success((value, duration)))
-                        case .failure(let error):
-                            completion(.failure(error))
-                        }
-                    }
+                    AdvancedDeviceService.retryAPICall(apiKey: fAPiKey, maxRetries: 3, delay: 2, completion: completion)
                 case .failure(let error):
                     completion(.failure(error))
                 }
             }
             return
         }
+
         // fpjs key passed in, get RID!
-        AdvancedDeviceService.retryAPICall(
-            apiKey: notNilFPJSKey, maxRetries: 3, delay: 2
-        ) { result in
-            switch result {
-            case .success(let (value, duration)):
-                completion(.success((value, duration)))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        AdvancedDeviceService.retryAPICall(apiKey: notNilFPJSKey, maxRetries: 3, delay: 2, completion: completion)
     }
 
     static func getAPIKey(
@@ -76,8 +70,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
             string:
             "https://receiver.neuroid.cloud/a/\(apiKey)?clientId=\(clientID ?? "")&linkedSiteId=\(linkedSiteID ?? "")"
         )!
-        let task = URLSession.shared.dataTask(with: apiURL) {
-            data, response, error in
+        let task = URLSession.shared.dataTask(with: apiURL) { data, response, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -152,76 +145,67 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         }
         task.resume()
     }
-
-    static func getRequestID(
+    
+    static func getAdvancedDeviceResult(
         _ apiKey: String,
-        completion: @escaping (Result<String, Error>) -> Void
+        completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        if #available(iOS 13.0, *) {
-            let region: Region = .custom(
-                domain: "https://advanced.neuro-id.com"
-            )
-            let configuration = Configuration(apiKey: apiKey, region: region)
-            let client = FingerprintProFactory.getInstance(configuration)
-            client.getVisitorIdResponse { result in
-                switch result {
-                case .success(let fResponse):
-                    completion(.success(fResponse.requestId))
-                case .failure(let error):
-                    completion(
-                        .failure(
-                            createError(
-                                code: 6,
-                                description:
-                                "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
-                            )
+        let configuration = Configuration(apiKey: apiKey, region: endpoint(useProxy: NeuroID.shared.useAdvancedDeviceProxy))
+        let client = FingerprintProFactory.getInstance(configuration)
+        
+        client.getVisitorIdResponse { result in
+            switch result {
+            case .success(let fpResponse):
+                completion(.success((fpResponse.requestId, fpResponse.sealedResult)))
+            case .failure(let error):
+                completion(
+                    .failure(
+                        createError(
+                            code: 6,
+                            description:
+                            "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
                         )
                     )
-                }
-            }
-        } else {
-            completion(
-                .failure(
-                    createError(
-                        code: 7,
-                        description:
-                        "Fingerprint Response Failure (code 7): Method Not Available"
-                    )
                 )
-            )
+            }
         }
     }
-
+    
+    // Selects the endpoint to use based on the `useAdvancedDeviceProxy` flag
+    static func endpoint(useProxy: Bool) -> FingerprintPro.Region {
+        return useProxy
+            ? .custom(domain: Endpoints.proxy.url, fallback: [Endpoints.standard.url])
+            : .custom(domain: Endpoints.standard.url)
+    }
+    
     static func retryAPICall(
         apiKey: String,
         maxRetries: Int,
         delay: TimeInterval,
-        completion: @escaping (Result<(String, TimeInterval), Error>) -> Void
+        completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     ) {
         var currentRetry = 0
 
         func attemptAPICall() {
             let startTime = Date()
 
-            getRequestID(apiKey) { result in
-                if case .failure(let error) = result {
-                    if error.localizedDescription.contains(
-                        "Method not available")
-                    {
+            getAdvancedDeviceResult(apiKey) { result in
+                switch result {
+                case .success(let (requestID, sealedResults)):
+                    let duration = Date().timeIntervalSince(startTime) * 1000
+                    completion(.success((requestID, duration, sealedResults)))
+
+                case .failure(let error):
+                    if error.localizedDescription.contains("Method not available") {
                         completion(.failure(error))
                     } else if currentRetry < maxRetries {
                         currentRetry += 1
-                        DispatchQueue.global().asyncAfter(
-                            deadline: .now() + delay
-                        ) {
+                        DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
                             attemptAPICall()
                         }
                     } else {
                         completion(.failure(error))
                     }
-                } else if case .success(let value) = result {
-                    let duration = Date().timeIntervalSince(startTime) * 1000
-                    completion(.success((value, duration)))
                 }
             }
         }

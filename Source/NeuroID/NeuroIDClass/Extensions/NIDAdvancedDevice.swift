@@ -41,13 +41,14 @@ extension NeuroID {
 
     func getCachedADV() -> Bool {
         if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
-            if let exp = storedADVKey["exp"] as? Double,
-               let requestID = storedADVKey["key"] as? String
-            {
+            if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
                 let currentTimeEpoch = Date().timeIntervalSince1970
 
                 if currentTimeEpoch < exp {
-                    self.captureADVEvent(requestID, cached: true, latency: 0, message: "")
+                    // If there is sealed results from proxy, include those
+                    let storedSealedResults: String? = storedADVKey["scr"] as? String
+
+                    self.captureADVEvent(requestID, cached: true, latency: 0, message: "", sealedClientResults: storedSealedResults)
                     return true
                 }
             }
@@ -70,43 +71,58 @@ extension NeuroID {
             advancedDeviceKey: self.advancedDeviceKey
         ) { request in
             switch request {
-            case .success((let requestID, let duration)):
+            case .success((let requestID, let duration, let sealedClientResults)):
 
-                self.captureADVEvent(requestID,
-                                     cached: false,
-                                     latency: duration,
-                                     message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key")
+                self.captureADVEvent(
+                    requestID,
+                    cached: false,
+                    latency: duration,
+                    message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key",
+                    sealedClientResults: sealedClientResults
+                )
 
+                let storedKey : [String: Any?] = [
+                    "exp": UtilFunctions.getFutureTimeStamp(
+                        self.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
+                    ),
+                    "key": requestID,
+                    "scr": sealedClientResults
+                ]
+                
                 setUserDefaultKey(
                     Constants.storageAdvancedDeviceKey.rawValue,
-                    value: [
-                        "exp": UtilFunctions.getFutureTimeStamp(
-                            self.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
-                        ),
-                        "key": requestID,
-                    ] as [String: Any]
+                    value: storedKey.compactMapValues { $0 }
                 )
+
                 self.isFPJSRunning = false
+
             case .failure(let error):
                 self.saveEventToDataStore(
                     NIDEvent.createErrorLogEvent(
                         error.localizedDescription
                     )
                 )
+
                 self.saveEventToDataStore(
                     NIDEvent(
                         type: .advancedDeviceRequestFailed,
                         m: error.localizedDescription
                     )
                 )
+
                 self.isFPJSRunning = false
+
                 return
             }
         }
     }
 
     func captureADVEvent(
-        _ requestID: String, cached: Bool, latency: Double, message: String
+        _ requestID: String,
+        cached: Bool,
+        latency: Double,
+        message: String,
+        sealedClientResults: String? = nil
     ) {
         self.saveEventToDataStore(
             NIDEvent(
@@ -115,7 +131,8 @@ extension NeuroID {
                 l: latency,
                 rid: requestID,
                 c: cached,
-                m: message
+                m: message,
+                sealedClientResults: sealedClientResults
             )
         )
     }
@@ -124,7 +141,7 @@ extension NeuroID {
      Based on the parameter passed in AND the sampling flag, this function will make a call to the ADV library or not,
      Default is to use the global settings from the NeuroID class but can be overridden (see `start`
      or `startSession` in the `NIDAdvancedDevice.swift` file.
-
+    
      Marked as `@objc` because this method can be called with reflection if the ADV library is not installed.
      Because of the reflection we use an array with a boolean instead of just boolean. Log the shouldCapture flag
      in a LOG event (isAdvancedDevice setting: <true/false>.
@@ -140,14 +157,8 @@ extension NeuroID {
 
         // Verify the command is called with a true value (want to capture) AND that the session
         //  is NOT being restricted/throttled prior to calling for an ADV event
-
-        if shouldCapture,
-           self.configService.isSessionFlowSampled
-        {
-            // call stored value, if expired then clear and get new one, else send existing
-            if !self.getCachedADV() {
-                self.getNewADV()
-            }
+        if shouldCapture && self.configService.isSessionFlowSampled && !self.getCachedADV() {
+            self.getNewADV()
         }
     }
 }

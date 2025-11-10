@@ -10,18 +10,18 @@ extension NeuroID {
         var clientKey: String
         var isAdvancedDevice: Bool
         var advancedDeviceKey: String?
-        var useFingerprintProxy: Bool
+        var useAdvancedDeviceProxy: Bool
 
         public init(
             clientKey: String,
             isAdvancedDevice: Bool = false,
             advancedDeviceKey: String? = nil,
-            useFingerprintProxy: Bool = false
+            useAdvancedDeviceProxy: Bool = false
         ) {
             self.clientKey = clientKey
             self.isAdvancedDevice = isAdvancedDevice
             self.advancedDeviceKey = advancedDeviceKey
-            self.useFingerprintProxy = useFingerprintProxy
+            self.useAdvancedDeviceProxy = useAdvancedDeviceProxy
         }
     }
 }
