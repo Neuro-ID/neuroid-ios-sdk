@@ -150,10 +150,20 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        let configuration = Configuration(apiKey: apiKey, region: endpoint(useProxy: NeuroID.shared.useAdvancedDeviceProxy))
+        let configuration = Configuration(
+            apiKey: apiKey,
+            region: endpoint(useProxy: NeuroID.shared.useAdvancedDeviceProxy)
+        )
+        
         let client = FingerprintProFactory.getInstance(configuration)
         
-        client.getVisitorIdResponse { result in
+        var metadata = Metadata(linkedId: NeuroID.shared.linkedSiteID)
+        metadata.setTag(NeuroID.shared.siteID ?? "", forKey: "siteId")
+        metadata.setTag(NeuroID.shared.clientID ?? "", forKey: "clientId")
+        metadata.setTag(Constants.environmentLive.rawValue, forKey: "environment")
+        metadata.setTag(Date().timeIntervalSince1970 * 1000, forKey: "requestStartTime")
+               
+        client.getVisitorIdResponse(metadata) { result in
             switch result {
             case .success(let fpResponse):
                 completion(.success((fpResponse.requestId, fpResponse.sealedResult)))
