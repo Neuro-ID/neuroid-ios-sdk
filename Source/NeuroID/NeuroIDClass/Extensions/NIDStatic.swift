@@ -12,15 +12,15 @@ import UIKit
 
 public extension NeuroID {
     
-    static func configure(_ configuration: NeuroID.Configuration) -> Bool {
+    static func configure(_ configuration: Configuration) -> Bool {
         return NeuroID.shared.configure(configuration)
     }
     
-    @available(*, deprecated, renamed: "configure(_:)", message: "Use `NeuroID.configure(_ configuration: NeuroID.Configuration)` instead.")
+    @available(*, deprecated, renamed: "configure(_:)", message: "Use `NeuroID.configure(_ configuration: Configuration)` instead.")
     static func configure(
         clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
     ) -> Bool {
-        let configuration = NeuroID.Configuration(
+        let configuration = Configuration(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,
             advancedDeviceKey: advancedDeviceKey

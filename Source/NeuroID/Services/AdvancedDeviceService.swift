@@ -150,7 +150,11 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        let configuration = Configuration(apiKey: apiKey, region: endpoint(useProxy: NeuroID.shared.useAdvancedDeviceProxy))
+        let configuration = FingerprintPro.Configuration(
+            apiKey: apiKey,
+            region: endpoint(useProxy: NeuroID.shared.useAdvancedDeviceProxy)
+        )
+        
         let client = FingerprintProFactory.getInstance(configuration)
         
         client.getVisitorIdResponse { result in

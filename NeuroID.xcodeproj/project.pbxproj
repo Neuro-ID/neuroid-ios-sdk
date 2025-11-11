@@ -449,6 +449,7 @@
 		F25908DD2BEE62E100B7A73D /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				015C01622EBA46F900077E22 /* Configuration.swift */,
 				F2EB87272C500FB7000362C5 /* ApplicationMetaData.swift */,
 				F25908DE2BEE62EF00B7A73D /* RemoteConfiguration.swift */,
 				076252EE2876294400FBA209 /* NeuroIDSensors.swift */,
@@ -471,7 +472,6 @@
 		F2AEE7352A27A5C8009690CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				015C01622EBA46F900077E22 /* Configuration.swift */,
 				F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */,
 				F2AEE7422A27A7B5009690CB /* NIDClientSiteId.swift */,
 				FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */,
