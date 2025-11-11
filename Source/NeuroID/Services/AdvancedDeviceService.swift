@@ -157,11 +157,10 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         
         let client = FingerprintProFactory.getInstance(configuration)
         
-        var metadata = Metadata(linkedId: NeuroID.shared.linkedSiteID)
-        metadata.setTag(NeuroID.shared.siteID ?? "", forKey: "siteId")
-        metadata.setTag(NeuroID.shared.clientID ?? "", forKey: "clientId")
+        var metadata = Metadata()
+        metadata.setTag(NeuroID.shared.getClientID(), forKey: "clientId")
         metadata.setTag(Constants.environmentLive.rawValue, forKey: "environment")
-        metadata.setTag(Date().timeIntervalSince1970 * 1000, forKey: "requestStartTime")
+        metadata.setTag((Date().timeIntervalSince1970 * 1000).rounded(), forKey: "requestStartTime")
                
         client.getVisitorIdResponse(metadata) { result in
             switch result {

@@ -59,11 +59,12 @@ extension NeuroID {
 
     func getNewADV() {
         // run one at a time, drop any other instances
-        if self.isFPJSRunning == true {
+        guard !self.isFPJSRunning else {
             return
-        } else {
-            self.isFPJSRunning = true
         }
+        
+        self.isFPJSRunning = true
+        
         self.deviceSignalService.getAdvancedDeviceSignal(
             self.getClientKey(),
             clientID: self.clientID,
