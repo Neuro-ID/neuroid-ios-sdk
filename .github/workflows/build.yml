@@ -1,0 +1,36 @@
+# ******************************************************************
+# Please see README.md for prerequisites and repository settings.
+# ******************************************************************
+
+name: SDK Build and Testing
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: macos-15
+    steps:
+      - name: Branch Checkout
+        uses: actions/checkout@v6
+
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app
+
+      - name: Build and Test (Simulator)
+        run: |
+          set -o pipefail
+          xcodebuild clean build test \
+            CODE_SIGNING_ALLOWED=NO \
+            -project NeuroID.xcodeproj \
+            -scheme NeuroID \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest" \
+            -configuration Debug \
+            -resultBundlePath TestResults.xcresult | \
+          xcbeautify
