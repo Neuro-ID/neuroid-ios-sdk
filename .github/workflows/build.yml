@@ -23,14 +23,23 @@ jobs:
       - name: Select Xcode 26
         run: sudo xcode-select -s /Applications/Xcode_26.0.app
 
-      - name: Build and Test (Simulator)
-        run: |
-          set -o pipefail
-          xcodebuild clean build test \
-            CODE_SIGNING_ALLOWED=NO \
-            -project NeuroID.xcodeproj \
-            -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest" \
-            -configuration Debug \
-            -resultBundlePath TestResults.xcresult | \
-          xcbeautify
+      # - name: Build and Test (Simulator)
+      #   run: |
+      #     set -o pipefail
+      #     xcodebuild clean build test \
+      #       CODE_SIGNING_ALLOWED=NO \
+      #       -project NeuroID.xcodeproj \
+      #       -scheme NeuroID \
+      #       -destination "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest" \
+      #       -configuration Debug \
+      #       -resultBundlePath TestResults.xcresult | \
+      #     xcbeautify
+
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4.7
+          bundler-cache: true
+
+      - name: Run iOS Unit Testing for SDK
+        run: bundle exec fastlane test
