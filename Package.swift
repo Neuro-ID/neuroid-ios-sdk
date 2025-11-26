@@ -1,4 +1,6 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
 let package = Package(
@@ -14,15 +16,17 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
-        .package(name: "FingerprintPro", url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", from: "2.11.0"),
-        .package(name:"DSJSONSchemaValidation", url: "https://github.com/dashpay/JSONSchemaValidation", from: "2.0.7"),
-        .package(name: "JSONSchema", url:"https://github.com/kylef/JSONSchema.swift", from:"0.6.0")
-
+        .package(url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", from: "2.11.0"),
+        .package(url: "https://github.com/dashpay/JSONSchemaValidation", from: "2.0.7"),
+        .package(url: "https://github.com/kylef/JSONSchema.swift", from: "0.6.0")
     ],
     targets: [
         .target(
             name: "NeuroID",
-            dependencies: ["Alamofire", "FingerprintPro"],
+            dependencies: [
+                .product(name: "FingerprintPro", package: "fingerprintjs-pro-ios"),
+                .product(name: "Alamofire", package: "Alamofire")
+            ],
             path: "Source/NeuroID",
             exclude: [
                
@@ -32,8 +36,12 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "NeuroIDTests",
-            dependencies: ["NeuroID", "DSJSONSchemaValidation", "JSONSchema"],
+            name: "SDKTest",
+            dependencies: [
+                "NeuroID",
+                .product(name: "DSJSONSchemaValidation", package: "JSONSchemaValidation"),
+                .product(name: "JSONSchema", package: "JSONSchema.swift")
+            ],
             path: "SDKTest"
         )
     ]
