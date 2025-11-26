@@ -20,8 +20,10 @@ platform :ios do
   lane :test do
     run_tests(
       scheme: "NeuroID",
+      project: "NeuroID.xcodeproj",
       clean: true,
-      devices: ["iPhone 17 Pro (26.0)"],
+      destination: "platform=iOS Simulator,name=iPhone 17 Pro,OS=latest",
+      configuration: "Debug",
       xcargs: "CODE_SIGNING_ALLOWED=NO",
     )
   end
