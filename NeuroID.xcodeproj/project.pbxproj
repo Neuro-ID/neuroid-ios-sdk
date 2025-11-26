@@ -3,15 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
 		01D31F502E9D906C0042B0DD /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F4F2E9D906C0042B0DD /* FingerprintPro */; };
 		01D31F532E9D907E0042B0DD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F522E9D907E0042B0DD /* Alamofire */; };
 		01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */; };
 		01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F582E9D90F10042B0DD /* JSONSchema */; };
-		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
 		01E5B4742EBD0C94007C9B2B /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */; };
 		01E5B4782EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */; };
 		076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076252EE2876294400FBA209 /* NeuroIDSensors.swift */; };
@@ -617,7 +617,6 @@
 				};
 			};
 			buildConfigurationList = 26BCF336268DA3C40002C289 /* Build configuration list for PBXProject "NeuroID" */;
-			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -631,6 +630,7 @@
 				01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */,
 				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
