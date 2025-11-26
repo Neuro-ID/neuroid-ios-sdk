@@ -33,7 +33,7 @@ jobs:
             ios-simulator: 'iPhone 16 Pro,OS=latest'
 
           - macos: 15
-            xcode: '16.1'    # Swift 6.0
+            xcode: '16.2'    # Swift 6.0
             ios-simulator: 'iPhone 16 Pro,OS=18.6'
 
     steps:
@@ -45,6 +45,21 @@ jobs:
           sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
           ls /Applications/
           xcodebuild -version
+          xcrun simctl list devices
+
+      - name: Sanity check
+        run: |
+          echo "Using DEVELOPER_DIR=$DEVELOPER_DIR"
+          xcrun -find xcodebuild
+
+          echo "Devices with that DEVELOPER_DIR:"
+          xcrun simctl list devices
+
+          echo "Now explicitly using 16.0:"
+          DEVELOPER_DIR=/Applications/Xcode_16.0.app xcrun simctl list devices
+
+          echo "Now using the default Xcode:"
+          unset DEVELOPER_DIR
           xcrun simctl list devices
 
       - name: Build and Test (Simulator)
