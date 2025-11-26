@@ -58,7 +58,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }},OS=latest" \
+            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
             -configuration Debug \
             -resultBundlePath TestResults.xcresult | \
           xcbeautify
