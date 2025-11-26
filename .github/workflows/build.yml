@@ -62,6 +62,9 @@ jobs:
           unset DEVELOPER_DIR
           xcrun simctl list devices
 
+          echo "Show SDKs:"
+          xcodebuild -showsdks
+
       - name: Build and Test (Simulator)
         run: |
           set -o pipefail
