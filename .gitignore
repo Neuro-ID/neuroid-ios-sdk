@@ -53,4 +53,5 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 Gemfile.lock
 
+# macOS
 .DS_Store
