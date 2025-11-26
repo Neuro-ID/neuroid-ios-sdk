@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           # Latest
-          - macos: 26
+          - macos: 15
             xcode: '26.0'    # Swift 6.2
             ios-simulator: 'iPhone 17 Pro'
 
@@ -37,7 +37,7 @@ jobs:
             ios-simulator: 'iPhone 16 Pro'
 
           - macos: 14
-            xcode: '15.3'    # Swift 5.10
+            xcode: '15.4'    # Swift 5.10
             ios-simulator: "iPhone 15 Pro"
 
     steps:
@@ -58,7 +58,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
+            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }},OS=latest" \
             -configuration Debug \
             -resultBundlePath TestResults.xcresult | \
           xcbeautify
