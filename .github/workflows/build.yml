@@ -25,16 +25,19 @@ jobs:
           # Latest
           - macos: 15
             xcode: '26.0'    # Swift 6.2
-            ios-simulator: 'iPhone 17 Pro,OS=latest'
+            ios-simulator: 'iPhone 17 Pro'
+            OS: latest
 
           # Legacy
           - macos: 15
             xcode: '16.4'    # Swift 6.1
-            ios-simulator: 'iPhone 16 Pro,OS=latest'
+            ios-simulator: 'iPhone 16 Pro'
+            OS: latest
 
           - macos: 15
             xcode: '16.2'    # Swift 6.0
-            ios-simulator: 'iPhone 16 Pro,OS=18.2'
+            ios-simulator: 'iPhone 16 Pro'
+            OS: 18.6
 
     steps:
       - name: Branch Checkout
@@ -47,23 +50,22 @@ jobs:
           xcodebuild -version
           xcrun simctl list devices
 
-      - name: Sanity check
+      - name: List Items
         run: |
-          echo "Using DEVELOPER_DIR=$DEVELOPER_DIR"
-          xcrun -find xcodebuild
-
-          echo "Devices with that DEVELOPER_DIR:"
-          xcrun simctl list devices
-
-          echo "Now explicitly using 16.0:"
-          DEVELOPER_DIR=/Applications/Xcode_16.0.app xcrun simctl list devices
-
-          echo "Now using the default Xcode:"
-          unset DEVELOPER_DIR
-          xcrun simctl list devices
+          echo "Runtimes:"
+          xcrun simctl list runtimes
 
           echo "Show SDKs:"
           xcodebuild -showsdks
+
+          echo "Devices:"
+          xcrun simctl list devices
+
+      - name: Prepare Simulator
+        run: |
+          set -o pipefail
+          xcrun simctl boot "${{ matrix.ios-simulator }}" || true
+          xcrun simctl list devices
 
       - name: Build and Test (Simulator)
         run: |
@@ -72,7 +74,15 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
+            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }},OS=${{ matrix.OS }}" \
             -configuration Debug \
             -resultBundlePath TestResults.xcresult | \
           xcbeautify
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: xcode-test-results-macos-${{ matrix.macos }}-xcode-${{ matrix.xcode }}
+          path: |
+            TestResults.xcresult
