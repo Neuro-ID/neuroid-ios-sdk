@@ -21,8 +21,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Check Apple Developer for information on Xcode versions: https://developer.apple.com/support/xcode/
         include:
+          # Check Apple Developer for information on device and Swift version support: https://developer.apple.com/support/xcode/
+          
           # Latest
           - macos: 15
             xcode: '26.0'   # Swift 6.2
@@ -46,11 +47,11 @@ jobs:
           ls /Applications/ | grep Xcode
           sudo xcode-select -s ${{ env.DEVELOPER_DIR }}
 
-      # - name: Prepare Simulator
-      #   run: |
-      #     set -o pipefail
-      #     xcrun simctl boot "${{ matrix.ios-simulator }}" || true
-      #     xcrun simctl list devices
+      - name: Prepare Simulator
+        run: |
+          set -o pipefail
+          xcrun simctl boot "${{ matrix.ios-simulator }}" || true
+          xcrun simctl list devices
 
       - name: Build and Test (Simulator)
         run: |
