@@ -7,6 +7,7 @@ function convert_xccov_to_xml {
       -e 's/^ *\([0-9][0-9]*\): 0.*$/    <lineToCover lineNumber="\1" covered="false"\/>/p'    \
       -e 's/^ *\([0-9][0-9]*\): [1-9].*$/    <lineToCover lineNumber="\1" covered="true"\/>/p' \
       -e 's/^$/  <\/file>/p'
+  return 0
 }
 
 function xccov_to_generic {
@@ -15,6 +16,7 @@ function xccov_to_generic {
   echo '<coverage version="1">'
   xcrun xccov view --archive "$xcresult" | convert_xccov_to_xml
   echo '</coverage>'
+  return 0
 }
 
 function check_xcode_version() {
