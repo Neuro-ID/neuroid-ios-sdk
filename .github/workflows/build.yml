@@ -38,14 +38,6 @@ jobs:
             xcode: '16.2'   # Swift 6.0
             ios-simulator: 'iPhone 16 Pro'
 
-          - macos: 14
-            xcode: '16.1'   # Swift 6.0
-            ios-simulator: 'iPhone 16 Pro'
-
-          - macos: 14
-            xcode: '15.4'   # Swift 5.10
-            ios-simulator: 'iPhone 15 Pro'
-
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v6

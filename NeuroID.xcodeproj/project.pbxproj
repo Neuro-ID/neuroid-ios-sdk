@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -613,7 +613,6 @@
 				};
 			};
 			buildConfigurationList = 26BCF336268DA3C40002C289 /* Build configuration list for PBXProject "NeuroID" */;
-			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -627,6 +626,7 @@
 				01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
