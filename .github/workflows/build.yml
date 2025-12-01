@@ -25,7 +25,7 @@ jobs:
           # Check Apple Developer for information on device and Swift version support: https://developer.apple.com/support/xcode/
           
           # Latest
-          - macos: 15
+          - macos: 26
             xcode: '26.0'   # Swift 6.2
             ios-simulator: 'iPhone 17 Pro'
 
@@ -34,9 +34,17 @@ jobs:
             xcode: '16.4'   # Swift 6.1
             ios-simulator: 'iPhone 16 Pro'
 
-          - macos: 14
+          - macos: 15
             xcode: '16.2'   # Swift 6.0
             ios-simulator: 'iPhone 16 Pro'
+
+          - macos: 14
+            xcode: '16.0'   # Swift 6.0
+            ios-simulator: 'iPhone 16 Pro'
+
+          - macos: 14
+            xcode: '15.4'   # Swift 5.10
+            ios-simulator: 'iPhone 15 Pro'
 
     steps:
       - name: Branch Checkout
