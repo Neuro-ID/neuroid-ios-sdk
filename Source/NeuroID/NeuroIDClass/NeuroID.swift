@@ -186,6 +186,14 @@ public class NeuroID: NSObject {
         }
         return true
     }
+    
+    func testSonarFunction() -> Bool {
+        if self.clientKey == nil || self.clientKey == "" {
+            self.logger.e("Missing Client Key - please call configure prior to calling start")
+            return false
+        }
+        return true
+    }
 
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
