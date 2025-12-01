@@ -36,7 +36,7 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "SDKTest",
+            name: "NeuroIDTests",
             dependencies: [
                 "NeuroID",
                 .product(name: "DSJSONSchemaValidation", package: "JSONSchemaValidation"),
