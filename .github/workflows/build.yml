@@ -34,12 +34,12 @@ jobs:
             xcode: '16.4'   # Swift 6.1
             ios-simulator: 'iPhone 16 Pro'
 
-          - macos: 15
+          - macos: 14
             xcode: '16.2'   # Swift 6.0
             ios-simulator: 'iPhone 16 Pro'
 
           - macos: 14
-            xcode: '16.0'   # Swift 6.0
+            xcode: '16.1'   # Swift 6.0
             ios-simulator: 'iPhone 16 Pro'
 
           - macos: 14
