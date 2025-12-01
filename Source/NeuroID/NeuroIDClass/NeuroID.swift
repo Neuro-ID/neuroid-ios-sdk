@@ -355,4 +355,22 @@ public class NeuroID: NSObject {
         }
         return nil
     }
+
+    // ENG-9193 - Will remove on next breaking release
+    @available(
+        *, deprecated,
+        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
+    )
+    public static func printIntegrationHealthInstruction() {
+        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
+
+    // ENG-9193 - Will remove on next breaking release
+    @available(
+        *, deprecated,
+        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
+    )
+    public static func setVerifyIntegrationHealth(_ verify: Bool) {
+        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
 }
