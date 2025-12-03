@@ -75,7 +75,8 @@ extension NIDMetadata {
           guard let value = element.value as? Int8, value != 0 else { return identifier }
           return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        return identifier
+        
+        return ["i386", "x86_64", "arm64"].contains(identifier) ? "simulator" : identifier
     }
 
     static func getDisplay() -> String {
