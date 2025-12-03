@@ -15,10 +15,10 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0"),
-        .package(url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", from: "2.11.0"),
-        .package(url: "https://github.com/dashpay/JSONSchemaValidation", from: "2.0.7"),
-        .package(url: "https://github.com/kylef/JSONSchema.swift", from: "0.6.0")
+        .package(url: "https://github.com/Alamofire/Alamofire.git", exact: "5.10.2"),
+        .package(url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", exact: "2.11.0"),
+        .package(url: "https://github.com/dashpay/JSONSchemaValidation", exact: "2.0.7"),
+        .package(url: "https://github.com/kylef/JSONSchema.swift", exact: "0.6.0")
     ],
     targets: [
         .target(
