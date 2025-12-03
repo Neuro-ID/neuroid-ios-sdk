@@ -41,7 +41,7 @@ final class NIDMetadata: Codable {
         self.display = NIDMetadata.getDisplay()
         self.displayResolution = NIDMetadata.getDisplayResolution()
         self.manufacturer = NIDMetadata.getDeviceManufacturer()
-        self.model = NIDMetadata.getDeviceModel()
+        self.model = NIDMetadata.getDeviceModelIdentifier()
         self.product = NIDMetadata.getDeviceName()
         self.osVersion = NIDMetadata.getOSVersion()
         self.isWifiOn = NIDMetadata.isWifiEnable()
@@ -65,8 +65,17 @@ extension NIDMetadata {
         return ""
     }
 
-    static func getDeviceModel() -> String {
-        return UIDevice.current.type.rawValue
+    // Returns the model identifier (eg. "iPhone7,1")
+    static func getDeviceModelIdentifier() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let mirror = Mirror(reflecting: systemInfo.machine)
+
+        let identifier = mirror.children.reduce("") { identifier, element in
+          guard let value = element.value as? Int8, value != 0 else { return identifier }
+          return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
     }
 
     static func getDisplay() -> String {
@@ -243,237 +252,5 @@ class NetworkStatus {
             return .cellular
         }
         return .unknown
-    }
-}
-
-public enum Model: String {
-    case simulator,
-
-         iPod1 = "iPod 1",
-         iPod2 = "iPod 2",
-         iPod3 = "iPod 3",
-         iPod4 = "iPod 4",
-         iPod5 = "iPod 5",
-
-         iPad2 = "iPad 2",
-         iPad3 = "iPad 3",
-         iPad4 = "iPad 4",
-         iPadAir = "iPad Air ",
-         iPadAir2 = "iPad Air 2",
-         iPadAir3 = "iPad Air 3",
-         iPad5 = "iPad 5",
-         iPad6 = "iPad 6",
-         iPad7 = "iPad 7",
-
-         iPadMini = "iPad Mini",
-         iPadMini2 = "iPad Mini 2",
-         iPadMini3 = "iPad Mini 3",
-         iPadMini4 = "iPad Mini 4",
-         iPadMini5 = "iPad Mini 5",
-
-         iPadPro9_7 = "iPad Pro 9.7\"",
-         iPadPro10_5 = "iPad Pro 10.5\"",
-         iPadPro11 = "iPad Pro 11\"",
-         iPadPro12_9 = "iPad Pro 12.9\"",
-         iPadPro2_12_9 = "iPad Pro 2 12.9\"",
-         iPadPro3_12_9 = "iPad Pro 3 12.9\"",
-
-         iPhone4 = "iPhone 4",
-         iPhone4S = "iPhone 4S",
-         iPhone5 = "iPhone 5",
-         iPhone5S = "iPhone 5S",
-         iPhone5C = "iPhone 5C",
-         iPhone6 = "iPhone 6",
-         iPhone6Plus = "iPhone 6 Plus",
-         iPhone6S = "iPhone 6S",
-         iPhone6SPlus = "iPhone 6S Plus",
-         iPhoneSE = "iPhone SE",
-         iPhone7 = "iPhone 7",
-         iPhone7Plus = "iPhone 7 Plus",
-         iPhone8 = "iPhone 8",
-         iPhone8Plus = "iPhone 8 Plus",
-         iPhoneX = "iPhone X",
-         iPhoneXS = "iPhone XS",
-         iPhoneXSMax = "iPhone XS Max",
-         iPhoneXR = "iPhone XR",
-         iPhone11 = "iPhone 11",
-         iPhone11Pro = "iPhone 11 Pro",
-         iPhone11ProMax = "iPhone 11 Pro Max",
-         iPhoneSE_2nd_Gen = "iPhone SE 2nd Gen",
-         iPhone12Mini = "iPhone 12 Mini",
-         iPhone12 = "iPhone 12",
-         iPhone12Pro = "iPhone 12 Pro",
-         iPhone12ProMax = "iPhone 12 Pro Max",
-         iPhone13Pro = "iPhone 13 Pro",
-         iPhone13ProMax = "iPhone 13 Pro Max",
-         iPhone13Mini = "iPhone 13 Mini",
-         iPhone13 = "iPhone 13",
-         iPhoneSE_3rd_Gen = "iPhone SE 3rd Gen",
-         iPhone14 = "iPhone 14",
-         iPhone14Plus = "iPhone 14 Plus",
-         iPhone14Pro = "iPhone 14 Pro",
-         iPhone14ProMax = "iPhone 14 Pro Max",
-         iPhone15 = "iPhone 15",
-         iPhone15Plus = "iPhone 15 Plus",
-         iPhone15Pro = "iPhone 15 Pro",
-         iPhone15ProMax = "iPhone 15 Pro Max",
-         iPhone16 = "iPhone 16",
-         iPhone16Plus = "iPhone 16 Plus",
-         iPhone16Pro = "iPhone 16 Pro",
-         iPhone16ProMax = "iPhone 16 Pro Max",
-         iPhone16e = "iPhone 16e",
-
-         AppleTV = "Apple TV",
-         AppleTV_4K = "Apple TV 4K",
-         unrecognized = "?unrecognized?"
-}
-
-public extension UIDevice {
-    var type: Model {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let modelCode = withUnsafePointer(to: &systemInfo.machine) {
-            $0.withMemoryRebound(to: CChar.self, capacity: 1) {
-                ptr in String(validatingUTF8: ptr)
-            }
-        }
-
-        let modelMap: [String: Model] = [
-            "i386": .simulator,
-            "x86_64": .simulator,
-
-            "iPod1,1": .iPod1,
-            "iPod2,1": .iPod2,
-            "iPod3,1": .iPod3,
-            "iPod4,1": .iPod4,
-            "iPod5,1": .iPod5,
-
-            "iPad2,1": .iPad2,
-            "iPad2,2": .iPad2,
-            "iPad2,3": .iPad2,
-            "iPad2,4": .iPad2,
-            "iPad3,1": .iPad3,
-            "iPad3,2": .iPad3,
-            "iPad3,3": .iPad3,
-            "iPad3,4": .iPad4,
-            "iPad3,5": .iPad4,
-            "iPad3,6": .iPad4,
-            "iPad6,11": .iPad5,
-            "iPad6,12": .iPad5,
-            "iPad7,5": .iPad6,
-            "iPad7,6": .iPad6,
-            "iPad7,11": .iPad7,
-            "iPad7,12": .iPad7,
-
-            "iPad2,5": .iPadMini,
-            "iPad2,6": .iPadMini,
-            "iPad2,7": .iPadMini,
-            "iPad4,4": .iPadMini2,
-            "iPad4,5": .iPadMini2,
-            "iPad4,6": .iPadMini2,
-            "iPad4,7": .iPadMini3,
-            "iPad4,8": .iPadMini3,
-            "iPad4,9": .iPadMini3,
-            "iPad5,1": .iPadMini4,
-            "iPad5,2": .iPadMini4,
-            "iPad11,1": .iPadMini5,
-            "iPad11,2": .iPadMini5,
-
-            "iPad6,3": .iPadPro9_7,
-            "iPad6,4": .iPadPro9_7,
-            "iPad7,3": .iPadPro10_5,
-            "iPad7,4": .iPadPro10_5,
-            "iPad6,7": .iPadPro12_9,
-            "iPad6,8": .iPadPro12_9,
-            "iPad7,1": .iPadPro2_12_9,
-            "iPad7,2": .iPadPro2_12_9,
-            "iPad8,1": .iPadPro11,
-            "iPad8,2": .iPadPro11,
-            "iPad8,3": .iPadPro11,
-            "iPad8,4": .iPadPro11,
-            "iPad8,5": .iPadPro3_12_9,
-            "iPad8,6": .iPadPro3_12_9,
-            "iPad8,7": .iPadPro3_12_9,
-            "iPad8,8": .iPadPro3_12_9,
-
-            "iPad4,1": .iPadAir,
-            "iPad4,2": .iPadAir,
-            "iPad4,3": .iPadAir,
-            "iPad5,3": .iPadAir2,
-            "iPad5,4": .iPadAir2,
-            "iPad11,3": .iPadAir3,
-            "iPad11,4": .iPadAir3,
-
-            "iPhone3,1": .iPhone4,
-            "iPhone3,2": .iPhone4,
-            "iPhone3,3": .iPhone4,
-            "iPhone4,1": .iPhone4S,
-            "iPhone5,1": .iPhone5,
-            "iPhone5,2": .iPhone5,
-            "iPhone5,3": .iPhone5C,
-            "iPhone5,4": .iPhone5C,
-            "iPhone6,1": .iPhone5S,
-            "iPhone6,2": .iPhone5S,
-            "iPhone7,1": .iPhone6Plus,
-            "iPhone7,2": .iPhone6,
-            "iPhone8,1": .iPhone6S,
-            "iPhone8,2": .iPhone6SPlus,
-            "iPhone8,4": .iPhoneSE,
-            "iPhone9,1": .iPhone7,
-            "iPhone9,3": .iPhone7,
-            "iPhone9,2": .iPhone7Plus,
-            "iPhone9,4": .iPhone7Plus,
-            "iPhone10,1": .iPhone8,
-            "iPhone10,4": .iPhone8,
-            "iPhone10,2": .iPhone8Plus,
-            "iPhone10,5": .iPhone8Plus,
-            "iPhone10,3": .iPhoneX,
-            "iPhone10,6": .iPhoneX,
-            "iPhone11,2": .iPhoneXS,
-            "iPhone11,4": .iPhoneXSMax,
-            "iPhone11,6": .iPhoneXSMax,
-            "iPhone11,8": .iPhoneXR,
-            "iPhone12,1": .iPhone11,
-            "iPhone12,3": .iPhone11Pro,
-            "iPhone12,5": .iPhone11ProMax,
-            "iPhone12,8": .iPhoneSE_2nd_Gen,
-            "iPhone13,1": .iPhone12Mini,
-            "iPhone13,2": .iPhone12,
-            "iPhone13,3": .iPhone12Pro,
-            "iPhone13,4": .iPhone12ProMax,
-            "iPhone14,2": .iPhone13Pro,
-            "iPhone14,3": .iPhone13ProMax,
-            "iPhone14,4": .iPhone13Mini,
-            "iPhone14,5": .iPhone13,
-            "iPhone14,6": .iPhoneSE_3rd_Gen,
-            "iPhone14,7": .iPhone14,
-            "iPhone14,8": .iPhone14Plus,
-            "iPhone15,2": .iPhone14Pro,
-            "iPhone15,3": .iPhone14ProMax,
-            "iPhone15,4": .iPhone15,
-            "iPhone15,5": .iPhone15Plus,
-            "iPhone16,1": .iPhone15Pro,
-            "iPhone16,2": .iPhone15ProMax,
-            "iPhone17,3": .iPhone16,
-            "iPhone17,4": .iPhone16Plus,
-            "iPhone17,1": .iPhone16Pro,
-            "iPhone17,2": .iPhone16ProMax,
-            "iPhone17,5": .iPhone16e,
-
-            "AppleTV5,3": .AppleTV,
-            "AppleTV6,2": .AppleTV_4K
-        ]
-
-        if let model = modelMap[String(validatingUTF8: modelCode!)!] {
-            if model == .simulator {
-                if let simModelCode = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] {
-                    if let simModel = modelMap[String(validatingUTF8: simModelCode)!] {
-                        return simModel
-                    }
-                }
-            }
-            return model
-        }
-        return Model.unrecognized
     }
 }
