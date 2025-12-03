@@ -42,6 +42,8 @@ jobs:
     steps:
       - name: Branch Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Full history for accurate Sonar analysis
 
       - name: Select Xcode Version
         run: |
