@@ -1,58 +1,29 @@
 # ******************************************************************
-# This workflow will trigger once a PR goes into main from a branch
+# This workflow will trigger once  PR goes into main from a branch
 # that does NOT have a prefix of `releases/`
 # ******************************************************************
 
 name: Deploy Dev Sandbox Apps
 
 on:
-  pull_request_target:
-    types:
-      - closed
+  push:
     branches:
       - main
 
   workflow_dispatch:
+
   repository_dispatch:
     types: [on-demand-testflight-dev]
+
 env:
-  VERSION: "2.0.0"
+  VERSION: '2.0.0'
 
 jobs:
   testflight-dev:
-    runs-on: macos-latest
-    if: github.event.pull_request.merged
-    outputs:
-      slack-message: ${{ steps.slack-settings.outputs.SLACK_MESSAGE }}
-      slack-title: ${{ steps.slack-settings.outputs.SLACK_TITLE }}
-      slack-color: ${{ steps.slack-settings.outputs.SLACK_COLOR }}
+    runs-on: macos-15
     steps:
       - name: Branch Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up ruby env
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.6
-          bundler-cache: true
-
-      - name: Restore cached Pods
-        uses: actions/cache/restore@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-dev-apps-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-dev-apps
-
-      - name: CocoaPod Install
-        run: pod install
-
-      - name: Save Updated Pods
-        id: cache-pods-save
-        uses: actions/cache/save@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-dev-apps-${{ hashFiles('**/Podfile.lock') }}
+        uses: actions/checkout@v6
 
       - name: Get last version from tags
         run: |
@@ -108,33 +79,3 @@ jobs:
               -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
               https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
               -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
-      
-      - name: Set Slack message
-        id: slack-settings
-        if: always()
-        run: |
-            if [[ "${{ job.status }}" == "success" ]]; then
-              echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
-              echo "SLACK_MESSAGE=Successful Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-              echo "SLACK_TITLE=Successful Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-            elif [[ "${{ job.status }}" == "failure" ]]; then
-              echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
-              echo "SLACK_MESSAGE=Failed Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-              echo "SLACK_TITLE=Failed Dev Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-            fi            
-  # notifications:
-  #   runs-on: ubuntu-latest
-  #   needs: testflight-dev
-  #   if: always()
-  #   steps:
-  #     - name: Send Slack Notification Status
-  #       if: needs.testflight-dev.outputs.slack-message
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env: 
-  #         SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
-  #         SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
-  #         SLACK_COLOR: ${{ needs.testflight-dev.outputs.slack-color}}
-  #         SLACK_ICON: https://github.com/rtCamp.png?size=48
-  #         SLACK_MESSAGE: ${{needs.testflight-dev.outputs.slack-message}}
-  #         SLACK_TITLE:  ${{needs.testflight-dev.outputs.slack-title}}
-  #         SLACK_USERNAME: rtBot
