@@ -41,15 +41,6 @@ jobs:
           git push origin development
           set -e
 
-      - name: Run iOS Sandbox Dev Deployment
-        run: |
-          curl \
-             -X POST \
-             -H "Accept: application/vnd.github.v3+json" \
-             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
-             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-             -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
-
       - name: Run iOS SwiftUI Sandbox Dev Deployment
         run: |
           curl \
