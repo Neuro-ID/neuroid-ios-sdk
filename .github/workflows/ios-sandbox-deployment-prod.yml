@@ -51,37 +51,28 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Run iOS SwiftUI Sandbox Deployment
-        env:
-          GPR_API_KEY: ${{ secrets.GPR_API_KEY }}
-          VERSION: ${{ steps.version.outputs.version }}
         run: |
           curl \
             -X POST \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${GPR_API_KEY}" \
+            -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
-            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"'"${VERSION}"'"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
 
       - name: Run iOS Storyboard Sandbox Deployment
-        env:
-          GPR_API_KEY: ${{ secrets.GPR_API_KEY }}
-          VERSION: ${{ steps.version.outputs.version }}
         run: |
           curl \
             -X POST \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${GPR_API_KEY}" \
+            -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-storyboard/dispatches \
-            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"'"${VERSION}"'"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
 
       - name: Run ReactNative Sandbox Deployment
-        env:
-          GPR_API_KEY: ${{ secrets.GPR_API_KEY }}
-          VERSION: ${{ steps.version.outputs.version }}
         run: |
           curl \
              -X POST \
              -H "Accept: application/vnd.github.v3+json" \
-             -H "Authorization: token ${GPR_API_KEY}" \
+             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
              https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-             -d '{"event_type":"on-demand-testflight","client_payload":{"version":"'"${VERSION}"'"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
