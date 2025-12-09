@@ -9,26 +9,18 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
-
   repository_dispatch:
     types: [on-demand-testflight-dev]
-
-env:
-  VERSION: '2.0.0'
 
 jobs:
   testflight-dev:
     runs-on: macos-15
     steps:
-      - name: Branch Checkout
-        uses: actions/checkout@v6
-
-      - name: Get last version from tags
-        run: |
-          git fetch --prune --unshallow
-          echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Update new commit to have "Development" Tag
         run: |
@@ -48,7 +40,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
-            -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
+            -d '{"event_type":"on-demand-testflight-dev"}'
 
       - name: Run iOS Storyboard Sandbox Dev Deployment
         run: |
@@ -57,7 +49,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-storyboard/dispatches \
-            -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.head_commit.message }}"}}'
+            -d '{"event_type":"on-demand-testflight-dev"}'
 
       - name: Run ReactNative Sandbox Dev Deployment
         run: |
@@ -66,4 +58,4 @@ jobs:
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
               https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-              -d '{"event_type":"on-demand-testflight-dev","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+              -d '{"event_type":"on-demand-testflight-dev"}'

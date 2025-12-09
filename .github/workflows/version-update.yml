@@ -30,25 +30,21 @@ on:
 
 jobs:
   updateProjectVersion:
-    runs-on: macos-latest
+    runs-on: macos-15
     name: Update version for podspec and project
     permissions:
       pull-requests: write
       contents: write
       issues: write
     steps:
-      - name: Update version
-        run: echo "Updating version with release type ${{ inputs.version_update }}"
-
-      - name: Branch Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.6
+          ruby-version: 3.4.7
           bundler-cache: true
 
       - name: Run iOS Unit Testing for SDK
