@@ -18,6 +18,30 @@ jobs:
   testflight:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Determine Version to Deploy
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${{ github.ref }}"
+            echo "Using provided version: $VERSION"
+          else
+            echo "Defaulting to latest created tag.."
+            VERSION=$(git tag --sort=-creatordate | grep -v '^development$' | grep -v '^latest$' | head -n 1)
+            if [[ -z "$VERSION" ]]; then
+              echo "Error: No valid tags found"
+              exit 1
+            fi
+          fi
+          # Strip refs/tags/ prefix if present
+          VERSION="${VERSION#refs/tags/}"
+          echo "Using version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Run iOS SwiftUI Sandbox Deployment
         run: |
           curl \
@@ -25,7 +49,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
-            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ github.ref }}", "message": "${{ github.event.commits[0].message }}"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
 
       - name: Run iOS Storyboard Sandbox Deployment
         run: |
@@ -34,7 +58,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-storyboard/dispatches \
-            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ github.ref }}", "message": "${{ github.event.commits[0].message }}"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
 
       - name: Run ReactNative Sandbox Deployment
         run: |
@@ -43,4 +67,4 @@ jobs:
              -H "Accept: application/vnd.github.v3+json" \
              -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
              https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-             -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ github.ref }}", "message": "${{ github.event.commits[0].message }}"}}'
+             -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
