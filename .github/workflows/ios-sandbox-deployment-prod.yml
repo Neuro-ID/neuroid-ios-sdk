@@ -16,7 +16,7 @@ on:
 
 jobs:
   testflight:
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     steps:
       - name: Run iOS SwiftUI Sandbox Deployment
         run: |
