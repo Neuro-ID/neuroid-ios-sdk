@@ -11,8 +11,11 @@ on:
       - '!development'
       - '!latest'
   workflow_dispatch:
-  repository_dispatch:
-    types: [on-demand-testflight]
+    inputs:
+      version:
+        description: 'Version tag to deploy (e.g., v3.5.0)'
+        required: true
+        type: string
 
 jobs:
   testflight:
@@ -26,20 +29,23 @@ jobs:
       - name: Determine Version to Deploy
         id: version
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            # Triggered by tag push
             VERSION="${{ github.ref }}"
-            echo "Using provided version: $VERSION"
-          else
-            echo "Defaulting to latest created tag.."
-            VERSION=$(git tag --sort=-creatordate | grep -v '^development$' | grep -v '^latest$' | head -n 1)
-            if [[ -z "$VERSION" ]]; then
-              echo "Error: No valid tags found"
+            VERSION="${VERSION#refs/tags/}"
+            echo "Using version from tag push: $VERSION"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Triggered manually - use input version
+            VERSION="${{ inputs.version }}"
+            echo "Using manually specified version: $VERSION"
+            
+            # Verify the tag exists
+            if ! git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1; then
+              echo "Error: Tag '$VERSION' does not exist"
               exit 1
             fi
           fi
-          # Strip refs/tags/ prefix if present
-          VERSION="${VERSION#refs/tags/}"
-          echo "Using version: $VERSION"
+          
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Run iOS SwiftUI Sandbox Deployment
