@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag to deploy (e.g., v3.5.0)'
+        description: 'Version tag to deploy'
         required: true
         type: string
 

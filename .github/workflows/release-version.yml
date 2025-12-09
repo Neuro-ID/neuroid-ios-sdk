@@ -12,6 +12,9 @@ on:
     branches:
       - main
 
+env: 
+  SVC_NAME: "neuroid-ios-sdk"
+
 jobs:
   releaseProjectVersion:
     runs-on: macos-15
@@ -74,4 +77,20 @@ jobs:
         run: |
           pod trunk push NeuroID.podspec --allow-warnings
 
-      # TODO: Configure slack action notifications for successful or failed deploy
+      - uses: Neuro-ID/actions/slack-notification@v5
+        if: success()
+        with:
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel: "#releases"
+          template: workflow-success
+          title: ${{ env.SVC_NAME }}
+          message: "iOS SDK release created successfully!"
+
+      - uses: Neuro-ID/actions/slack-notification@v5
+        if: failure()
+        with:
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel: "#mobile-deployment-notifications"
+          template: workflow-failure
+          title: ${{ env.SVC_NAME }}
+          message: "iOS SDK release creation failed - check logs for details"
