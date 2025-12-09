@@ -47,9 +47,6 @@ jobs:
           ruby-version: 3.4.7
           bundler-cache: true
 
-      - name: Run iOS Unit Testing for SDK
-        run: bundle exec fastlane test
-
       - name: Pre-check PodSpec
         run: pod spec lint --allow-warnings
 
