@@ -9,6 +9,7 @@ on:
     tags:
       - '*'
       - '!development'
+      - '!latest'
   workflow_dispatch:
   repository_dispatch:
     types: [on-demand-testflight]
@@ -24,7 +25,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
-            -d '{"event_type":"on-demand-testflight"}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ github.ref }}", "message": "${{ github.event.commits[0].message }}"}}'
 
       - name: Run iOS Storyboard Sandbox Deployment
         run: |
@@ -33,7 +34,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-storyboard/dispatches \
-            -d '{"event_type":"on-demand-testflight"}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ github.ref }}", "message": "${{ github.event.commits[0].message }}"}}'
 
       - name: Run ReactNative Sandbox Deployment
         run: |
@@ -42,4 +43,4 @@ jobs:
              -H "Accept: application/vnd.github.v3+json" \
              -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
              https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-             -d '{"event_type":"on-demand-testflight"}'
+             -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ github.ref }}", "message": "${{ github.event.commits[0].message }}"}}'
