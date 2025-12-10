@@ -1,99 +1,54 @@
 # ******************************************************************
-# This workflow will trigger once a PR goes into main from a branch
-# that does has a prefix of `releases/`
+# This workflow will run once a new version is tagged that isn't development
 # ******************************************************************
 
 name: Deploy Prod Sandbox Apps
 
 on:
-  pull_request_target:
-    types:
-      - closed
-    branches:
-      - main
+  push:
+    tags:
+      - '*'
+      - '!development'
+      - '!latest'
   workflow_dispatch:
-  repository_dispatch:
-    types: [on-demand-testflight]
-
-env:
-  VERSION: "1.3.0"
+    inputs:
+      version:
+        description: 'Version tag to deploy'
+        required: true
+        type: string
 
 jobs:
-  updateSchema:
-    if: github.event.pull_request == null
-    name: Retrieve new Schema.json
+  testflight:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
-          path: neuroid-ios-sdk
-
-      - name: Checkout schema
-        uses: actions/checkout@v3
-        with:
-          repository: Neuro-ID/nid-event-schema
-          token: ${{ secrets.SCHEMA_PAT }}
-          path: schema
-
-      - name: Update Internal Library
-        run: |
-          ls neuroid-ios-sdk/
-          ls schema/
-          cp schema/src/schema.json neuroid-ios-sdk/NeuroID/
-
-  testflight:
-    if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/')
-    outputs:
-      slack-message: ${{ steps.slack-settings.outputs.SLACK_MESSAGE }}
-      slack-title: ${{ steps.slack-settings.outputs.SLACK_TITLE }}
-      slack-color: ${{ steps.slack-settings.outputs.SLACK_COLOR }}
-    runs-on: macos-latest
-    steps:
-      - name: Branch Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: main
+          fetch-depth: 0
           fetch-tags: true
 
-      - name: Set up ruby env
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.6
-          bundler-cache: true
-
-      - name: Restore cached Pods
-        uses: actions/cache/restore@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-prod-apps-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-prod-apps
-
-      - name: CocoaPod Install
-        run: pod install
-
-      - name: Save Updated Pods
-        id: cache-pods-save
-        uses: actions/cache/save@v3
-        with:
-          path: Pods
-          key: ${{ runner.os }}-pods-prod-apps-${{ hashFiles('**/Podfile.lock') }}
-
-      - name: Get last version from tags
-        run: echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
-
-      - name: Run iOS Unit Testing for SDK
-        run: bundle exec fastlane test
-
-      - name: Run iOS Sandbox Deployment
+      - name: Determine Version to Deploy
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          curl \
-             -X POST \
-             -H "Accept: application/vnd.github.v3+json" \
-             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
-             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox/dispatches \
-             -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            # Triggered by tag push
+            VERSION="${{ github.ref }}"
+            VERSION="${VERSION#refs/tags/}"
+            echo "Using version from tag push: $VERSION"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # Triggered manually - use input version
+            VERSION="${INPUT_VERSION}"
+            echo "Using manually specified version: $VERSION"
+            
+            # Verify the tag exists
+            if ! git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1; then
+              echo "Error: Tag '$VERSION' does not exist"
+              exit 1
+            fi
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Run iOS SwiftUI Sandbox Deployment
         run: |
@@ -102,7 +57,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
-            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
 
       - name: Run iOS Storyboard Sandbox Deployment
         run: |
@@ -111,7 +66,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
             https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-storyboard/dispatches \
-            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'
 
       - name: Run ReactNative Sandbox Deployment
         run: |
@@ -120,33 +75,4 @@ jobs:
              -H "Accept: application/vnd.github.v3+json" \
              -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
              https://api.github.com/repos/Neuro-ID/neuroid-reactnative-sdk/dispatches \
-             -d '{"event_type":"on-demand-testflight","client_payload":{"version":"5.ios-${{env.VERSION}}", "message": "${{ github.event.commits[0].message }}"}}'
-      - name: Set Slack message
-        id: slack-settings
-        if: always()
-        run: |
-            if [[ "${{ job.status }}" == "success" ]]; then
-              echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
-              echo "SLACK_MESSAGE=Successful Prod Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-              echo "SLACK_TITLE=Successful Prod Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-            elif [[ "${{ job.status }}" == "failure" ]]; then
-              echo "SLACK_COLOR=${{ job.status }}" >> $GITHUB_OUTPUT
-              echo "SLACK_MESSAGE=Failed Prod Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-              echo "SLACK_TITLE=Failed Prod Sandbox Deployment for iOS" >> $GITHUB_OUTPUT
-            fi            
-  # notifications:
-  #   runs-on: ubuntu-latest
-  #   needs: testflight
-  #   if: always()
-  #   steps:
-  #     - name: Send Slack Notification Status
-  #       if: needs.testflight.outputs.slack-message
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env: 
-  #         SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
-  #         SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
-  #         SLACK_COLOR: ${{ needs.testflight.outputs.slack-color}}
-  #         SLACK_ICON: https://github.com/rtCamp.png?size=48
-  #         SLACK_MESSAGE: ${{needs.testflight.outputs.slack-message}}
-  #         SLACK_TITLE:  ${{needs.testflight.outputs.slack-title}}
-  #         SLACK_USERNAME: rtBot
+            -d '{"event_type":"on-demand-testflight","client_payload":{"version":"${{ steps.version.outputs.version }}"}}'

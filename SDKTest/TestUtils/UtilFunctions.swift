@@ -4,6 +4,8 @@
 //
 //  Created by Kevin Sites on 9/3/25.
 //
+
+import Foundation
 @testable import NeuroID
 
 func getMockResponseData() -> RemoteConfiguration {

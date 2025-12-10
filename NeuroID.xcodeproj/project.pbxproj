@@ -158,8 +158,6 @@
 		26BCF349268DA7CF0002C289 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTracker.swift; sourceTree = "<group>"; };
 		26BCF34B268DA7CF0002C289 /* NIDEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIDEvent.swift; sourceTree = "<group>"; };
-		26BCF358268DAC530002C289 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
-		26BCF35A268DAC5A0002C289 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDCallStatusObserverService.swift; sourceTree = "<group>"; };
 		6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPreferences.swift; sourceTree = "<group>"; };
 		6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -328,8 +326,6 @@
 		26BCF357268DAC530002C289 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				26BCF35A268DAC5A0002C289 /* Foundation.framework */,
-				26BCF358268DAC530002C289 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

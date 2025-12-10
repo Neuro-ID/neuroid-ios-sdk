@@ -12,22 +12,24 @@ on:
     branches:
       - main
 
+env: 
+  SVC_NAME: "neuroid-ios-sdk"
+
 jobs:
   releaseProjectVersion:
-    runs-on: macos-latest
+    runs-on: macos-15
     if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/')
     name: Create Release from Tag
     permissions:
       contents: write
       issues: write
     steps:
-      - name: Branch Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Set up ruby env
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71
         with:
-          ruby-version: 2.7.6
+          ruby-version: 3.4.7
           bundler-cache: true
 
       - name: Get Updated Version
@@ -75,31 +77,20 @@ jobs:
         run: |
           pod trunk push NeuroID.podspec --allow-warnings
 
-  # notifications:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ always() }}
-  #   needs: [releaseProjectVersion]
-  #   steps:
-  #     - name: Send Slack Notification on Success
-  #       if: ${{ needs.releaseProjectVersion.result == 'success' }}
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env:
-  #         SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
-  #         SLACK_COLOR: ${{ job.status }}
-  #         SLACK_ICON: https://github.com/rtCamp.png?size=48
-  #         SLACK_MESSAGE: "Successfully released iOS SDK version ${{ env.PACKAGE_VERSION }}"
-  #         SLACK_TITLE: Success release iOS SDK
-  #         SLACK_USERNAME: rtBot
-  #         SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
+      - uses: Neuro-ID/actions/slack-notification@v5
+        if: success()
+        with:
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel: "#releases"
+          template: workflow-success
+          title: ${{ env.SVC_NAME }}
+          message: "iOS SDK release created successfully!"
 
-  #     - name: Send Slack Notification on Failure
-  #       if: ${{ needs.releaseProjectVersion.result == 'failure' }}
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env:
-  #         SLACK_CHANNEL: ${{ secrets.MOBILE_SLACK_NOTIFICATIONS_CHANNEL }}
-  #         SLACK_COLOR: ${{ job.status }}
-  #         SLACK_ICON: https://github.com/rtCamp.png?size=48
-  #         SLACK_MESSAGE: "Failed execution on iOS SDK release for version ${{ env.PACKAGE_VERSION }}"
-  #         SLACK_TITLE: Failed release iOS SDK
-  #         SLACK_USERNAME: rtBot
-  #         SLACK_WEBHOOK: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
+      - uses: Neuro-ID/actions/slack-notification@v5
+        if: failure()
+        with:
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel: "#mobile-deployment-notifications"
+          template: workflow-failure
+          title: ${{ env.SVC_NAME }}
+          message: "iOS SDK release creation failed - check logs for details"
