@@ -17,17 +17,10 @@ protocol PayloadSendingServiceProtocol {
         onFailure: @escaping (Error) -> Void,
         eventSubset: [NIDEvent]?
     )
-
-    func updateTestingCollectionUrl(isDev: Bool)
 }
 
 class PayloadSendingService: PayloadSendingServiceProtocol {
-    static var COLLECTION_URL = Constants.productionURL.rawValue
-    static let SEND_INTERVAL: Double = 5
-
-    static func getCollectionEndpointURL() -> String {
-        return self.COLLECTION_URL
-    }
+    static let collectionEndpointUrl = Constants.productionURL.rawValue
 
     static func buildStaticPayload(events: [NIDEvent], screen: String) -> NeuroHTTPRequest {
         let tabId = ParamsCreator.getTabId()
@@ -124,7 +117,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onSuccess: @escaping () -> Void,
         onFailure: @escaping (Error) -> Void
     ) {
-        guard let url = URL(string: PayloadSendingService.getCollectionEndpointURL()) else {
+        guard let url = URL(string: PayloadSendingService.collectionEndpointUrl) else {
             self.logger.e("NeuroID Base URL NOT found")
             return
         }
@@ -170,9 +163,5 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
                 onFailure(error)
             }
         }
-    }
-
-    func updateTestingCollectionUrl(isDev: Bool) {
-        PayloadSendingService.COLLECTION_URL = isDev ? Constants.developmentURL.rawValue : Constants.productionURL.rawValue
     }
 }

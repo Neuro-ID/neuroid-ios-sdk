@@ -179,15 +179,7 @@ enum ParamsCreator {
 
     /** Start with primar JS version as TrackJS requires to force correct session structure */
     static func getSDKVersion() -> String {
-        // Version MUST start with 4. in order to be processed correctly
-        var version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        // Get Version number from bundled info.plist file if included
-        if let bundleURL = Bundle(for: NeuroIDTracker.self).url(forResource: "NeuroID", withExtension: "bundle") {
-            version = Bundle(url: bundleURL)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        } else {
-            version = getSPVersionID(version: "%%%3.6.0%%%")
-        }
-        return "5.ios\(NeuroID.shared.isRN ? "-rn" : "")-adv-\(version ?? "?")"
+        return "5.ios\(NeuroID.shared.isRN ? "-rn" : "")-adv-\(NeuroID.nidVersion)"
     }
 
     static func getCommandQueueNamespace() -> String {
@@ -199,21 +191,5 @@ enum ParamsCreator {
         let now = Date().timeIntervalSince1970 * 1000
         let rawId = (Int(now) - 1488084578518) * 1024 + (x + 1)
         return String(format: "%02X", rawId)
-    }
-
-    static func getSPVersionID(version: String) -> String {
-        var spVersion = version
-
-        // extract version from the sp version string
-        guard let regex = try? NSRegularExpression(pattern: "%%%([^%]*)%%%") else {
-            return spVersion
-        }
-        if let match = regex.firstMatch(in: spVersion, options: [], range: NSRange(spVersion.startIndex..., in: spVersion)) {
-            if let range = Range(match.range(at: 1), in: spVersion) {
-                let extracted = String(spVersion[range])
-                spVersion = extracted
-            }
-        }
-        return spVersion
     }
 }
