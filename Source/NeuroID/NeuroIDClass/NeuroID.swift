@@ -297,8 +297,6 @@ public class NeuroID: NSObject {
         UITextView.startSwizzling()
         UINavigationController.swizzleNavigation()
         UITableView.tableviewSwizzle()
-        // UIScrollView.startSwizzlingUIScroll()
-        // UIButton.startSwizzling()
 
         self.didSwizzle.toggle()
     }
