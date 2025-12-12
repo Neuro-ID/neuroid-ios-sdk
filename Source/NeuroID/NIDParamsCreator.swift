@@ -179,7 +179,7 @@ enum ParamsCreator {
 
     /** Start with primar JS version as TrackJS requires to force correct session structure */
     static func getSDKVersion() -> String {
-        return "5.ios\(NeuroID.shared.isRN ? "-rn" : "")-adv-\(NeuroID.nidVersion)"
+        return "5.ios\(NeuroID.shared.isRN ? "-rn" : "")-adv-\(NeuroID.nidVersion)-c"
     }
 
     static func getCommandQueueNamespace() -> String {
