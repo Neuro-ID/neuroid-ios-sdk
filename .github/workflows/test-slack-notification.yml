@@ -17,7 +17,7 @@ permissions:
 
 env:
   SVC_NAME: ios-sdk
-  ACTION_VERSION: ENG-1105-testing # Change this to test a specific branch or tag (e.g., 'main', 'v1.0.0', 'feature-branch')
+  ACTION_VERSION: v5 # Change this to test a specific branch or tag (e.g., 'main', 'v1.0.0', 'feature-branch')
 
 jobs:
   test-custom-template:
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Post Custom Notification
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -47,7 +47,7 @@ jobs:
         run: echo "✅ Workflow completed successfully"
 
       - name: Post Workflow Success Notification
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -68,7 +68,7 @@ jobs:
         run: echo "❌ Simulating a failed step"
 
       - name: Post Workflow Failure Notification
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -90,7 +90,7 @@ jobs:
           fetch-depth: 0 # Fetch all history for tags
 
       - name: Post Release Review Notification
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -117,7 +117,7 @@ jobs:
 
       - name: Post Initial Release Notification
         id: initial-notification
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -139,7 +139,7 @@ jobs:
           echo "✅ Deployment complete!"
 
       - name: Post Deployment Progress (Thread Reply 1)
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -152,7 +152,7 @@ jobs:
         run: sleep 2
 
       - name: Post Deployment Success (Thread Reply 2)
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -172,7 +172,7 @@ jobs:
     if: contains(github.event.inputs.slack-channel, ',')
     steps:
       - name: Post to Multiple Channels
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Post with Custom Bot
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
@@ -211,7 +211,7 @@ jobs:
     if: always()
     steps:
       - name: Post Summary
-        uses: Neuro-ID/actions/slack-notification@ENG-1105-testing
+        uses: Neuro-ID/actions/slack-notification@v5
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel: ${{ github.event.inputs.slack-channel }}
