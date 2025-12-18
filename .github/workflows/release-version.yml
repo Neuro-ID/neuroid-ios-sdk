@@ -77,20 +77,22 @@ jobs:
         run: |
           pod trunk push NeuroID.podspec --allow-warnings
 
-      - uses: Neuro-ID/actions/slack-notification@v5
+      - name: Send Release Succeeded Result to iOS SwiftUI Sandbox Repo
         if: success()
-        with:
-          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel: "#releases"
-          template: workflow-success
-          title: ${{ env.SVC_NAME }}
-          message: "iOS SDK release created successfully!"
+        run: |
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
+            https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
+            -d '{"event_type":"release","client_payload":{"release_successful":true}}'
 
-      - uses: Neuro-ID/actions/slack-notification@v5
+      - name: Send Release Failure Result to iOS SwiftUI Sandbox Repo
         if: failure()
-        with:
-          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel: "#mobile-deployment-notifications"
-          template: workflow-failure
-          title: ${{ env.SVC_NAME }}
-          message: "iOS SDK release creation failed - check logs for details"
+        run: |
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GPR_API_KEY }}" \
+            https://api.github.com/repos/Neuro-ID/neuroid-ios-sdk-sandbox-swiftui/dispatches \
+            -d '{"event_type":"release","client_payload":{"release_successful":false}}'
