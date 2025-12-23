@@ -206,12 +206,6 @@ class NeuroIDClassTests: BaseTestClass {
     }
 
     func test_getSDKVersion() {
-        let expectedValue = ParamsCreator.getSDKVersion()
-
-        let value = NeuroID.getSDKVersion()
-
-        assert(value == expectedValue)
-
         let resultAdvTrue = NeuroID.getSDKVersion()
         assert(resultAdvTrue.contains("-adv"))
 

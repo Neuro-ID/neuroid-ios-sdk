@@ -21,7 +21,6 @@
 		26BCF34D268DA7CF0002C289 /* NeuroIDTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */; };
 		26BCF34E268DA7CF0002C289 /* NIDEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BCF34B268DA7CF0002C289 /* NIDEvent.swift */; };
 		4B0AA7F92B646D50001F26B3 /* NIDCallStatusObserverService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */; };
-		6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */; };
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
 		6F47B9AF2B7E80360047DFCB /* NIDNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */; };
 		6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */; };
@@ -41,17 +40,14 @@
 		F21702B829D4CDD300133A1C /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702B729D4CDD300133A1C /* Data.swift */; };
 		F21702BC29D4CDF900133A1C /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702BB29D4CDF900133A1C /* Dictionary.swift */; };
 		F21702BE29D4CE0700133A1C /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702BD29D4CE0700133A1C /* Double.swift */; };
-		F21702C029D4CE7E00133A1C /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702BF29D4CE7E00133A1C /* Sequence.swift */; };
 		F21702C229D4CECD00133A1C /* NeuroID.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C129D4CECD00133A1C /* NeuroID.swift */; };
 		F21702C829D5D5D000133A1C /* TextControlEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C529D5D5D000133A1C /* TextControlEvents.swift */; };
 		F21702C929D5D5D000133A1C /* TouchEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702C629D5D5D000133A1C /* TouchEvents.swift */; };
-		F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CB29D5D5E800133A1C /* Bundle.swift */; };
 		F21702D029D5E9D800133A1C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702CF29D5E9D800133A1C /* Utils.swift */; };
 		F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21702D329D6077600133A1C /* NIDParamsCreator.swift */; };
 		F23B75542AC36F8A00A7DF4D /* NIDRN.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23B75532AC36F8A00A7DF4D /* NIDRN.swift */; };
 		F2420C352BF3A1CD00143928 /* NIDListeners.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2420C342BF3A1CD00143928 /* NIDListeners.swift */; };
 		F2506FD12AD9A4FB00AD0903 /* NIDAdvancedDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */; };
-		F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25165482A6EF74700D41B89 /* UIScrollView.swift */; };
 		F25908DF2BEE62EF00B7A73D /* RemoteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25908DE2BEE62EF00B7A73D /* RemoteConfiguration.swift */; };
 		F25908E32BEE648400B7A73D /* NIDConfigService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25908E22BEE648400B7A73D /* NIDConfigService.swift */; };
 		F27045EE2B6A896700FE24FF /* NetworkMonitoringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */; };
@@ -115,7 +111,6 @@
 		FFAC96BB2D358AA7004C2A25 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BA2D358AA7004C2A25 /* UITextView.swift */; };
 		FFAC96BD2D358AB5004C2A25 /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BC2D358AB5004C2A25 /* UITableView.swift */; };
 		FFAC96BF2D358AC1004C2A25 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96BE2D358AC1004C2A25 /* UINavigationController.swift */; };
-		FFAC96C12D358ACC004C2A25 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C02D358ACC004C2A25 /* UIButton.swift */; };
 		FFAC96C22D358B3D004C2A25 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */; };
 		FFAC96C42D36D7EE004C2A25 /* IdentifierService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */; };
 		FFAC97A12D40047B004C2A25 /* NIDDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */; };
@@ -159,7 +154,6 @@
 		26BCF34A268DA7CF0002C289 /* NeuroIDTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NeuroIDTracker.swift; sourceTree = "<group>"; };
 		26BCF34B268DA7CF0002C289 /* NIDEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NIDEvent.swift; sourceTree = "<group>"; };
 		4B0AA7F82B646D50001F26B3 /* NIDCallStatusObserverService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDCallStatusObserverService.swift; sourceTree = "<group>"; };
-		6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKPreferences.swift; sourceTree = "<group>"; };
 		6F39E8C926CEA9A800BE9834 /* SDKTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SDKTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F467EDE2BAA0D8500B0605D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6F47B9AE2B7E80360047DFCB /* NIDNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDNetworkService.swift; sourceTree = "<group>"; };
@@ -177,17 +171,14 @@
 		F21702B729D4CDD300133A1C /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		F21702BB29D4CDF900133A1C /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		F21702BD29D4CE0700133A1C /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
-		F21702BF29D4CE7E00133A1C /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		F21702C129D4CECD00133A1C /* NeuroID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroID.swift; sourceTree = "<group>"; };
 		F21702C529D5D5D000133A1C /* TextControlEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextControlEvents.swift; sourceTree = "<group>"; };
 		F21702C629D5D5D000133A1C /* TouchEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchEvents.swift; sourceTree = "<group>"; };
-		F21702CB29D5D5E800133A1C /* Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		F21702CF29D5E9D800133A1C /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		F21702D329D6077600133A1C /* NIDParamsCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDParamsCreator.swift; sourceTree = "<group>"; };
 		F23B75532AC36F8A00A7DF4D /* NIDRN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDRN.swift; sourceTree = "<group>"; };
 		F2420C342BF3A1CD00143928 /* NIDListeners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDListeners.swift; sourceTree = "<group>"; };
 		F2506FD02AD9A4FB00AD0903 /* NIDAdvancedDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDAdvancedDevice.swift; sourceTree = "<group>"; };
-		F25165482A6EF74700D41B89 /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		F25908DE2BEE62EF00B7A73D /* RemoteConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfiguration.swift; sourceTree = "<group>"; };
 		F25908E22BEE648400B7A73D /* NIDConfigService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDConfigService.swift; sourceTree = "<group>"; };
 		F27045ED2B6A896700FE24FF /* NetworkMonitoringService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoringService.swift; sourceTree = "<group>"; };
@@ -253,7 +244,6 @@
 		FFAC96BA2D358AA7004C2A25 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
 		FFAC96BC2D358AB5004C2A25 /* UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableView.swift; sourceTree = "<group>"; };
 		FFAC96BE2D358AC1004C2A25 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
-		FFAC96C02D358ACC004C2A25 /* UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
 		FFAC96C32D36D7EE004C2A25 /* IdentifierService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierService.swift; sourceTree = "<group>"; };
 		FFAC97A02D40047B004C2A25 /* NIDDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDDataStore.swift; sourceTree = "<group>"; };
 		FFD6967E2D28988B003928EF /* LocationManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerService.swift; sourceTree = "<group>"; };
@@ -316,7 +306,6 @@
 				F2AEE7342A27A5BE009690CB /* NeuroIDClass */,
 				F25908DD2BEE62E100B7A73D /* Models */,
 				FFD6967D2D28948F003928EF /* Services */,
-				6F39E8A926CE9F7B00BE9834 /* SDKPreferences.swift */,
 				07A05C2028B91B4D00509509 /* NIDMetadata.swift */,
 				F2F0A3F429FB05A90083D43C /* Constants.swift */,
 			);
@@ -335,7 +324,6 @@
 			children = (
 				F21702B429D4CD9900133A1C /* BaseClassExtensions */,
 				F21702B329D4CD8000133A1C /* UIClassExtensions */,
-				F21702CB29D5D5E800133A1C /* Bundle.swift */,
 				F21702CF29D5E9D800133A1C /* Utils.swift */,
 			);
 			path = TrackerClassExtensions;
@@ -357,9 +345,7 @@
 			isa = PBXGroup;
 			children = (
 				6F6B754E2A8A9FDF00192E13 /* CommonTextFieldUtils.swift */,
-				FFAC96C02D358ACC004C2A25 /* UIButton.swift */,
 				FFAC96BE2D358AC1004C2A25 /* UINavigationController.swift */,
-				F25165482A6EF74700D41B89 /* UIScrollView.swift */,
 				FFAC96BC2D358AB5004C2A25 /* UITableView.swift */,
 				F217029829D4C4DF00133A1C /* UITextField.swift */,
 				FFAC96BA2D358AA7004C2A25 /* UITextView.swift */,
@@ -378,7 +364,6 @@
 				F21702BD29D4CE0700133A1C /* Double.swift */,
 				F216C4032A718B0A001DDABB /* LosslessStringConvertible.swift */,
 				F216C4012A718AEA001DDABB /* Optional.swift */,
-				F21702BF29D4CE7E00133A1C /* Sequence.swift */,
 				F21702B529D4CDB300133A1C /* String.swift */,
 			);
 			path = BaseClassExtensions;
@@ -666,18 +651,14 @@
 				076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */,
 				F21702D029D5E9D800133A1C /* Utils.swift in Sources */,
 				F21702C229D4CECD00133A1C /* NeuroID.swift in Sources */,
-				F251654A2A6EF74F00D41B89 /* UIScrollView.swift in Sources */,
 				F25908E32BEE648400B7A73D /* NIDConfigService.swift in Sources */,
-				F21702CC29D5D5E800133A1C /* Bundle.swift in Sources */,
 				F216C4022A718AEA001DDABB /* Optional.swift in Sources */,
 				F217029929D4C4DF00133A1C /* UITextField.swift in Sources */,
-				F21702C029D4CE7E00133A1C /* Sequence.swift in Sources */,
 				F2AEE7472A27A84B009690CB /* NIDSend.swift in Sources */,
 				F216C4082A71BE19001DDABB /* Date.swift in Sources */,
 				F21702C829D5D5D000133A1C /* TextControlEvents.swift in Sources */,
 				FFAC96BB2D358AA7004C2A25 /* UITextView.swift in Sources */,
 				6F6B754F2A8A9FDF00192E13 /* CommonTextFieldUtils.swift in Sources */,
-				6F39E8AA26CE9F7B00BE9834 /* SDKPreferences.swift in Sources */,
 				F21702BE29D4CE0700133A1C /* Double.swift in Sources */,
 				FF0E22382E54E5D600DECB89 /* NIDStatic.swift in Sources */,
 				FF0E22312E4BBD1A00DECB89 /* RepeatingTask.swift in Sources */,
@@ -705,7 +686,6 @@
 				FF88597C2D481B3A00A91902 /* AdvancedDeviceService.swift in Sources */,
 				FFAC96BF2D358AC1004C2A25 /* UINavigationController.swift in Sources */,
 				F21702D429D6077600133A1C /* NIDParamsCreator.swift in Sources */,
-				FFAC96C12D358ACC004C2A25 /* UIButton.swift in Sources */,
 				F2AEE73D2A27A6AE009690CB /* NIDScreen.swift in Sources */,
 				FF0E22252E41497B00DECB89 /* EventStorageService.swift in Sources */,
 				F2AEE73F2A27A6E9009690CB /* NIDUser.swift in Sources */,

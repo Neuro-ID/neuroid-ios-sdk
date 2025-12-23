@@ -5,21 +5,18 @@
 //  Created by Kevin Sites on 3/29/23.
 //
 
-import Alamofire
-import CommonCrypto
-import Foundation
-import ObjectiveC
-import os
-import SwiftUI
 import UIKit
-import WebKit
 
 public class NeuroID: NSObject {
-    static let SEND_INTERVAL: Double = 5
+    static let nidVersion = "3.6.0"
     static let shared: NeuroID = .init()
 
-    var advancedDeviceKey: String? = nil
+    // Configuration
     var clientKey: String?
+    var isAdvancedDevice: Bool = false
+    var advancedDeviceKey: String? = nil
+    var useAdvancedDeviceProxy: Bool = false
+    
     var siteID: String?
     var linkedSiteID: String?
 
@@ -111,12 +108,7 @@ public class NeuroID: NSObject {
 
     var lowMemory: Bool = false
 
-    var isAdvancedDevice: Bool = false
-
     var packetNumber: Int32 = 0
-    
-    // Use Advanced Device Proxy 
-    var useAdvancedDeviceProxy: Bool = false
 
     // Testing Purposes Only
     static var _isTesting = false
@@ -189,7 +181,7 @@ public class NeuroID: NSObject {
 
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
-    /// 3. Send cached events from DB every `SEND_INTERVAL`
+    /// 3. Send cached events from DB on a given interval
     func configure(_ configuration: Configuration) -> Bool {
         // set last install time if not already set.
         if getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0 {
@@ -305,8 +297,6 @@ public class NeuroID: NSObject {
         UITextView.startSwizzling()
         UINavigationController.swizzleNavigation()
         UITableView.tableviewSwizzle()
-        // UIScrollView.startSwizzlingUIScroll()
-        // UIButton.startSwizzling()
 
         self.didSwizzle.toggle()
     }

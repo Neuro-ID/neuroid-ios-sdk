@@ -382,34 +382,31 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value == expectedValue)
     }
 
-    func getSDKVersion() {
+    func test_getSDKVersion() {
         NeuroID.shared.isRN = false
-        let version = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValue = "5.ios-adv-\(version ?? "?")"
+        let version: String = NeuroID.nidVersion
+        let expectedValue = "5.ios-adv-\(version)"
 
         let value = ParamsCreator.getSDKVersion()
 
         assert(value == expectedValue)
 
         NeuroID.shared.isRN = true
-        let versionRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValueRN = "5.ios-rn-adv-\(version ?? "?")"
+        let expectedValueRN = "5.ios-rn-adv-\(version)"
 
         let valueRN = ParamsCreator.getSDKVersion()
 
         assert(valueRN == expectedValueRN)
 
         NeuroID.shared.isRN = false
-        let versionADV = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValueADV = "5.ios-adv-\(version ?? "?")"
+        let expectedValueADV = "5.ios-adv-\(version)"
 
         let valueADV = ParamsCreator.getSDKVersion()
 
         assert(valueADV == expectedValueADV)
 
         NeuroID.shared.isRN = true
-        let versionADVRN = Bundle(for: NeuroIDTracker.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        let expectedValueADVRN = "5.ios-rn-adv-\(version ?? "?")"
+        let expectedValueADVRN = "5.ios-rn-adv-\(version)"
 
         let valueADVRN = ParamsCreator.getSDKVersion()
 
@@ -433,11 +430,5 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(secondValue.count >= 7)
 
         assert(value != secondValue)
-    }
-
-    func test_getSPVersionID() {
-        let expectedValue = "3.4.5"
-        let value = ParamsCreator.getSPVersionID(version: "%%%3.4.5%%%")
-        assert(value == expectedValue)
     }
 }
