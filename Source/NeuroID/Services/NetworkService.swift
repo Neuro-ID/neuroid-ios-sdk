@@ -1,5 +1,5 @@
 //
-//  NIDNetworkingService.swift
+//  NetworkService.swift
 //  NeuroID
 //
 //  Created by Clayton Selby on 2/15/24.
@@ -14,15 +14,22 @@ protocol NetworkServiceProtocol {
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration
 }
 
-class NIDNetworkServiceImpl: NetworkServiceProtocol {
+class NetworkService: NetworkServiceProtocol {
     private let logger: LoggerProtocol
     private var afCustomSession: Alamofire.Session
-    private let configuration = URLSessionConfiguration.af.default
+    private let afConfiguration = URLSessionConfiguration.af.default
+    private let session: URLSession
 
     init(logger: LoggerProtocol) {
         self.logger = logger
         // Initialize the session
-        self.afCustomSession = Alamofire.Session(configuration: configuration)
+        self.afCustomSession = Alamofire.Session(configuration: afConfiguration)
+        
+        let configuration = URLSessionConfiguration.default
+        // TODO: Copy Defualts from Alamofire for config
+        
+        session = URLSession(configuration: configuration)
+        session.sessionDescription = "NeuroID"
     }
 
     func retryableRequest(
@@ -34,7 +41,7 @@ class NIDNetworkServiceImpl: NetworkServiceProtocol {
     ) {
         let maxRetryCount = 3
 
-        configuration.timeoutIntervalForRequest = Double(NeuroID.shared.configService.configCache.requestTimeout)
+        afConfiguration.timeoutIntervalForRequest = Double(NeuroID.shared.configService.configCache.requestTimeout)
 
         afCustomSession.request(
             url,
@@ -53,7 +60,7 @@ class NIDNetworkServiceImpl: NetworkServiceProtocol {
     }
     
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
-        let (data, response) = try await URLSession.shared.data(from: endpoint)
+        let (data, response) = try await session.data(from: endpoint)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)

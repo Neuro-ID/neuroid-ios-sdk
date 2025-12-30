@@ -14,7 +14,7 @@ class MockNetworkService: NetworkServiceProtocol {
     var mockResponseResult: Any?
     var mockError: Error?
 
-    var shouldMockFalse = false
+    var mockRequestShouldFail = false
 
     var mockedRetryableRequestSuccess = 0
     var mockedRetryableRequestFailure = 0
@@ -61,7 +61,7 @@ class MockNetworkService: NetworkServiceProtocol {
     }
 
     func mockFailedResponse() {
-        shouldMockFalse = true
+        mockRequestShouldFail = true
     }
 
     // Protocol Implementations
@@ -74,14 +74,14 @@ class MockNetworkService: NetworkServiceProtocol {
    ) {
        print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
 
-       if shouldMockFalse {
+       if mockRequestShouldFail {
            mockedRetryableRequestFailure += 1
        } else {
            mockedRetryableRequestSuccess += 1
        }
 
        let mockResponse = createMockAlamofireResponse(
-           successful: !shouldMockFalse,
+           successful: !mockRequestShouldFail,
            responseData: nil,
            statusCode: 200
        )
@@ -90,54 +90,12 @@ class MockNetworkService: NetworkServiceProtocol {
    }
 
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
-        if shouldMockFalse {
-//            let request = URLRequest(url: URL(string: "https://mock-nid.com")!)
-//            let response = HTTPURLResponse(url: endpoint, statusCode: 500, httpVersion: nil, headerFields: nil)
-
-//            var result: Result<RemoteConfiguration, AFError>
-//            let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 500))
-//            result = .failure(error)
-//
-//            let finalRes: RemoteConfiguration = .init(
-//                request: request,
-//                response: response,
-//                data: mockResponse,
-//                metrics: nil,
-//                serializationDuration: 0,
-//                result: result
-//            )
-
-            //completion(finalRes)
-
+        if mockRequestShouldFail {
             mockedGetRequestFailureCount += 1
-            shouldMockFalse = false
-            throw URLError(.badServerResponse)
+            throw URLError(.unknown)
         } else {
-//            let request = URLRequest(url: URL(string: "https://mock-nid.com")!)
-//            let response = HTTPURLResponse(url: endpoint, statusCode: 200, httpVersion: nil, headerFields: nil)
-            
-            var result: RemoteConfiguration
-            
-            if let typed = mockResponseResult as? RemoteConfiguration {
-                result = typed
-            } else {
-                throw URLError(.unknown)
-            }
-//            
-//            let finalRes: DataResponse<RemoteConfiguration, AFError> = .init(
-//                request: request,
-//                response: response,
-//                data: mockResponse,
-//                metrics: nil,
-//                serializationDuration: 0,
-//                result: result
-//            )
-            
-            //completion(finalRes)
-            
             mockedGetRequestSuccessCount += 1
-            shouldMockFalse = false
-            return result
+            return mockResponseResult as! RemoteConfiguration
         }
     }
 }

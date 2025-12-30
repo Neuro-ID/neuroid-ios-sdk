@@ -1,5 +1,5 @@
 //
-//  NIDConfigService.swift
+//  ConfigService.swift
 //  NeuroID
 
 import Foundation
@@ -20,12 +20,12 @@ protocol RandomGenerator {
 
 class NIDRandomGenerator: RandomGenerator {
     func getNumber() -> Int {
-        let num = Int.random(in: 1 ... NIDConfigService.MAX_SAMPLE_RATE)
+        let num = Int.random(in: 1 ... ConfigService.MAX_SAMPLE_RATE)
         return num
     }
 }
 
-class NIDConfigService: ConfigServiceProtocol {
+class ConfigService: ConfigServiceProtocol {
     let randomGenerator: RandomGenerator
     
     static let DEFAULT_SAMPLE_RATE: Int = 100
@@ -68,7 +68,7 @@ class NIDConfigService: ConfigServiceProtocol {
         }
         
         do {
-            let configUrlStr = NIDConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
+            let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
             let configUrl = URL(string: configUrlStr)!
             
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
@@ -129,22 +129,16 @@ class NIDConfigService: ConfigServiceProtocol {
      once the cache has been loaded once, we will not expire - this is subject to change
      (i.e. a time expiration approach instead)
      */
-    func expiredCache() -> Bool {
-        if !cacheSetWithRemote {
-            return true
-        }
-        
-        return false
+    var expiredCache: Bool {
+        return !cacheSetWithRemote
     }
     
     /**
      Will check if the cache is available or needs to be refreshed,
      */
     func retrieveOrRefreshCache() {
-        if expiredCache() {
-            Task {
-                await retrieveConfig()
-            }          
+        if expiredCache {
+            Task { await retrieveConfig() }
         }
     }
     

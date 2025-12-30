@@ -21,7 +21,7 @@ func getMockResponseData() -> RemoteConfiguration {
     return config
 }
 
-func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) -> NIDConfigService {
+func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) -> ConfigService {
     NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
     let mockedData = try! JSONEncoder().encode(getMockResponseData())
@@ -29,9 +29,9 @@ func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) ->
     let mockedNetwork = MockNetworkService()
     mockedNetwork.mockResponse = mockedData
     mockedNetwork.mockResponseResult = getMockResponseData()
-    mockedNetwork.shouldMockFalse = shouldFail
+    mockedNetwork.mockRequestShouldFail = shouldFail
 
-    let configService = NIDConfigService(
+    let configService = ConfigService(
         logger: NIDLog(),
         networkService: mockedNetwork,
         randomGenerator: randomGenerator,

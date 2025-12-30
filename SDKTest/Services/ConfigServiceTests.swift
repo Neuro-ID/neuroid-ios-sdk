@@ -21,14 +21,14 @@ class MockedNIDRandomGenerator: RandomGenerator {
 
 @Suite
 struct ConfigServiceTests {
-    var configService: NIDConfigService = NIDConfigService(
+    var configService: ConfigService = ConfigService(
         logger: NIDLog(),
         networkService: MockNetworkService()
     )
 
 //    override func setUpWithError() throws {
-//        NIDConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
-//        configService = NIDConfigService(
+//        ConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
+//        configService = ConfigService(
 //            logger: NIDLog()
 //        )
 //    }
@@ -39,7 +39,7 @@ struct ConfigServiceTests {
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
         
-        self.configService = NIDConfigService(logger: NIDLog(), networkService: mockedNetwork)
+        self.configService = ConfigService(logger: NIDLog(), networkService: mockedNetwork)
     }
    
    func getMockResponseData() -> RemoteConfiguration {
@@ -59,7 +59,7 @@ struct ConfigServiceTests {
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockResponse = try! JSONEncoder().encode(getMockResponseData())
         mockedNetwork.mockResponseResult = getMockResponseData()
-        mockedNetwork.shouldMockFalse = shouldFail
+        mockedNetwork.mockRequestShouldFail = shouldFail
         
         return mockedNetwork
     }
@@ -111,7 +111,7 @@ struct ConfigServiceTests {
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
 
-        configService = NIDConfigService(
+        configService = ConfigService(
             logger: NIDLog(),
             networkService: mockedNetwork,
             configRetrievalCallback: {}
@@ -144,10 +144,9 @@ struct ConfigServiceTests {
     }
 
     @Test(arguments: [true, false])
-    func expiredCache_false(cacheSetWithRemote: Bool) {
+    func expiredCache(cacheSetWithRemote: Bool) {
         configService.cacheSetWithRemote = cacheSetWithRemote
-        let expiredCache = configService.expiredCache()
-        #expect(expiredCache == !cacheSetWithRemote)
+        #expect(configService.expiredCache == !cacheSetWithRemote)
     }
 
     @Test(arguments: [0, 100])
@@ -249,7 +248,7 @@ struct ConfigServiceTests {
     mutating func configResponseProcessing(_ parms: Rolls) async {
         NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
-        self.configService = NIDConfigService(
+        self.configService = ConfigService(
             logger: NIDLog(),
             networkService: setupMockNetworkRequest(shouldFail: parms.shouldFail),
             randomGenerator: parms.mockedRandomGenerator,
@@ -275,7 +274,7 @@ struct ConfigServiceTests {
     mutating func configRetrievalCallback(shouldFail: Bool) async {
         var configCallBackCalled = false
         
-        self.configService = NIDConfigService(
+        self.configService = ConfigService(
             logger: NIDLog(),
             networkService: setupMockNetworkRequest(shouldFail: shouldFail),
             randomGenerator: MockedNIDRandomGenerator(0),

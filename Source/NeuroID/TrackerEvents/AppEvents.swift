@@ -52,7 +52,7 @@ extension NeuroIDTracker {
             NeuroID.shared.lowMemory = true
         }
 
-        let lowMembackOffTime = NeuroID.shared.configService.configCache.lowMemoryBackOff ?? NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
+        let lowMembackOffTime = NeuroID.shared.configService.configCache.lowMemoryBackOff ?? ConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
 
         DispatchQueue.main.asyncAfter(deadline: .now() + lowMembackOffTime) {
             NeuroID.shared.lowMemory = false

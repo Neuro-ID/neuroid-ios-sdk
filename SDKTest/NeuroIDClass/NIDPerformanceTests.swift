@@ -20,7 +20,7 @@ final class NIDPerformanceTests: XCTestCase {
     
     func test_remote_backoff_overrides_default() {
         mockedConfigService.mockConfigCache = RemoteConfiguration(lowMemoryBackOff: 0)
-        assert(mockedConfigService.configCache.lowMemoryBackOff != NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF)
+        assert(mockedConfigService.configCache.lowMemoryBackOff != ConfigService.DEFAULT_LOW_MEMORY_BACK_OFF)
     }
     
     func testLowMemoryFlagChangesAfterDefaultConfigSeconds() {
