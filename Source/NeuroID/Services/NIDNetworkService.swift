@@ -10,8 +10,8 @@ import Foundation
 
 protocol NetworkServiceProtocol {
     func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int, completion: @escaping (AFDataResponse<Data>) -> Void)
-
-    func getRequest<T: Decodable>(url: URL, responseDecodableType: T.Type, completion: @escaping (DataResponse<T, AFError>) -> Void)
+    
+    func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration
 }
 
 class NIDNetworkServiceImpl: NetworkServiceProtocol {
@@ -25,7 +25,13 @@ class NIDNetworkServiceImpl: NetworkServiceProtocol {
         self.afCustomSession = Alamofire.Session(configuration: configuration)
     }
 
-    func retryableRequest(url: URL, neuroHTTPRequest: NeuroHTTPRequest, headers: HTTPHeaders, retryCount: Int = 0, completion: @escaping (AFDataResponse<Data>) -> Void) {
+    func retryableRequest(
+        url: URL,
+        neuroHTTPRequest: NeuroHTTPRequest,
+        headers: HTTPHeaders,
+        retryCount: Int = 0,
+        completion: @escaping (AFDataResponse<Data>) -> Void
+    ) {
         let maxRetryCount = 3
 
         configuration.timeoutIntervalForRequest = Double(NeuroID.shared.configService.configCache.requestTimeout)
@@ -45,20 +51,16 @@ class NIDNetworkServiceImpl: NetworkServiceProtocol {
             }
         }
     }
-
-    func getRequest<T: Decodable>(
-        url: URL,
-        responseDecodableType: T.Type,
-        completion: @escaping (DataResponse<T, AFError>) -> Void
-    ) {
-        afCustomSession
-            .request(
-                url,
-                method: .get
-            )
-            .validate()
-            .responseDecodable(of: responseDecodableType.self) { response in
-                completion(response)
-            }
+    
+    func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
+        let (data, response) = try await URLSession.shared.data(from: endpoint)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        let config: RemoteConfiguration = try JSONDecoder().decode(RemoteConfiguration.self, from: data)
+        
+        return config
     }
 }

@@ -2,7 +2,6 @@
 //  NIDConfigService.swift
 //  NeuroID
 
-import Alamofire
 import Foundation
 
 protocol ConfigServiceProtocol {
@@ -38,7 +37,7 @@ class NIDConfigService: ConfigServiceProtocol {
     let logger: LoggerProtocol
     let networkService: NetworkServiceProtocol
     let configRetrievalCallback: () -> Void
-
+    
     var cacheSetWithRemote = false
     var cacheCreationTime: Date = .init()
     var siteIDMap: [String: Bool] = [:]
@@ -46,6 +45,7 @@ class NIDConfigService: ConfigServiceProtocol {
     
     var isSessionFlowSampled: Bool { _isSessionFlowSampled }
     
+    // Use default remote configuration unless replaced
     public var configCache: RemoteConfiguration = .init()
     
     init(
@@ -60,38 +60,36 @@ class NIDConfigService: ConfigServiceProtocol {
         self.configRetrievalCallback = configRetrievalCallback
     }
     
-    func retrieveConfig() {
+    func retrieveConfig() async {
         if !NeuroID.shared.verifyClientKeyExists() {
             cacheSetWithRemote = false
             configRetrievalCallback()
             return
         }
         
-        let config_url = NIDConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
-        networkService.getRequest(
-            url: URL(string: config_url)!,
-            responseDecodableType: RemoteConfiguration.self
-        ) { response in
-            switch response.result {
-            case .success(let responseData):
-                self.setCache(responseData)
-                self.logger.d("Retrieved remote config \(responseData)")
-                self.initSiteIDSampleMap(config: responseData)
-                self.cacheSetWithRemote = true
-                self.cacheCreationTime = .init()
-                self.captureConfigEvent(configData: responseData)
-                self.configRetrievalCallback()
-            case .failure(let error):
-                self.logger.e("Failed to retrieve NID Config \(error)")
-                self.configCache = RemoteConfiguration()
-                self.cacheSetWithRemote = false
-                NeuroID.shared.saveEventToDataStore(
-                    NIDEvent.createErrorLogEvent(
-                        "Failed to retrieve NID config: \(error). Default values will be used."
-                    )
+        do {
+            let configUrlStr = NIDConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
+            let configUrl = URL(string: configUrlStr)!
+            
+            let config = try await networkService.fetchRemoteConfig(from: configUrl)
+            
+            self.configCache = config
+            self.logger.d("Retrieved remote config \(config)")
+            self.initSiteIDSampleMap(config: config)
+            self.cacheSetWithRemote = true
+            self.cacheCreationTime = .now
+            self.captureConfigEvent(configData: config)
+            self.configRetrievalCallback()
+        } catch (let error) {
+            self.logger.e("Failed to retrieve NID Config \(error)")
+            self.configCache = RemoteConfiguration()
+            self.cacheSetWithRemote = false
+            NeuroID.shared.saveEventToDataStore(
+                NIDEvent.createErrorLogEvent(
+                    "Failed to retrieve NID config: \(error). Default values will be used."
                 )
-                self.configRetrievalCallback()
-            }
+            )
+            self.configRetrievalCallback()
         }
     }
     
@@ -116,7 +114,7 @@ class NIDConfigService: ConfigServiceProtocol {
                 }
             }
         }
-
+        
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateSampleSiteIDMap,
@@ -125,15 +123,11 @@ class NIDConfigService: ConfigServiceProtocol {
         )
     }
     
-    func setCache(_ newCache: RemoteConfiguration) {
-        configCache = newCache
-    }
-    
     /**
-        Determines if the cache is expired.
-        Expired = not loaded from the remote source at all,
-        once the cache has been loaded once, we will not expire - this is subject to change
-        (i.e. a time expiration approach instead)
+     Determines if the cache is expired.
+     Expired = not loaded from the remote source at all,
+     once the cache has been loaded once, we will not expire - this is subject to change
+     (i.e. a time expiration approach instead)
      */
     func expiredCache() -> Bool {
         if !cacheSetWithRemote {
@@ -145,10 +139,12 @@ class NIDConfigService: ConfigServiceProtocol {
     
     /**
      Will check if the cache is available or needs to be refreshed,
-      */
+     */
     func retrieveOrRefreshCache() {
         if expiredCache() {
-            retrieveConfig()
+            Task {
+                await retrieveConfig()
+            }          
         }
     }
     
@@ -166,7 +162,7 @@ class NIDConfigService: ConfigServiceProtocol {
         let encoder = JSONEncoder()
         
         guard let jsonData = try? encoder.encode(configData) else { return }
-          
+        
         if let jsonString = String(data: jsonData, encoding: .utf8) {
             NeuroID.shared.saveEventToDataStore(
                 NIDEvent(type: .configCached, v: jsonString)

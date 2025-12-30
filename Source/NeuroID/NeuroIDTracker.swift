@@ -1,4 +1,3 @@
-import Alamofire
 import CommonCrypto
 import Foundation
 import ObjectiveC

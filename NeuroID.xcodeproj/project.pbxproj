@@ -142,6 +142,7 @@
 
 /* Begin PBXFileReference section */
 		015C01622EBA46F900077E22 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		017162C02EFEDEA100CBD60B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
 		01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceServiceTests.swift; sourceTree = "<group>"; };
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
@@ -275,6 +276,7 @@
 		26BCF332268DA3C40002C289 = {
 			isa = PBXGroup;
 			children = (
+				017162C02EFEDEA100CBD60B /* README.md */,
 				FFAC96B52D358978004C2A25 /* Package.swift */,
 				FFAC96B42D358967004C2A25 /* Source */,
 				FF1770A82E26DB8E007235A2 /* SDKTest */,
