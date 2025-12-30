@@ -146,7 +146,7 @@ struct ConfigServiceTests {
     @Test(arguments: [true, false])
     func expiredCache(cacheSetWithRemote: Bool) {
         configService.cacheSetWithRemote = cacheSetWithRemote
-        #expect(configService.expiredCache == !cacheSetWithRemote)
+        #expect(configService.cacheExpired == !cacheSetWithRemote)
     }
 
     @Test(arguments: [0, 100])

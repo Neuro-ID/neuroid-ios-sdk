@@ -8,7 +8,7 @@ protocol ConfigServiceProtocol {
     var configCache: RemoteConfiguration { get }
     var siteIDMap: [String: Bool] { get }
     var isSessionFlowSampled: Bool { get }
-    
+
     func clearSiteIDMap()
     func retrieveOrRefreshCache()
     func updateIsSampledStatus(siteID: String?)
@@ -20,34 +20,35 @@ protocol RandomGenerator {
 
 class NIDRandomGenerator: RandomGenerator {
     func getNumber() -> Int {
-        let num = Int.random(in: 1 ... ConfigService.MAX_SAMPLE_RATE)
+        let num = Int.random(in: 1...ConfigService.MAX_SAMPLE_RATE)
         return num
     }
 }
 
 class ConfigService: ConfigServiceProtocol {
-    let randomGenerator: RandomGenerator
-    
+
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static let MAX_SAMPLE_RATE: Int = 100
     static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
-    
+
+    // Services
     let logger: LoggerProtocol
     let networkService: NetworkServiceProtocol
+    let randomGenerator: RandomGenerator
+
     let configRetrievalCallback: () -> Void
-    
-    var cacheSetWithRemote = false
-    var cacheCreationTime: Date = .init()
+
     var siteIDMap: [String: Bool] = [:]
+
     var _isSessionFlowSampled = true
-    
     var isSessionFlowSampled: Bool { _isSessionFlowSampled }
-    
+
     // Use default remote configuration unless replaced
     public var configCache: RemoteConfiguration = .init()
-    
+    var cacheSetWithRemote = false
+
     init(
         logger: LoggerProtocol,
         networkService: NetworkServiceProtocol,
@@ -59,9 +60,9 @@ class ConfigService: ConfigServiceProtocol {
         self.randomGenerator = randomGenerator
         self.configRetrievalCallback = configRetrievalCallback
     }
-    
+
     func retrieveConfig() async {
-        if !NeuroID.shared.verifyClientKeyExists() {
+        guard NeuroID.shared.verifyClientKeyExists() else {
             cacheSetWithRemote = false
             configRetrievalCallback()
             return
@@ -73,11 +74,10 @@ class ConfigService: ConfigServiceProtocol {
             
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
             
-            self.configCache = config
             self.logger.d("Retrieved remote config \(config)")
+            self.configCache = config
             self.initSiteIDSampleMap(config: config)
             self.cacheSetWithRemote = true
-            self.cacheCreationTime = .now
             self.captureConfigEvent(configData: config)
             self.configRetrievalCallback()
         } catch (let error) {
@@ -92,7 +92,7 @@ class ConfigService: ConfigServiceProtocol {
             self.configRetrievalCallback()
         }
     }
-    
+
     func initSiteIDSampleMap(config: RemoteConfiguration) {
         if let linkedSiteOptions: [String: RemoteConfiguration.LinkedSiteOption] = config.linkedSiteOptions {
             for siteID in linkedSiteOptions.keys {
@@ -105,6 +105,7 @@ class ConfigService: ConfigServiceProtocol {
                 }
             }
         }
+        
         if let siteID: String = config.siteID {
             if let sampleRate: Int = config.sampleRate {
                 if config.sampleRate == 0 {
@@ -114,7 +115,7 @@ class ConfigService: ConfigServiceProtocol {
                 }
             }
         }
-        
+
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateSampleSiteIDMap,
@@ -122,26 +123,26 @@ class ConfigService: ConfigServiceProtocol {
             )
         )
     }
-    
+
     /**
      Determines if the cache is expired.
      Expired = not loaded from the remote source at all,
      once the cache has been loaded once, we will not expire - this is subject to change
      (i.e. a time expiration approach instead)
      */
-    var expiredCache: Bool {
+    var cacheExpired: Bool {
         return !cacheSetWithRemote
     }
-    
+
     /**
      Will check if the cache is available or needs to be refreshed,
      */
     func retrieveOrRefreshCache() {
-        if expiredCache {
+        if cacheExpired {
             Task { await retrieveConfig() }
         }
     }
-    
+
     func clearSiteIDMap() {
         siteIDMap.removeAll()
         NeuroID.shared.saveEventToDataStore(
@@ -151,12 +152,12 @@ class ConfigService: ConfigServiceProtocol {
             )
         )
     }
-    
+
     func captureConfigEvent(configData: RemoteConfiguration) {
         let encoder = JSONEncoder()
-        
+
         guard let jsonData = try? encoder.encode(configData) else { return }
-        
+
         if let jsonString = String(data: jsonData, encoding: .utf8) {
             NeuroID.shared.saveEventToDataStore(
                 NIDEvent(type: .configCached, v: jsonString)
@@ -167,7 +168,7 @@ class ConfigService: ConfigServiceProtocol {
             )
         }
     }
-    
+
     func updateIsSampledStatus(siteID: String?) {
         if let nonNullSiteID: String = siteID {
             if let nonNullFlag = siteIDMap[nonNullSiteID] {
@@ -183,7 +184,7 @@ class ConfigService: ConfigServiceProtocol {
             }
         }
         _isSessionFlowSampled = true
-        
+
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateIsSampledStatus,

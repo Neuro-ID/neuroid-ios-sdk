@@ -19,14 +19,14 @@ class MockNetworkService: NetworkServiceProtocol {
     var mockedRetryableRequestSuccess = 0
     var mockedRetryableRequestFailure = 0
 
-    var mockedGetRequestSuccessCount = 0
-    var mockedGetRequestFailureCount = 0
+    var fetchRemoteConfigSuccessCount = 0
+    var fetchRemoteConfigFailureCount = 0
 
     func resetMockCounts() {
         mockedRetryableRequestSuccess = 0
         mockedRetryableRequestFailure = 0
-        mockedGetRequestSuccessCount = 0
-        mockedGetRequestFailureCount = 0
+        fetchRemoteConfigSuccessCount = 0
+        fetchRemoteConfigFailureCount = 0
     }
 
     // Mock Class Utils
@@ -91,10 +91,10 @@ class MockNetworkService: NetworkServiceProtocol {
 
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
         if mockRequestShouldFail {
-            mockedGetRequestFailureCount += 1
+            fetchRemoteConfigFailureCount += 1
             throw URLError(.unknown)
         } else {
-            mockedGetRequestSuccessCount += 1
+            fetchRemoteConfigSuccessCount += 1
             return mockResponseResult as! RemoteConfiguration
         }
     }
