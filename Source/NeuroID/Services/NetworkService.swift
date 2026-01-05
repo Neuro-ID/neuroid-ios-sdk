@@ -26,8 +26,6 @@ class NetworkService: NetworkServiceProtocol {
         self.afCustomSession = Alamofire.Session(configuration: afConfiguration)
         
         let configuration = URLSessionConfiguration.default
-        // TODO: Copy Defualts from Alamofire for config
-        
         session = URLSession(configuration: configuration)
         session.sessionDescription = "NeuroID"
     }

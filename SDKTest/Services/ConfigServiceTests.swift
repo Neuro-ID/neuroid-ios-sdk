@@ -21,17 +21,15 @@ class MockedNIDRandomGenerator: RandomGenerator {
 
 @Suite
 struct ConfigServiceTests {
-    var configService: ConfigService = ConfigService(
-        logger: NIDLog(),
-        networkService: MockNetworkService()
-    )
-
-//    override func setUpWithError() throws {
-//        ConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
-//        configService = ConfigService(
-//            logger: NIDLog()
-//        )
-//    }
+    var configService: ConfigService
+    
+    init() {
+        ConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
+        configService = ConfigService(
+            logger: NIDLog(),
+            networkService: MockNetworkService()
+        )
+    }
    
     mutating func setupKeyAndMockInternet() {
         NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"

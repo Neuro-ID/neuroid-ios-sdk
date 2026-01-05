@@ -105,7 +105,6 @@ class ConfigService: ConfigServiceProtocol {
                 }
             }
         }
-        
         if let siteID: String = config.siteID {
             if let sampleRate: Int = config.sampleRate {
                 if config.sampleRate == 0 {
