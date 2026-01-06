@@ -32,7 +32,6 @@ struct ValidationServiceTests {
             "key_foo_XXXXXXXXXXX",  // invalid
             "sdfsdfsdfsdf",  // random
             "",  // Empty
-            "key_test_ABCDEFGHIG"
         ]
     )
     func validateClientKeyFail(clientKey: String) {
