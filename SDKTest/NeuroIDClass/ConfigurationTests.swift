@@ -8,7 +8,7 @@
 import Testing
 @testable import NeuroID
 
-@Suite("Configuration")
+@Suite("Configuration Tests")
 struct ConfigurationTests {
     
     // MARK: - `useAdvancedDeviceProxy` Tests

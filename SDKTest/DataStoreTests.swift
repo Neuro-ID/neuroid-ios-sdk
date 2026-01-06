@@ -6,9 +6,10 @@
 //
 
 @testable import NeuroID
-import XCTest
+import Testing
 
-class DataStoreTests: XCTestCase {
+@Suite("DataStore Tests")
+class DataStoreTests {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
     let eventsKey = "test_events_stored"
@@ -24,7 +25,7 @@ class DataStoreTests: XCTestCase {
 
     var dataStore = DataStore(logger: NIDLog())
 
-    override func setUpWithError() throws {
+    init() {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
@@ -34,11 +35,11 @@ class DataStoreTests: XCTestCase {
         dataStore = DataStore(logger: NIDLog())
     }
 
-    override func tearDownWithError() throws {
+    deinit {
         _ = NeuroID.stop()
     }
 
-    func testEncodeAndDecode() throws {
+    @Test func encodeAndDecode() throws {
         let nidE = NIDEvent(
             type: .radioChange,
             tg: ["name": TargetValue.string("john")]
@@ -52,32 +53,32 @@ class DataStoreTests: XCTestCase {
             let existingEvents = UserDefaults.standard.object(forKey: eventsKey)
             let parsedEvents = try JSONDecoder().decode([NIDEvent].self, from: existingEvents as! Data)
 
-            assert(parsedEvents.count == 1)
-            assert(parsedEvents[0].type == "RADIO_CHANGE")
-            assert(parsedEvents[0].tg?["name"]?.toString() == "john")
+            #expect(parsedEvents.count == 1)
+            #expect(parsedEvents[0].type == "RADIO_CHANGE")
+            #expect(parsedEvents[0].tg?["name"]?.toString() == "john")
         } catch {
             assertionFailure("Failed to Encode/Decode: \(String(describing: error))")
         }
     }
 
-    func test_insertCleanedEvent_queued() {
+    @Test func insertCleanedEvent_queued() {
         let nidE = nidEvent
 
         dataStore.insertCleanedEvent(event: nidE, storeType: "queue")
-        assert(dataStore.events.count == 0)
-        assert(dataStore.queuedEvents.count == 1)
+        #expect(dataStore.events.count == 0)
+        #expect(dataStore.queuedEvents.count == 1)
     }
 
-    func test_insertCleanedEvent_event() {
+    @Test func insertCleanedEvent_event() {
         let nidE = nidEvent
 
         dataStore.insertCleanedEvent(event: nidE, storeType: "event")
-        assert(dataStore.events.count == 1)
-        assert(dataStore.queuedEvents.count == 0)
+        #expect(dataStore.events.count == 1)
+        #expect(dataStore.queuedEvents.count == 0)
     }
 
-    func test_getAllEvents() {
-        assert(dataStore.events.count == 0)
+    @Test func getAllEvents() {
+        #expect(dataStore.events.count == 0)
 
         dataStore.events = [
             nidEvent
@@ -85,11 +86,11 @@ class DataStoreTests: XCTestCase {
 
         let retrievedEvents = dataStore.getAllEvents()
 
-        assert(retrievedEvents.count == 1)
+        #expect(retrievedEvents.count == 1)
     }
 
-    func test_getAndRemoveAllEvents() {
-        assert(dataStore.events.count == 0)
+    @Test func getAndRemoveAllEvents() {
+        #expect(dataStore.events.count == 0)
 
         dataStore.events = [
             nidEvent
@@ -97,12 +98,12 @@ class DataStoreTests: XCTestCase {
 
         let retrievedEvents = dataStore.getAndRemoveAllEvents()
 
-        assert(retrievedEvents.count == 1)
-        assert(dataStore.events.count == 0)
+        #expect(retrievedEvents.count == 1)
+        #expect(dataStore.events.count == 0)
     }
 
-    func test_getAndRemoveAllQueuedEvents() {
-        assert(dataStore.queuedEvents.count == 0)
+    @Test func getAndRemoveAllQueuedEvents() {
+        #expect(dataStore.queuedEvents.count == 0)
 
         dataStore.queuedEvents = [
             nidEvent
@@ -110,98 +111,70 @@ class DataStoreTests: XCTestCase {
 
         let retrievedEvents = dataStore.getAndRemoveAllQueuedEvents()
 
-        assert(retrievedEvents.count == 1)
-        assert(dataStore.queuedEvents.count == 0)
+        #expect(retrievedEvents.count == 1)
+        #expect(dataStore.queuedEvents.count == 0)
     }
 
-    func test_getUserDefaultKeyBool() {
-        UserDefaults.standard.set(false, forKey: testStoreKey)
+    @Test(arguments: [true, false, nil]) func testGetUserDefaultKeyBool(input: Bool?) {
+        UserDefaults.standard.set(input, forKey: testStoreKey)
 
         let value = getUserDefaultKeyBool(testStoreKey)
-        assert(value == false)
+        #expect(value == input ?? false)
     }
 
-    func test_getUserDefaultKeyBool_true() {
-        UserDefaults.standard.set(true, forKey: testStoreKey)
-
-        let value = getUserDefaultKeyBool(testStoreKey)
-        assert(value == true)
-    }
-
-    func test_getUserDefaultKeyBool_nil() {
-        UserDefaults.standard.set(nil, forKey: testStoreKey)
-
-        let value = getUserDefaultKeyBool(testStoreKey)
-        assert(value == false)
-    }
-
-    func test_getUserDefaultKeyString() {
-        UserDefaults.standard.set("", forKey: testStoreKey)
+    @Test(arguments: ["", "test", nil]) func testGetUserDefaultKeyString(input: String?) {
+        UserDefaults.standard.set(input, forKey: testStoreKey)
 
         let value = getUserDefaultKeyString(testStoreKey)
-        assert(value == "")
+        #expect(value == input)
     }
 
-    func test_getUserDefaultKeyString_value() {
-        UserDefaults.standard.set("test", forKey: testStoreKey)
-
-        let value = getUserDefaultKeyString(testStoreKey)
-        assert(value == "test")
-    }
-
-    func test_getUserDefaultKeyString_nil() {
-        UserDefaults.standard.set(nil, forKey: testStoreKey)
-
-        let value = getUserDefaultKeyString(testStoreKey)
-        assert(value == nil)
-    }
-
-    func test_getUserDefaultKeyDict_value() {
+    @Test func getUserDefaultKeyDict_value() {
         UserDefaults.standard.set(["foo": "bar"], forKey: testStoreKey)
 
         let value = getUserDefaultKeyDict(testStoreKey)
         if let myV = value {
-            assert(myV["foo"] != nil)
+            #expect(myV["foo"] != nil)
         } else {
             assertionFailure("Dictionary Missing")
         }
     }
 
-    func test_getUserDefaultKeyDict_nil() {
+    @Test func getUserDefaultKeyDict_nil() {
         UserDefaults.standard.set(nil, forKey: testStoreKey)
 
         let value = getUserDefaultKeyDict(testStoreKey)
-        assert(value == nil)
+        #expect(value == nil)
     }
 
-    func test_setUserDefaultKey_string() {
+    @Test func setUserDefaultKey_string() {
         setUserDefaultKey(testStoreKey, value: "test")
 
         let value = UserDefaults.standard.string(forKey: testStoreKey)
-        assert(value == "test")
+        #expect(value == "test")
     }
 
-    func test_setUserDefaultKey_string_nil() {
+    @Test func setUserDefaultKey_string_nil() {
         setUserDefaultKey(testStoreKey, value: nil)
 
         let value = UserDefaults.standard.string(forKey: testStoreKey)
-        assert(value == nil)
+        #expect(value == nil)
     }
 
-    func test_setUserDefaultKey_bool() {
+    @Test func setUserDefaultKey_bool() {
         setUserDefaultKey(testStoreKey, value: true)
 
         let value = UserDefaults.standard.bool(forKey: testStoreKey)
-        assert(value == true)
+        #expect(value == true)
     }
 
-    func test_getUserDefaultKeyDouble_no_value() {
+    @Test func getUserDefaultKeyDouble_no_value() {
         UserDefaults.standard.removeObject(forKey: "test_key")
-        assert(getUserDefaultKeyDouble("test_key") == 0)
+        #expect(getUserDefaultKeyDouble("test_key") == 0)
     }
 
-    func test_getUserDefaultKeyDouble_valid_value() {
+    @Test func getUserDefaultKeyDouble_valid_value() {
         setUserDefaultKey("test_key", value: 15.0)
-        assert(getUserDefaultKeyDouble("test_key") == 15.0)
+        #expect(getUserDefaultKeyDouble("test_key") == 15.0)
     }
 }
