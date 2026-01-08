@@ -133,10 +133,10 @@ public class NeuroID: NSObject {
         self.datastore = datastore ?? DataStore(logger: self.logger)
         self.eventStorageService = eventStorageService ?? EventStorageService()
         self.validationService = validationService ?? ValidationService(logger: self.logger)
-        self.networkService = networkService ?? NIDNetworkServiceImpl(logger: self.logger)
+        self.networkService = networkService ?? NetworkService(logger: self.logger)
         self.configService =
             configService
-                ?? NIDConfigService(
+                ?? ConfigService(
                     logger: self.logger,
                     networkService: self.networkService,
                     configRetrievalCallback: {} // callback is reconfigured on `configure` command
@@ -230,7 +230,7 @@ public class NeuroID: NSObject {
         )
         self.packetNumber = 0
 
-        self.configService = NIDConfigService(
+        self.configService = ConfigService(
             logger: self.logger,
             networkService: self.networkService,
             configRetrievalCallback: self.configSetupCompletion

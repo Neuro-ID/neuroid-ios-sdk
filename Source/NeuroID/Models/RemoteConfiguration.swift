@@ -15,11 +15,11 @@ struct RemoteConfiguration: Codable {
     var requestTimeout: Int = 10
     var gyroAccelCadence: Bool = false
     var gyroAccelCadenceTime: Int = 200
-    var lowMemoryBackOff: Double? = NIDConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
-    var advancedCookieExpiration: Int? = NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
+    var lowMemoryBackOff: Double? = ConfigService.DEFAULT_LOW_MEMORY_BACK_OFF
+    var advancedCookieExpiration: Int? = ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
 
     // could exist for parent site or could be null meaning 100%
-    var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
+    var sampleRate: Int? = ConfigService.DEFAULT_SAMPLE_RATE
 
     var siteID: String? = "" // should not be optional but older configs might not have it
     var linkedSiteOptions: [String: LinkedSiteOption]? = [:]
@@ -40,7 +40,7 @@ struct RemoteConfiguration: Codable {
     }
     
     struct LinkedSiteOption: Codable {
-        var sampleRate: Int? = NIDConfigService.DEFAULT_SAMPLE_RATE
+        var sampleRate: Int? = ConfigService.DEFAULT_SAMPLE_RATE
 
         enum CodingKeys: String, CodingKey {
             case sampleRate = "sample_rate"

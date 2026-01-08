@@ -14,19 +14,19 @@ class MockNetworkService: NetworkServiceProtocol {
     var mockResponseResult: Any?
     var mockError: Error?
 
-    var shouldMockFalse = false
+    var mockRequestShouldFail = false
 
     var mockedRetryableRequestSuccess = 0
     var mockedRetryableRequestFailure = 0
 
-    var mockedGetRequestSuccessCount = 0
-    var mockedGetRequestFailureCount = 0
+    var fetchRemoteConfigSuccessCount = 0
+    var fetchRemoteConfigFailureCount = 0
 
     func resetMockCounts() {
         mockedRetryableRequestSuccess = 0
         mockedRetryableRequestFailure = 0
-        mockedGetRequestSuccessCount = 0
-        mockedGetRequestFailureCount = 0
+        fetchRemoteConfigSuccessCount = 0
+        fetchRemoteConfigFailureCount = 0
     }
 
     // Mock Class Utils
@@ -61,89 +61,41 @@ class MockNetworkService: NetworkServiceProtocol {
     }
 
     func mockFailedResponse() {
-        shouldMockFalse = true
+        mockRequestShouldFail = true
     }
 
     // Protocol Implementations
-    func retryableRequest(
-        url: URL,
-        neuroHTTPRequest: NeuroHTTPRequest,
-        headers: HTTPHeaders,
-        retryCount: Int,
-        completion: @escaping (AFDataResponse<Data>) -> Void
-    ) {
-        print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
+   func retryableRequest(
+       url: URL,
+       neuroHTTPRequest: NeuroHTTPRequest,
+       headers: HTTPHeaders,
+       retryCount: Int,
+       completion: @escaping (AFDataResponse<Data>) -> Void
+   ) {
+       print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
 
-        if shouldMockFalse {
-            mockedRetryableRequestFailure += 1
+       if mockRequestShouldFail {
+           mockedRetryableRequestFailure += 1
+       } else {
+           mockedRetryableRequestSuccess += 1
+       }
+
+       let mockResponse = createMockAlamofireResponse(
+           successful: !mockRequestShouldFail,
+           responseData: nil,
+           statusCode: 200
+       )
+
+       completion(mockResponse)
+   }
+
+    func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
+        if mockRequestShouldFail {
+            fetchRemoteConfigFailureCount += 1
+            throw URLError(.unknown)
         } else {
-            mockedRetryableRequestSuccess += 1
+            fetchRemoteConfigSuccessCount += 1
+            return mockResponseResult as! RemoteConfiguration
         }
-
-        let mockResponse = createMockAlamofireResponse(
-            successful: !shouldMockFalse,
-            responseData: nil,
-            statusCode: 200
-        )
-
-        completion(mockResponse)
-    }
-
-    func getRequest<T: Decodable>(
-        url: URL,
-        responseDecodableType: T.Type,
-        completion: @escaping (DataResponse<T, AFError>) -> Void
-    ) {
-        if shouldMockFalse {
-            let request = URLRequest(url: URL(string: "https://mock-nid.com")!)
-            let response = HTTPURLResponse(url: url, statusCode: 500, httpVersion: nil, headerFields: nil)
-
-            var result: Result<T, AFError>
-            let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 500))
-            result = .failure(error)
-
-            let finalRes: DataResponse<T, AFError> = .init(
-                request: request,
-                response: response,
-                data: mockResponse,
-                metrics: nil,
-                serializationDuration: 0,
-                result: result
-            )
-
-            completion(finalRes)
-
-            mockedGetRequestFailureCount += 1
-            shouldMockFalse = false
-            return
-        } else {
-            let request = URLRequest(url: URL(string: "https://mock-nid.com")!)
-            let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
-
-            var result: Result<T, AFError>
-
-            if let typed = mockResponseResult as? T {
-                result = .success(typed)
-            } else {
-                result = .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
-            }
-
-            let finalRes: DataResponse<T, AFError> = .init(
-                request: request,
-                response: response,
-                data: mockResponse,
-                metrics: nil,
-                serializationDuration: 0,
-                result: result
-            )
-
-            completion(finalRes)
-
-            mockedGetRequestSuccessCount += 1
-            shouldMockFalse = false
-            return
-        }
-
-        print("MockNetworkService Mocked GET Request \(url)")
     }
 }

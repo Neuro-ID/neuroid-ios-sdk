@@ -7,7 +7,7 @@ name: Deploy Prod Sandbox Apps
 on:
   push:
     tags:
-      - '*'
+      - '**'
       - '!development'
       - '!latest'
   workflow_dispatch:

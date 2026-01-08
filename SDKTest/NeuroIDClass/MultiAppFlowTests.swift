@@ -139,7 +139,7 @@ class MultiAppFlowTests: XCTestCase {
         }
     }
 
-    func test_captureAdvancedDevice_throttle() {
+    func test_captureAdvancedDevice_throttle() async {
         NeuroID.shared.clientKey = ""
         NeuroID.shared.deviceSignalService = mockService
         let configuration = NeuroID.Configuration(clientKey: clientKey)
@@ -151,7 +151,7 @@ class MultiAppFlowTests: XCTestCase {
             randomGenerator: MockedNIDRandomGenerator(0)
         )
         service._isSessionFlowSampled = false
-        service.retrieveConfig()
+        await service.retrieveConfig()
         NeuroID.shared.configService = service // setting to false indicating we are throttling
 
         NeuroID.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
@@ -165,7 +165,7 @@ class MultiAppFlowTests: XCTestCase {
         NeuroID.shared._isSDKStarted = false
     }
 
-    func test_captureAdvancedDevice_no_throttle() {
+    func test_captureAdvancedDevice_no_throttle() async {
         NeuroID.shared.clientKey = ""
         let configuration = NeuroID.Configuration(clientKey: clientKey)
         _ = NeuroID.configure(configuration)
@@ -181,7 +181,7 @@ class MultiAppFlowTests: XCTestCase {
         NeuroID.shared.configService = service
 
         NeuroID.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
-        service.retrieveConfig()
+        await service.retrieveConfig()
 
         let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
             $0.type == "ADVANCED_DEVICE_REQUEST"

@@ -144,7 +144,7 @@ class PayloadSendingServiceTests: BaseTestClass {
         var isSuccess = true
         var packetIncremented = false
 
-        mockNetworkService.shouldMockFalse = true
+        mockNetworkService.mockRequestShouldFail = true
 
         payloadSendingService.cleanAndSendEvents(
             clientKey: clientKey,
@@ -189,7 +189,7 @@ class PayloadSendingServiceTests: BaseTestClass {
 
     func test_post_failure() {
         var isSuccess = true
-        mockNetworkService.shouldMockFalse = true
+        mockNetworkService.mockRequestShouldFail = true
 
         payloadSendingService.post(
             screen: "testScreenName",

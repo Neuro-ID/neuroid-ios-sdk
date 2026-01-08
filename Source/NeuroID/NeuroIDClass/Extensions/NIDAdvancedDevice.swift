@@ -84,7 +84,7 @@ extension NeuroID {
 
                 let storedKey : [String: Any?] = [
                     "exp": UtilFunctions.getFutureTimeStamp(
-                        self.configService.configCache.advancedCookieExpiration ?? NIDConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
+                        self.configService.configCache.advancedCookieExpiration ?? ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
                     ),
                     "key": requestID,
                     "scr": sealedClientResults

@@ -5,7 +5,6 @@
 //  Created by Kevin Sites on 5/31/23.
 //
 
-import Alamofire
 import Foundation
 
 extension NeuroID {

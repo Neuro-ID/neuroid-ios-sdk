@@ -101,8 +101,8 @@ class NeuroIDClassTests: BaseTestClass {
 
         assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
 
-        assert(mockedNetworkService.mockedGetRequestSuccessCount == 1)
-        assert(mockedNetworkService.mockedGetRequestFailureCount == 0)
+        assert(mockedNetworkService.fetchRemoteConfigSuccessCount == 1)
+        assert(mockedNetworkService.fetchRemoteConfigFailureCount == 0)
     }
 
     func test_configure_invalidKey() {
