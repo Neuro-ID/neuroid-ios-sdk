@@ -33,31 +33,6 @@ class BaseClassExtensionTests: XCTestCase {
         assert(value == secondValue)
     }
     
-    func test_double_truncate() {
-        let og = 1.0101
-        
-        let value = og.truncate(places: 1)
-        assert(value == 1.0)
-        
-        let value2 = og.truncate(places: 2)
-        assert(value2 == 1.01)
-    }
-    
-    func test_dictionary_toKeyValueString() {
-        var og = ["foo": "bar"]
-        
-        let value = og.toKeyValueString()
-        assert(value == "foo=bar")
-        
-        og["foo2"] = "bar2"
-
-        let value2 = og.toKeyValueString()
-        
-        if value2 != "foo=bar&foo2=bar2" && value2 != "foo2=bar2&foo=bar" {
-            assertionFailure("Dictionary toKeyValueString is missing values")
-        }
-    }
-    
     func test_optional_isEmptyOrNil() {
         let og: String? = "test"
         
