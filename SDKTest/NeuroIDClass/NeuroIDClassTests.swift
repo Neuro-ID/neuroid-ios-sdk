@@ -100,7 +100,19 @@ class NeuroIDClassTests: BaseTestClass {
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
         assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
-
+        
+        // Wait for async config fetch to complete by checking cacheSetWithRemote
+        let exp = XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
+                if let realConfig = NeuroID.shared.configService as? ConfigService {
+                    return realConfig.cacheSetWithRemote
+                }
+                return false
+            },
+            object: nil
+        )
+        wait(for: [exp], timeout: 4.0)
+        
         assert(mockedNetworkService.fetchRemoteConfigSuccessCount == 1)
         assert(mockedNetworkService.fetchRemoteConfigFailureCount == 0)
     }
