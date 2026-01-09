@@ -137,9 +137,8 @@ class ConfigService: ConfigServiceProtocol {
      Will check if the cache is available or needs to be refreshed,
      */
     func retrieveOrRefreshCache() {
-        if cacheExpired {
-            Task { await retrieveConfig() }
-        }
+        guard cacheExpired else { return }
+        Task { await retrieveConfig() }
     }
 
     func clearSiteIDMap() {

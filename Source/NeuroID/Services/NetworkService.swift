@@ -60,7 +60,7 @@ class NetworkService: NetworkServiceProtocol {
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
         let (data, response) = try await session.data(from: endpoint)
         
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
         }
         

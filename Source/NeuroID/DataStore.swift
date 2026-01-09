@@ -17,7 +17,6 @@ public class DataStore: DataStoreServiceProtocol {
 
     var _events = [NIDEvent]()
     private let lock = NSLock()
-    private let max_event_size = 1999
 
     var events: [NIDEvent] {
         get { lock.withCriticalSection { _events } }
