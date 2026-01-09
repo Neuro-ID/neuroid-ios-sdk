@@ -104,10 +104,8 @@ class NeuroIDClassTests: BaseTestClass {
         // Wait for async config fetch to complete by checking cacheSetWithRemote
         let exp = XCTNSPredicateExpectation(
             predicate: NSPredicate { _, _ in
-                if let realConfig = NeuroID.shared.configService as? ConfigService {
-                    return realConfig.cacheSetWithRemote
-                }
-                return false
+                guard let realConfig = NeuroID.shared.configService as? ConfigService else { return false }
+                return realConfig.cacheSetWithRemote
             },
             object: nil
         )
