@@ -4,8 +4,10 @@
 //
 //  Created by Clayton Selby on 4/9/24.
 //
+
 @testable import NeuroID
 import Testing
+import Foundation
 
 class MockedNIDRandomGenerator: RandomGenerator {
     var number: Int
