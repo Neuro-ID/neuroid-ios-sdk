@@ -5,71 +5,78 @@
 //  Created by Kevin Sites on 1/27/25.
 //
 
-import Foundation
+import Testing
 @testable import NeuroID
 
-class ValidationServiceTests: BaseTestClass {
+@Suite("Validation Service Tests")
+struct ValidationServiceTests {
     let validationService = ValidationService(
         logger: NIDLog()
     )
 
-    func test_validateClientKey_valid_live() {
-        let value = validationService.validateClientKey("key_live_XXXXXXXXXXX")
-
-        assert(value)
+    // MARK: Client Key
+    @Test(
+        "Validate Site ID - Valid",
+        arguments: [
+            "key_live_XXXXXXXXXXX",  // LIVE
+            "key_test_XXXXXXXXXXX",  // TEST
+        ]
+    )
+    func validateClientKeySuccess(clientKey: String) {
+        #expect(validationService.validateClientKey(clientKey))
     }
 
-    func test_validateClientKey_valid_test() {
-        let value = validationService.validateClientKey("key_test_XXXXXXXXXXX")
-
-        assert(value)
+    @Test(
+        "Validate Site ID - Invalid",
+        arguments: [
+            "key_foo_XXXXXXXXXXX",  // invalid
+            "sdfsdfsdfsdf",  // random
+            "",  // Empty
+        ]
+    )
+    func validateClientKeyFail(clientKey: String) {
+        #expect(!validationService.validateClientKey(clientKey))
     }
 
-    func test_validateClientKey_invalid_env() {
-        let value = validationService.validateClientKey("key_foo_XXXXXXXXXXX")
-
-        assert(!value)
+    // MARK: Site ID
+    @Test(
+        "Validate Site ID - Valid",
+        arguments: [
+            "form_peaks345"
+        ]
+    )
+    func validateSiteIdSuccess(siteId: String) {
+        #expect(validationService.validateSiteID(siteId))
     }
 
-    func test_validateClientKey_invalid_random() {
-        let value = validationService.validateClientKey("sdfsdfsdfsdf")
-
-        assert(!value)
+    @Test(
+        "Validate Site ID - Invalid",
+        arguments: [
+            "form_abc123",  // too short
+            "badSiteID",  // random
+            "",  // Empty
+        ]
+    )
+    func validateSiteIdFail(siteId: String) {
+        #expect(!validationService.validateSiteID(siteId))
     }
 
-    func test_validateSiteID_valid() {
-        let value = validationService.validateSiteID("form_peaks345")
-
-        assert(value)
-    }
-
-    func test_validateSiteID_invalid_bad() {
-        let value = validationService.validateSiteID("badSiteID")
-
-        assert(!value)
-    }
-
-    func test_validateSiteID_invalid_short() {
-        let value = validationService.validateSiteID("form_abc123")
-
-        assert(!value)
-    }
-
-    func test_validatedIdentifiers_valid_id() {
-        let validIdentifiers = [
+    // MARK: ID
+    @Test(
+        "Validate ID - Valid",
+        arguments: [
             "123",
             "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789",
             "a-A_1.0",
         ]
-
-        for identifier in validIdentifiers {
-            let userNameSet = validationService.validateIdentifier(identifier)
-            assert(userNameSet == true)
-        }
+    )
+    func validateIdentifierSuccess(id: String) {
+        #expect(validationService.validateIdentifier(id))
     }
 
-    func test_validatedIdentifiers_invalid_id() {
-        let invalidIdentifiers = [
+    @Test(
+        "Validate ID - Invalid",
+        arguments: [
             "",
             "1",
             "12",
@@ -78,12 +85,8 @@ class ValidationServiceTests: BaseTestClass {
             "invalid characters",
             "invalid*ch@racters",
         ]
-
-        for identifier in invalidIdentifiers {
-            let userNameSet = validationService.validateIdentifier(identifier)
-            assert(userNameSet == false)
-        }
+    )
+    func validateIdentifierFail(id: String) {
+        #expect(!validationService.validateIdentifier(id))
     }
-
-//    validateIdentifier
 }
