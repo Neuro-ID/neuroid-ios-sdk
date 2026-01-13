@@ -46,14 +46,7 @@ extension UIView {
 public extension UIView {
     var id: String {
         get {
-            var title = "UNKNOWN_NO_ID_SET"
-
-            if #available(iOS 13.0, *) {
-                title = "UNKNOWN_NO_ID_SET"
-                title = title.replacingOccurrences(of: " ", with: "_")
-            }
-
-            title = "\(nidClassName)_\(title)"
+            let title = "\(nidClassName)_UNKNOWN_NO_ID_SET"
             var backupName = "\(description.hashValue)"
 
             var placeholder = ""

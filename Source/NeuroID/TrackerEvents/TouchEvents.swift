@@ -61,10 +61,7 @@ func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, ty
     var size: CGFloat = 0.0
     var force: CGFloat = 0.0
     if let touch = touches.first {
-        if #available(iOS 9.0, *) {
-            force = touch.force
-        }
-
+        force = touch.force
         size = touch.majorRadius
     }
 
