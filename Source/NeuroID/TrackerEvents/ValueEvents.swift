@@ -37,10 +37,8 @@ extension NeuroIDTracker {
             // This is the only listener the UIDatePicker element will trigger, so we register here if not found
             _ = NeuroIDTracker.registerViewIfNotRegistered(view: sender)
 
-        } else if #available(iOS 14.0, *) {
-            if let _ = sender as? UIColorWell {
-                eventName = .colorWellChange
-            }
+        } else if let _ = sender as? UIColorWell {
+            eventName = .colorWellChange
         }
 
         let viewId = TargetValue.string(sender.id)

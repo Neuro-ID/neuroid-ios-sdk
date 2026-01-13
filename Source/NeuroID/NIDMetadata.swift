@@ -90,22 +90,19 @@ extension NIDMetadata {
     }
 
     static func getCurrentCarrier() -> String {
-        if #available(iOS 12.0, *) {
-            let coreTelephony = CTTelephonyNetworkInfo()
-            var current = ""
-            var name = ""
-            if #available(iOS 13.0, *) {
-                if let currentName = coreTelephony.dataServiceIdentifier {
-                    name = currentName
-                }
-            }
-            if let data = coreTelephony.serviceSubscriberCellularProviders, let carrierName = data[name]?.carrierName {
-                current = carrierName
-            }
-            return current
-        } else {
-            return ""
+        let coreTelephony = CTTelephonyNetworkInfo()
+        var current = ""
+        var name = ""
+        
+        if let currentName = coreTelephony.dataServiceIdentifier {
+            name = currentName
         }
+        
+        if let data = coreTelephony.serviceSubscriberCellularProviders, let carrierName = data[name]?.carrierName {
+            current = carrierName
+        }
+        
+        return current
     }
 
     static func getBaterryLevel() -> Double {
@@ -127,14 +124,10 @@ extension NIDMetadata {
     }
 
     static func isWifiEnable() -> Bool {
-        if #available(iOS 12.0, *) {
-            let networkStatus = NetworkStatus.shared
-            networkStatus.start()
-            networkStatus.stop()
-            return networkStatus.connType == .wifi
-        } else {
-            return false
-        }
+        let networkStatus = NetworkStatus.shared
+        networkStatus.start()
+        networkStatus.stop()
+        return networkStatus.connType == .wifi
     }
 
     @available(iOSApplicationExtension, unavailable)

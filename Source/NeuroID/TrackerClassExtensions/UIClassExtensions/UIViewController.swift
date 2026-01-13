@@ -177,10 +177,7 @@ extension UIViewController {
         // Handle keyboard will show event - potentially fires twice (might be a simulator bug)
         if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
             // Determine the safe area insets of the device
-            var safeAreaInsets: UIEdgeInsets = .zero
-            if #available(iOS 11.0, *) {
-                safeAreaInsets = view.safeAreaInsets
-            }
+            let safeAreaInsets: UIEdgeInsets = view.safeAreaInsets
 
             // Compare the bottom of the keyboard frame with the bottom of the screen
             let keyboardBottomY = keyboardFrame.origin.y + keyboardFrame.size.height

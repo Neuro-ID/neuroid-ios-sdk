@@ -73,22 +73,15 @@ public class NeuroIDTracker: NSObject {
         // indicate if a supported element was found
         var found = false
         
-        if #available(iOS 14.0, *) {
-            switch v {
-                case is UIColorWell:
-                    let _ = v as! UIColorWell
-                    
-                    value = ""
-                    type = "UIColorWell"
-                    
-                    found = true
-                    
-                default:
-                    let _ = ""
-            }
-        }
-        
         switch v {
+            case is UIColorWell:
+                let _ = v as! UIColorWell
+                
+                value = ""
+                type = "UIColorWell"
+                
+                found = true
+                
             case is UITextField:
                 let element = v as! UITextField
                 element.addTapGesture()
@@ -185,17 +178,15 @@ public class NeuroIDTracker: NSObject {
                 NeuroID.shared.logger.d(tag: "NeuroID FE:", "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
                 
             default:
-                if !found {
-                    // Capture custom RN elements that have a testID set
-                    if NeuroID.shared.isRN && !id.contains("UNKNOWN_NO_ID_SET") {
-                        value = id
-                        etn = "ELEMENT"
-                        type = "ReactNativeElement"
-                        
-                        found = true
-                    } else {
-                        return
-                    }
+                // Capture custom RN elements that have a testID set
+                if NeuroID.shared.isRN && !id.contains("UNKNOWN_NO_ID_SET") {
+                    value = id
+                    etn = "ELEMENT"
+                    type = "ReactNativeElement"
+                    
+                    found = true
+                } else {
+                    return
                 }
         }
         
