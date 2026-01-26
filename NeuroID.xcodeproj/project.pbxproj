@@ -10,7 +10,6 @@
 		01219BBE2ED77175008F3D71 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01219BBD2ED77175008F3D71 /* Alamofire */; };
 		01219BC12ED77183008F3D71 /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01219BC02ED77183008F3D71 /* FingerprintPro */; };
 		015C01632EBA46FC00077E22 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C01622EBA46F900077E22 /* Configuration.swift */; };
-		01BF006F2F2813F200D0268A /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF006E2F2813EE00D0268A /* TrackerTests.swift */; };
 		01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */; };
 		01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F582E9D90F10042B0DD /* JSONSchema */; };
 		01E5B4742EBD0C94007C9B2B /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */; };
@@ -143,7 +142,6 @@
 /* Begin PBXFileReference section */
 		015C01622EBA46F900077E22 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		017162C02EFEDEA100CBD60B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		01BF006E2F2813EE00D0268A /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
 		01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
 		01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceServiceTests.swift; sourceTree = "<group>"; };
 		01F523DD2F17E8AF00E8B234 /* KeyboardObserverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserverTests.swift; sourceTree = "<group>"; };
@@ -489,7 +487,6 @@
 				FF1770A22E26DB8E007235A2 /* DataStoreTests.swift */,
 				FF1770A32E26DB8E007235A2 /* Info.plist */,
 				FF1770A42E26DB8E007235A2 /* NeuroIDTrackerTests.swift */,
-				01BF006E2F2813EE00D0268A /* TrackerTests.swift */,
 				FF1770A52E26DB8E007235A2 /* NIDEventTests.swift */,
 				FF1770A62E26DB8E007235A2 /* UIViewExtensionTests.swift */,
 				FF1770A72E26DB8E007235A2 /* UtilFunctionsTests.swift */,
@@ -718,7 +715,6 @@
 				FF1770AF2E26DB8E007235A2 /* NeuroIDTrackerTests.swift in Sources */,
 				FF1770B02E26DB8E007235A2 /* UIViewExtensionTests.swift in Sources */,
 				FF1770B12E26DB8E007235A2 /* SessionTests.swift in Sources */,
-				01BF006F2F2813F200D0268A /* TrackerTests.swift in Sources */,
 				FF1770B22E26DB8E007235A2 /* NIDRegistrationTests.swift in Sources */,
 				FF1770B32E26DB8E007235A2 /* NIDClientSiteIdTests.swift in Sources */,
 				FFAA66D32E5CE994003C0FF1 /* MockValidationService.swift in Sources */,
