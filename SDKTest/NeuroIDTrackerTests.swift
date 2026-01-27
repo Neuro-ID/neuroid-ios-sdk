@@ -215,9 +215,27 @@ class NeuroIDTrackerTests: BaseTestClass {
         assertViewNOTRegistered(v: uiView)
     }
     
-    func test_valueChanged() {
+    func test_valueChanged_stepper() {
         let view = UIStepper(frame: CGRect(x: 0, y: 0, width: 120, height: 30))
         view.accessibilityIdentifier = "stepper-1"
+        
+        NeuroIDTracker.registerSingleView(
+            v: view,
+            screenName: screenNameValue,
+            guid: guidValue,
+            topDownHierarchyPath: ""
+        )
+        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+        
+        tracker.valueChanged(sender: view)
+        
+        let events = NeuroID.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
+        assert(events.count == 1)
+    }
+    
+    func test_valueChanged_color() {
+        let view = UIColorWell()
+        view.accessibilityIdentifier = "color-picker"
         
         NeuroIDTracker.registerSingleView(
             v: view,
