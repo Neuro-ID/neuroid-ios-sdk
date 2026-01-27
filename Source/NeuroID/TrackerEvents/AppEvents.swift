@@ -12,17 +12,26 @@ import UIKit
 
 extension NeuroIDTracker {
     func observeAppEvents() {
-        if #available(iOS 13.0, *) {
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIScene.willDeactivateNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appMovedToBackground),
+            name: UIScene.willDeactivateNotification,
+            object: nil
+        )
 
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIScene.didActivateNotification, object: nil)
-        } else {
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appMovedToForeground),
+            name: UIScene.didActivateNotification,
+            object: nil
+        )
 
-            NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
-        }
-
-        NotificationCenter.default.addObserver(self, selector: #selector(appLowMemoryWarning), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appLowMemoryWarning),
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
     }
 
     @objc func appMovedToBackground() {
