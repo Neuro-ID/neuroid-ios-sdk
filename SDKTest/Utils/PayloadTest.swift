@@ -7,8 +7,9 @@
 
 import DSJSONSchemaValidation
 import JSONSchema
-@testable import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class PayloadTest: XCTestCase {
     var schema: [String: Any]!
@@ -17,8 +18,10 @@ class PayloadTest: XCTestCase {
     override func setUpWithError() throws {
         do {
             /// This path may point to your on file system
-            var url = URL(fileURLWithPath: #file).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-            url.appendPathComponent("/Source/NeuroID/schema.json")
+            var url = URL(fileURLWithPath: #file)
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+            url.appendPathComponent("schema.json")
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
             self.data = data
             let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
