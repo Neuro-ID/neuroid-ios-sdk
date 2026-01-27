@@ -14,7 +14,6 @@
 		01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F582E9D90F10042B0DD /* JSONSchema */; };
 		01E5B4742EBD0C94007C9B2B /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */; };
 		01E5B4782EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */; };
-		01F523DE2F17E8AF00E8B234 /* KeyboardObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F523DD2F17E8AF00E8B234 /* KeyboardObserverTests.swift */; };
 		076252EF2876294400FBA209 /* NeuroIDSensors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076252EE2876294400FBA209 /* NeuroIDSensors.swift */; };
 		1FD6E6BB2C4598DF00C8017E /* NIDPacketNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */; };
 		26BCF341268DA3C40002C289 /* NeuroID.h in Headers */ = {isa = PBXBuildFile; fileRef = 26BCF33F268DA3C40002C289 /* NeuroID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -144,7 +143,6 @@
 		017162C02EFEDEA100CBD60B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
 		01E5B4772EBD2C3E007C9B2B /* AdvancedDeviceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedDeviceServiceTests.swift; sourceTree = "<group>"; };
-		01F523DD2F17E8AF00E8B234 /* KeyboardObserverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardObserverTests.swift; sourceTree = "<group>"; };
 		076252EE2876294400FBA209 /* NeuroIDSensors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeuroIDSensors.swift; sourceTree = "<group>"; };
 		07A05C2028B91B4D00509509 /* NIDMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDMetadata.swift; sourceTree = "<group>"; };
 		1FD6E6BA2C4598DF00C8017E /* NIDPacketNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NIDPacketNumber.swift; sourceTree = "<group>"; };
@@ -431,7 +429,6 @@
 				FF17708D2E26DB8E007235A2 /* NIDSessionTests.swift */,
 				FF17708E2E26DB8E007235A2 /* NIDUserTests.swift */,
 				01E5B4732EBD0C94007C9B2B /* ConfigurationTests.swift */,
-				01F523DD2F17E8AF00E8B234 /* KeyboardObserverTests.swift */,
 			);
 			path = NeuroIDClass;
 			sourceTree = "<group>";
@@ -733,7 +730,6 @@
 				FF0E222F2E4AA89100DECB89 /* PayloadSendingServiceTests.swift in Sources */,
 				FF1770BF2E26DB8E007235A2 /* MockDeviceSignalService.swift in Sources */,
 				FF1770C02E26DB8E007235A2 /* ValidationServiceTests.swift in Sources */,
-				01F523DE2F17E8AF00E8B234 /* KeyboardObserverTests.swift in Sources */,
 				FFAA66CF2E5CDB5F003C0FF1 /* MockEventStorageService.swift in Sources */,
 				FF1770C12E26DB8E007235A2 /* NIDLogTests.swift in Sources */,
 				FF1770C22E26DB8E007235A2 /* NIDFormTests.swift in Sources */,
