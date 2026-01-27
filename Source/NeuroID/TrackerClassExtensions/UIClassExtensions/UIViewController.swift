@@ -16,9 +16,7 @@ func uiViewSwizzling(
     let originalMethod = class_getInstanceMethod(viewController, originalSelector)
     let swizzledMethod = class_getInstanceMethod(viewController, swizzledSelector)
 
-    if let originalMethod = originalMethod,
-       let swizzledMethod = swizzledMethod
-    {
+    if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
         method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 }

@@ -4,6 +4,7 @@
 //
 //  Created by Kevin Sites on 1/3/25.
 //
+
 import CoreLocation
 
 protocol LocationManagerServiceProtocol {
@@ -30,15 +31,15 @@ class LocationManagerService: NSObject, CLLocationManagerDelegate, LocationManag
         let status: CLAuthorizationStatus = manager.authorizationStatus
 
         switch status {
-            case .notDetermined:
-                self.authorizationStatus = "notDetermined"
-            case .restricted, .denied:
-                self.authorizationStatus = status == .restricted ? "restricted" : "denied"
-            case .authorizedWhenInUse, .authorizedAlways:
-                self.authorizationStatus = status == .authorizedWhenInUse ? "authorizedWhenInUse" : "authorizedAlways"
-                self.manager.startUpdatingLocation()
-            @unknown default:
-                break
+        case .notDetermined:
+            self.authorizationStatus = "notDetermined"
+        case .restricted, .denied:
+            self.authorizationStatus = status == .restricted ? "restricted" : "denied"
+        case .authorizedWhenInUse, .authorizedAlways:
+            self.authorizationStatus = status == .authorizedWhenInUse ? "authorizedWhenInUse" : "authorizedAlways"
+            self.manager.startUpdatingLocation()
+        @unknown default:
+            break
         }
     }
 

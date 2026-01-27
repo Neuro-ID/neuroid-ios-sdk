@@ -80,9 +80,7 @@ class NeuroIDTrackerTests: BaseTestClass {
         assert((firstEvent.tgs?.contains("\(id)")) != nil)
     }
     
-    func assertActionExists(
-        target: UIControl, actionParent: NeuroIDTracker, actionType: UIControl.Event, actionName: String
-    ) {
+    func assertActionExists(target: UIControl, actionParent: NeuroIDTracker, actionType: UIControl.Event, actionName: String) {
         let actionQuery = target.actions(forTarget: actionParent, forControlEvent: actionType)
         XCTAssertNotNil(actionQuery, "No actions found for \(actionType) event")
         XCTAssertEqual(actionQuery?.first, actionName, "Action \(actionName) not found")
@@ -97,8 +95,8 @@ class NeuroIDTrackerTests: BaseTestClass {
         
         let _ = assertEventTypeCount(type: "KEY_UP", expectedCount: 1)
         
-        //         NOT WORKING?
-        //        assert(filteredEvent[0].url ?? "" == "testScreen")
+//         NOT WORKING?
+//        assert(filteredEvent[0].url ?? "" == "testScreen")
     }
     
     func test_captureEvent_stopped() {
@@ -107,18 +105,17 @@ class NeuroIDTrackerTests: BaseTestClass {
         
         _ = NeuroID.stop()
         tracker.captureEvent(event: event)
-        
+
         let _ = assertEventTypeCount(type: "KEY_UP", expectedCount: 0)
         
-        //         NOT WORKING?
-        //        assert(filteredEvent[0].url ?? "" == "testScreen")
+//         NOT WORKING?
+//        assert(filteredEvent[0].url ?? "" == "testScreen")
     }
     
     func test_registerSingleView_UITextField() {
         let uiView = UITextField()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -126,8 +123,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UITextView() {
         let uiView = UITextView()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -135,8 +131,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UIButton() {
         let uiView = UIButton()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -144,8 +139,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UISlider() {
         let uiView = UISlider()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -153,8 +147,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UISwitch() {
         let uiView = UISwitch()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -162,8 +155,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UIDatePicker() {
         let uiView = UIDatePicker()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -171,8 +163,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UIStepper() {
         let uiView = UIStepper()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
         
@@ -182,8 +173,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_UISegmentedControl() {
         let uiView = UISegmentedControl()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewRegistered(v: uiView)
     }
@@ -191,8 +181,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_NOT_UIPickerView() {
         let uiView = UIPickerView()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewNOTRegistered(v: uiView)
     }
@@ -200,8 +189,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_NOT_UITableViewCell() {
         let uiView = UITableViewCell()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewNOTRegistered(v: uiView)
     }
@@ -209,16 +197,15 @@ class NeuroIDTrackerTests: BaseTestClass {
     func test_registerSingleView_NOT_UIScrollView() {
         let uiView = UIScrollView()
         
-        NeuroIDTracker.registerSingleView(
-            v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
+        NeuroIDTracker.registerSingleView(v: uiView, screenName: screenNameValue, guid: guidValue, topDownHierarchyPath: "")
         
         assertViewNOTRegistered(v: uiView)
     }
-    
+
     func test_valueChanged_stepper() {
         let view = UIStepper(frame: CGRect(x: 0, y: 0, width: 120, height: 30))
         view.accessibilityIdentifier = "stepper-1"
-        
+
         NeuroIDTracker.registerSingleView(
             v: view,
             screenName: screenNameValue,
@@ -226,17 +213,17 @@ class NeuroIDTrackerTests: BaseTestClass {
             topDownHierarchyPath: ""
         )
         let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
-        
+
         tracker.valueChanged(sender: view)
-        
+
         let events = NeuroID.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
         assert(events.count == 1)
     }
-    
+
     func test_valueChanged_color() {
         let view = UIColorWell()
         view.accessibilityIdentifier = "color-picker"
-        
+
         NeuroIDTracker.registerSingleView(
             v: view,
             screenName: screenNameValue,
@@ -244,79 +231,19 @@ class NeuroIDTrackerTests: BaseTestClass {
             topDownHierarchyPath: ""
         )
         let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
-        
+
         tracker.valueChanged(sender: view)
-        
+
         let events = NeuroID.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
         assert(events.count == 1)
     }
-    
-    //    func test_subscribe() {
-    //        NeuroID.observingInputs = false
-    //        NeuroID._isSDKStarted = true
-    //
-    //        let uiControllerBasic = UIViewController()
-    //        let input = UITextField()
-    //
-    //        uiControllerBasic.view.addSubview(input)
-    //
-    //        // subscribe happens in the INIT method
-    //        let _ = NeuroIDTracker(
-    //            screen: "test",
-    //            controller: uiControllerBasic
-    //        )
-    //
-    //        // Text Field Notification Tests - observeTextInputEvents()
-    //        // Field Focus
-    //        let _ = NeuroID.datastore.getAndRemoveAllEvents()
-    //        NotificationCenter.default.post(name: UITextField.textDidBeginEditingNotification, object: input)
-    //        var e = NeuroID.datastore.getAndRemoveAllEvents()
-    //        assertEventTypeCountFromArray(type: "REGISTER_TARGET", expectedCount: 1, events: e) // because not registered from view
-    //        assertEventTypeCountFromArray(type: "FOCUS", expectedCount: 1, events: e)
-    //
-    //        // Field Input
-    //        NotificationCenter.default.post(name: UITextField.textDidChangeNotification, object: input)
-    //        e = NeuroID.datastore.getAndRemoveAllEvents()
-    //        assertEventTypeCountFromArray(type: "INPUT", expectedCount: 1, events: e)
-    //
-    //        // Field Blur
-    //        NotificationCenter.default.post(name: UITextField.textDidEndEditingNotification, object: input)
-    //        e = NeuroID.datastore.getAndRemoveAllEvents()
-    //        assertEventTypeCountFromArray(type: "BLUR", expectedCount: 1, events: e)
-    //        assertEventTypeCountFromArray(type: "TEXT_CHANGE", expectedCount: 1, events: e)
-    //
-    //        // App Notification Tests - observeAppEvents()
-    //        NotificationCenter.default.post(name: UIDevice.orientationDidChangeNotification, object: UIDevice.self)
-    //        e = NeuroID.datastore.getAndRemoveAllEvents()
-    //        assertEventTypeCountFromArray(type: "DEVICE_ORIENTATION", expectedCount: 1, events: e)
-    //        assertEventTypeCountFromArray(type: "WINDOW_ORIENTATION_CHANGE", expectedCount: 1, events: e)
-    //
-    //        // Device Notification Tests - observeRotation()
-    //        if #available(iOS 13.0, *) {
-    //            NotificationCenter.default.post(name: UIScene.didActivateNotification, object: UIScene.self)
-    //            e = NeuroID.datastore.getAndRemoveAllEvents()
-    //            assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
-    //
-    //            NotificationCenter.default.post(name: UIScene.willDeactivateNotification, object: UIScene.self)
-    //            e = NeuroID.datastore.getAndRemoveAllEvents()
-    //            assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
-    //        } else {
-    //            NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: UIApplication.self)
-    //            e = NeuroID.datastore.getAndRemoveAllEvents()
-    //            assertEventTypeCountFromArray(type: "WINDOW_FOCUS", expectedCount: 1, events: e)
-    //
-    //            NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: UIApplication.self)
-    //            e = NeuroID.datastore.getAndRemoveAllEvents()
-    //            assertEventTypeCountFromArray(type: "WINDOW_BLUR", expectedCount: 1, events: e)
-    //        }
-    //    }
-    //
+
     func test_observeViews() {
         let tracker = NeuroIDTracker(
             screen: "test",
             controller: nil
         )
-        
+
         let button = UIButton(type: .system)
         
         tracker.observeViews([button])

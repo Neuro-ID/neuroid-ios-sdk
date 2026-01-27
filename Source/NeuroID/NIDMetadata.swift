@@ -93,15 +93,15 @@ extension NIDMetadata {
         let coreTelephony = CTTelephonyNetworkInfo()
         var current = ""
         var name = ""
-        
+
         if let currentName = coreTelephony.dataServiceIdentifier {
             name = currentName
         }
-        
+
         if let data = coreTelephony.serviceSubscriberCellularProviders, let carrierName = data[name]?.carrierName {
             current = carrierName
         }
-        
+
         return current
     }
 
