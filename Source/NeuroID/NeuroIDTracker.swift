@@ -74,14 +74,6 @@ public class NeuroIDTracker: NSObject {
         var found = false
 
         switch v {
-        case is UIColorWell:
-            let _ = v as! UIColorWell
-
-            value = ""
-            type = "UIColorWell"
-
-            found = true
-
         case is UITextField:
             let element = v as! UITextField
             element.addTapGesture()
@@ -163,6 +155,14 @@ public class NeuroIDTracker: NSObject {
 
             found = true
 
+        case is UIColorWell:
+            let _ = v as! UIColorWell
+
+            value = ""
+            type = "UIColorWell"
+
+            found = true
+
         // UNSUPPORTED AS OF RIGHT NOW
         case is UIPickerView:
             let element = v as! UIPickerView
@@ -175,14 +175,14 @@ public class NeuroIDTracker: NSObject {
             // swiftUI list
             let element = v as! UITableViewCell
             NeuroID.shared.logger.d(
-                tag: "NeuroID FE:", 
+                tag: "NeuroID FE:",
                 "Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-"
             )
 
         case is UIScrollView:
             let element = v as! UIScrollView
             NeuroID.shared.logger.d(
-                tag: "NeuroID FE:", 
+                tag: "NeuroID FE:",
                 "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-"
             )
 
