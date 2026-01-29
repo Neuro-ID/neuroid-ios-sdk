@@ -20,6 +20,7 @@ jobs:
   build:
     name: Build and Test (Xcode ${{ matrix.xcode }})
     runs-on: macos-${{ matrix.macos }}
+    timeout-minutes: 45
     env:
       DEVELOPER_DIR: "/Applications/Xcode_${{ matrix.xcode }}.app"
     strategy:
@@ -60,20 +61,16 @@ jobs:
           xcrun simctl list devices
 
       - name: Build and Test (Simulator)
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 45
-          max_attempts: 3
-          command: |
-            set -o pipefail
-            xcodebuild clean build test \
-              CODE_SIGNING_ALLOWED=NO \
-              -project NeuroID.xcodeproj \
-              -scheme NeuroID \
-              -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
-              -configuration Debug \
-              -resultBundlePath TestResults.xcresult | \
-            xcbeautify
+        run: |
+          set -o pipefail
+          xcodebuild clean build test \
+            CODE_SIGNING_ALLOWED=NO \
+            -project NeuroID.xcodeproj \
+            -scheme NeuroID \
+            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
+            -configuration Debug \
+            -resultBundlePath TestResults.xcresult | \
+          xcbeautify
 
       - name: Convert Coverage for Sonar
         if: ${{ matrix.sonar_check == true }}
