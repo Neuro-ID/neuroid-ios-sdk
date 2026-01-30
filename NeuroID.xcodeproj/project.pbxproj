@@ -50,18 +50,7 @@
 			membershipExceptions = (
 				NeuroID/Info.plist,
 			);
-			publicHeaders = (
-				NeuroID/NeuroID.h,
-			);
 			target = 26BCF33B268DA3C40002C289 /* NeuroID */;
-		};
-		01BB77542F21334D00F80519 /* Exceptions for "Source" folder in "SDKTest" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				NeuroID/Models/NIDErrors.swift,
-				NeuroID/TrackerClassExtensions/UIClassExtensions/CommonTextFieldUtils.swift,
-			);
-			target = 6F39E8C826CEA9A800BE9834 /* SDKTest */;
 		};
 		01BB77B22F21337800F80519 /* Exceptions for "SDKTest" folder in "SDKTest" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -77,7 +66,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				01BB77532F21334D00F80519 /* Exceptions for "Source" folder in "NeuroID" target */,
-				01BB77542F21334D00F80519 /* Exceptions for "Source" folder in "SDKTest" target */,
 			);
 			path = Source;
 			sourceTree = "<group>";

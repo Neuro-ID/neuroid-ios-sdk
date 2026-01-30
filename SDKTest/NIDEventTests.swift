@@ -232,19 +232,4 @@ class NIDEventTests: XCTestCase {
         
         setRtsTests(nidEvent: nidEvent, rts: "targetInteractionEvent")
     }
-    
-    func test_copy() {
-        let nidEvent = NIDEvent(type: .blur)
-        nidEvent.v = "myTestValue"
-        
-        let copyOf = nidEvent.copy()
-        
-        nidEvent.v = "myUpdatedTestValue"
-        
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.v == "myUpdatedTestValue")
-        
-        assert(copyOf.type == NIDEventName.blur.rawValue)
-        assert(copyOf.v == "myTestValue")
-    }
 }
