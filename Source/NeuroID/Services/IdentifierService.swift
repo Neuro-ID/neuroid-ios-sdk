@@ -133,7 +133,7 @@ class IdentifierService: IdentifierServiceProtocol {
             return false
         }
 
-        NIDLog.d(tag: "\(type)", "\(identifier)")
+        NIDLog.d("\(type) \(identifier)")
 
         eventStorageService.saveEventToDataStore(
             NIDEvent(

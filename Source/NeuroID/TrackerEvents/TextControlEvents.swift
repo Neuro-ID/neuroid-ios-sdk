@@ -84,7 +84,7 @@ extension NeuroIDTracker {
                 )
 
             default:
-                NIDLog.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
+                NIDLog.d("\(Constants.extraInfoTag.rawValue No known text object")
         }
 
         // DO WE WANT THIS?

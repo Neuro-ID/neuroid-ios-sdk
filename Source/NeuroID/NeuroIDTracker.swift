@@ -167,24 +167,17 @@ public class NeuroIDTracker: NSObject {
         case is UIPickerView:
             let element = v as! UIPickerView
             NIDLog.d(
-                tag: "NeuroID FE:",
-                "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)"
+                "NeuroID FE: Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)"
             )
 
         case is UITableViewCell:
             // swiftUI list
             let element = v as! UITableViewCell
-            NIDLog.d(
-                tag: "NeuroID FE:",
-                "Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-"
-            )
+            NIDLog.d("NeuroID FE: Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
 
         case is UIScrollView:
             let element = v as! UIScrollView
-            NIDLog.d(
-                tag: "NeuroID FE:",
-                "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-"
-            )
+            NIDLog.d("NeuroID FE: Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-")
 
         default:
             // Capture custom RN elements that have a testID set

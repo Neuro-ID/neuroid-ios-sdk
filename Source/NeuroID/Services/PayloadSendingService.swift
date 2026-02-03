@@ -136,18 +136,17 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         ) { response in
             NIDLog.i("NeuroID API Response \(response.response?.statusCode ?? 000)")
             NIDLog.d(
-                tag: "Payload",
                 """
-                \nPayload Summary
-                 ClientID: \(neuroHTTPRequest.clientId)
-                 SessionID: \(neuroHTTPRequest.userId ?? "")
-                 RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
-                 LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
-                 TabID: \(neuroHTTPRequest.tabId)
-                 Packet Number: \(neuroHTTPRequest.packetNumber)
-                 SDK Version: \(neuroHTTPRequest.sdkVersion)
-                 Screen Name: \(NeuroID.getScreenName() ?? "")
-                 Event Count: \(neuroHTTPRequest.jsonEvents.count)
+                Payload Summary
+                ClientID: \(neuroHTTPRequest.clientId)
+                SessionID: \(neuroHTTPRequest.userId ?? "")
+                RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
+                LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
+                TabID: \(neuroHTTPRequest.tabId)
+                Packet Number: \(neuroHTTPRequest.packetNumber)
+                SDK Version: \(neuroHTTPRequest.sdkVersion)
+                Screen Name: \(NeuroID.getScreenName() ?? "")
+                Event Count: \(neuroHTTPRequest.jsonEvents.count)
                 """
             )
 

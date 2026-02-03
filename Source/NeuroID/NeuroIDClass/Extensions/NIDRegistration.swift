@@ -32,7 +32,7 @@ extension NeuroID {
     func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
         let guid = ParamsCreator.generateID()
-        NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view: \(screenName)")
+        NIDLog.d("\(Constants.registrationTag.rawValue) Registering single view: \(screenName)")
         NeuroIDTracker.registerSingleView(
             v: view,
             screenName: screenName,
@@ -42,7 +42,7 @@ extension NeuroID {
         let childViews = view.subviewsRecursive()
 
         for _view in childViews {
-            NIDLog.d(tag: "\(Constants.registrationTag.rawValue)", "Registering subview Parent: \(screenName) Child: \(_view)")
+            NIDLog.d("\(Constants.registrationTag.rawValue) Registering subview Parent: \(screenName) Child: \(_view)")
             NeuroIDTracker.registerSingleView(
                 v: _view,
                 screenName: screenName,

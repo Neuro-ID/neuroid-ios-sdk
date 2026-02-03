@@ -33,10 +33,6 @@ enum NIDLog {
     }
 
     static func d(_ strings: String) {
-        d(tag: "", strings)
-    }
-
-    static func d(tag: String = "", _ strings: String) {
         guard NeuroID.shared._isSDKStarted, showLogs else { return }
         nid.debug("[NeuroID Debug] \(strings)")
     }
