@@ -28,7 +28,6 @@ struct ConfigServiceTests {
     init() {
         ConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
         configService = ConfigService(
-            logger: NIDLog(),
             networkService: MockNetworkService()
         )
     }
@@ -39,7 +38,7 @@ struct ConfigServiceTests {
         let mockedNetwork = MockNetworkService()
         mockedNetwork.mockFailedResponse()
         
-        self.configService = ConfigService(logger: NIDLog(), networkService: mockedNetwork)
+        self.configService = ConfigService(networkService: mockedNetwork)
     }
    
    func getMockResponseData() -> RemoteConfiguration {
@@ -112,7 +111,6 @@ struct ConfigServiceTests {
         mockedNetwork.mockFailedResponse()
 
         configService = ConfigService(
-            logger: NIDLog(),
             networkService: mockedNetwork,
             configRetrievalCallback: {}
         )
@@ -249,7 +247,6 @@ struct ConfigServiceTests {
         NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
         self.configService = ConfigService(
-            logger: NIDLog(),
             networkService: setupMockNetworkRequest(shouldFail: parms.shouldFail),
             randomGenerator: parms.mockedRandomGenerator,
             configRetrievalCallback: {}
@@ -275,7 +272,6 @@ struct ConfigServiceTests {
         var configCallBackCalled = false
         
         self.configService = ConfigService(
-            logger: NIDLog(),
             networkService: setupMockNetworkRequest(shouldFail: shouldFail),
             randomGenerator: MockedNIDRandomGenerator(0),
             configRetrievalCallback: { configCallBackCalled.toggle() }

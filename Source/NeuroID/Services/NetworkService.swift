@@ -15,13 +15,11 @@ protocol NetworkServiceProtocol {
 }
 
 class NetworkService: NetworkServiceProtocol {
-    private let logger: LoggerProtocol
     private var afCustomSession: Alamofire.Session
     private let afConfiguration = URLSessionConfiguration.af.default
     private let session: URLSession
 
-    init(logger: LoggerProtocol) {
-        self.logger = logger
+    init() {
         // Initialize the session
         self.afCustomSession = Alamofire.Session(configuration: afConfiguration)
         
@@ -49,7 +47,7 @@ class NetworkService: NetworkServiceProtocol {
             headers: headers
         ).validate().responseData { response in
             if let _ = response.error, response.response?.statusCode != 403, retryCount < maxRetryCount {
-                self.logger.i("NeuroID network Retrying... attempt \(retryCount + 1)")
+                NIDLog.i("NeuroID network Retrying... attempt \(retryCount + 1)")
                 self.retryableRequest(url: url, neuroHTTPRequest: neuroHTTPRequest, headers: headers, retryCount: retryCount + 1, completion: completion)
             } else {
                 completion(response)

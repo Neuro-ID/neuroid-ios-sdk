@@ -67,7 +67,7 @@ extension NeuroID {
                     storeType: storeType
                 )
             }
-            self.logger.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
+            NIDLog.d("Warning, NeuroID DataStore is full. Event dropped: \(event.type)")
             return
         }
 
@@ -102,11 +102,9 @@ extension NeuroID {
         mutableEvent.gyro = sensorManager.getSensorData(sensor: .gyro)
         mutableEvent.accel = sensorManager.getSensorData(sensor: .accelerometer)
 
-        self.logDebug(
-            category: "Sensor Accel", content: sensorManager.isSensorAvailable(.accelerometer)
-        )
-        self.logDebug(category: "Sensor Gyro", content: sensorManager.isSensorAvailable(.gyro))
-        self.logDebug(category: "saveEvent", content: mutableEvent.toDict())
+        NIDLog.d("Sensor Accel: \(sensorManager.isSensorAvailable(.accelerometer))")
+        NIDLog.d("Sensor Gyro: \(sensorManager.isSensorAvailable(.gyro))")
+        NIDLog.d("saveEvent: \(mutableEvent.toDict())")
 
         self.datastore.insertCleanedEvent(event: mutableEvent, storeType: storeType)
 

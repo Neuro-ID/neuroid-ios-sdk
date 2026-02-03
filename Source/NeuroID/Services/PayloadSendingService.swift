@@ -48,7 +48,6 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         )
     }
 
-    let logger: LoggerProtocol
     let datastore: DataStoreServiceProtocol
     let networkService: NetworkServiceProtocol
 
@@ -56,12 +55,10 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
     var buildPayload: ((_: [NIDEvent], _: String) -> NeuroHTTPRequest)?
 
     init(
-        logger: LoggerProtocol,
         datastore: DataStoreServiceProtocol,
         networkService: NetworkServiceProtocol,
         buildPayload: ((_: [NIDEvent], _: String) -> NeuroHTTPRequest)? = nil
     ) {
-        self.logger = logger
         self.datastore = datastore
         self.networkService = networkService
         self.buildPayload = buildPayload
@@ -118,7 +115,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onFailure: @escaping (Error) -> Void
     ) {
         guard let url = URL(string: PayloadSendingService.collectionEndpointUrl) else {
-            self.logger.e("NeuroID Base URL NOT found")
+            NIDLog.e("NeuroID Base URL NOT found")
             return
         }
 
@@ -137,8 +134,8 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             headers: headers,
             retryCount: 0
         ) { response in
-            self.logger.i("NeuroID API Response \(response.response?.statusCode ?? 000)")
-            self.logger.d(
+            NIDLog.i("NeuroID API Response \(response.response?.statusCode ?? 000)")
+            NIDLog.d(
                 tag: "Payload",
                 """
                 \nPayload Summary
@@ -156,10 +153,10 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
 
             switch response.result {
             case .success:
-                self.logger.i("NeuroID post to API Successful")
+                NIDLog.i("NeuroID post to API Successful")
                 onSuccess()
             case let .failure(error):
-                self.logger.e("NeuroID FAIL to post API")
+                NIDLog.e("NeuroID FAIL to post API")
                 onFailure(error)
             }
         }

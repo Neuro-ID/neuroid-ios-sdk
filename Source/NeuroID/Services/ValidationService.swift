@@ -14,11 +14,6 @@ protocol ValidationServiceProtocol {
 }
 
 class ValidationService: ValidationServiceProtocol {
-    let logger: LoggerProtocol
-
-    init(logger: LoggerProtocol) {
-        self.logger = logger
-    }
 
     func validateClientKey(_ clientKey: String) -> Bool {
         var validKey = false
@@ -33,7 +28,7 @@ class ValidationService: ValidationServiceProtocol {
         {
             validKey = true
         } else {
-            logger.e("Invalid ClientKey")
+            NIDLog.e("Invalid ClientKey")
         }
 
         return validKey
@@ -46,7 +41,7 @@ class ValidationService: ValidationServiceProtocol {
         let valid = predicate.evaluate(with: string)
 
         if !valid {
-            logger.e("Invalid SiteID/AppID")
+            NIDLog.e("Invalid SiteID/AppID")
         }
 
         return valid
@@ -63,11 +58,11 @@ class ValidationService: ValidationServiceProtocol {
                 options: NSRegularExpression.MatchingOptions(rawValue: 0),
                 range: NSMakeRange(0, identifier.count))
             if result.count != 1 {
-                logger.e(NIDError.invalidUserID.rawValue)
+                NIDLog.e(NIDError.invalidUserID.rawValue)
                 return false
             }
         } catch {
-            logger.e(NIDError.invalidUserID.rawValue)
+            NIDLog.e(NIDError.invalidUserID.rawValue)
             return false
         }
         return true

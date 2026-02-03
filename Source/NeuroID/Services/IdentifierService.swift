@@ -39,7 +39,6 @@ struct SessionIDOriginalResult {
 }
 
 class IdentifierService: IdentifierServiceProtocol {
-    let logger: LoggerProtocol
     let validationService: ValidationServiceProtocol
     let eventStorageService: EventStorageServiceProtocol
 
@@ -47,11 +46,9 @@ class IdentifierService: IdentifierServiceProtocol {
     var registeredUserID: String = ""
 
     init(
-        logger: LoggerProtocol,
         validationService: ValidationServiceProtocol,
         eventStorageService: EventStorageServiceProtocol
     ) {
-        self.logger = logger
         self.validationService = validationService
         self.eventStorageService = eventStorageService
     }
@@ -84,7 +81,7 @@ class IdentifierService: IdentifierServiceProtocol {
                         )
                     )
 
-                    logger.e(
+                    NIDLog.e(
                         "Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session"
                     )
                 }
@@ -136,7 +133,7 @@ class IdentifierService: IdentifierServiceProtocol {
             return false
         }
 
-        logger.d(tag: "\(type)", "\(identifier)")
+        NIDLog.d(tag: "\(type)", "\(identifier)")
 
         eventStorageService.saveEventToDataStore(
             NIDEvent(
@@ -202,7 +199,7 @@ class IdentifierService: IdentifierServiceProtocol {
             }
             return identifier
         } catch let error as NSError {
-            logger.e("Invalid pattern: \(error.localizedDescription)")
+            NIDLog.e("Invalid pattern: \(error.localizedDescription)")
             return identifier
         }
     }

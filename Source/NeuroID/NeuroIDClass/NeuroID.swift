@@ -21,7 +21,6 @@ public class NeuroID: NSObject {
     var linkedSiteID: String?
 
     // Services
-    var logger: LoggerProtocol
     var datastore: DataStoreServiceProtocol
     var eventStorageService: EventStorageServiceProtocol
     var validationService: ValidationServiceProtocol
@@ -116,7 +115,6 @@ public class NeuroID: NSObject {
     // MARK: - Setup
 
     init(
-        logger: LoggerProtocol? = nil,
         datastore: DataStoreServiceProtocol? = nil,
         eventStorageService: EventStorageServiceProtocol? = nil,
         validationService: ValidationServiceProtocol? = nil,
@@ -129,22 +127,19 @@ public class NeuroID: NSObject {
         callObserver: CallStatusObserverServiceProtocol? = nil,
         locationManager: LocationManagerServiceProtocol? = nil
     ) {
-        self.logger = logger ?? NIDLog()
-        self.datastore = datastore ?? DataStore(logger: self.logger)
+        self.datastore = datastore ?? DataStore()
         self.eventStorageService = eventStorageService ?? EventStorageService()
-        self.validationService = validationService ?? ValidationService(logger: self.logger)
-        self.networkService = networkService ?? NetworkService(logger: self.logger)
+        self.validationService = validationService ?? ValidationService()
+        self.networkService = networkService ?? NetworkService()
         self.configService =
             configService
                 ?? ConfigService(
-                    logger: self.logger,
                     networkService: self.networkService,
                     configRetrievalCallback: {} // callback is reconfigured on `configure` command
                 )
         self.identifierService =
             identifierService
                 ?? IdentifierService(
-                    logger: self.logger,
                     validationService: self.validationService,
                     eventStorageService: self.eventStorageService
                 )
@@ -153,7 +148,6 @@ public class NeuroID: NSObject {
         self.payloadSendingService =
             payloadSendingService
                 ?? PayloadSendingService(
-                    logger: self.logger,
                     datastore: self.datastore,
                     networkService: self.networkService
                 )
@@ -173,7 +167,7 @@ public class NeuroID: NSObject {
 
     func verifyClientKeyExists() -> Bool {
         if self.clientKey == nil || self.clientKey == "" {
-            self.logger.e("Missing Client Key - please call configure prior to calling start")
+            NIDLog.e("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -190,13 +184,13 @@ public class NeuroID: NSObject {
 
         self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
         
-        if self.verifyClientKeyExists() {
-            self.logger.e("You already configured the SDK")
+        if self.clientKey != nil && self.clientKey != "" {
+            NIDLog.e("You already configured the SDK")
             return false
         }
 
         if !self.validationService.validateClientKey(configuration.clientKey) {
-            self.logger.e("Invalid Client Key")
+            NIDLog.e("Invalid Client Key")
             self.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Invalid Client Key \(configuration.clientKey)"
@@ -231,7 +225,6 @@ public class NeuroID: NSObject {
         self.packetNumber = 0
 
         self.configService = ConfigService(
-            logger: self.logger,
             networkService: self.networkService,
             configRetrievalCallback: self.configSetupCompletion
         )
@@ -257,17 +250,17 @@ public class NeuroID: NSObject {
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
-        self.logger.i("Remote Config Retrieval Attempt Completed")
+        NIDLog.i("Remote Config Retrieval Attempt Completed")
 
         self.setupListeners()
     }
 
     func stop() -> Bool {
-        self.logger.i("NeuroID Stopped")
+        NIDLog.i("NeuroID Stopped")
         do {
             _ = try self.closeSession(skipStop: true)
         } catch {
-            self.logger.e("Failed to Stop because \(error)")
+            NIDLog.e("Failed to Stop because \(error)")
             self.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
@@ -352,7 +345,7 @@ public class NeuroID: NSObject {
         message: "printIntegrationHealthInstruction is deprecated and no longer functional"
     )
     public static func printIntegrationHealthInstruction() {
-        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     // ENG-9193 - Will remove on next breaking release
@@ -361,6 +354,6 @@ public class NeuroID: NSObject {
         message: "printIntegrationHealthInstruction is deprecated and no longer functional"
     )
     public static func setVerifyIntegrationHealth(_ verify: Bool) {
-        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }

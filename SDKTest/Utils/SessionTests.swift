@@ -22,7 +22,7 @@ class SessionTests: XCTestCase {
     func testRandom() throws {
         let dictRandom = ["events": "eventstringt", "status": "pending"]
         if let key = dictRandom.first(where: { $0.value == "pending" })?.key {
-            NeuroID.shared.logger.log(key)
+            NIDLog.log(key)
         }
     }
 

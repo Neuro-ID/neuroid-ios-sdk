@@ -166,7 +166,7 @@ public class NeuroIDTracker: NSObject {
         // UNSUPPORTED AS OF RIGHT NOW
         case is UIPickerView:
             let element = v as! UIPickerView
-            NeuroID.shared.logger.d(
+            NIDLog.d(
                 tag: "NeuroID FE:",
                 "Picker View Found NOT Registered: \(element.nidClassName) - \(element.id)- \(element.numberOfComponents) - \(element.tag)"
             )
@@ -174,14 +174,14 @@ public class NeuroIDTracker: NSObject {
         case is UITableViewCell:
             // swiftUI list
             let element = v as! UITableViewCell
-            NeuroID.shared.logger.d(
+            NIDLog.d(
                 tag: "NeuroID FE:",
                 "Table View Found NOT Registered: \(element.nidClassName) - \(element.id)-"
             )
 
         case is UIScrollView:
             let element = v as! UIScrollView
-            NeuroID.shared.logger.d(
+            NIDLog.d(
                 tag: "NeuroID FE:",
                 "Scroll View Found NOT Registered: \(element.nidClassName) - \(element.id)-"
             )

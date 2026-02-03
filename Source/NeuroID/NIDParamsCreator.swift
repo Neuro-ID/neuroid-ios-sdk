@@ -63,7 +63,7 @@ enum ParamsCreator {
             ]
 
         default:
-            NeuroID.shared.logger.log("Invalid input type")
+            NIDLog.log("Invalid input type")
         }
         for (key, value) in extraParams {
             params[key] = value

@@ -84,7 +84,7 @@ extension NeuroIDTracker {
                 )
 
             default:
-                NeuroID.shared.logger.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
+                NIDLog.d(tag: Constants.extraInfoTag.rawValue, "No known text object")
         }
 
         // DO WE WANT THIS?

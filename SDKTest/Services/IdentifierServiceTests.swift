@@ -12,8 +12,7 @@ import XCTest
 class IdentifierServiceTests: BaseTestClass {
     var mockEventStorageService = MockEventStorageService()
     var identifierService = IdentifierService(
-        logger: NIDLog(),
-        validationService: ValidationService(logger: NIDLog()),
+        validationService: ValidationService(),
         eventStorageService: MockEventStorageService()
     )
 
@@ -24,8 +23,7 @@ class IdentifierServiceTests: BaseTestClass {
     override func setUp() {
         mockEventStorageService = MockEventStorageService()
         identifierService = IdentifierService(
-            logger: NIDLog(),
-            validationService: ValidationService(logger: NIDLog()),
+            validationService: ValidationService(),
             eventStorageService: mockEventStorageService
         )
     }
@@ -147,7 +145,6 @@ class IdentifierServiceTests: BaseTestClass {
         let mockValidationService = MockValidationService()
         mockValidationService.validIdentifier = false
         identifierService = IdentifierService(
-            logger: NIDLog(),
             validationService: mockValidationService,
             eventStorageService: mockEventStorageService
         )
