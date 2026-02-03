@@ -5,8 +5,10 @@
 //  Created by Kevin Sites on 8/30/23.
 //
 
-@testable import NeuroID
+import Foundation
 import Testing
+
+@testable import NeuroID
 
 @Suite("Base Class Extensions Tests")
 struct BaseClassExtensionTests {

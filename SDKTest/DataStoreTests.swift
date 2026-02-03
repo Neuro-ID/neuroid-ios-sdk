@@ -5,8 +5,10 @@
 //  Created by Clayton Selby on 10/19/21.
 //
 
-@testable import NeuroID
+import Foundation
 import Testing
+
+@testable import NeuroID
 
 @Suite("DataStore Tests")
 class DataStoreTests {
