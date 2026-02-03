@@ -16,7 +16,7 @@ public class NeuroID: NSObject {
     var isAdvancedDevice: Bool = false
     var advancedDeviceKey: String? = nil
     var useAdvancedDeviceProxy: Bool = false
-    
+
     var siteID: String?
     var linkedSiteID: String?
 
@@ -64,7 +64,7 @@ public class NeuroID: NSObject {
 
     var _isSDKStarted: Bool = false
     public var isSDKStarted: Bool { self._isSDKStarted }
-    
+
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
         NeuroID.shared.send()
@@ -133,24 +133,24 @@ public class NeuroID: NSObject {
         self.networkService = networkService ?? NetworkService()
         self.configService =
             configService
-                ?? ConfigService(
-                    networkService: self.networkService,
-                    configRetrievalCallback: {} // callback is reconfigured on `configure` command
-                )
+            ?? ConfigService(
+                networkService: self.networkService,
+                configRetrievalCallback: {}  // callback is reconfigured on `configure` command
+            )
         self.identifierService =
             identifierService
-                ?? IdentifierService(
-                    validationService: self.validationService,
-                    eventStorageService: self.eventStorageService
-                )
+            ?? IdentifierService(
+                validationService: self.validationService,
+                eventStorageService: self.eventStorageService
+            )
         self.networkMonitor = networkMonitor ?? NetworkMonitoringService()
         self.deviceSignalService = deviceSignalService ?? AdvancedDeviceService()
         self.payloadSendingService =
             payloadSendingService
-                ?? PayloadSendingService(
-                    datastore: self.datastore,
-                    networkService: self.networkService
-                )
+            ?? PayloadSendingService(
+                datastore: self.datastore,
+                networkService: self.networkService
+            )
         self.callObserver = callObserver
         self.locationManager = locationManager
 
@@ -183,7 +183,7 @@ public class NeuroID: NSObject {
         }
 
         self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
-        
+
         if self.clientKey != nil && self.clientKey != "" {
             NIDLog.e("You already configured the SDK")
             return false
@@ -202,7 +202,7 @@ public class NeuroID: NSObject {
 
             return false
         }
-        
+
         self.advancedDeviceKey = configuration.advancedDeviceKey
         self.isAdvancedDevice = configuration.isAdvancedDevice
 

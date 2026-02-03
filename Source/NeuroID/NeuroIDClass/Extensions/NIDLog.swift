@@ -8,16 +8,25 @@
 import Foundation
 import os
 
+extension NeuroID {
+    /**
+     Enable or disable the NeuroID debug logging
+     */
+    public func enableLogging(_ value: Bool) {
+        showLogs = value
+    }
+}
+
 enum NIDLog {
     private static let nid = Logger(
         subsystem: "com.neuroid.sdk",
         category: "general"
     )
-    
+
     private static var showLogs: Bool {
         NeuroID.shared.showLogs
     }
-    
+
     static func log(_ strings: String) {
         guard NeuroID.shared._isSDKStarted, showLogs else { return }
         nid.log("[NeuroID] \(strings)")
@@ -42,17 +51,6 @@ enum NIDLog {
         nid.error("****** NEUROID ERROR: ******\n\(strings)")
     }
 }
-
-
-extension NeuroID {
-    /**
-     Enable or disable the NeuroID debug logging
-     */
-    public func enableLogging(_ value: Bool) {
-        showLogs = value
-    }
-}
-
 
 func NIDPrintEvent(_ mutableEvent: NIDEvent) {
     var contextString = ""

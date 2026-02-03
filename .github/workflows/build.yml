@@ -70,7 +70,7 @@ jobs:
             -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
             -configuration Debug \
             -resultBundlePath TestResults.xcresult | \
-          xcbeautify
+          xcbeautify --renderer github-actions
 
       - name: Convert Coverage for Sonar
         if: ${{ matrix.sonar_check == true }}
