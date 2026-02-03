@@ -5,11 +5,14 @@
 //  Created by Kevin Sites on 8/30/23.
 //
 
-@testable import NeuroID
-import XCTest
+import Foundation
+import Testing
 
-class BaseClassExtensionTests: XCTestCase {
-    func test_string_sha256_withSalt() {
+@testable import NeuroID
+
+@Suite("Base Class Extensions Tests")
+struct BaseClassExtensionTests {
+    @Test func string_sha256_withSalt() {
         UserDefaults.standard.set("mySalt", forKey: Constants.storageSaltKey.rawValue)
         let og = "myString"
         
@@ -18,7 +21,7 @@ class BaseClassExtensionTests: XCTestCase {
         assert(value == "bbed32651d5c168d7bd222adc04b8b53655ec5db8ca0d4a5ad30a250fcc6c5bc")
     }
     
-    func test_string_sha256_withOutSalt() {
+    @Test func string_sha256_withOutSalt() {
         UserDefaults.standard.set("", forKey: Constants.storageSaltKey.rawValue)
         let og = "myString"
         
@@ -33,7 +36,7 @@ class BaseClassExtensionTests: XCTestCase {
         assert(value == secondValue)
     }
     
-    func test_optional_isEmptyOrNil() {
+    @Test func optional_isEmptyOrNil() {
         let og: String? = "test"
         
         if og.isEmptyOrNil {
@@ -41,7 +44,7 @@ class BaseClassExtensionTests: XCTestCase {
         }
     }
     
-    func test_optional_isEmptyOrNil_nil() {
+    @Test func optional_isEmptyOrNil_nil() {
         let og: String? = nil
         
         if !og.isEmptyOrNil {
@@ -49,7 +52,7 @@ class BaseClassExtensionTests: XCTestCase {
         }
     }
     
-    func test_optional_isEmptyOrNil_empty() {
+    @Test func optional_isEmptyOrNil_empty() {
         let og: String? = ""
         
         if !og.isEmptyOrNil {
@@ -57,7 +60,7 @@ class BaseClassExtensionTests: XCTestCase {
         }
     }
     
-    func test_date_toString() {
+    @Test func date_toString() {
         let og = Date()
         
         let value = og.toString()

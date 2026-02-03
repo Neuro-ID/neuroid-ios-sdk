@@ -5,32 +5,31 @@
 //  Created by Collin Dunphy on 11/6/25.
 //
 
-import XCTest
-@testable import NeuroID
 import FingerprintPro
+import Testing
 
-class AdvancedDeviceServiceTests: XCTestCase {
-        
-    // MARK: - AdvancedDeviceService endpoint selection
+@testable import NeuroID
 
-    // When `useAdvancedDeviceProxy` is disabled it should select the standard endpoint domain only
+@Suite("Advanced Device Service")
+struct AdvancedDeviceServiceTests {
+
+    @Test("Standard endpoint configuration should match")
     func testEndpointUsesStandardWhenProxyDisabled() {
-        XCTAssertEqual(
-            AdvancedDeviceService.endpoint(useProxy: false),
-            .custom(domain: AdvancedDeviceService.Endpoints.standard.url),
-            "Standard endpoint configuration should match"
+        #expect(
+            AdvancedDeviceService.endpoint(useProxy: false)
+                == .custom(domain: AdvancedDeviceService.Endpoints.standard.url)
         )
     }
 
     // When `useAdvancedDeviceProxy` is enabled it should select the proxy domain with the standard domain as a fallback
+    @Test("Proxy endpoint configuration should match")
     func testEndpointUsesProxyWhenEnabled() {
-        XCTAssertEqual(
-            AdvancedDeviceService.endpoint(useProxy: true),
-            .custom(
-                domain: AdvancedDeviceService.Endpoints.proxy.url,
-                fallback: [AdvancedDeviceService.Endpoints.standard.url]
-            ),
-            "Proxy endpoint configuration should match"
+        #expect(
+            AdvancedDeviceService.endpoint(useProxy: true)
+                == .custom(
+                    domain: AdvancedDeviceService.Endpoints.proxy.url,
+                    fallback: [AdvancedDeviceService.Endpoints.standard.url]
+                )
         )
     }
 }
