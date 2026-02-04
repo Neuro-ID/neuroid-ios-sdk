@@ -10,7 +10,7 @@ import UIKit
 
 extension NeuroID {
     func excludeViewByTestID(_ excludedView: String) {
-        self.logger.i("Exclude view called - \(excludedView)")
+        NIDLog.info("Exclude view called - \(excludedView)")
         self.excludedViewsTestIDs.append(excludedView)
     }
 
@@ -32,7 +32,7 @@ extension NeuroID {
     func manuallyRegisterTarget(view: UIView) {
         let screenName = view.id
         let guid = ParamsCreator.generateID()
-        NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view: \(screenName)")
+        NIDLog.debug("\(Constants.registrationTag.rawValue) Registering single view: \(screenName)")
         NeuroIDTracker.registerSingleView(
             v: view,
             screenName: screenName,
@@ -42,7 +42,7 @@ extension NeuroID {
         let childViews = view.subviewsRecursive()
 
         for _view in childViews {
-            NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "Registering subview Parent: \(screenName) Child: \(_view)")
+            NIDLog.debug("\(Constants.registrationTag.rawValue) Registering subview Parent: \(screenName) Child: \(_view)")
             NeuroIDTracker.registerSingleView(
                 v: _view,
                 screenName: screenName,

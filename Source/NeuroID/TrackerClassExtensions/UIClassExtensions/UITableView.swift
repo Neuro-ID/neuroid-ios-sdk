@@ -8,16 +8,11 @@
 import Foundation
 import UIKit
 
-private func tableViewSwizzling(element: UITableView.Type,
-                                originalSelector: Selector,
-                                swizzledSelector: Selector)
-{
+private func tableViewSwizzling(element: UITableView.Type, originalSelector: Selector, swizzledSelector: Selector) {
     let originalMethod = class_getInstanceMethod(element, originalSelector)
     let swizzledMethod = class_getInstanceMethod(element, swizzledSelector)
 
-    if let originalMethod = originalMethod,
-       let swizzledMethod = swizzledMethod
-    {
+    if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
         method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 }
@@ -25,7 +20,11 @@ private func tableViewSwizzling(element: UITableView.Type,
 extension UITableView {
     static func tableviewSwizzle() {
         let table = UITableView.self
-        tableViewSwizzling(element: table, originalSelector: #selector(table.reloadData), swizzledSelector: #selector(table.neuroIDReloadData))
+        tableViewSwizzling(
+            element: table,
+            originalSelector: #selector(table.reloadData),
+            swizzledSelector: #selector(table.neuroIDReloadData)
+        )
     }
 
     @objc private func neuroIDReloadData() {
@@ -36,13 +35,15 @@ extension UITableView {
         let guid = ParamsCreator.generateID()
         let oldCells = visibleCells
         let newCells = visibleCells
-        let currentNewViews = newCells.filter { !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.nidClassName) }
+        let currentNewViews = newCells.filter {
+            !oldCells.contains($0) && !UIViewController().ignoreLists.contains($0.nidClassName)
+        }
 
         for cell in currentNewViews {
             let cellName = cell.nidClassName
             let childViews = cell.contentView.subviewsRecursive()
             for _view in childViews {
-                NeuroID.shared.logger.d(tag: "\(Constants.registrationTag.rawValue)", "Registering single view for cell.")
+                NIDLog.debug("\(Constants.registrationTag.rawValue) Registering single view for cell.")
                 NeuroIDTracker.registerSingleView(
                     v: _view,
                     screenName: cellName,

@@ -5,8 +5,9 @@
 //  Created by Clayton Selby on 10/19/21.
 //
 
-@testable import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class DataStoreTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
@@ -22,7 +23,7 @@ class DataStoreTests: XCTestCase {
 
     let excludeId = "exclude_test_id"
 
-    var dataStore = DataStore(logger: NIDLog())
+    var dataStore = DataStore()
 
     override func setUpWithError() throws {
         UserDefaults.standard.setValue(nil, forKey: eventsKey)
@@ -31,7 +32,7 @@ class DataStoreTests: XCTestCase {
         _ = NeuroID.stop()
         NeuroID.shared._isSDKStarted = true
 
-        dataStore = DataStore(logger: NIDLog())
+        dataStore = DataStore()
     }
 
     override func tearDownWithError() throws {

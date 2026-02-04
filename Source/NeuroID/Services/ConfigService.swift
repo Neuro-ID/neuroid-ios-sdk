@@ -34,7 +34,6 @@ class ConfigService: ConfigServiceProtocol {
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
 
     // Services
-    let logger: LoggerProtocol
     let networkService: NetworkServiceProtocol
     let randomGenerator: RandomGenerator
 
@@ -50,12 +49,10 @@ class ConfigService: ConfigServiceProtocol {
     var cacheSetWithRemote = false
 
     init(
-        logger: LoggerProtocol,
         networkService: NetworkServiceProtocol,
         randomGenerator: RandomGenerator = NIDRandomGenerator(),
         configRetrievalCallback: @escaping () -> Void = {}
     ) {
-        self.logger = logger
         self.networkService = networkService
         self.randomGenerator = randomGenerator
         self.configRetrievalCallback = configRetrievalCallback
@@ -67,21 +64,21 @@ class ConfigService: ConfigServiceProtocol {
             configRetrievalCallback()
             return
         }
-        
+
         do {
             let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
             let configUrl = URL(string: configUrlStr)!
-            
+
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
-            
-            self.logger.d("Retrieved remote config \(config)")
+
+            NIDLog.debug("Retrieved remote config \(config)")
             self.configCache = config
             self.initSiteIDSampleMap(config: config)
             self.cacheSetWithRemote = true
             self.captureConfigEvent(configData: config)
             self.configRetrievalCallback()
         } catch (let error) {
-            self.logger.e("Failed to retrieve NID Config \(error)")
+            NIDLog.error("Failed to retrieve NID Config \(error)")
             self.configCache = RemoteConfiguration()
             self.cacheSetWithRemote = false
             NeuroID.shared.saveEventToDataStore(

@@ -32,7 +32,6 @@ func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) ->
     mockedNetwork.mockRequestShouldFail = shouldFail
 
     let configService = ConfigService(
-        logger: NIDLog(),
         networkService: mockedNetwork,
         randomGenerator: randomGenerator,
         configRetrievalCallback: {}

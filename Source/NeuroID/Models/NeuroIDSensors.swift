@@ -66,10 +66,10 @@ public final class NIDSensorManager: NSObject {
         }
         switch sensor {
         case .accelerometer:
-            NeuroID.shared.logDebug(content: "Is \(sensor.rawValue): \(manager.isAccelerometerAvailable)")
+            NIDLog.debug("Is \(sensor.rawValue): \(manager.isAccelerometerAvailable)")
             return manager.isAccelerometerAvailable
         case .gyro:
-            NeuroID.shared.logDebug(content: "Is \(sensor.rawValue): \(manager.isGyroAvailable)")
+            NIDLog.debug("Is \(sensor.rawValue): \(manager.isGyroAvailable)")
             return manager.isGyroAvailable
         }
     }

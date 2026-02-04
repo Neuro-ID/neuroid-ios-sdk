@@ -12,8 +12,7 @@ import XCTest
 class PayloadSendingServiceTests: BaseTestClass {
     var mockNetworkService = MockNetworkService()
     var payloadSendingService = PayloadSendingService(
-        logger: NIDLog(),
-        datastore: DataStore(logger: NIDLog()),
+        datastore: DataStore(),
         networkService: MockNetworkService(),
         buildPayload: { events, screenName in
             NeuroHTTPRequest(
@@ -40,7 +39,6 @@ class PayloadSendingServiceTests: BaseTestClass {
         NeuroID._isTesting = true
         mockNetworkService = MockNetworkService()
         payloadSendingService = PayloadSendingService(
-            logger: NIDLog(),
             datastore: dataStore,
             networkService: mockNetworkService,
             buildPayload: { events, screenName in

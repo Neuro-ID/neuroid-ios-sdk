@@ -48,7 +48,6 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         )
     }
 
-    let logger: LoggerProtocol
     let datastore: DataStoreServiceProtocol
     let networkService: NetworkServiceProtocol
 
@@ -56,12 +55,10 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
     var buildPayload: ((_: [NIDEvent], _: String) -> NeuroHTTPRequest)?
 
     init(
-        logger: LoggerProtocol,
         datastore: DataStoreServiceProtocol,
         networkService: NetworkServiceProtocol,
         buildPayload: ((_: [NIDEvent], _: String) -> NeuroHTTPRequest)? = nil
     ) {
-        self.logger = logger
         self.datastore = datastore
         self.networkService = networkService
         self.buildPayload = buildPayload
@@ -91,7 +88,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         let cleanEvents = dataStoreEvents.map { nidevent -> NIDEvent in
             // Only send url on register target and create session events
             if nidevent.type != NIDEventName.registerTarget.rawValue,
-               nidevent.type != NIDEventName.createSession.rawValue
+                nidevent.type != NIDEventName.createSession.rawValue
             {
                 nidevent.url = nil
             }
@@ -118,7 +115,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onFailure: @escaping (Error) -> Void
     ) {
         guard let url = URL(string: PayloadSendingService.collectionEndpointUrl) else {
-            self.logger.e("NeuroID Base URL NOT found")
+            NIDLog.error("NeuroID Base URL NOT found")
             return
         }
 
@@ -137,29 +134,28 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             headers: headers,
             retryCount: 0
         ) { response in
-            self.logger.i("NeuroID API Response \(response.response?.statusCode ?? 000)")
-            self.logger.d(
-                tag: "Payload",
+            NIDLog.info("NeuroID API Response \(response.response?.statusCode ?? 000)")
+            NIDLog.debug(
                 """
-                \nPayload Summary
-                 ClientID: \(neuroHTTPRequest.clientId)
-                 SessionID: \(neuroHTTPRequest.userId ?? "")
-                 RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
-                 LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
-                 TabID: \(neuroHTTPRequest.tabId)
-                 Packet Number: \(neuroHTTPRequest.packetNumber)
-                 SDK Version: \(neuroHTTPRequest.sdkVersion)
-                 Screen Name: \(NeuroID.getScreenName() ?? "")
-                 Event Count: \(neuroHTTPRequest.jsonEvents.count)
+                Payload Summary
+                ClientID: \(neuroHTTPRequest.clientId)
+                SessionID: \(neuroHTTPRequest.userId ?? "")
+                RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
+                LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
+                TabID: \(neuroHTTPRequest.tabId)
+                Packet Number: \(neuroHTTPRequest.packetNumber)
+                SDK Version: \(neuroHTTPRequest.sdkVersion)
+                Screen Name: \(NeuroID.getScreenName() ?? "")
+                Event Count: \(neuroHTTPRequest.jsonEvents.count)
                 """
             )
 
             switch response.result {
             case .success:
-                self.logger.i("NeuroID post to API Successful")
+                NIDLog.info("NeuroID post to API Successful")
                 onSuccess()
-            case let .failure(error):
-                self.logger.e("NeuroID FAIL to post API")
+            case .failure(let error):
+                NIDLog.error("NeuroID FAIL to post API")
                 onFailure(error)
             }
         }

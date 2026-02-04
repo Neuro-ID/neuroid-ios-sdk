@@ -4,19 +4,22 @@
 //
 //  Created by Kevin Sites on 7/10/25.
 //
+
+import Testing
+
 @testable import NeuroID
-import XCTest
 
-class NIDLogTests: XCTestCase {
-    func test_enableLogging_true() {
+@Suite("NID Log Tests")
+struct NIDLogTests {
+
+    @Test func enableLogging() {
         NeuroID.enableLogging(true)
-
         assert(NeuroID.shared.showLogs)
     }
 
-    func test_enableLogging_false() {
+    @Test
+    func disableLogging() {
         NeuroID.enableLogging(false)
-
         assert(!NeuroID.shared.showLogs)
     }
 }

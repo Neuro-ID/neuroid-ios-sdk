@@ -13,7 +13,6 @@ protocol DataStoreServiceProtocol {
 }
 
 public class DataStore: DataStoreServiceProtocol {
-    let logger: LoggerProtocol
 
     var _events = [NIDEvent]()
     private let lock = NSLock()
@@ -29,13 +28,9 @@ public class DataStore: DataStoreServiceProtocol {
         set { lock.withCriticalSection { _queuedEvents = newValue } }
     }
 
-    init(logger: LoggerProtocol) {
-        self.logger = logger
-    }
-
     func insertCleanedEvent(event: NIDEvent, storeType: String) {
         if storeType == "queue" {
-            logger.d("Store Queued Event: \(event.type)")
+            NIDLog.debug("Store Queued Event: \(event.type)")
             DispatchQueue.global(qos: .utility).sync {
                 queuedEvents.append(event)
             }

@@ -9,19 +9,18 @@ import UIKit
 
 public class NeuroID: NSObject {
     static let nidVersion = "3.6.0"
-    static let shared: NeuroID = .init()
+    static let shared: NeuroID = NeuroID()
 
     // Configuration
     var clientKey: String?
     var isAdvancedDevice: Bool = false
     var advancedDeviceKey: String? = nil
     var useAdvancedDeviceProxy: Bool = false
-    
+
     var siteID: String?
     var linkedSiteID: String?
 
     // Services
-    var logger: LoggerProtocol
     var datastore: DataStoreServiceProtocol
     var eventStorageService: EventStorageServiceProtocol
     var validationService: ValidationServiceProtocol
@@ -53,8 +52,7 @@ public class NeuroID: NSObject {
     static var trackers = [String: NeuroIDTracker]()
 
     /// Turn on/off printing the SDK log to your console
-    public var showLogs = true
-    let showDebugLog = false
+    var showLogs = true
 
     var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
@@ -65,7 +63,7 @@ public class NeuroID: NSObject {
 
     var _isSDKStarted: Bool = false
     public var isSDKStarted: Bool { self._isSDKStarted }
-    
+
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
         NeuroID.shared.send()
@@ -116,7 +114,6 @@ public class NeuroID: NSObject {
     // MARK: - Setup
 
     init(
-        logger: LoggerProtocol? = nil,
         datastore: DataStoreServiceProtocol? = nil,
         eventStorageService: EventStorageServiceProtocol? = nil,
         validationService: ValidationServiceProtocol? = nil,
@@ -129,34 +126,30 @@ public class NeuroID: NSObject {
         callObserver: CallStatusObserverServiceProtocol? = nil,
         locationManager: LocationManagerServiceProtocol? = nil
     ) {
-        self.logger = logger ?? NIDLog()
-        self.datastore = datastore ?? DataStore(logger: self.logger)
+        self.datastore = datastore ?? DataStore()
         self.eventStorageService = eventStorageService ?? EventStorageService()
-        self.validationService = validationService ?? ValidationService(logger: self.logger)
-        self.networkService = networkService ?? NetworkService(logger: self.logger)
+        self.validationService = validationService ?? ValidationService()
+        self.networkService = networkService ?? NetworkService()
         self.configService =
             configService
-                ?? ConfigService(
-                    logger: self.logger,
-                    networkService: self.networkService,
-                    configRetrievalCallback: {} // callback is reconfigured on `configure` command
-                )
+            ?? ConfigService(
+                networkService: self.networkService,
+                configRetrievalCallback: {}  // callback is reconfigured on `configure` command
+            )
         self.identifierService =
             identifierService
-                ?? IdentifierService(
-                    logger: self.logger,
-                    validationService: self.validationService,
-                    eventStorageService: self.eventStorageService
-                )
+            ?? IdentifierService(
+                validationService: self.validationService,
+                eventStorageService: self.eventStorageService
+            )
         self.networkMonitor = networkMonitor ?? NetworkMonitoringService()
         self.deviceSignalService = deviceSignalService ?? AdvancedDeviceService()
         self.payloadSendingService =
             payloadSendingService
-                ?? PayloadSendingService(
-                    logger: self.logger,
-                    datastore: self.datastore,
-                    networkService: self.networkService
-                )
+            ?? PayloadSendingService(
+                datastore: self.datastore,
+                networkService: self.networkService
+            )
         self.callObserver = callObserver
         self.locationManager = locationManager
 
@@ -173,7 +166,7 @@ public class NeuroID: NSObject {
 
     func verifyClientKeyExists() -> Bool {
         if self.clientKey == nil || self.clientKey == "" {
-            self.logger.e("Missing Client Key - please call configure prior to calling start")
+            NIDLog.error("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -189,14 +182,14 @@ public class NeuroID: NSObject {
         }
 
         self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
-        
-        if self.verifyClientKeyExists() {
-            self.logger.e("You already configured the SDK")
+
+        if self.clientKey != nil && self.clientKey != "" {
+            NIDLog.error("You already configured the SDK")
             return false
         }
 
         if !self.validationService.validateClientKey(configuration.clientKey) {
-            self.logger.e("Invalid Client Key")
+            NIDLog.error("Invalid Client Key")
             self.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Invalid Client Key \(configuration.clientKey)"
@@ -208,7 +201,7 @@ public class NeuroID: NSObject {
 
             return false
         }
-        
+
         self.advancedDeviceKey = configuration.advancedDeviceKey
         self.isAdvancedDevice = configuration.isAdvancedDevice
 
@@ -231,7 +224,6 @@ public class NeuroID: NSObject {
         self.packetNumber = 0
 
         self.configService = ConfigService(
-            logger: self.logger,
             networkService: self.networkService,
             configRetrievalCallback: self.configSetupCompletion
         )
@@ -257,17 +249,17 @@ public class NeuroID: NSObject {
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
-        self.logger.i("Remote Config Retrieval Attempt Completed")
+        NIDLog.info("Remote Config Retrieval Attempt Completed")
 
         self.setupListeners()
     }
 
     func stop() -> Bool {
-        self.logger.i("NeuroID Stopped")
+        NIDLog.info("NeuroID Stopped")
         do {
             _ = try self.closeSession(skipStop: true)
         } catch {
-            self.logger.e("Failed to Stop because \(error)")
+            NIDLog.error("Failed to Stop because \(error)")
             self.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
@@ -352,7 +344,7 @@ public class NeuroID: NSObject {
         message: "printIntegrationHealthInstruction is deprecated and no longer functional"
     )
     public static func printIntegrationHealthInstruction() {
-        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     // ENG-9193 - Will remove on next breaking release
@@ -361,6 +353,6 @@ public class NeuroID: NSObject {
         message: "printIntegrationHealthInstruction is deprecated and no longer functional"
     )
     public static func setVerifyIntegrationHealth(_ verify: Bool) {
-        NeuroID.shared.logger.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }

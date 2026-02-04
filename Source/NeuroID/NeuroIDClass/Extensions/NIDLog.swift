@@ -6,19 +6,7 @@
 //
 
 import Foundation
-import os
-
-private enum Log {
-    @available(iOS 10.0, *)
-    static func log(category: String, contents: Any..., type: OSLogType) {
-        #if DEBUG
-        if NeuroID.shared.showDebugLog {
-            let message = contents.map { "\($0)" }.joined(separator: " ")
-            os_log("NeuroID: %@", message)
-        }
-        #endif
-    }
-}
+import OSLog
 
 extension NeuroID {
     /**
@@ -27,59 +15,36 @@ extension NeuroID {
     public func enableLogging(_ value: Bool) {
         showLogs = value
     }
+}
 
-    // Instance methods for logging
-    func logInfo(category: String = "default", content: Any...) {
-        osLog(category: category, content: content, type: .info)
+enum NIDLog {
+    private static let nid = Logger(
+        subsystem: "com.neuroid.sdk",
+        category: "general"
+    )
+
+    private static var showLogs: Bool {
+        NeuroID.shared.showLogs
     }
 
-    func logError(category: String = "default", content: Any...) {
-        osLog(category: category, content: content, type: .error)
+    static func log(_ strings: String) {
+        guard NeuroID.shared._isSDKStarted, showLogs else { return }
+        nid.log("[NeuroID] \(strings)")
     }
 
-    func logFault(category: String = "default", content: Any...) {
-        osLog(category: category, content: content, type: .fault)
+    static func debug(_ strings: String) {
+        guard NeuroID.shared._isSDKStarted, showLogs else { return }
+        nid.debug("[NeuroID Debug] \(strings)")
     }
 
-    func logDebug(category: String = "default", content: Any...) {
-        osLog(category: category, content: content, type: .debug)
+    static func info(_ strings: String) {
+        guard showLogs else { return }
+        nid.info("[NeuroID Info] \(strings)")
     }
 
-    func logDefault(category: String = "default", content: Any...) {
-        osLog(category: category, content: content, type: .default)
-    }
-
-    private func osLog(category: String = "default", content: Any..., type: OSLogType) {
-        Log.log(category: category, contents: content, type: .info)
-    }
-
-    /**
-     Save the params being sent to POST to collector endpoint to a local file
-     */
-    static func saveDebugJSON(events: String) {
-        let jsonStringNIDEvents = "\(events)".data(using: .utf8)!
-        do {
-            let filemgr = FileManager.default
-            let path = filemgr.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(Constants.debugJsonFileName.rawValue)
-            if !filemgr.fileExists(atPath: path.path) {
-                filemgr.createFile(atPath: path.path, contents: jsonStringNIDEvents, attributes: nil)
-
-            } else {
-                let file = FileHandle(forReadingAtPath: path.path)
-                if let fileUpdater = try? FileHandle(forUpdating: path) {
-                    // Function which when called will cause all updates to start from end of the file
-                    fileUpdater.seekToEndOfFile()
-
-                    // Which lets the caller move editing to any position within the file by supplying an offset
-                    fileUpdater.write(",\n".data(using: .utf8)!)
-                    fileUpdater.write(jsonStringNIDEvents)
-                } else {
-                    NeuroID.shared.logger.e("Unable to append DEBUG JSON")
-                }
-            }
-        } catch {
-            NeuroID.shared.logger.e(String(describing: error))
-        }
+    static func error(_ strings: String) {
+        guard showLogs else { return }
+        nid.error("****** NEUROID ERROR: ******\n\(strings)")
     }
 }
 
@@ -185,66 +150,5 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = ""
     }
 
-    NIDLog().d(
-        tag: "Event:",
-        "\(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)"
-    )
-}
-
-// Protocols don't allow optional args so we need to allow both with and
-//  without tags
-protocol LoggerProtocol {
-    func log(_ strings: String)
-    func log(tag: String, _ strings: String)
-
-    func d(_ strings: String)
-    func d(tag: String, _ strings: String)
-
-    func i(_ strings: String)
-    func i(tag: String, _ strings: String)
-
-    func e(_ strings: String)
-    func e(tag: String, _ strings: String)
-}
-
-class NIDLog: LoggerProtocol {
-    func log(_ strings: String) {
-        log(tag: "", strings)
-    }
-
-    func log(tag: String = "", _ strings: String) {
-        if NeuroID.shared._isSDKStarted, NeuroID.shared.showLogs {
-            Swift.print("(NeuroID) \(tag) ", strings)
-        }
-    }
-
-    func d(_ strings: String) {
-        d(tag: "", strings)
-    }
-
-    func d(tag: String = "", _ strings: String) {
-        if NeuroID.shared._isSDKStarted, NeuroID.shared.showLogs {
-            Swift.print("(NeuroID Debug) \(tag) ", strings)
-        }
-    }
-
-    func i(_ strings: String) {
-        i(tag: "", strings)
-    }
-
-    func i(tag: String = "", _ strings: String) {
-        if NeuroID.shared.showLogs {
-            Swift.print("(NeuroID Info) \(tag) ", strings)
-        }
-    }
-
-    func e(_ strings: String) {
-        e(tag: "", strings)
-    }
-
-    func e(tag: String = "", _ strings: String) {
-        if NeuroID.shared.showLogs {
-            Swift.print("****** NEUROID ERROR: ******\n\(tag) ", strings)
-        }
-    }
+    NIDLog.debug("Event: \(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
 }

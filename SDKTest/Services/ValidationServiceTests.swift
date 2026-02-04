@@ -9,9 +9,7 @@ import Foundation
 @testable import NeuroID
 
 class ValidationServiceTests: BaseTestClass {
-    let validationService = ValidationService(
-        logger: NIDLog()
-    )
+    let validationService = ValidationService()
 
     func test_validateClientKey_valid_live() {
         let value = validationService.validateClientKey("key_live_XXXXXXXXXXX")

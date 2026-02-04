@@ -17,7 +17,7 @@ class BaseTestClass: XCTestCase {
     let clientIdKey = Constants.storageClientIDKey.rawValue
     let tabIdKey = Constants.storageTabIDKey.rawValue
     
-    var dataStore = DataStore(logger: NIDLog())
+    var dataStore = DataStore()
     
     func clearOutDataStore() {
         NeuroID.shared.datastore.removeSentEvents()
