@@ -61,7 +61,7 @@ class NIDSessionTests: BaseTestClass {
             let closeSession = try NeuroID.shared.closeSession()
             assert(closeSession.ct == "SDK_EVENT")
         } catch {
-            NIDLog.e("Threw on Close Session that shouldn't")
+            NIDLog.error("Threw on Close Session that shouldn't")
             XCTFail()
         }
 

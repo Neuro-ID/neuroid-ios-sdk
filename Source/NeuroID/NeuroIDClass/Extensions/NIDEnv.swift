@@ -16,6 +16,6 @@ extension NeuroID {
         *, deprecated, message: "setEnvironmentProduction is deprecated and no longer required"
     )
     static func setEnvironmentProduction(_ value: Bool) {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED")
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED")
     }
 }

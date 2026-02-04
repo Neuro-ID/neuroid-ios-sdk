@@ -71,14 +71,14 @@ class ConfigService: ConfigServiceProtocol {
             
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
             
-            NIDLog.d("Retrieved remote config \(config)")
+            NIDLog.debug("Retrieved remote config \(config)")
             self.configCache = config
             self.initSiteIDSampleMap(config: config)
             self.cacheSetWithRemote = true
             self.captureConfigEvent(configData: config)
             self.configRetrievalCallback()
         } catch (let error) {
-            NIDLog.e("Failed to retrieve NID Config \(error)")
+            NIDLog.error("Failed to retrieve NID Config \(error)")
             self.configCache = RemoteConfiguration()
             self.cacheSetWithRemote = false
             NeuroID.shared.saveEventToDataStore(

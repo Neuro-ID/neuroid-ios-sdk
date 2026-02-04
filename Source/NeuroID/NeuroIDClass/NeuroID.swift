@@ -9,7 +9,7 @@ import UIKit
 
 public class NeuroID: NSObject {
     static let nidVersion = "3.6.0"
-    static let shared: NeuroID = .init()
+    static let shared: NeuroID = NeuroID()
 
     // Configuration
     var clientKey: String?
@@ -52,8 +52,7 @@ public class NeuroID: NSObject {
     static var trackers = [String: NeuroIDTracker]()
 
     /// Turn on/off printing the SDK log to your console
-    public var showLogs = true
-    let showDebugLog = false
+    var showLogs = true
 
     var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
@@ -167,7 +166,7 @@ public class NeuroID: NSObject {
 
     func verifyClientKeyExists() -> Bool {
         if self.clientKey == nil || self.clientKey == "" {
-            NIDLog.e("Missing Client Key - please call configure prior to calling start")
+            NIDLog.error("Missing Client Key - please call configure prior to calling start")
             return false
         }
         return true
@@ -185,12 +184,12 @@ public class NeuroID: NSObject {
         self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
 
         if self.clientKey != nil && self.clientKey != "" {
-            NIDLog.e("You already configured the SDK")
+            NIDLog.error("You already configured the SDK")
             return false
         }
 
         if !self.validationService.validateClientKey(configuration.clientKey) {
-            NIDLog.e("Invalid Client Key")
+            NIDLog.error("Invalid Client Key")
             self.saveQueuedEventToLocalDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Invalid Client Key \(configuration.clientKey)"
@@ -250,17 +249,17 @@ public class NeuroID: NSObject {
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
-        NIDLog.i("Remote Config Retrieval Attempt Completed")
+        NIDLog.info("Remote Config Retrieval Attempt Completed")
 
         self.setupListeners()
     }
 
     func stop() -> Bool {
-        NIDLog.i("NeuroID Stopped")
+        NIDLog.info("NeuroID Stopped")
         do {
             _ = try self.closeSession(skipStop: true)
         } catch {
-            NIDLog.e("Failed to Stop because \(error)")
+            NIDLog.error("Failed to Stop because \(error)")
             self.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to Stop because \(error)")
             )
@@ -345,7 +344,7 @@ public class NeuroID: NSObject {
         message: "printIntegrationHealthInstruction is deprecated and no longer functional"
     )
     public static func printIntegrationHealthInstruction() {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     // ENG-9193 - Will remove on next breaking release
@@ -354,6 +353,6 @@ public class NeuroID: NSObject {
         message: "printIntegrationHealthInstruction is deprecated and no longer functional"
     )
     public static func setVerifyIntegrationHealth(_ verify: Bool) {
-        NIDLog.i("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 }

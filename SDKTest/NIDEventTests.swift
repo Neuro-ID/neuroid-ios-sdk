@@ -170,7 +170,7 @@ class NIDEventTests: XCTestCase {
             NIDLog.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
         } catch {
-            NIDLog.e("\(error.localizedDescription)")
+            NIDLog.error("\(error.localizedDescription)")
         }
         assert(neuroHTTPRequest != nil)
     }

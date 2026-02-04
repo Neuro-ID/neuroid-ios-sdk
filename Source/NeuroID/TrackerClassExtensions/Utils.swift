@@ -88,7 +88,7 @@ enum UtilFunctions {
 
     static func registerSubViewsTargets(controller: UIViewController) {
         // self
-        NIDLog.d(
+        NIDLog.debug(
             "\(Constants.registrationTag.rawValue) Registering Top Level UIViewController \(controller.nidClassName)"
         )
 
@@ -104,7 +104,7 @@ enum UtilFunctions {
                 continue
             }
 
-            NIDLog.d(
+            NIDLog.debug(
                 "\(Constants.registrationTag.rawValue)    Registering Child UIViewController \(childController.1) - \(childController.0.nidClassName)"
             )
 
@@ -118,7 +118,7 @@ enum UtilFunctions {
 
             for _view in subViewChildren {
                 let v = _view as! UIView
-                NIDLog.d(
+                NIDLog.debug(
                     "\(Constants.registrationTag.rawValue)         Registering Single View \(childController.1)/\(v.nidClassName)"
                 )
 
@@ -166,7 +166,7 @@ enum UtilFunctions {
 
         NeuroID.shared.saveEventToLocalDataStore(nidEvent)
 
-        NIDLog.d("\(Constants.registrationTag.rawValue)            Registered View: \(className) - \(id)")
+        NIDLog.debug("\(Constants.registrationTag.rawValue)            Registered View: \(className) - \(id)")
     }
 
     static func captureContextMenuAction(
@@ -251,7 +251,7 @@ enum UtilFunctions {
         hashValue: String,
         attrParams: [String: String]
     ) {
-        NIDLog.d("Input = <\(textControl.id)>")
+        NIDLog.debug("Input = <\(textControl.id)>")
         let eventTg = ParamsCreator.getTGParamsForInput(
             eventName: eventType,
             view: textControl,

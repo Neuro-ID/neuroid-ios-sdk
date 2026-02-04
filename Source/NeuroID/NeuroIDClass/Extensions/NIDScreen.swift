@@ -13,14 +13,14 @@ extension NeuroID {
      */
     func setScreenName(_ screen: String) -> Bool {
         if !self.isSDKStarted {
-            NIDLog.e(NIDError.sdkNotStarted.rawValue)
+            NIDLog.error(NIDError.sdkNotStarted.rawValue)
             return false
         }
 
         if let urlEncode = screen.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) {
             self._currentScreenName = urlEncode
         } else {
-            NIDLog.e("Invalid Screenname for NeuroID. \(screen) can't be encode")
+            NIDLog.error("Invalid Screenname for NeuroID. \(screen) can't be encode")
             return false
         }
 

@@ -81,7 +81,7 @@ class IdentifierService: IdentifierServiceProtocol {
                         )
                     )
 
-                    NIDLog.e(
+                    NIDLog.error(
                         "Multiple Registered UserID Attempt: Only 1 Registered UserID can be set per session"
                     )
                 }
@@ -133,7 +133,7 @@ class IdentifierService: IdentifierServiceProtocol {
             return false
         }
 
-        NIDLog.d("\(type) \(identifier)")
+        NIDLog.debug("\(type) \(identifier)")
 
         eventStorageService.saveEventToDataStore(
             NIDEvent(
@@ -199,7 +199,7 @@ class IdentifierService: IdentifierServiceProtocol {
             }
             return identifier
         } catch let error as NSError {
-            NIDLog.e("Invalid pattern: \(error.localizedDescription)")
+            NIDLog.error("Invalid pattern: \(error.localizedDescription)")
             return identifier
         }
     }

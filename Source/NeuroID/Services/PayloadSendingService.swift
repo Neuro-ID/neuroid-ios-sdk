@@ -115,7 +115,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onFailure: @escaping (Error) -> Void
     ) {
         guard let url = URL(string: PayloadSendingService.collectionEndpointUrl) else {
-            NIDLog.e("NeuroID Base URL NOT found")
+            NIDLog.error("NeuroID Base URL NOT found")
             return
         }
 
@@ -134,8 +134,8 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             headers: headers,
             retryCount: 0
         ) { response in
-            NIDLog.i("NeuroID API Response \(response.response?.statusCode ?? 000)")
-            NIDLog.d(
+            NIDLog.info("NeuroID API Response \(response.response?.statusCode ?? 000)")
+            NIDLog.debug(
                 """
                 Payload Summary
                 ClientID: \(neuroHTTPRequest.clientId)
@@ -152,10 +152,10 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
 
             switch response.result {
             case .success:
-                NIDLog.i("NeuroID post to API Successful")
+                NIDLog.info("NeuroID post to API Successful")
                 onSuccess()
             case let .failure(error):
-                NIDLog.e("NeuroID FAIL to post API")
+                NIDLog.error("NeuroID FAIL to post API")
                 onFailure(error)
             }
         }

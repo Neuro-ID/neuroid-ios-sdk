@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+import OSLog
 
 extension NeuroID {
     /**
@@ -32,17 +32,17 @@ enum NIDLog {
         nid.log("[NeuroID] \(strings)")
     }
 
-    static func d(_ strings: String) {
+    static func debug(_ strings: String) {
         guard NeuroID.shared._isSDKStarted, showLogs else { return }
         nid.debug("[NeuroID Debug] \(strings)")
     }
 
-    static func i(_ strings: String) {
+    static func info(_ strings: String) {
         guard showLogs else { return }
         nid.info("[NeuroID Info] \(strings)")
     }
 
-    static func e(_ strings: String) {
+    static func error(_ strings: String) {
         guard showLogs else { return }
         nid.error("****** NEUROID ERROR: ******\n\(strings)")
     }
@@ -150,5 +150,5 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = ""
     }
 
-    NIDLog.d("Event: \(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
+    NIDLog.debug("Event: \(mutableEvent.type) - \(mutableEvent.ts) - \(mutableEvent.tgs ?? "NO_TARGET") - \(contextString)")
 }

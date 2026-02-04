@@ -28,7 +28,7 @@ class ValidationService: ValidationServiceProtocol {
         {
             validKey = true
         } else {
-            NIDLog.e("Invalid ClientKey")
+            NIDLog.error("Invalid ClientKey")
         }
 
         return validKey
@@ -41,7 +41,7 @@ class ValidationService: ValidationServiceProtocol {
         let valid = predicate.evaluate(with: string)
 
         if !valid {
-            NIDLog.e("Invalid SiteID/AppID")
+            NIDLog.error("Invalid SiteID/AppID")
         }
 
         return valid
@@ -58,11 +58,11 @@ class ValidationService: ValidationServiceProtocol {
                 options: NSRegularExpression.MatchingOptions(rawValue: 0),
                 range: NSMakeRange(0, identifier.count))
             if result.count != 1 {
-                NIDLog.e(NIDError.invalidUserID.rawValue)
+                NIDLog.error(NIDError.invalidUserID.rawValue)
                 return false
             }
         } catch {
-            NIDLog.e(NIDError.invalidUserID.rawValue)
+            NIDLog.error(NIDError.invalidUserID.rawValue)
             return false
         }
         return true

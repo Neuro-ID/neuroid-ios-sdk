@@ -30,7 +30,7 @@ public class DataStore: DataStoreServiceProtocol {
 
     func insertCleanedEvent(event: NIDEvent, storeType: String) {
         if storeType == "queue" {
-            NIDLog.d("Store Queued Event: \(event.type)")
+            NIDLog.debug("Store Queued Event: \(event.type)")
             DispatchQueue.global(qos: .utility).sync {
                 queuedEvents.append(event)
             }
