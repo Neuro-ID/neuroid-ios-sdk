@@ -55,7 +55,7 @@ enum Constants: String {
 }
 
 enum UserIDTypes: String {
-    case sessionID = "setUserID" // leaving for log messages
+    case sessionID = "setUserID"  // leaving for log messages
     case registeredUserID = "setRegisteredUserID"
     case attemptedLogin
 }
@@ -87,7 +87,7 @@ enum CallInProgressMetaData: String {
 extension AdvancedDeviceService {
     enum Endpoints {
         case standard, proxy
-        
+
         var url: String {
             switch self {
             case .standard:

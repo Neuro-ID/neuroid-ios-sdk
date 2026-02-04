@@ -64,13 +64,13 @@ class ConfigService: ConfigServiceProtocol {
             configRetrievalCallback()
             return
         }
-        
+
         do {
             let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
             let configUrl = URL(string: configUrlStr)!
-            
+
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
-            
+
             NIDLog.debug("Retrieved remote config \(config)")
             self.configCache = config
             self.initSiteIDSampleMap(config: config)

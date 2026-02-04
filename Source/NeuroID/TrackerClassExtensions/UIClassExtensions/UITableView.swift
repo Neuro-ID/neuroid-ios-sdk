@@ -21,7 +21,7 @@ extension UITableView {
     static func tableviewSwizzle() {
         let table = UITableView.self
         tableViewSwizzling(
-            element: table, 
+            element: table,
             originalSelector: #selector(table.reloadData),
             swizzledSelector: #selector(table.neuroIDReloadData)
         )
