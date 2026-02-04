@@ -8,7 +8,7 @@
 import Foundation
 
 protocol IdentifierServiceProtocol {
-    var sessionID: String? { get set } // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    var sessionID: String? { get set }  // Formerly known as userID, now within the mobile sdk ONLY sessionID
     var registeredUserID: String { get set }
 
     func setSessionID(_ sessionID: String, _ userGenerated: Bool) -> Bool
@@ -42,7 +42,7 @@ class IdentifierService: IdentifierServiceProtocol {
     let validationService: ValidationServiceProtocol
     let eventStorageService: EventStorageServiceProtocol
 
-    var sessionID: String? // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    var sessionID: String?  // Formerly known as userID, now within the mobile sdk ONLY sessionID
     var registeredUserID: String = ""
 
     init(
@@ -72,9 +72,7 @@ class IdentifierService: IdentifierServiceProtocol {
             identifier: registeredUserID,
             type: .registeredUserID,
             duplicatesAllowedCheck: { scrubbedIdentifier in
-                if !self.registeredUserID.isEmpty,
-                   registeredUserID != self.registeredUserID
-                {
+                if !self.registeredUserID.isEmpty, registeredUserID != self.registeredUserID {
                     self.eventStorageService.saveEventToLocalDataStore(
                         NIDEvent.createWarnLogEvent(
                             "Multiple Registered UserID Attempt - existing:\(self.registeredUserID) new:\(scrubbedIdentifier)"
@@ -171,8 +169,7 @@ class IdentifierService: IdentifierServiceProtocol {
 
     func scrubIdentifier(_ identifier: String) -> String {
         do {
-            let emailRegex = try NSRegularExpression(
-                pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            let emailRegex = try NSRegularExpression(pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
             var result = emailRegex.matches(
                 in: identifier, range: NSMakeRange(0, identifier.count)
             )
@@ -189,8 +186,7 @@ class IdentifierService: IdentifierServiceProtocol {
                 return scrubbedEmailId
             }
 
-            let ssnRegex = try NSRegularExpression(
-                pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")
+            let ssnRegex = try NSRegularExpression(pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b")
             result = ssnRegex.matches(
                 in: identifier, range: NSMakeRange(0, identifier.count)
             )
@@ -199,6 +195,7 @@ class IdentifierService: IdentifierServiceProtocol {
             }
             return identifier
         } catch let error as NSError {
+            // Should not fail, catch is not dependent on input string
             NIDLog.error("Invalid pattern: \(error.localizedDescription)")
             return identifier
         }
@@ -243,14 +240,14 @@ class IdentifierService: IdentifierServiceProtocol {
     ) -> SessionIDOriginalResult {
         let origin =
             userGenerated
-                ? SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
-                : SessionOrigin.NID_ORIGIN_NID_SET.rawValue
+            ? SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
+            : SessionOrigin.NID_ORIGIN_NID_SET.rawValue
         var originCode = SessionOrigin.NID_ORIGIN_CODE_FAIL.rawValue
         if validID {
             originCode =
                 userGenerated
-                    ? SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
-                    : SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
+                ? SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
+                : SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
         }
         return SessionIDOriginalResult(
             origin: origin, originCode: originCode, idValue: idValue,
