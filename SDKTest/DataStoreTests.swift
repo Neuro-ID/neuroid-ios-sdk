@@ -5,8 +5,9 @@
 //  Created by Clayton Selby on 10/19/21.
 //
 
-@testable import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class DataStoreTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"

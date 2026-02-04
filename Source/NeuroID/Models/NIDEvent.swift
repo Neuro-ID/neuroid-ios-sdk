@@ -96,8 +96,7 @@ public enum NIDEventName: String {
 
     var etn: String? {
         switch self {
-        case .change, .textChange, .radioChange, .inputChange,
-             .paste, .keyDown, .keyUp, .selectChange, .sliderChange:
+        case .change, .textChange, .radioChange, .inputChange, .paste, .keyDown, .keyUp, .selectChange, .sliderChange:
             return rawValue
         default:
             return nil

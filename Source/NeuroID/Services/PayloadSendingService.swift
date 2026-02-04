@@ -88,7 +88,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         let cleanEvents = dataStoreEvents.map { nidevent -> NIDEvent in
             // Only send url on register target and create session events
             if nidevent.type != NIDEventName.registerTarget.rawValue,
-               nidevent.type != NIDEventName.createSession.rawValue
+                nidevent.type != NIDEventName.createSession.rawValue
             {
                 nidevent.url = nil
             }
@@ -154,7 +154,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             case .success:
                 NIDLog.info("NeuroID post to API Successful")
                 onSuccess()
-            case let .failure(error):
+            case .failure(let error):
                 NIDLog.error("NeuroID FAIL to post API")
                 onFailure(error)
             }
