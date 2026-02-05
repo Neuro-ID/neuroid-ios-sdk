@@ -16,8 +16,8 @@ struct DeviceMetadata: Codable {
     var device: String
     var display: String
     var manufacturer: String
+    var modelId: String
     var modelName: String
-    var model: String
     var product: String
     var osVersion: String
     var displayResolution: String
@@ -36,8 +36,8 @@ struct DeviceMetadata: Codable {
         self.display = DeviceMetadata.getDisplay()
         self.displayResolution = DeviceMetadata.getDisplayResolution()
         self.manufacturer = DeviceMetadata.getDeviceManufacturer()
-        self.modelName = DeviceMetadata.getDeviceModel()
-        self.model = DeviceMetadata.getModelIdentifier()
+        self.modelName = DeviceMetadata.getDeviceModelName()
+        self.modelId = DeviceMetadata.getModelIdentifier()
         self.product = DeviceMetadata.getDeviceName()
         self.osVersion = DeviceMetadata.getOSVersion()
         self.isWifiOn = DeviceMetadata.isWifiEnable()
@@ -59,7 +59,7 @@ struct DeviceMetadata: Codable {
         case display
         case manufacturer
         case modelName = "model"
-        case model = "modelId"
+        case modelId = "modelId"
         case product
         case osVersion
         case displayResolution
@@ -87,7 +87,7 @@ extension DeviceMetadata {
     }
 
     // Deprecated in favor of sending the model identifier
-    static func getDeviceModel() -> String {
+    static func getDeviceModelName() -> String {
         return UIDevice.current.type.rawValue
     }
 
@@ -188,41 +188,37 @@ extension DeviceMetadata {
     }
 
     // suspicious apps path to check
-    static var suspiciousAppsPathToCheck: [String] {
-        return [
-            "/Applications/Cydia.app",
-            "/Applications/blackra1n.app",
-            "/Applications/FakeCarrier.app",
-            "/Applications/Icy.app",
-            "/Applications/IntelliScreen.app",
-            "/Applications/MxTube.app",
-            "/Applications/RockApp.app",
-            "/Applications/SBSettings.app",
-            "/Applications/WinterBoard.app",
-        ]
-    }
+    static var suspiciousAppsPathToCheck: [String] = [
+        "/Applications/Cydia.app",
+        "/Applications/blackra1n.app",
+        "/Applications/FakeCarrier.app",
+        "/Applications/Icy.app",
+        "/Applications/IntelliScreen.app",
+        "/Applications/MxTube.app",
+        "/Applications/RockApp.app",
+        "/Applications/SBSettings.app",
+        "/Applications/WinterBoard.app",
+    ]
 
     // suspicious system paths to check
-    static var suspiciousSystemPathsToCheck: [String] {
-        return [
-            "/Library/MobileSubstrate/DynamicLibraries/LiveClock.plist",
-            "/Library/MobileSubstrate/DynamicLibraries/Veency.plist",
-            "/private/var/lib/apt",
-            "/private/var/lib/apt/",
-            "/private/var/lib/cydia",
-            "/private/var/mobile/Library/SBSettings/Themes",
-            "/private/var/stash",
-            "/private/var/tmp/cydia.log",
-            "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
-            "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
-            "/usr/bin/sshd",
-            "/usr/libexec/sftp-server",
-            "/usr/sbin/sshd",
-            "/etc/apt",
-            "/bin/bash",
-            "/Library/MobileSubstrate/MobileSubstrate.dylib",
-        ]
-    }
+    static var suspiciousSystemPathsToCheck: [String] = [
+        "/Library/MobileSubstrate/DynamicLibraries/LiveClock.plist",
+        "/Library/MobileSubstrate/DynamicLibraries/Veency.plist",
+        "/private/var/lib/apt",
+        "/private/var/lib/apt/",
+        "/private/var/lib/cydia",
+        "/private/var/mobile/Library/SBSettings/Themes",
+        "/private/var/stash",
+        "/private/var/tmp/cydia.log",
+        "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
+        "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
+        "/usr/bin/sshd",
+        "/usr/libexec/sftp-server",
+        "/usr/sbin/sshd",
+        "/etc/apt",
+        "/bin/bash",
+        "/Library/MobileSubstrate/MobileSubstrate.dylib",
+    ]
 
     // Returns the model identifier (eg. "iPhone7,1")
     static func getModelIdentifier() -> String {
