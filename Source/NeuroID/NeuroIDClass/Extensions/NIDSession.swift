@@ -173,7 +173,7 @@ extension NeuroID {
             url: NeuroID.getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
             jsv: NeuroID.getSDKVersion(),
-            metadata: NIDMetadata(),
+            metadata: DeviceMetadata(),
             sh: UIScreen.main.bounds.height,
             sw: UIScreen.main.bounds.width
         )
