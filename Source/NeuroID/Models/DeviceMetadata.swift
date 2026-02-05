@@ -1,5 +1,5 @@
 //
-//  NIDMetadata.swift
+//  DeviceMetadata.swift
 //  NeuroID
 //
 //  Created by jose perez on 26/08/22.
@@ -11,18 +11,13 @@ import Network
 import SwiftUI
 import UIKit
 
-struct NIDLocation: Codable {
-    var latitude: Double?
-    var longitude: Double?
-    var authorizationStatus: String
-}
-
-final class NIDMetadata: Codable {
+struct DeviceMetadata: Codable {
     var brand: String
     var device: String
     var display: String
     var manufacturer: String
-    var model: String
+    var modelId: String
+    var modelName: String
     var product: String
     var osVersion: String
     var displayResolution: String
@@ -37,18 +32,19 @@ final class NIDMetadata: Codable {
     // Init with local data
     public init() {
         self.brand = UIDevice.current.model
-        self.device = NIDMetadata.getDeviceName()
-        self.display = NIDMetadata.getDisplay()
-        self.displayResolution = NIDMetadata.getDisplayResolution()
-        self.manufacturer = NIDMetadata.getDeviceManufacturer()
-        self.model = NIDMetadata.getDeviceModel()
-        self.product = NIDMetadata.getDeviceName()
-        self.osVersion = NIDMetadata.getOSVersion()
-        self.isWifiOn = NIDMetadata.isWifiEnable()
-        self.carrier = NIDMetadata.getCurrentCarrier()
-        self.batteryLevel = NIDMetadata.getBaterryLevel()
-        self.isJailBreak = NIDMetadata.hasJailbreak()
-        self.isSimulator = NIDMetadata.isSimulator()
+        self.device = DeviceMetadata.getDeviceName()
+        self.display = DeviceMetadata.getDisplay()
+        self.displayResolution = DeviceMetadata.getDisplayResolution()
+        self.manufacturer = DeviceMetadata.getDeviceManufacturer()
+        self.modelName = DeviceMetadata.getDeviceModelName()
+        self.modelId = DeviceMetadata.getModelIdentifier()
+        self.product = DeviceMetadata.getDeviceName()
+        self.osVersion = DeviceMetadata.getOSVersion()
+        self.isWifiOn = DeviceMetadata.isWifiEnable()
+        self.carrier = DeviceMetadata.getCurrentCarrier()
+        self.batteryLevel = DeviceMetadata.getBaterryLevel()
+        self.isJailBreak = DeviceMetadata.hasJailbreak()
+        self.isSimulator = DeviceMetadata.isSimulator()
         self.lastInstallTime = Int64(getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) * 1000)
         self.gpsCoordinates = NIDLocation(
             latitude: NeuroID.shared.locationManager?.latitude ?? -1,
@@ -56,16 +52,42 @@ final class NIDMetadata: Codable {
             authorizationStatus: NeuroID.shared.locationManager?.authorizationStatus ?? "unknown"
         )
     }
+
+    enum CodingKeys: String, CodingKey {
+        case brand
+        case device
+        case display
+        case manufacturer
+        case modelName = "model"
+        case modelId = "modelId"
+        case product
+        case osVersion
+        case displayResolution
+        case carrier
+        case batteryLevel
+        case isJailBreak
+        case isWifiOn
+        case isSimulator
+        case gpsCoordinates
+        case lastInstallTime
+    }
+}
+
+struct NIDLocation: Codable {
+    var latitude: Double?
+    var longitude: Double?
+    var authorizationStatus: String
 }
 
 // MARK: - Static funtions
 
-extension NIDMetadata {
+extension DeviceMetadata {
     static func getDeviceName() -> String {
         return ""
     }
 
-    static func getDeviceModel() -> String {
+    // Deprecated in favor of sending the model identifier
+    static func getDeviceModelName() -> String {
         return UIDevice.current.type.rawValue
     }
 
@@ -166,36 +188,50 @@ extension NIDMetadata {
     }
 
     // suspicious apps path to check
-    static var suspiciousAppsPathToCheck: [String] {
-        return ["/Applications/Cydia.app",
-                "/Applications/blackra1n.app",
-                "/Applications/FakeCarrier.app",
-                "/Applications/Icy.app",
-                "/Applications/IntelliScreen.app",
-                "/Applications/MxTube.app",
-                "/Applications/RockApp.app",
-                "/Applications/SBSettings.app",
-                "/Applications/WinterBoard.app"]
-    }
+    static var suspiciousAppsPathToCheck: [String] = [
+        "/Applications/Cydia.app",
+        "/Applications/blackra1n.app",
+        "/Applications/FakeCarrier.app",
+        "/Applications/Icy.app",
+        "/Applications/IntelliScreen.app",
+        "/Applications/MxTube.app",
+        "/Applications/RockApp.app",
+        "/Applications/SBSettings.app",
+        "/Applications/WinterBoard.app",
+    ]
 
     // suspicious system paths to check
-    static var suspiciousSystemPathsToCheck: [String] {
-        return ["/Library/MobileSubstrate/DynamicLibraries/LiveClock.plist",
-                "/Library/MobileSubstrate/DynamicLibraries/Veency.plist",
-                "/private/var/lib/apt",
-                "/private/var/lib/apt/",
-                "/private/var/lib/cydia",
-                "/private/var/mobile/Library/SBSettings/Themes",
-                "/private/var/stash",
-                "/private/var/tmp/cydia.log",
-                "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
-                "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
-                "/usr/bin/sshd",
-                "/usr/libexec/sftp-server",
-                "/usr/sbin/sshd",
-                "/etc/apt",
-                "/bin/bash",
-                "/Library/MobileSubstrate/MobileSubstrate.dylib"]
+    static var suspiciousSystemPathsToCheck: [String] = [
+        "/Library/MobileSubstrate/DynamicLibraries/LiveClock.plist",
+        "/Library/MobileSubstrate/DynamicLibraries/Veency.plist",
+        "/private/var/lib/apt",
+        "/private/var/lib/apt/",
+        "/private/var/lib/cydia",
+        "/private/var/mobile/Library/SBSettings/Themes",
+        "/private/var/stash",
+        "/private/var/tmp/cydia.log",
+        "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
+        "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
+        "/usr/bin/sshd",
+        "/usr/libexec/sftp-server",
+        "/usr/sbin/sshd",
+        "/etc/apt",
+        "/bin/bash",
+        "/Library/MobileSubstrate/MobileSubstrate.dylib",
+    ]
+
+    // Returns the model identifier (eg. "iPhone7,1")
+    static func getModelIdentifier() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let mirror = Mirror(reflecting: systemInfo.machine)
+
+        let identifier = mirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+
+        return ["i386", "x86_64", "arm64"].contains(identifier) ? "simulator" : identifier
     }
 }
 
@@ -209,7 +245,6 @@ extension UIDevice {
     }
 }
 
-@available(iOS 12.0, *)
 class NetworkStatus {
     public static let shared = NetworkStatus()
     private var monitor: NWPathMonitor
@@ -245,6 +280,8 @@ class NetworkStatus {
         return .unknown
     }
 }
+
+// No longer maintaining these list of models on the client side, sending the model identifier instead
 
 public enum Model: String {
     case simulator,

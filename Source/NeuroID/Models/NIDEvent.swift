@@ -327,7 +327,7 @@ public class NIDEvent: Codable {
     var gyro: NIDSensorData?
     var accel: NIDSensorData?
     var touches: [NIDTouches]?
-    var metadata: NIDMetadata?
+    var metadata: DeviceMetadata?
     var sh: CGFloat?
     var sw: CGFloat?
     var rts: String?
@@ -385,7 +385,7 @@ public class NIDEvent: Codable {
         gyro: NIDSensorData? = nil,
         accel: NIDSensorData? = nil,
         touches: [NIDTouches]? = nil,
-        metadata: NIDMetadata? = nil,
+        metadata: DeviceMetadata? = nil,
         sh: CGFloat? = nil,
         sw: CGFloat? = nil,
         rts: String? = nil,
