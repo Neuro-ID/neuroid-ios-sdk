@@ -12,11 +12,6 @@ import XCTest
 class MultiAppFlowTests: XCTestCase {
     let clientKey = "key_test_0OMmplsawAp2CQfWrytWA3wL"
 
-    // Keys for storage:
-    let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
-    let clientKeyKey = Constants.storageClientKey.rawValue
-    let tabIdKey = Constants.storageTabIDKey.rawValue
-
     let mockService = MockDeviceSignalService()
     let mockedConfig = MockConfigService()
     var mockedNetworkService = MockNetworkService()

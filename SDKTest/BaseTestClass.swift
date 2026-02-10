@@ -5,14 +5,14 @@
 //  Created by Kevin Sites on 1/21/25.
 //
 
-@testable import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class BaseTestClass: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    
+
     // Keys for storage:
-    let localStorageNIDStopAll = Constants.storageLocalNIDStopAllKey.rawValue
     let clientKeyKey = Constants.storageClientKey.rawValue
     let clientIdKey = Constants.storageClientIDKey.rawValue
     let tabIdKey = Constants.storageTabIDKey.rawValue

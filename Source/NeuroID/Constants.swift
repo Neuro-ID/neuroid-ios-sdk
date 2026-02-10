@@ -14,16 +14,11 @@ enum Constants: String {
     case productionURL = "https://receiver.neuroid.cloud/c"
     case developmentURL = "https://receiver.neuro-dev.com/c"
 
-    case debugJsonKey = "debugJSON"
-    case debugJsonFileName = "nidJSONPOSTFormat.txt"
-
-    case storageLocalNIDStopAllKey = "nid_stop_all"
     case storageClientKey = "nid_key"
     case storageClientIDKey = "nid_cid"
     case storageTabIDKey = "nid_tid"
     case storageDeviceIDKey = "nid_did"
     case storageDntKey = "nid_dnt"
-    case storageSessionExpiredKey = "nid_sid_expires"
     case storageSaltKey = "nid_sk"
 
     case storageAdvancedDeviceKey = "nid_advancedDevice"
@@ -46,12 +41,8 @@ enum Constants: String {
     case lastInstallTime
 
     // Tags
-    case debugTag = "NeuroID Debug:"
     case extraInfoTag = "NeuroID Extra:"
     case registrationTag = "NeuroID Registration:"
-    case sessionTag = "NeuroID SessionId:"
-    case userTag = "NeuroID UserId:"
-    case debugTest = "TEST: "
 }
 
 enum UserIDTypes: String {
@@ -71,7 +62,6 @@ enum SessionOrigin: String {
 enum CallInProgress: String {
     case ACTIVE = "true"
     case INACTIVE = "false"
-    case UNAUTHORIZED = "unauthorized"
 }
 
 enum CallInProgressMetaData: String {
