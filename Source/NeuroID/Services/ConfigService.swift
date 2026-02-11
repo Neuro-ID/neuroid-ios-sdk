@@ -1,17 +1,17 @@
 //
 //  ConfigService.swift
 //  NeuroID
+//
 
 import Foundation
 
 protocol ConfigServiceProtocol {
     var configCache: RemoteConfiguration { get }
-    var siteIDMap: [String: Bool] { get }
     var isSessionFlowSampled: Bool { get }
 
     func clearSiteIDMap()
     func retrieveOrRefreshCache()
-    func updateIsSampledStatus(siteID: String?)
+    func updateIsSampledStatus(siteID: String?) async
 }
 
 protocol RandomGenerator {
@@ -22,6 +22,22 @@ class NIDRandomGenerator: RandomGenerator {
     func getNumber() -> Int {
         let num = Int.random(in: 1...ConfigService.MAX_SAMPLE_RATE)
         return num
+    }
+}
+
+actor ConfigStore {
+    var siteIDMap: [String: Bool] = [:]
+
+    func setSiteIDMap(_ map: [String: Bool]) {
+        siteIDMap = map
+    }
+
+    func clearSiteIDMap() {
+        siteIDMap.removeAll()
+    }
+
+    func flag(for siteID: String) -> Bool? {
+        siteIDMap[siteID]
     }
 }
 
@@ -36,10 +52,9 @@ class ConfigService: ConfigServiceProtocol {
     // Services
     let networkService: NetworkServiceProtocol
     let randomGenerator: RandomGenerator
+    private let configStore: ConfigStore = ConfigStore()
 
     let configRetrievalCallback: () -> Void
-
-    var siteIDMap: [String: Bool] = [:]
 
     var _isSessionFlowSampled = true
     var isSessionFlowSampled: Bool { _isSessionFlowSampled }
@@ -73,9 +88,11 @@ class ConfigService: ConfigServiceProtocol {
 
             NIDLog.debug("Retrieved remote config \(config)")
             self.configCache = config
-            self.initSiteIDSampleMap(config: config)
             self.cacheSetWithRemote = true
+
+            await self.initSiteIDSampleMap(config: config)
             self.captureConfigEvent(configData: config)
+
             self.configRetrievalCallback()
         } catch (let error) {
             NIDLog.error("Failed to retrieve NID Config \(error)")
@@ -90,27 +107,27 @@ class ConfigService: ConfigServiceProtocol {
         }
     }
 
-    func initSiteIDSampleMap(config: RemoteConfiguration) {
+    // Access to the siteIDMap state inside the actor
+    func siteIDMap() async -> [String: Bool] {
+        await self.configStore.siteIDMap
+    }
+
+    private func initSiteIDSampleMap(config: RemoteConfiguration) async {
+        var newMap: [String: Bool] = [:]
+
         if let linkedSiteOptions: [String: RemoteConfiguration.LinkedSiteOption] = config.linkedSiteOptions {
-            for siteID in linkedSiteOptions.keys {
-                if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
-                    if sampleRate == 0 {
-                        siteIDMap[siteID] = false
-                    } else {
-                        siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
-                    }
+            for (siteID, opt) in linkedSiteOptions {
+                if let sampleRate: Int = opt.sampleRate {
+                    newMap[siteID] = (sampleRate == 0) ? false : (randomGenerator.getNumber() <= sampleRate)
                 }
             }
         }
-        if let siteID: String = config.siteID {
-            if let sampleRate: Int = config.sampleRate {
-                if config.sampleRate == 0 {
-                    siteIDMap[siteID] = false
-                } else {
-                    siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
-                }
-            }
+
+        if let siteID: String = config.siteID, let sampleRate: Int = config.sampleRate {
+            newMap[siteID] = (sampleRate == 0) ? false : (randomGenerator.getNumber() <= sampleRate)
         }
+
+        await self.configStore.setSiteIDMap(newMap)
 
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
@@ -139,7 +156,8 @@ class ConfigService: ConfigServiceProtocol {
     }
 
     func clearSiteIDMap() {
-        siteIDMap.removeAll()
+        // Clear siteID Map in background
+        Task { await configStore.clearSiteIDMap() }
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.clearSampleSiteIDmap,
@@ -164,22 +182,20 @@ class ConfigService: ConfigServiceProtocol {
         }
     }
 
-    func updateIsSampledStatus(siteID: String?) {
-        if let nonNullSiteID: String = siteID {
-            if let nonNullFlag = siteIDMap[nonNullSiteID] {
-                _isSessionFlowSampled = nonNullFlag
-                NeuroID.shared.saveEventToDataStore(
-                    NIDEvent(
-                        type: NIDEventName.updateIsSampledStatus,
-                        m: "\(nonNullSiteID) : \(nonNullFlag)",
-                        level: "INFO"
-                    )
+    func updateIsSampledStatus(siteID: String?) async {
+        if let siteID: String = siteID, let flag = await configStore.flag(for: siteID) {
+            self._isSessionFlowSampled = flag
+            NeuroID.shared.saveEventToDataStore(
+                NIDEvent(
+                    type: NIDEventName.updateIsSampledStatus,
+                    m: "\(siteID) : \(flag)",
+                    level: "INFO"
                 )
-                return
-            }
+            )
+            return
         }
-        _isSessionFlowSampled = true
 
+        self._isSessionFlowSampled = true
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateIsSampledStatus,

@@ -14,7 +14,7 @@ protocol NetworkServiceProtocol {
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration
 }
 
-class NetworkService: NetworkServiceProtocol {
+final class NetworkService: NetworkServiceProtocol {
     private var afCustomSession: Alamofire.Session
     private let afConfiguration = URLSessionConfiguration.af.default
     private let session: URLSession

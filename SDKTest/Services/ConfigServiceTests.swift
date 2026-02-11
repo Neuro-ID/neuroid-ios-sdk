@@ -148,11 +148,11 @@ struct ConfigServiceTests {
     }
 
     @Test(arguments: [0, 100])
-    func updateIsSampledStatusNilSiteID(sampleRate: Int) {
+    func updateIsSampledStatusNilSiteID(sampleRate: Int) async {
         configService.configCache.sampleRate = sampleRate
         configService._isSessionFlowSampled = false
         
-        configService.updateIsSampledStatus(siteID: nil)
+        await configService.updateIsSampledStatus(siteID: nil)
         
         #expect(configService.isSessionFlowSampled)
     }
@@ -252,18 +252,18 @@ struct ConfigServiceTests {
             configRetrievalCallback: {}
         )
         
-        #expect(configService.siteIDMap.isEmpty)
+        #expect(await configService.siteIDMap().isEmpty)
         
         await self.configService.retrieveConfig()
         
         for key in parms.expectedResults.keys {
-            configService.updateIsSampledStatus(siteID: key)
+            await configService.updateIsSampledStatus(siteID: key)
             #expect(configService.isSessionFlowSampled == parms.expectedResults[key])
         }
-        #expect(configService.siteIDMap.isEmpty == parms.siteIDMapIsEmpty)
+        #expect(await configService.siteIDMap().isEmpty == parms.siteIDMapIsEmpty)
            
         // test siteID not found in map
-        configService.updateIsSampledStatus(siteID: "test1000")
+        await configService.updateIsSampledStatus(siteID: "test1000")
         #expect(configService.isSessionFlowSampled == true)
     }
     
