@@ -64,7 +64,7 @@ class ConfigService: ConfigServiceProtocol {
 
     func retrieveConfig() async {
         guard NeuroID.shared.verifyClientKeyExists() else {
-            cacheSetWithRemote = false
+            setCacheWithRemote(false)
             configRetrievalCallback()
             return
         }
@@ -78,13 +78,13 @@ class ConfigService: ConfigServiceProtocol {
             NIDLog.debug("Retrieved remote config \(config)")
             self.configCache = config
             self.initSiteIDSampleMap(config: config)
-            self.cacheSetWithRemote = true
+            setCacheWithRemote(true)
             self.captureConfigEvent(configData: config)
             self.configRetrievalCallback()
         } catch (let error) {
             NIDLog.error("Failed to retrieve NID Config \(error)")
             self.configCache = RemoteConfiguration()
-            self.cacheSetWithRemote = false
+            setCacheWithRemote(false)
             NeuroID.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Failed to retrieve NID config: \(error). Default values will be used."
@@ -126,17 +126,18 @@ class ConfigService: ConfigServiceProtocol {
      (i.e. a time expiration approach instead)
      */
     var cacheExpired: Bool {
-        return !cacheSetWithRemote
+        inFlightLock.lock()
+        let expired = !cacheSetWithRemote
+        inFlightLock.unlock()
+        return expired
     }
 
     /**
      Will check if the cache is available or needs to be refreshed,
      */
     func retrieveOrRefreshCache() {
-        guard cacheExpired else { return }
-
         inFlightLock.lock()
-        if inFlightRetrieveTask != nil {
+        guard !cacheSetWithRemote, inFlightRetrieveTask == nil else {
             inFlightLock.unlock()
             return
         }
@@ -157,6 +158,12 @@ class ConfigService: ConfigServiceProtocol {
         inFlightLock.unlock()
     }
 
+    private func setCacheWithRemote(_ value: Bool) {
+        inFlightLock.lock()
+        cacheSetWithRemote = value
+        inFlightLock.unlock()
+    }
+    
     func clearSiteIDMap() {
         siteIDMap.removeAll()
         NeuroID.shared.saveEventToDataStore(
