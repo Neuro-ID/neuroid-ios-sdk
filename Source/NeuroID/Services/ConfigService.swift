@@ -138,17 +138,17 @@ class ConfigService: ConfigServiceProtocol {
         inFlightLock.withLock {
             // Ensure cache has not been set and that there is not an existing task running
             guard !cacheSetWithRemote, inFlightRetrieveTask == nil else { return }
-            
+
             let task = Task {
                 defer {
                     self.inFlightLock.withLock {
                         self.inFlightRetrieveTask = nil
                     }
                 }
-                
+
                 await self.retrieveConfig()
             }
-            
+
             inFlightRetrieveTask = task
         }
     }
@@ -158,7 +158,7 @@ class ConfigService: ConfigServiceProtocol {
             cacheSetWithRemote = value
         }
     }
-    
+
     func clearSiteIDMap() {
         siteIDMap.removeAll()
         NeuroID.shared.saveEventToDataStore(
