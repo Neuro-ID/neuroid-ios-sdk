@@ -142,9 +142,7 @@ class ConfigService: ConfigServiceProtocol {
             return
         }
 
-        let task = Task { [weak self] in
-            guard let self else { return }
-
+        let task = Task {
             defer {
                 self.inFlightLock.lock()
                 self.inFlightRetrieveTask = nil
