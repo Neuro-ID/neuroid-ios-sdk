@@ -1,6 +1,7 @@
 //
 //  ConfigService.swift
 //  NeuroID
+//
 
 import Foundation
 
@@ -48,6 +49,9 @@ class ConfigService: ConfigServiceProtocol {
     public var configCache: RemoteConfiguration = .init()
     var cacheSetWithRemote = false
 
+    private let inFlightLock = NSLock()
+    private var inFlightRetrieveTask: Task<Void, Never>?
+
     init(
         networkService: NetworkServiceProtocol,
         randomGenerator: RandomGenerator = NIDRandomGenerator(),
@@ -90,27 +94,22 @@ class ConfigService: ConfigServiceProtocol {
         }
     }
 
-    func initSiteIDSampleMap(config: RemoteConfiguration) {
+    private func initSiteIDSampleMap(config: RemoteConfiguration) {
+        var newMap: [String: Bool] = [:]
+
         if let linkedSiteOptions: [String: RemoteConfiguration.LinkedSiteOption] = config.linkedSiteOptions {
-            for siteID in linkedSiteOptions.keys {
-                if let sampleRate: Int = linkedSiteOptions[siteID]?.sampleRate {
-                    if sampleRate == 0 {
-                        siteIDMap[siteID] = false
-                    } else {
-                        siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
-                    }
+            for (siteID, opt) in linkedSiteOptions {
+                if let sampleRate: Int = opt.sampleRate {
+                    newMap[siteID] = (sampleRate == 0) ? false : (randomGenerator.getNumber() <= sampleRate)
                 }
             }
         }
-        if let siteID: String = config.siteID {
-            if let sampleRate: Int = config.sampleRate {
-                if config.sampleRate == 0 {
-                    siteIDMap[siteID] = false
-                } else {
-                    siteIDMap[siteID] = (randomGenerator.getNumber() <= sampleRate)
-                }
-            }
+
+        if let siteID: String = config.siteID, let sampleRate: Int = config.sampleRate {
+            newMap[siteID] = (sampleRate == 0) ? false : (randomGenerator.getNumber() <= sampleRate)
         }
+
+        self.siteIDMap = newMap
 
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
@@ -135,7 +134,27 @@ class ConfigService: ConfigServiceProtocol {
      */
     func retrieveOrRefreshCache() {
         guard cacheExpired else { return }
-        Task { await retrieveConfig() }
+
+        inFlightLock.lock()
+        if inFlightRetrieveTask != nil {
+            inFlightLock.unlock()
+            return
+        }
+
+        let task = Task { [weak self] in
+            guard let self else { return }
+
+            defer {
+                self.inFlightLock.lock()
+                self.inFlightRetrieveTask = nil
+                self.inFlightLock.unlock()
+            }
+
+            await self.retrieveConfig()
+        }
+
+        inFlightRetrieveTask = task
+        inFlightLock.unlock()
     }
 
     func clearSiteIDMap() {
@@ -165,19 +184,18 @@ class ConfigService: ConfigServiceProtocol {
     }
 
     func updateIsSampledStatus(siteID: String?) {
-        if let nonNullSiteID: String = siteID {
-            if let nonNullFlag = siteIDMap[nonNullSiteID] {
-                _isSessionFlowSampled = nonNullFlag
-                NeuroID.shared.saveEventToDataStore(
-                    NIDEvent(
-                        type: NIDEventName.updateIsSampledStatus,
-                        m: "\(nonNullSiteID) : \(nonNullFlag)",
-                        level: "INFO"
-                    )
+        if let siteID: String = siteID, let flag = siteIDMap[siteID] {
+            _isSessionFlowSampled = flag
+            NeuroID.shared.saveEventToDataStore(
+                NIDEvent(
+                    type: NIDEventName.updateIsSampledStatus,
+                    m: "\(siteID) : \(flag)",
+                    level: "INFO"
                 )
-                return
-            }
+            )
+            return
         }
+
         _isSessionFlowSampled = true
 
         NeuroID.shared.saveEventToDataStore(
