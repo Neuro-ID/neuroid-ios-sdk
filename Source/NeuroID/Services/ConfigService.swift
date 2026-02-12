@@ -126,40 +126,37 @@ class ConfigService: ConfigServiceProtocol {
      (i.e. a time expiration approach instead)
      */
     var cacheExpired: Bool {
-        inFlightLock.lock()
-        let expired = !cacheSetWithRemote
-        inFlightLock.unlock()
-        return expired
+        inFlightLock.withLock {
+            return !cacheSetWithRemote
+        }
     }
 
     /**
      Will check if the cache is available or needs to be refreshed,
      */
     func retrieveOrRefreshCache() {
-        inFlightLock.lock()
-        guard !cacheSetWithRemote, inFlightRetrieveTask == nil else {
-            inFlightLock.unlock()
-            return
-        }
-
-        let task = Task {
-            defer {
-                self.inFlightLock.lock()
-                self.inFlightRetrieveTask = nil
-                self.inFlightLock.unlock()
+        inFlightLock.withLock {
+            // Ensure cache has not been set and that there is not an existing task running
+            guard !cacheSetWithRemote, inFlightRetrieveTask == nil else { return }
+            
+            let task = Task {
+                defer {
+                    self.inFlightLock.withLock {
+                        self.inFlightRetrieveTask = nil
+                    }
+                }
+                
+                await self.retrieveConfig()
             }
-
-            await self.retrieveConfig()
+            
+            inFlightRetrieveTask = task
         }
-
-        inFlightRetrieveTask = task
-        inFlightLock.unlock()
     }
 
     private func setCacheWithRemote(_ value: Bool) {
-        inFlightLock.lock()
-        cacheSetWithRemote = value
-        inFlightLock.unlock()
+        inFlightLock.withLock {
+            cacheSetWithRemote = value
+        }
     }
     
     func clearSiteIDMap() {
