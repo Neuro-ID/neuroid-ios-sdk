@@ -40,13 +40,28 @@ class ConfigService: ConfigServiceProtocol {
 
     let configRetrievalCallback: () -> Void
 
-    var siteIDMap: [String: Bool] = [:]
+    private var _siteIDMap: [String: Bool] = [:]
+    var siteIDMap: [String: Bool] {
+        inFlightLock.withLock {
+            _siteIDMap
+        }
+    }
 
     var _isSessionFlowSampled = true
-    var isSessionFlowSampled: Bool { _isSessionFlowSampled }
+    var isSessionFlowSampled: Bool {
+        inFlightLock.withLock {
+            _isSessionFlowSampled
+        }
+    }
 
     // Use default remote configuration unless replaced
-    public var configCache: RemoteConfiguration = .init()
+    private var _configCache: RemoteConfiguration = .init()
+    public var configCache: RemoteConfiguration {
+        inFlightLock.withLock {
+            _configCache
+        }
+    }
+
     var cacheSetWithRemote = false
 
     private let inFlightLock = NSLock()
@@ -72,18 +87,18 @@ class ConfigService: ConfigServiceProtocol {
         do {
             let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
             let configUrl = URL(string: configUrlStr)!
-
+            
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
 
             NIDLog.debug("Retrieved remote config \(config)")
-            self.configCache = config
+            setConfigCache(config)
             self.initSiteIDSampleMap(config: config)
             setCacheWithRemote(true)
             self.captureConfigEvent(configData: config)
             self.configRetrievalCallback()
         } catch (let error) {
             NIDLog.error("Failed to retrieve NID Config \(error)")
-            self.configCache = RemoteConfiguration()
+            setConfigCache(RemoteConfiguration())
             setCacheWithRemote(false)
             NeuroID.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent(
@@ -109,7 +124,7 @@ class ConfigService: ConfigServiceProtocol {
             newMap[siteID] = (sampleRate == 0) ? false : (randomGenerator.getNumber() <= sampleRate)
         }
 
-        self.siteIDMap = newMap
+        setSiteIDMap(newMap)
 
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
@@ -128,6 +143,30 @@ class ConfigService: ConfigServiceProtocol {
     var cacheExpired: Bool {
         inFlightLock.withLock {
             return !cacheSetWithRemote
+        }
+    }
+
+    private func setCacheWithRemote(_ value: Bool) {
+        inFlightLock.withLock {
+            cacheSetWithRemote = value
+        }
+    }
+
+    func setConfigCache(_ config: RemoteConfiguration) {
+        inFlightLock.withLock {
+            _configCache = config
+        }
+    }
+
+    private func setSiteIDMap(_ map: [String: Bool]) {
+        inFlightLock.withLock {
+            _siteIDMap = map
+        }
+    }
+
+    private func setIsSessionFlowSampled(_ value: Bool) {
+        inFlightLock.withLock {
+            _isSessionFlowSampled = value
         }
     }
 
@@ -153,14 +192,10 @@ class ConfigService: ConfigServiceProtocol {
         }
     }
 
-    private func setCacheWithRemote(_ value: Bool) {
-        inFlightLock.withLock {
-            cacheSetWithRemote = value
-        }
-    }
-
     func clearSiteIDMap() {
-        siteIDMap.removeAll()
+        inFlightLock.withLock {
+            _siteIDMap.removeAll()
+        }
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.clearSampleSiteIDmap,
@@ -187,7 +222,7 @@ class ConfigService: ConfigServiceProtocol {
 
     func updateIsSampledStatus(siteID: String?) {
         if let siteID: String = siteID, let flag = siteIDMap[siteID] {
-            _isSessionFlowSampled = flag
+            setIsSessionFlowSampled(flag)
             NeuroID.shared.saveEventToDataStore(
                 NIDEvent(
                     type: NIDEventName.updateIsSampledStatus,
@@ -198,7 +233,7 @@ class ConfigService: ConfigServiceProtocol {
             return
         }
 
-        _isSessionFlowSampled = true
+        setIsSessionFlowSampled(true)
 
         NeuroID.shared.saveEventToDataStore(
             NIDEvent(

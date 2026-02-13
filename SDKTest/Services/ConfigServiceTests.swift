@@ -67,14 +67,18 @@ struct ConfigServiceTests {
     mutating func retrieveConfig_withKeyAndNoInternet() async {
         setupKeyAndMockInternet()
         
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.eventQueueFlushSize = 1999
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
+        let config = RemoteConfiguration(
+            callInProgress: false,
+            geoLocation: false,
+            eventQueueFlushInterval: 0,
+            eventQueueFlushSize: 1999,
+            requestTimeout: 0,
+            gyroAccelCadence: true,
+            gyroAccelCadenceTime: 0
+        )
         configService.cacheSetWithRemote = true
+        
+        configService.setConfigCache(config)
         
         await configService.retrieveConfig()
         
@@ -91,8 +95,9 @@ struct ConfigServiceTests {
         
         NeuroID.shared.networkService = MockNetworkService()
         
-        configService.configCache.requestTimeout = 0
-        configService.cacheSetWithRemote = true
+        var config = configService.configCache
+        config.requestTimeout = 0
+        configService.setConfigCache(config)
         
         await configService.retrieveConfig()
         
@@ -115,12 +120,14 @@ struct ConfigServiceTests {
             configRetrievalCallback: {}
         )
         
-        configService.configCache.eventQueueFlushInterval = 0
-        configService.configCache.callInProgress = false
-        configService.configCache.geoLocation = false
-        configService.configCache.gyroAccelCadence = true
-        configService.configCache.gyroAccelCadenceTime = 0
-        configService.configCache.requestTimeout = 0
+        let config = RemoteConfiguration(
+            callInProgress: false,
+            geoLocation: false,
+            eventQueueFlushInterval: 0,
+            requestTimeout: 0,
+            gyroAccelCadence: true,
+            gyroAccelCadenceTime: 0
+        )
         
         await configService.retrieveConfig()
         
@@ -132,11 +139,13 @@ struct ConfigServiceTests {
     
     @Test
     func setCache() {
-        configService.configCache.callInProgress = false
+        var config = configService.configCache
+        config.callInProgress = false
+        configService.setConfigCache(config)
         
         let newConfig = RemoteConfiguration()
         
-        configService.configCache = newConfig
+        configService.setConfigCache(newConfig)
         
         #expect(configService.configCache.callInProgress)
     }
@@ -149,7 +158,10 @@ struct ConfigServiceTests {
 
     @Test(arguments: [0, 100])
     func updateIsSampledStatusNilSiteID(sampleRate: Int) {
-        configService.configCache.sampleRate = sampleRate
+        var config = configService.configCache
+        config.sampleRate = sampleRate
+        configService.setConfigCache(config)
+
         configService._isSessionFlowSampled = false
         
         configService.updateIsSampledStatus(siteID: nil)
