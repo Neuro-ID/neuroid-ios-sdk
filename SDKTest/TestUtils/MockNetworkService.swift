@@ -7,6 +7,7 @@
 
 import Alamofire
 import Foundation
+
 @testable import NeuroID
 
 class MockNetworkService: NetworkServiceProtocol {
@@ -38,7 +39,8 @@ class MockNetworkService: NetworkServiceProtocol {
         let url = URL(string: "https://mock-nid.com")!
         let request = URLRequest(url: url)
 
-        let response = HTTPURLResponse(url: url, statusCode: successful ? 200 : 500, httpVersion: nil, headerFields: nil)
+        let response = HTTPURLResponse(
+            url: url, statusCode: successful ? 200 : 500, httpVersion: nil, headerFields: nil)
 
         var result: Result<Data, AFError>
         if successful {
@@ -65,29 +67,37 @@ class MockNetworkService: NetworkServiceProtocol {
     }
 
     // Protocol Implementations
-   func retryableRequest(
-       url: URL,
-       neuroHTTPRequest: NeuroHTTPRequest,
-       headers: HTTPHeaders,
-       retryCount: Int,
-       completion: @escaping (AFDataResponse<Data>) -> Void
-   ) {
-       print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
+    func retryableRequest(
+        url: URL,
+        neuroHTTPRequest: NeuroHTTPRequest,
+        headers: HTTPHeaders,
+        retryCount: Int,
+        completion: @escaping (AFDataResponse<Data>) -> Void
+    ) {
+        print("MockNetworkService Mocked retryableRequest \(neuroHTTPRequest)")
 
-       if mockRequestShouldFail {
-           mockedRetryableRequestFailure += 1
-       } else {
-           mockedRetryableRequestSuccess += 1
-       }
+        if mockRequestShouldFail {
+            mockedRetryableRequestFailure += 1
+        } else {
+            mockedRetryableRequestSuccess += 1
+        }
 
-       let mockResponse = createMockAlamofireResponse(
-           successful: !mockRequestShouldFail,
-           responseData: nil,
-           statusCode: 200
-       )
+        let mockResponse = createMockAlamofireResponse(
+            successful: !mockRequestShouldFail,
+            responseData: nil,
+            statusCode: 200
+        )
 
-       completion(mockResponse)
-   }
+        completion(mockResponse)
+    }
+    
+    let customRemoteConfig: RemoteConfiguration = RemoteConfiguration(
+        callInProgress: false,
+        requestTimeout: 10,
+        gyroAccelCadence: true,
+        gyroAccelCadenceTime: 200,
+        advancedCookieExpiration: 43200
+    )
 
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
         if mockRequestShouldFail {
@@ -95,7 +105,9 @@ class MockNetworkService: NetworkServiceProtocol {
             throw URLError(.unknown)
         } else {
             fetchRemoteConfigSuccessCount += 1
-            return mockResponseResult as! RemoteConfiguration
+            
+            
+            return mockResponseResult as? RemoteConfiguration ?? customRemoteConfig
         }
     }
 }
