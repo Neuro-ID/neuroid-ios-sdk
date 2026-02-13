@@ -42,14 +42,14 @@ class ConfigService: ConfigServiceProtocol {
 
     private var _siteIDMap: [String: Bool] = [:]
     var siteIDMap: [String: Bool] {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _siteIDMap
         }
     }
 
     var _isSessionFlowSampled = true
     var isSessionFlowSampled: Bool {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _isSessionFlowSampled
         }
     }
@@ -57,14 +57,14 @@ class ConfigService: ConfigServiceProtocol {
     // Use default remote configuration unless replaced
     private var _configCache: RemoteConfiguration = .init()
     public var configCache: RemoteConfiguration {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _configCache
         }
     }
 
     var cacheSetWithRemote = false
 
-    private let inFlightLock = NSLock()
+    private let stateLock = NSLock()
     private var inFlightRetrieveTask: Task<Void, Never>?
 
     init(
@@ -87,7 +87,7 @@ class ConfigService: ConfigServiceProtocol {
         do {
             let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
             let configUrl = URL(string: configUrlStr)!
-            
+
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
 
             NIDLog.debug("Retrieved remote config \(config)")
@@ -141,31 +141,31 @@ class ConfigService: ConfigServiceProtocol {
      (i.e. a time expiration approach instead)
      */
     var cacheExpired: Bool {
-        inFlightLock.withLock {
+        stateLock.withLock {
             return !cacheSetWithRemote
         }
     }
 
     private func setCacheWithRemote(_ value: Bool) {
-        inFlightLock.withLock {
+        stateLock.withLock {
             cacheSetWithRemote = value
         }
     }
 
     func setConfigCache(_ config: RemoteConfiguration) {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _configCache = config
         }
     }
 
     private func setSiteIDMap(_ map: [String: Bool]) {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _siteIDMap = map
         }
     }
 
     private func setIsSessionFlowSampled(_ value: Bool) {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _isSessionFlowSampled = value
         }
     }
@@ -174,13 +174,13 @@ class ConfigService: ConfigServiceProtocol {
      Will check if the cache is available or needs to be refreshed,
      */
     func retrieveOrRefreshCache() {
-        inFlightLock.withLock {
+        stateLock.withLock {
             // Ensure cache has not been set and that there is not an existing task running
             guard !cacheSetWithRemote, inFlightRetrieveTask == nil else { return }
 
             let task = Task {
                 defer {
-                    self.inFlightLock.withLock {
+                    self.stateLock.withLock {
                         self.inFlightRetrieveTask = nil
                     }
                 }
@@ -193,7 +193,7 @@ class ConfigService: ConfigServiceProtocol {
     }
 
     func clearSiteIDMap() {
-        inFlightLock.withLock {
+        stateLock.withLock {
             _siteIDMap.removeAll()
         }
         NeuroID.shared.saveEventToDataStore(
