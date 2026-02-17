@@ -128,6 +128,7 @@ struct ConfigServiceTests {
             gyroAccelCadence: true,
             gyroAccelCadenceTime: 0
         )
+        configService.setConfigCache(config)
         
         await configService.retrieveConfig()
         
