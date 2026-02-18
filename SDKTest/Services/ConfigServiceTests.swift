@@ -67,6 +67,14 @@ struct ConfigServiceTests {
     // Valid key, fetch request succeed
     @Test
     func retrieveConfigValidKey() async {
+        networkService.mockResponseResult = RemoteConfiguration(
+            callInProgress: false,
+            requestTimeout: 10,
+            gyroAccelCadence: true,
+            gyroAccelCadenceTime: 200,
+            advancedCookieExpiration: 43200
+        )
+        
         await configService.retrieveConfig()
 
         // Remote config should have been fetched, therefore not expired
@@ -99,7 +107,7 @@ struct ConfigServiceTests {
                 "test10": true,
                 "test30": true,
                 "test50": true,
-                "test100": true,
+                "test100": true
             ],
             siteIDMapIsEmpty: false
         ),
@@ -113,7 +121,7 @@ struct ConfigServiceTests {
                 "test10": false,
                 "test30": true,
                 "test50": true,
-                "test100": true,
+                "test100": true
             ],
             siteIDMapIsEmpty: false
         ),
@@ -127,7 +135,7 @@ struct ConfigServiceTests {
                 "test10": false,
                 "test30": false,
                 "test50": true,
-                "test100": true,
+                "test100": true
             ],
             siteIDMapIsEmpty: false
         ),
@@ -141,7 +149,7 @@ struct ConfigServiceTests {
                 "test10": false,
                 "test30": false,
                 "test50": false,
-                "test100": true,
+                "test100": true
             ],
             siteIDMapIsEmpty: false
         ),
@@ -155,10 +163,10 @@ struct ConfigServiceTests {
                 "test10": true,
                 "test30": true,
                 "test50": true,
-                "test100": true,
+                "test100": true
             ],
             siteIDMapIsEmpty: true
-        ),
+        )
     ])
     mutating func configResponseProcessing(_ parms: Rolls) async {
         // setup mock network service
@@ -196,6 +204,15 @@ struct ConfigServiceTests {
 
         // setup mock network service
         networkService.mockRequestShouldFail = shouldFail
+        if !shouldFail {
+            networkService.mockResponseResult = RemoteConfiguration(
+                callInProgress: false,
+                requestTimeout: 10,
+                gyroAccelCadence: true,
+                gyroAccelCadenceTime: 200,
+                advancedCookieExpiration: 43200
+            )
+        }
 
         configService = ConfigService(
             networkService: networkService,

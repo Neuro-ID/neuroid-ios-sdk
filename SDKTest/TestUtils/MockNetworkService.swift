@@ -86,21 +86,13 @@ class MockNetworkService: NetworkServiceProtocol {
        completion(mockResponse)
    }
 
-    let customRemoteConfig: RemoteConfiguration = RemoteConfiguration(
-        callInProgress: false,
-        requestTimeout: 10,
-        gyroAccelCadence: true,
-        gyroAccelCadenceTime: 200,
-        advancedCookieExpiration: 43200
-    )
-
     func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
         if mockRequestShouldFail {
             fetchRemoteConfigFailureCount += 1
             throw URLError(.unknown)
         } else {
             fetchRemoteConfigSuccessCount += 1
-            return mockResponseResult as? RemoteConfiguration ?? customRemoteConfig
+            return mockResponseResult as! RemoteConfiguration
         }
     }
 }
