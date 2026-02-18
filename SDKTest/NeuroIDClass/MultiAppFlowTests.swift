@@ -29,8 +29,8 @@ class MultiAppFlowTests: XCTestCase {
         NeuroID.shared.configService = getMockConfigService(shouldFail: false, randomGenerator: MockedNIDRandomGenerator(0))
 
         mockedNetworkService = MockNetworkService()
-        mockedNetworkService.mockResponse = try! JSONEncoder().encode(getMockResponseData())
-        mockedNetworkService.mockResponseResult = getMockResponseData()
+        mockedNetworkService.mockResponse = try! JSONEncoder().encode(RemoteConfiguration.mock())
+        mockedNetworkService.mockResponseResult = RemoteConfiguration.mock()
 
         NeuroID.shared.networkService = mockedNetworkService
 

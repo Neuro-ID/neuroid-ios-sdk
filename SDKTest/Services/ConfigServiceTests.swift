@@ -171,8 +171,8 @@ struct ConfigServiceTests {
     mutating func configResponseProcessing(_ parms: Rolls) async {
         // setup mock network service
         networkService.mockRequestShouldFail = parms.shouldFail
-        networkService.mockResponse = try! JSONEncoder().encode(getMockResponseData())
-        networkService.mockResponseResult = getMockResponseData()
+        networkService.mockResponse = try! JSONEncoder().encode(RemoteConfiguration.mock())
+        networkService.mockResponseResult = RemoteConfiguration.mock()
 
         self.configService = ConfigService(
             networkService: networkService,

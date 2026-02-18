@@ -34,8 +34,8 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.shared.identifierService = mockIdentifierService
 
         mockedNetworkService = MockNetworkService()
-        mockedNetworkService.mockResponse = try! JSONEncoder().encode(getMockResponseData())
-        mockedNetworkService.mockResponseResult = getMockResponseData()
+        mockedNetworkService.mockResponse = try! JSONEncoder().encode(RemoteConfiguration.mock())
+        mockedNetworkService.mockResponseResult = RemoteConfiguration.mock()
         NeuroID.shared.networkService = mockedNetworkService
     }
 
