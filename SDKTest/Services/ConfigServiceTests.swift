@@ -168,7 +168,7 @@ struct ConfigServiceTests {
 
         self.configService = ConfigService(
             networkService: networkService,
-            randomGenerator: parms.mockedRandomGenerator,
+            randomGenerator: parms.mockedRandomGenerator
         )
 
         // should start with an empty map
