@@ -61,10 +61,6 @@ class MockNetworkService: NetworkServiceProtocol {
         return mockResponse
     }
 
-    func mockFailedResponse() {
-        mockRequestShouldFail = true
-    }
-
     // Protocol Implementations
    func retryableRequest(
        url: URL,
