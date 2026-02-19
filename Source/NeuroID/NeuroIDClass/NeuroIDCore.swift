@@ -1,5 +1,5 @@
 //
-//  NeuroID.swift
+//  NeuroIDCore.swift
 //  NeuroID
 //
 //  Created by Kevin Sites on 3/29/23.
