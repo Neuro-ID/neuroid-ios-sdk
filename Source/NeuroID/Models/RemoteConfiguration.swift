@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RemoteConfiguration: Codable {
+struct RemoteConfiguration: Codable, Equatable {
     var callInProgress: Bool = true
     var geoLocation: Bool = false
     var eventQueueFlushInterval: Int = 5
@@ -39,7 +39,7 @@ struct RemoteConfiguration: Codable {
         case advancedCookieExpiration = "advanced_cookie_expires"
     }
     
-    struct LinkedSiteOption: Codable {
+    struct LinkedSiteOption: Codable, Equatable {
         var sampleRate: Int? = ConfigService.DEFAULT_SAMPLE_RATE
 
         enum CodingKeys: String, CodingKey {

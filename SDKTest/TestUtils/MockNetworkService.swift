@@ -7,6 +7,7 @@
 
 import Alamofire
 import Foundation
+
 @testable import NeuroID
 
 class MockNetworkService: NetworkServiceProtocol {
@@ -58,10 +59,6 @@ class MockNetworkService: NetworkServiceProtocol {
         )
 
         return mockResponse
-    }
-
-    func mockFailedResponse() {
-        mockRequestShouldFail = true
     }
 
     // Protocol Implementations

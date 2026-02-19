@@ -27,6 +27,12 @@ class NetworkService: NetworkServiceProtocol {
         session = URLSession(configuration: configuration)
         session.sessionDescription = "NeuroID"
     }
+    
+    internal init(session: URLSession) {
+        self.afCustomSession = Alamofire.Session(configuration: afConfiguration)
+
+        self.session = session
+    }
 
     func retryableRequest(
         url: URL,
@@ -55,15 +61,13 @@ class NetworkService: NetworkServiceProtocol {
         }
     }
     
-    func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
+    public func fetchRemoteConfig(from endpoint: URL) async throws -> RemoteConfiguration {
         let (data, response) = try await session.data(from: endpoint)
         
         guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
         }
         
-        let config: RemoteConfiguration = try JSONDecoder().decode(RemoteConfiguration.self, from: data)
-        
-        return config
+        return try JSONDecoder().decode(RemoteConfiguration.self, from: data)
     }
 }
