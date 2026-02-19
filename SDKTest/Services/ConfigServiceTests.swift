@@ -16,7 +16,7 @@ struct ConfigServiceTests {
 
     init() {
         ConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
-        NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+        NeuroIDCore.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
         self.networkService = MockNetworkService()
         self.configService = ConfigService(
@@ -53,7 +53,7 @@ struct ConfigServiceTests {
     @Test
     func retrieveConfigInvalidKey() async {
         // override key to empty
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
         await configService.retrieveConfig()
 
         // Remote config should not have been fetched, therefore still expired

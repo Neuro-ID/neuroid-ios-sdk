@@ -12,7 +12,7 @@ class NeuroIDClassTests: BaseTestClass {
     var mockedNetworkService = MockNetworkService()
     var mockIdentifierService = MockIdentifierService()
     let mockService = MockDeviceSignalService()
-    var neuroID = NeuroID()
+    var neuroID = NeuroIDCore()
 
     override func setUpWithError() throws {
         // skip all tests in this class, remove this line to re-enabled tests
@@ -25,18 +25,18 @@ class NeuroIDClassTests: BaseTestClass {
 
     override func setUp() {
         mockIdentifierService = MockIdentifierService()
-        neuroID = NeuroID(identifierService: mockIdentifierService)
+        neuroID = NeuroIDCore(identifierService: mockIdentifierService)
 
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000)), nil))
-        NeuroID._isTesting = true
-        NeuroID.shared.datastore = dataStore
-        NeuroID.shared.identifierService = mockIdentifierService
+        NeuroIDCore._isTesting = true
+        NeuroIDCore.shared.datastore = dataStore
+        NeuroIDCore.shared.identifierService = mockIdentifierService
 
         mockedNetworkService = MockNetworkService()
         mockedNetworkService.mockResponse = try! JSONEncoder().encode(RemoteConfiguration.mock())
         mockedNetworkService.mockResponseResult = RemoteConfiguration.mock()
-        NeuroID.shared.networkService = mockedNetworkService
+        NeuroIDCore.shared.networkService = mockedNetworkService
     }
 
     override func tearDown() {
@@ -45,18 +45,18 @@ class NeuroIDClassTests: BaseTestClass {
         mockedNetworkService.resetMockCounts()
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     func test_getAdvDeviceLatency() {
         let mockService = MockDeviceSignalService()
-        NeuroID.shared.deviceSignalService = mockService
+        NeuroIDCore.shared.deviceSignalService = mockService
         let configuration = NeuroID.Configuration(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         _ = NeuroID.configure(configuration)
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds, nil))
 
-        NeuroID.shared.configService = MockConfigService()
+        NeuroIDCore.shared.configService = MockConfigService()
 
         NeuroID.start(true) { _ in
             self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
@@ -80,7 +80,7 @@ class NeuroIDClassTests: BaseTestClass {
     func test_configure_success() {
         clearOutDataStore()
         // remove things configured in setup
-        NeuroID.shared.clientKey = nil
+        NeuroIDCore.shared.clientKey = nil
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
@@ -99,12 +99,12 @@ class NeuroIDClassTests: BaseTestClass {
 
         assertStoredEventCount(type: "CREATE_SESSION", count: 0)
 
-        assert(NeuroID.shared.environment == "\(Constants.environmentLive.rawValue)")
+        assert(NeuroIDCore.shared.environment == "\(Constants.environmentLive.rawValue)")
         
         // Wait for async config fetch to complete by checking cacheSetWithRemote
         let exp = XCTNSPredicateExpectation(
             predicate: NSPredicate { _, _ in
-                guard let realConfig = NeuroID.shared.configService as? ConfigService else { return false }
+                guard let realConfig = NeuroIDCore.shared.configService as? ConfigService else { return false }
                 return realConfig.cacheSetWithRemote
             },
             object: nil
@@ -118,8 +118,8 @@ class NeuroIDClassTests: BaseTestClass {
     func test_configure_invalidKey() {
         clearOutDataStore()
         // remove things configured in setup
-        NeuroID.shared.environment = Constants.environmentTest.rawValue
-        NeuroID.shared.clientKey = nil
+        NeuroIDCore.shared.environment = Constants.environmentTest.rawValue
+        NeuroIDCore.shared.clientKey = nil
         UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
@@ -138,57 +138,57 @@ class NeuroIDClassTests: BaseTestClass {
         // 1 Log event should be in queue if the key fails validation
         assertQueuedEventTypeAndCount(type: "LOG", count: 1)
 
-        assert(NeuroID.shared.environment == "\(Constants.environmentTest.rawValue)")
+        assert(NeuroIDCore.shared.environment == "\(Constants.environmentTest.rawValue)")
     }
 
     func test_start_failure() {
         tearDown()
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.configService = MockConfigService()
-        NeuroID.shared.clientKey = nil
+        NeuroIDCore.shared._isSDKStarted = false
+        NeuroIDCore.shared.configService = MockConfigService()
+        NeuroIDCore.shared.clientKey = nil
 
         // pre tests
-        assert(!NeuroID.shared.isSDKStarted)
-        assert(NeuroID.shared.clientKey == nil)
+        assert(!NeuroIDCore.shared.isSDKStarted)
+        assert(NeuroIDCore.shared.clientKey == nil)
 
         // action
         NeuroID.start { started in
             assert(!started)
             // post action test
-            assert(!NeuroID.shared.isSDKStarted)
+            assert(!NeuroIDCore.shared.isSDKStarted)
         }
     }
 
     func test_start_success() {
         tearDown()
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.configService = MockConfigService()
-        NeuroID._isTesting = true
+        NeuroIDCore.shared._isSDKStarted = false
+        NeuroIDCore.shared.configService = MockConfigService()
+        NeuroIDCore._isTesting = true
 //        NeuroID.isAdvancedDevice = false
 
         // pre tests
-        assert(!NeuroID.shared.isSDKStarted)
+        assert(!NeuroIDCore.shared.isSDKStarted)
 
         // action
         NeuroID.start { started in
             // post action test
             assert(started)
-            assert(NeuroID.shared.isSDKStarted)
+            assert(NeuroIDCore.shared.isSDKStarted)
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
 
-            NeuroID._isTesting = false
+            NeuroIDCore._isTesting = false
         }
     }
 
     func test_start_success_queuedEvent() {
         _ = NeuroID.stop()
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.configService = MockConfigService()
-        NeuroID._isTesting = true
+        NeuroIDCore.shared._isSDKStarted = false
+        NeuroIDCore.shared.configService = MockConfigService()
+        NeuroIDCore._isTesting = true
 
         // pre tests
-        assert(!NeuroID.shared.isSDKStarted)
+        assert(!NeuroIDCore.shared.isSDKStarted)
 
         clearOutDataStore()
 
@@ -196,34 +196,34 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.start { started in
             // post action test
             assert(started)
-            assert(NeuroID.shared.isSDKStarted)
+            assert(NeuroIDCore.shared.isSDKStarted)
 
             self.assertStoredEventCount(type: "CREATE_SESSION", count: 1)
             self.assertStoredEventCount(type: "MOBILE_METADATA_IOS", count: 1)
             self.assertStoredEventCount(type: "APPLICATION_METADATA", count: 1)
             self.assertStoredEventCount(type: "LOG", count: 2)
-            NeuroID._isTesting = false
+            NeuroIDCore._isTesting = false
         }
     }
 
     func test_stop() {
-        NeuroID.shared._isSDKStarted = true
-        assert(NeuroID.shared.isSDKStarted)
+        NeuroIDCore.shared._isSDKStarted = true
+        assert(NeuroIDCore.shared.isSDKStarted)
 
         let stopped = NeuroID.stop()
         assert(stopped)
-        assert(!NeuroID.shared.isSDKStarted)
+        assert(!NeuroIDCore.shared.isSDKStarted)
     }
 
     func test_getSDKVersion() {
         let resultAdvTrue = NeuroID.getSDKVersion()
         assert(resultAdvTrue.contains("-adv"))
 
-        NeuroID.shared.isRN = true
+        NeuroIDCore.shared.isRN = true
         let resultRNTrue = NeuroID.getSDKVersion()
         assert(resultRNTrue.contains("-rn"))
 
-        NeuroID.shared.isRN = false
+        NeuroIDCore.shared.isRN = false
         let resultRNFalse = NeuroID.getSDKVersion()
         assert(!resultRNFalse.contains("-rn"))
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
@@ -128,7 +128,7 @@ extension NeuroID {
         self.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
-                ct: NeuroID.shared.networkMonitor.connectionType,
+                ct: NeuroIDCore.shared.networkMonitor.connectionType,
                 l: latency,
                 rid: requestID,
                 c: cached,

@@ -15,8 +15,8 @@ class NIDSessionTests: BaseTestClass {
     }
 
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
-        NeuroID._isTesting = true
+        NeuroIDCore.shared._isSDKStarted = true
+        NeuroIDCore._isTesting = true
     }
 
     override func tearDown() {
@@ -24,12 +24,12 @@ class NIDSessionTests: BaseTestClass {
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     func test_getSessionID() {
         let expectedValue = ""
-        NeuroID.shared.identifierService.sessionID = expectedValue
+        NeuroIDCore.shared.identifierService.sessionID = expectedValue
 
         let value = NeuroID.getSessionID()
 
@@ -38,7 +38,7 @@ class NIDSessionTests: BaseTestClass {
 
     func test_getSessionID_existing() {
         let expectedValue = "test_sid"
-        NeuroID.shared.identifierService.sessionID = expectedValue
+        NeuroIDCore.shared.identifierService.sessionID = expectedValue
 
         let value = NeuroID.getSessionID()
 
@@ -47,9 +47,9 @@ class NIDSessionTests: BaseTestClass {
 
     func test_createSession() {
         clearOutDataStore()
-        NeuroID.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared.datastore.removeSentEvents()
 
-        NeuroID.shared.createSession()
+        NeuroIDCore.shared.createSession()
 
         assertStoredEventTypeAndCount(type: "CREATE_SESSION", count: 1)
         assertStoredEventTypeAndCount(type: "MOBILE_METADATA_IOS", count: 1)
@@ -58,7 +58,7 @@ class NIDSessionTests: BaseTestClass {
     func test_closeSession() {
         clearOutDataStore()
         do {
-            let closeSession = try NeuroID.shared.closeSession()
+            let closeSession = try NeuroIDCore.shared.closeSession()
             assert(closeSession.ct == "SDK_EVENT")
         } catch {
             NIDLog.error("Threw on Close Session that shouldn't")
@@ -73,7 +73,7 @@ class NIDSessionTests: BaseTestClass {
         clearOutDataStore()
 
         XCTAssertThrowsError(
-            try NeuroID.shared.closeSession(),
+            try NeuroIDCore.shared.closeSession(),
             "Close Session throws an error when SDK is already stopped"
         )
     }
@@ -81,7 +81,7 @@ class NIDSessionTests: BaseTestClass {
     func test_captureMobileMetadata() {
         clearOutDataStore()
 
-        NeuroID.shared.captureMobileMetadata()
+        NeuroIDCore.shared.captureMobileMetadata()
 
         assertStoredEventTypeAndCount(type: NIDEventName.mobileMetadataIOS.rawValue, count: 1)
     }

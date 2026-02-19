@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     /**
      Set screen name. We ensure that this is a URL valid name by replacing non alphanumber chars with underscore
      */

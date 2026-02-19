@@ -15,18 +15,18 @@ protocol EventStorageServiceProtocol {
 
 struct EventStorageService: EventStorageServiceProtocol {
     func saveEventToDataStore(_ event: NIDEvent) {
-        NeuroID.shared.saveEventToDataStore(event)
+        NeuroIDCore.shared.saveEventToDataStore(event)
     }
 
     func saveEventToDataStore(_ event: NIDEvent, screen: String? = nil) {
-        NeuroID.shared.saveEventToDataStore(event, screen: screen)
+        NeuroIDCore.shared.saveEventToDataStore(event, screen: screen)
     }
 
     func saveEventToLocalDataStore(_ event: NIDEvent) {
-        NeuroID.shared.saveEventToLocalDataStore(event)
+        NeuroIDCore.shared.saveEventToLocalDataStore(event)
     }
 
     func saveEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
-        NeuroID.shared.saveEventToLocalDataStore(event, screen: screen)
+        NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: screen)
     }
 }

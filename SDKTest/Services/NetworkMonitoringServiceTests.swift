@@ -13,7 +13,7 @@ class NetworkMonitoringServiceTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
         sut = NetworkMonitoringService()
     }
 

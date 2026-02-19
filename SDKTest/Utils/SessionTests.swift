@@ -15,8 +15,8 @@ class SessionTests: XCTestCase {
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
 
-        NeuroID.shared._isSDKStarted = true
-        NeuroID.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared._isSDKStarted = true
+        NeuroIDCore.shared.datastore.removeSentEvents()
     }
 
     func testRandom() throws {

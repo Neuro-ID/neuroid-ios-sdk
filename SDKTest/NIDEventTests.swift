@@ -19,8 +19,8 @@ class NIDEventTests: XCTestCase {
     
     override func setUp() {
         // Clear out the DataStore Events after each test
-        NeuroID.shared.datastore.removeSentEvents()
-        NeuroID.shared._currentScreenName = nil
+        NeuroIDCore.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared._currentScreenName = nil
     }
  
     func dictionaryTests(dict: [String: Any?], expectedV: String) {
@@ -39,7 +39,7 @@ class NIDEventTests: XCTestCase {
     }
     
     func testFullPayload() {
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
         var tracker: NeuroIDTracker?
         /// Create a textfield
         lazy var textfield: UITextField = {
@@ -137,7 +137,7 @@ class NIDEventTests: XCTestCase {
             )))
         
         /// Get all events
-        let events = NeuroID.shared.datastore.getAllEvents()
+        let events = NeuroIDCore.shared.datastore.getAllEvents()
         /// Create http request
         let tabId = ParamsCreator.getTabId()
         

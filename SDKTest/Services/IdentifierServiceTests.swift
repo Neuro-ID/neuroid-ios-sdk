@@ -30,7 +30,7 @@ class IdentifierServiceTests: BaseTestClass {
 
     override func tearDown() {
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     // setSessionID

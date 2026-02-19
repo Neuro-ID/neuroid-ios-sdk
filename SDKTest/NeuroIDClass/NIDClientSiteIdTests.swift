@@ -12,13 +12,13 @@ class NIDClientSiteIdTests: BaseTestClass {
     var mockEventStorageService = MockEventStorageService()
     var mockValidationService = MockValidationService()
     var mockConfigService = MockConfigService()
-    var neuroID = NeuroID()
+    var neuroID = NeuroIDCore()
 
     override func setUp() {
         mockEventStorageService = MockEventStorageService()
         mockValidationService = MockValidationService()
         mockConfigService = MockConfigService()
-        neuroID = NeuroID(
+        neuroID = NeuroIDCore(
             eventStorageService: mockEventStorageService,
             validationService: mockValidationService,
             configService: mockConfigService

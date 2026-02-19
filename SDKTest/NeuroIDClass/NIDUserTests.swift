@@ -11,12 +11,12 @@ import XCTest
 class NIDUserTests: BaseTestClass {
     var mockIdentifierService = MockIdentifierService()
     var mockEventStorageService = MockEventStorageService()
-    var neuroID = NeuroID()
+    var neuroID = NeuroIDCore()
 
     override func setUp() {
         mockIdentifierService = MockIdentifierService()
         mockEventStorageService = MockEventStorageService()
-        neuroID = NeuroID(
+        neuroID = NeuroIDCore(
             eventStorageService: mockEventStorageService,
             identifierService: mockIdentifierService
         )

@@ -10,11 +10,11 @@ import XCTest
 
 class NIDScreenTests: BaseTestClass {
     var mockEventStorageService = MockEventStorageService()
-    var neuroID = NeuroID()
+    var neuroID = NeuroIDCore()
 
     override func setUp() {
         mockEventStorageService = MockEventStorageService()
-        neuroID = NeuroID(eventStorageService: mockEventStorageService)
+        neuroID = NeuroIDCore(eventStorageService: mockEventStorageService)
     }
 
     // setScreenName

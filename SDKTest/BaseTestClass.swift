@@ -20,26 +20,26 @@ class BaseTestClass: XCTestCase {
     var dataStore = DataStore()
     
     func clearOutDataStore() {
-        NeuroID.shared.datastore.removeSentEvents()
-        let _ = NeuroID.shared.datastore.getAndRemoveAllEvents()
-        let _ = NeuroID.shared.datastore.getAndRemoveAllQueuedEvents()
+        NeuroIDCore.shared.datastore.removeSentEvents()
+        let _ = NeuroIDCore.shared.datastore.getAndRemoveAllEvents()
+        let _ = NeuroIDCore.shared.datastore.getAndRemoveAllQueuedEvents()
     }
     
     override func setUpWithError() throws {
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.sendCollectionEventsJob.cancel()
-        NeuroID.shared.collectGyroAccelEventJob.cancel()
+        NeuroIDCore.shared.sendCollectionEventsJob.cancel()
+        NeuroIDCore.shared.collectGyroAccelEventJob.cancel()
     }
     
     override func setUp() {
-        NeuroID.shared.datastore = dataStore
+        NeuroIDCore.shared.datastore = dataStore
         
         let mockedNetworkService = MockNetworkService()
         mockedNetworkService.mockResponse = try! JSONEncoder().encode(RemoteConfiguration.mock())
         mockedNetworkService.mockResponseResult = RemoteConfiguration.mock()
 
-        NeuroID.shared.networkService = mockedNetworkService
+        NeuroIDCore.shared.networkService = mockedNetworkService
         
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
     }
@@ -52,18 +52,18 @@ class BaseTestClass: XCTestCase {
     }
     
     func assertDataStoreCount(count: Int) {
-        let allEvents = NeuroID.shared.datastore.getAllEvents()
+        let allEvents = NeuroIDCore.shared.datastore.getAllEvents()
         XCTAssertEqual(allEvents.count, count, "Expected \(count) events in datastore but found \(allEvents.count)")
     }
 
     func assertStoredEventCount(type: String, count: Int) {
-        let allEvents = NeuroID.shared.datastore.getAllEvents()
+        let allEvents = NeuroIDCore.shared.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
         XCTAssertEqual(validEvent.count, count, "Expected \(count) events of type '\(type)' but found \(validEvent.count)")
     }
 
     func assertStoredEventTypeAndCount(type: String, count: Int, skipType: Bool? = false) {
-        let allEvents = NeuroID.shared.datastore.getAllEvents()
+        let allEvents = NeuroIDCore.shared.datastore.getAllEvents()
         let validEvent = allEvents.filter { $0.type == type }
         XCTAssertEqual(validEvent.count, count, "Expected \(count) events of type '\(type)' but found \(validEvent.count)")
         

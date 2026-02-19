@@ -17,7 +17,7 @@ class MultiAppFlowTests: XCTestCase {
     var mockedNetworkService = MockNetworkService()
 
     func clearOutDataStore() {
-        let _ = NeuroID.shared.datastore.getAndRemoveAllEvents()
+        let _ = NeuroIDCore.shared.datastore.getAndRemoveAllEvents()
     }
 
     override func setUpWithError() throws {
@@ -25,20 +25,20 @@ class MultiAppFlowTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.shared.clientKey = nil
-        NeuroID.shared.configService = getMockConfigService(shouldFail: false, randomGenerator: MockedNIDRandomGenerator(0))
+        NeuroIDCore.shared.clientKey = nil
+        NeuroIDCore.shared.configService = getMockConfigService(shouldFail: false, randomGenerator: MockedNIDRandomGenerator(0))
 
         mockedNetworkService = MockNetworkService()
         mockedNetworkService.mockResponse = try! JSONEncoder().encode(RemoteConfiguration.mock())
         mockedNetworkService.mockResponseResult = RemoteConfiguration.mock()
 
-        NeuroID.shared.networkService = mockedNetworkService
+        NeuroIDCore.shared.networkService = mockedNetworkService
 
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
         mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000)), nil))
 
-        NeuroID.shared.deviceSignalService = mockService
-        NeuroID._isTesting = true
+        NeuroIDCore.shared.deviceSignalService = mockService
+        NeuroIDCore._isTesting = true
     }
 
     override func tearDown() {
@@ -46,100 +46,100 @@ class MultiAppFlowTests: XCTestCase {
 
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     func test_start_adv_true() {
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
         let configuration = NeuroID.Configuration(clientKey: clientKey)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.configService = mockedConfig
+        NeuroIDCore.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.start(true) { _ in
-            let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
 
-            assert(!NeuroID.shared.isAdvancedDevice)
+            assert(!NeuroIDCore.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
 
     func test_start_configure_adv_true() {
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
 
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: true)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.configService = mockedConfig
+        NeuroIDCore.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.start { _ in
-            let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
-            assert(NeuroID.shared.isAdvancedDevice)
+            assert(NeuroIDCore.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
 
     func test_start_session_adv_true() {
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
         let configuration = NeuroID.Configuration(clientKey: clientKey)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.configService = mockedConfig
+        NeuroIDCore.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.startSession("fake_user_session", true) { _ in
 
-            let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
-            XCTAssert(!NeuroID.shared.isAdvancedDevice)
+            XCTAssert(!NeuroIDCore.shared.isAdvancedDevice)
             XCTAssertTrue(validEvent.count == 1)
         }
     }
 
     func test_start_session_configure_adv_true() {
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: true)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.configService = mockedConfig
+        NeuroIDCore.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.startSession("fake_user_session") { _ in
-            let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
 
-            assert(NeuroID.shared.isAdvancedDevice)
+            assert(NeuroIDCore.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
 
     func test_start_start_app_flow_configure_adv_true() {
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: true)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.configService = mockedConfig
+        NeuroIDCore.shared.configService = mockedConfig
         clearOutDataStore()
 
         NeuroID.startAppFlow(siteID: "form_dream102", sessionID: "jakeId") { _ in
-            let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }
 
-            assert(NeuroID.shared.isAdvancedDevice)
+            assert(NeuroIDCore.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
         }
     }
 
     func test_captureAdvancedDevice_throttle() async {
-        NeuroID.shared.clientKey = ""
-        NeuroID.shared.deviceSignalService = mockService
+        NeuroIDCore.shared.clientKey = ""
+        NeuroIDCore.shared.deviceSignalService = mockService
         let configuration = NeuroID.Configuration(clientKey: clientKey)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
 
         let service = getMockConfigService(
             shouldFail: false,
@@ -147,25 +147,25 @@ class MultiAppFlowTests: XCTestCase {
         )
         service._isSessionFlowSampled = false
         await service.retrieveConfig()
-        NeuroID.shared.configService = service // setting to false indicating we are throttling
+        NeuroIDCore.shared.configService = service // setting to false indicating we are throttling
 
-        NeuroID.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
+        NeuroIDCore.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
 
-        let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+        let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
             $0.type == "ADVANCED_DEVICE_REQUEST"
         }
         assert(validEvent.count == 0)
 
         service._isSessionFlowSampled = true
-        NeuroID.shared._isSDKStarted = false
+        NeuroIDCore.shared._isSDKStarted = false
     }
 
     func test_captureAdvancedDevice_no_throttle() async {
-        NeuroID.shared.clientKey = ""
+        NeuroIDCore.shared.clientKey = ""
         let configuration = NeuroID.Configuration(clientKey: clientKey)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.deviceSignalService = mockService
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared.deviceSignalService = mockService
+        NeuroIDCore.shared._isSDKStarted = true
 
         let service = getMockConfigService(
             shouldFail: false,
@@ -173,16 +173,16 @@ class MultiAppFlowTests: XCTestCase {
         )
 
         service._isSessionFlowSampled = true // setting to true indicating we are NOT throttling
-        NeuroID.shared.configService = service
+        NeuroIDCore.shared.configService = service
 
-        NeuroID.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
+        NeuroIDCore.shared.captureAdvancedDevice(true) // passing true to indicate we should capture
         await service.retrieveConfig()
 
-        let validEvent = NeuroID.shared.datastore.getAllEvents().filter {
+        let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
             $0.type == "ADVANCED_DEVICE_REQUEST"
         }
         assert(validEvent.count == 1)
 
-        NeuroID.shared._isSDKStarted = false
+        NeuroIDCore.shared._isSDKStarted = false
     }
 }

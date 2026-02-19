@@ -21,7 +21,7 @@ class NIDDataExtensionTests: BaseTestClass {
     override func setUpWithError() throws {
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.datastore = dataStore
+        NeuroIDCore.shared.datastore = dataStore
     }
 
     override func setUp() {
@@ -38,33 +38,33 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_saveEventToLocalDataStore_stoppedSDK() {
         _ = NeuroID.stop()
 
-        NeuroID.shared.saveEventToLocalDataStore(nidEvent, screen: screenName)
+        NeuroIDCore.shared.saveEventToLocalDataStore(nidEvent, screen: screenName)
         assert(dataStore.events.count == 0)
     }
 
     func test_saveEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
-        NeuroID.shared._currentScreenName = screen
-        NeuroID.shared.datastore = dataStore
+        NeuroIDCore.shared._currentScreenName = screen
+        NeuroIDCore.shared.datastore = dataStore
 
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
 
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroID.shared.saveEventToLocalDataStore(nidE, screen: screenName)
+        NeuroIDCore.shared.saveEventToLocalDataStore(nidE, screen: screenName)
         assert(dataStore.events.count == 1)
         assert(dataStore.events[0].url == "ios://\(screen)")
     }
 
     func test_saveQueuedEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
-        NeuroID.shared._currentScreenName = screen
+        NeuroIDCore.shared._currentScreenName = screen
 
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroID.shared.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
+        NeuroIDCore.shared.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
         assert(dataStore.events.count == 0)
         assert(dataStore.queuedEvents.count == 1)
         assert(dataStore.queuedEvents[0].url == "ios://\(screen)")
@@ -74,41 +74,41 @@ class NIDDataExtensionTests: BaseTestClass {
         let nidE = nidEvent
         nidE.url = "RNScreensNavigationController"
 
-        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
     func test_cleanAndStoreEvent_excludedView_tg() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
+        NeuroIDCore.excludeViewByTestID(excludedView: excludeId)
 
         let nidE = nidEvent
         nidE.tg = [
             "tgs": TargetValue.string(excludeId)
         ]
 
-        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
     func test_cleanAndStoreEvent_excludedView_tgs() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
+        NeuroIDCore.excludeViewByTestID(excludedView: excludeId)
 
         let nidE = nidEvent
 
         nidE.tgs = excludeId
 
-        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
     func test_cleanAndStoreEvent_excludedView_en() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
+        NeuroIDCore.excludeViewByTestID(excludedView: excludeId)
 
         let nidE = nidEvent
 
         nidE.en = excludeId
 
-        NeuroID.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 }

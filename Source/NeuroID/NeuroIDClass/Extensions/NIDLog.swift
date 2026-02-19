@@ -8,7 +8,7 @@
 import Foundation
 import OSLog
 
-extension NeuroID {
+extension NeuroIDCore {
     /**
      Enable or disable the NeuroID debug logging
      */
@@ -24,16 +24,16 @@ enum NIDLog {
     )
 
     private static var showLogs: Bool {
-        NeuroID.shared.showLogs
+        NeuroIDCore.shared.showLogs
     }
 
     static func log(_ strings: String) {
-        guard NeuroID.shared._isSDKStarted, showLogs else { return }
+        guard NeuroIDCore.shared._isSDKStarted, showLogs else { return }
         nid.log("[NeuroID] \(strings)")
     }
 
     static func debug(_ strings: String) {
-        guard NeuroID.shared._isSDKStarted, showLogs else { return }
+        guard NeuroIDCore.shared._isSDKStarted, showLogs else { return }
         nid.debug("[NeuroID Debug] \(strings)")
     }
 

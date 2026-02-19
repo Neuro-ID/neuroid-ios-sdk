@@ -8,7 +8,7 @@
 import Foundation
 
 // Internal Only Functions
-extension NeuroID {
+extension NeuroIDCore {
     /**
      Public user facing getClientID function via Static Instance
      */

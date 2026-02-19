@@ -46,7 +46,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
             }
 
             // pause collection but don't flush events
-            NeuroID.shared.pauseCollection(flushEventQueue: false)
+            NeuroIDCore.shared.pauseCollection(flushEventQueue: false)
         }
     }
 
@@ -63,7 +63,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
     func startMonitoring() {
         monitor.start(queue: queue)
 
-        NeuroID.shared.saveEventToLocalDataStore(
+        NeuroIDCore.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent(
                 "Network Monitoring Started with starting status of connectionType:\(connectionType) connected:\(isConnected)"
             )
@@ -74,7 +74,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
 
             self.getConnectionType(path)
 
-            NeuroID.shared.saveEventToLocalDataStore(
+            NeuroIDCore.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .networkState,
                     attrs: [
@@ -88,7 +88,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
             if connectionStatus != self.isConnected {
                 self.isConnected = connectionStatus
                 if !self.isConnected {
-                    if !NeuroID.shared.isSDKStarted {
+                    if !NeuroIDCore.shared.isSDKStarted {
                         return
                     }
 
@@ -103,13 +103,13 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
                 } else {
                     self.noNetworkTask.cancel()
 
-                    if NeuroID.shared.isSDKStarted {
+                    if NeuroIDCore.shared.isSDKStarted {
                         return
                     }
 
                     // not collecting but a session is in progress we need to restart
-                    if !NeuroID.shared.isSDKStarted,
-                       !NeuroID.shared.identifierService.sessionID.isEmptyOrNil
+                    if !NeuroIDCore.shared.isSDKStarted,
+                       !NeuroIDCore.shared.identifierService.sessionID.isEmptyOrNil
                     {
                         self.setupResumeNetworkTask()
 

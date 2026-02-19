@@ -36,7 +36,7 @@ class PayloadSendingServiceTests: BaseTestClass {
 
     override func setUp() {
         clearOutDataStore()
-        NeuroID._isTesting = true
+        NeuroIDCore._isTesting = true
         mockNetworkService = MockNetworkService()
         payloadSendingService = PayloadSendingService(
             datastore: dataStore,
@@ -61,12 +61,12 @@ class PayloadSendingServiceTests: BaseTestClass {
             }
         )
 
-        NeuroID.shared.payloadSendingService = payloadSendingService
+        NeuroIDCore.shared.payloadSendingService = payloadSendingService
     }
 
     override func tearDown() {
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
         mockNetworkService.resetMockCounts()
     }
 

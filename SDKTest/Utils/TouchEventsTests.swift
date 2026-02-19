@@ -17,18 +17,18 @@ class TouchEventTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
     }
 
     override func tearDown() {
         _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
-        NeuroID.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared.datastore.removeSentEvents()
     }
 
     func assertEventTypeCount(type: String, expectedCount: Int) {
-        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
+        let dataStoreEvents = NeuroIDCore.shared.datastore.getAllEvents()
         let filteredEvents = dataStoreEvents.filter { $0.type == type }
 
         assert(filteredEvents.count == expectedCount)

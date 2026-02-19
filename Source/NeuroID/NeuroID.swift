@@ -10,7 +10,7 @@ import UIKit
 // All Static Methods that need to be available for integrations will be available
 //  in this file. Internally all of them will call the class instance method.
 
-public extension NeuroIDCore {
+public enum NeuroID {
     
     static func configure(_ configuration: NeuroID.Configuration) -> Bool {
         return NeuroIDCore.shared.configure(configuration)

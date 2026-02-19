@@ -30,7 +30,7 @@ class DataStoreTests: XCTestCase {
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
         _ = NeuroID.stop()
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
 
         dataStore = DataStore()
     }

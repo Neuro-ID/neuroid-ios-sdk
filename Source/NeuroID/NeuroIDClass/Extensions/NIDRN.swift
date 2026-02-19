@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     func setIsRN() {
         isRN = true
     }
@@ -28,7 +28,7 @@ extension NeuroID {
             configOptionKey: .useAdvancedDeviceProxy
         )
 
-        let configuration = Configuration(
+        let configuration = NeuroID.Configuration(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,
             advancedDeviceKey: advancedDeviceKey,

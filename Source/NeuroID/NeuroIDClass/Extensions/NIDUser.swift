@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     // This command replaces `setUserID`
     // Formerly known as userID, now within the mobile sdk ONLY sessionID
     func identify(_ sessionID: String) -> Bool {

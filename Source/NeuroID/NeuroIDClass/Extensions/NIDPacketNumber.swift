@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     func getPacketNumber() -> Int32 {
         return self.packetNumber
     }
