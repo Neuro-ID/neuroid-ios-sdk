@@ -70,7 +70,7 @@ public class NeuroIDCore: NSObject {
     }
 
     static var collectGyroAccelEventTask: () -> Void = {
-        if !NeuroIDCore.isStopped(), NeuroIDCore.shared.configService.configCache.gyroAccelCadence {
+        if !NeuroID.isStopped(), NeuroIDCore.shared.configService.configCache.gyroAccelCadence {
             NeuroIDCore.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .cadenceReadingAccel,

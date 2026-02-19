@@ -101,7 +101,7 @@ public enum NeuroID {
     // replaced with`getSessionID`
     @available(*, deprecated, message: "getUserID is deprecated, please use `getSessionID` instead.")
     static func getUserID() -> String {
-        return NeuroIDCore.getSessionID()
+        return NeuroIDCore.shared.getSessionID()
     }
 
     static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
