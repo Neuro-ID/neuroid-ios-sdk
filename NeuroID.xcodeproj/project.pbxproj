@@ -714,8 +714,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/fingerprintjs/fingerprintjs-pro-ios";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.11.0;
+				kind = exactVersion;
+				version = 2.11.0;
 			};
 		};
 		01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */ = {
