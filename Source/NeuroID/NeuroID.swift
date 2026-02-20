@@ -11,7 +11,7 @@ import UIKit
 //  in this file. Internally all of them will call the class instance method.
 
 public enum NeuroID {
-    
+
     public static func configure(_ configuration: NeuroID.Configuration) -> Bool {
         return NeuroIDCore.shared.configure(configuration)
     }
@@ -221,6 +221,33 @@ public enum NeuroID {
     )
     public static func printIntegrationHealthInstruction() {
         NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
+
+    /**
+     Form Submit, Sccuess & Failure
+     */
+    @available(*, deprecated, message: "formSubmit is deprecated and no longer required")
+    static func formSubmit() -> NIDEvent {
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
+        NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
+        return submitEvent
+    }
+
+    @available(*, deprecated, message: "formSubmitFailure is deprecated and no longer required")
+    static func formSubmitFailure() -> NIDEvent {
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
+        NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
+        return submitEvent
+    }
+
+    @available(*, deprecated, message: "formSubmitSuccess is deprecated and no longer required")
+    static func formSubmitSuccess() -> NIDEvent {
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
+        NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
+        return submitEvent
     }
 
     // ENG-9193 - Will remove on next breaking release
