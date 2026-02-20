@@ -231,4 +231,31 @@ public enum NeuroID {
     public static func setVerifyIntegrationHealth(_ verify: Bool) {
         NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
+
+    /**
+     Form Submit, Sccuess & Failure
+     */
+    @available(*, deprecated, message: "formSubmit is deprecated and no longer required")
+    public static func formSubmit() -> NIDEvent {
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmit)
+        NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
+        return submitEvent
+    }
+
+    @available(*, deprecated, message: "formSubmitFailure is deprecated and no longer required")
+    public static func formSubmitFailure() -> NIDEvent {
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitFailure)
+        NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
+        return submitEvent
+    }
+
+    @available(*, deprecated, message: "formSubmitSuccess is deprecated and no longer required")
+    public static func formSubmitSuccess() -> NIDEvent {
+        let submitEvent = NIDEvent(type: NIDEventName.applicationSubmitSuccess)
+        NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
+        return submitEvent
+    }
 }
