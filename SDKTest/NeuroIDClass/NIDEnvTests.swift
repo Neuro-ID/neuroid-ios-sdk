@@ -16,7 +16,7 @@ class NIDEnvTests: XCTestCase {
 
     func test_setEnvironmentProduction_true() {
         NeuroIDCore.shared.environment = ""
-        NeuroIDCore.setEnvironmentProduction(true)
+        NeuroID.setEnvironmentProduction(true)
 
         // Should do nothing because deprecated
         assert(NeuroID.getEnvironment() == "")
@@ -24,7 +24,7 @@ class NIDEnvTests: XCTestCase {
 
     func test_setEnvironmentProduction_false() {
         NeuroIDCore.shared.environment = ""
-        NeuroIDCore.setEnvironmentProduction(false)
+        NeuroID.setEnvironmentProduction(false)
 
         // Should do nothing because deprecated
         assert(NeuroID.getEnvironment() == "")
