@@ -223,6 +223,15 @@ public enum NeuroID {
         NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
+    // ENG-9193 - Will remove on next breaking release
+    @available(
+        *, deprecated,
+        message: "setVerifyIntegrationHealth is deprecated and no longer functional"
+    )
+    public static func setVerifyIntegrationHealth(_ verify: Bool) {
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
+    
     /**
      Form Submit, Sccuess & Failure
      */
@@ -248,15 +257,6 @@ public enum NeuroID {
         NeuroIDCore.shared.saveEventToLocalDataStore(submitEvent)
         NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
-    }
-
-    // ENG-9193 - Will remove on next breaking release
-    @available(
-        *, deprecated,
-        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
-    )
-    public static func setVerifyIntegrationHealth(_ verify: Bool) {
-        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
     }
 
     @available(*, deprecated, message: "setEnvironmentProduction is deprecated and no longer required")
