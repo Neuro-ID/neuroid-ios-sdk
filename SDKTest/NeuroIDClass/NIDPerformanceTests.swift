@@ -15,7 +15,7 @@ final class NIDPerformanceTests: XCTestCase {
 
     override func setUpWithError() throws {
         mockedConfigService.mockConfigCache = RemoteConfiguration()
-        NeuroID.shared.configService = mockedConfigService
+        NeuroIDCore.shared.configService = mockedConfigService
     }
     
     func test_remote_backoff_overrides_default() {
@@ -24,18 +24,18 @@ final class NIDPerformanceTests: XCTestCase {
     }
     
     func testLowMemoryFlagChangesAfterDefaultConfigSeconds() {
-        NeuroID.shared.lowMemory = false
+        NeuroIDCore.shared.lowMemory = false
         let expectation = self.expectation(description: "LowMemory flag should be true and then false after 5 seconds")
         
         let neuroIDTracker = NeuroIDTracker(screen: "test", controller: UIViewController())
         neuroIDTracker.appLowMemoryWarning()
         
         // Check if lowMemory is set to true after a low memory event
-        XCTAssertTrue(NeuroID.shared.lowMemory)
+        XCTAssertTrue(NeuroIDCore.shared.lowMemory)
         
         // Wait for 5 seconds and check if the flag is set to false
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.1) {
-            XCTAssertFalse(NeuroID.shared.lowMemory)
+            XCTAssertFalse(NeuroIDCore.shared.lowMemory)
             expectation.fulfill()
         }
         
@@ -43,7 +43,7 @@ final class NIDPerformanceTests: XCTestCase {
     }
     
     func testLowMemoryFlagChangesAfterDefaultOverrideToZeroSeconds() {
-        NeuroID.shared.lowMemory = false
+        NeuroIDCore.shared.lowMemory = false
         
         mockedConfigService.mockConfigCache = RemoteConfiguration(lowMemoryBackOff: 0)
         
@@ -54,11 +54,11 @@ final class NIDPerformanceTests: XCTestCase {
         neuroIDTracker.appLowMemoryWarning()
         
         // Check if lowMemory is set to true after a low memory event
-        XCTAssertTrue(NeuroID.shared.lowMemory)
+        XCTAssertTrue(NeuroIDCore.shared.lowMemory)
         
         // Ensure lowMemory flag was immediately toggled back so we dont drop events
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            XCTAssertFalse(NeuroID.shared.lowMemory)
+            XCTAssertFalse(NeuroIDCore.shared.lowMemory)
             expectation.fulfill()
         }
         

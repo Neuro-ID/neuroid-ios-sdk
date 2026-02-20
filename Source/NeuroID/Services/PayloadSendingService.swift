@@ -36,15 +36,15 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             sdkVersion: NeuroID.getSDKVersion(),
             pageTag: screen,
             responseID: ParamsCreator.generateUniqueHexID(),
-            siteID: NeuroID.shared.siteID ?? "",
-            linkedSiteID: NeuroID.shared.linkedSiteID,
+            siteID: NeuroIDCore.shared.siteID ?? "",
+            linkedSiteID: NeuroIDCore.shared.linkedSiteID,
             sessionID: sessionID == "" ? nil : sessionID,
             registeredUserID: registeredUserID == "" ? nil : registeredUserID,
             jsonEvents: events,
             tabID: "\(tabId)",
             pageID: "\(pageid)",
             url: "ios://\(NeuroID.getScreenName() ?? "")",
-            packetNumber: NeuroID.shared.getPacketNumber()
+            packetNumber: NeuroIDCore.shared.getPacketNumber()
         )
     }
 

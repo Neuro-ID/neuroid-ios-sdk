@@ -50,12 +50,12 @@ public extension UIViewController {
     var tracker: NeuroIDTracker? {
         if ignoreLists.contains(nidClassName) { return nil }
         if self is UINavigationController, nidClassName == "UINavigationController" { return nil }
-        if let tracker = NeuroID.trackers[nidClassName] {
+        if let tracker = NeuroIDCore.trackers[nidClassName] {
             tracker.subscribe(inScreen: self)
             return tracker
         } else {
-            let tracker = NeuroID.trackers[nidClassName] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
-            NeuroID.trackers[nidClassName] = tracker
+            let tracker = NeuroIDCore.trackers[nidClassName] ?? NeuroIDTracker(screen: neuroScreenName, controller: self)
+            NeuroIDCore.trackers[nidClassName] = tracker
             return tracker
         }
     }
@@ -147,14 +147,14 @@ extension UIViewController {
 
     @objc func neuroIDDismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         neuroIDDismiss(animated: flag, completion: completion)
-        NeuroID.shared.removeKeyboardListener(className: nidClassName, view: self)
+        NeuroIDCore.shared.removeKeyboardListener(className: nidClassName, view: self)
     }
 
     @objc func registerPageTargets() {
         if ignoreLists.contains(nidClassName) { return }
 
         // check if its RN, using the React Navigation Package, and Matching the ClassName
-        if NeuroID.shared.isRN, NeuroID.shared.rnOptions[.usingReactNavigation] as? Bool ?? false, nidClassName == "UIViewController" { return }
+        if NeuroIDCore.shared.isRN, NeuroIDCore.shared.rnOptions[.usingReactNavigation] as? Bool ?? false, nidClassName == "UIViewController" { return }
 
         if NeuroID.isStopped() {
             return
@@ -166,7 +166,7 @@ extension UIViewController {
         UtilFunctions.registerSubViewsTargets(controller: self)
         registerViews = view.subviewsDescriptions
 
-        NeuroID.shared.registerKeyboardListener(className: nidClassName, view: self)
+        NeuroIDCore.shared.registerKeyboardListener(className: nidClassName, view: self)
 
         UtilFunctions.captureWindowLoadUnloadEvent(eventType: .windowLoad, id: hash.string, className: nidClassName)
     }
@@ -189,7 +189,7 @@ extension UIViewController {
                 return
             }
 
-            NeuroID.shared.saveEventToLocalDataStore(
+            NeuroIDCore.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: NIDEventName.windowResize,
                     tgs: view.id,
@@ -217,7 +217,7 @@ extension UIViewController {
     @objc func keyboardWillHide(notification: Notification) {
         // Handle keyboard will hide event - Does not recieve any X, Y, W, H information
 
-        NeuroID.shared.saveEventToLocalDataStore(
+        NeuroIDCore.shared.saveEventToLocalDataStore(
             NIDEvent(
                 type: NIDEventName.windowResize,
                 tgs: view.id,

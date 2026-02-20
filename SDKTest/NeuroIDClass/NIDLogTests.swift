@@ -14,12 +14,12 @@ struct NIDLogTests {
 
     @Test func enableLogging() {
         NeuroID.enableLogging(true)
-        assert(NeuroID.shared.showLogs)
+        assert(NeuroIDCore.shared.showLogs)
     }
 
     @Test
     func disableLogging() {
         NeuroID.enableLogging(false)
-        assert(!NeuroID.shared.showLogs)
+        assert(!NeuroIDCore.shared.showLogs)
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     func getEnvironment() -> String {
         return self.environment
     }

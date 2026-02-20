@@ -22,14 +22,14 @@ class NeuroIDTrackerTests: BaseTestClass {
     }
     
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
     }
     
     override func tearDown() {
         _ = NeuroID.stop()
         
         // Clear out the DataStore Events after each test
-        NeuroID.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared.datastore.removeSentEvents()
     }
     
     func sleep(timeout: Double) {
@@ -48,7 +48,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     }
     
     func assertEventTypeCount(type: String, expectedCount: Int) -> [NIDEvent] {
-        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
+        let dataStoreEvents = NeuroIDCore.shared.datastore.getAllEvents()
         let filteredEvents = dataStoreEvents.filter { $0.type == type }
         
         assert(filteredEvents.count == expectedCount)
@@ -65,7 +65,7 @@ class NeuroIDTrackerTests: BaseTestClass {
     }
     
     func assertViewNOTRegistered(v: UIView) {
-        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
+        let dataStoreEvents = NeuroIDCore.shared.datastore.getAllEvents()
         let filteredEvent = dataStoreEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(filteredEvent.count == 0)
         
@@ -216,7 +216,7 @@ class NeuroIDTrackerTests: BaseTestClass {
 
         tracker.valueChanged(sender: view)
 
-        let events = NeuroID.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
+        let events = NeuroIDCore.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
         assert(events.count == 1)
     }
 
@@ -234,7 +234,7 @@ class NeuroIDTrackerTests: BaseTestClass {
 
         tracker.valueChanged(sender: view)
 
-        let events = NeuroID.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
+        let events = NeuroIDCore.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
         assert(events.count == 1)
     }
 

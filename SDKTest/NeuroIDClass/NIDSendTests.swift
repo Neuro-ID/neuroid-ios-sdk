@@ -9,12 +9,12 @@ import XCTest
 
 class NIDSendTests: BaseTestClass {
     override func setUpWithError() throws {
-        NeuroID.shared.networkService = MockNetworkService()
-        NeuroID.shared.configService = MockConfigService()
+        NeuroIDCore.shared.networkService = MockNetworkService()
+        NeuroIDCore.shared.configService = MockConfigService()
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
-        NeuroID.shared.sendCollectionEventsJob.cancel()
-        NeuroID._isTesting = true
+        NeuroIDCore.shared.sendCollectionEventsJob.cancel()
+        NeuroIDCore._isTesting = true
 
         clearOutDataStore()
     }
@@ -23,7 +23,7 @@ class NIDSendTests: BaseTestClass {
         _ = NeuroID.stop()
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     func test_sendCollectionEventsJob() {
@@ -34,9 +34,9 @@ class NIDSendTests: BaseTestClass {
         let counterQ = DispatchQueue(label: "nid.tests.counter")
         var valueChanged = 0
         
-        NeuroID.shared.sendCollectionEventsJob.cancel()
+        NeuroIDCore.shared.sendCollectionEventsJob.cancel()
 
-        NeuroID.shared.sendCollectionEventsJob = RepeatingTask(
+        NeuroIDCore.shared.sendCollectionEventsJob = RepeatingTask(
             interval: 0.5,
             task: {
                 let newValue = counterQ.sync {
@@ -46,12 +46,12 @@ class NIDSendTests: BaseTestClass {
                 exp.fulfill()
                 
                 if newValue == 2 {
-                    NeuroID.shared.sendCollectionEventsJob.cancel()
+                    NeuroIDCore.shared.sendCollectionEventsJob.cancel()
                 }
             }
         )
 
-        NeuroID.shared.sendCollectionEventsJob.start()
+        NeuroIDCore.shared.sendCollectionEventsJob.start()
 
         wait(for: [exp], timeout: 7)
 

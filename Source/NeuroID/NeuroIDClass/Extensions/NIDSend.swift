@@ -7,13 +7,13 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     func send(
         forceSend: Bool = false,
         eventSubset: [NIDEvent]? = nil,
         completion: @escaping () -> Void = {}
     ) {
-        if NeuroID._isTesting {
+        if NeuroIDCore._isTesting {
             return
         }
 

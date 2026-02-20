@@ -78,14 +78,14 @@ class ConfigService: ConfigServiceProtocol {
     }
 
     func retrieveConfig() async {
-        guard NeuroID.shared.verifyClientKeyExists() else {
+        guard NeuroIDCore.shared.verifyClientKeyExists() else {
             setCacheWithRemote(false)
             configRetrievalCallback()
             return
         }
 
         do {
-            let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroID.shared.getClientKey() + ".json"
+            let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroIDCore.shared.getClientKey() + ".json"
             let configUrl = URL(string: configUrlStr)!
 
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
@@ -100,7 +100,7 @@ class ConfigService: ConfigServiceProtocol {
             NIDLog.error("Failed to retrieve NID Config \(error)")
             setConfigCache(RemoteConfiguration())
             setCacheWithRemote(false)
-            NeuroID.shared.saveEventToDataStore(
+            NeuroIDCore.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Failed to retrieve NID config: \(error). Default values will be used."
                 )
@@ -126,7 +126,7 @@ class ConfigService: ConfigServiceProtocol {
 
         setSiteIDMap(newMap)
 
-        NeuroID.shared.saveEventToDataStore(
+        NeuroIDCore.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateSampleSiteIDMap,
                 level: "INFO"
@@ -196,7 +196,7 @@ class ConfigService: ConfigServiceProtocol {
         stateLock.withLock {
             _siteIDMap.removeAll()
         }
-        NeuroID.shared.saveEventToDataStore(
+        NeuroIDCore.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.clearSampleSiteIDmap,
                 level: "INFO"
@@ -210,11 +210,11 @@ class ConfigService: ConfigServiceProtocol {
         guard let jsonData = try? encoder.encode(configData) else { return }
 
         if let jsonString = String(data: jsonData, encoding: .utf8) {
-            NeuroID.shared.saveEventToDataStore(
+            NeuroIDCore.shared.saveEventToDataStore(
                 NIDEvent(type: .configCached, v: jsonString)
             )
         } else {
-            NeuroID.shared.saveEventToDataStore(
+            NeuroIDCore.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to parse config")
             )
         }
@@ -223,7 +223,7 @@ class ConfigService: ConfigServiceProtocol {
     func updateIsSampledStatus(siteID: String?) {
         if let siteID: String = siteID, let flag = siteIDMap[siteID] {
             setIsSessionFlowSampled(flag)
-            NeuroID.shared.saveEventToDataStore(
+            NeuroIDCore.shared.saveEventToDataStore(
                 NIDEvent(
                     type: NIDEventName.updateIsSampledStatus,
                     m: "\(siteID) : \(flag)",
@@ -235,7 +235,7 @@ class ConfigService: ConfigServiceProtocol {
 
         setIsSessionFlowSampled(true)
 
-        NeuroID.shared.saveEventToDataStore(
+        NeuroIDCore.shared.saveEventToDataStore(
             NIDEvent(
                 type: NIDEventName.updateIsSampledStatus,
                 m: "\(siteID ?? "unknownSiteID") : \(false)",

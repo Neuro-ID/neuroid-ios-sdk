@@ -12,11 +12,11 @@ class ConfigurationTests: XCTestCase {
     
     var config = NeuroID.Configuration(clientKey: "")
     
-    var neuroID: NeuroID = NeuroID()
+    var neuroID: NeuroIDCore = NeuroIDCore()
     
     override func setUp() {
         super.setUp()
-        neuroID = NeuroID()
+        neuroID = NeuroIDCore()
         config = NeuroID.Configuration(
             clientKey: "test_key",
             isAdvancedDevice: true

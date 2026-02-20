@@ -99,7 +99,7 @@ func captureTouchEvent(
         attrs.append(Attrs(n: key, v: value))
     }
 
-    NeuroID.shared.saveEventToLocalDataStore(
+    NeuroIDCore.shared.saveEventToLocalDataStore(
         NIDEvent(
             type: type,
             tg: tg,

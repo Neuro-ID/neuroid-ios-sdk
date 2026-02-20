@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension NeuroID {
+extension NeuroIDCore {
     func excludeViewByTestID(_ excludedView: String) {
         NIDLog.info("Exclude view called - \(excludedView)")
         self.excludedViewsTestIDs.append(excludedView)
@@ -102,7 +102,7 @@ extension NeuroID {
 
      */
     func setVariable(key: String, value: String) -> NIDEvent {
-        let myKeys: [String] = NeuroID.trackers.map { String($0.key) }
+        let myKeys: [String] = NeuroIDCore.trackers.map { String($0.key) }
 
         // If we don't have a valid URL, that means this was called before any views were tracked. Use "AppDelegate" as default
         var url = myKeys.last
@@ -113,7 +113,7 @@ extension NeuroID {
         let variableEvent = NIDEvent(
             type: .setVariable,
             key: key,
-            v: NeuroID.shared.identifierService.scrubIdentifier(value),
+            v: NeuroIDCore.shared.identifierService.scrubIdentifier(value),
             url: url
         )
 

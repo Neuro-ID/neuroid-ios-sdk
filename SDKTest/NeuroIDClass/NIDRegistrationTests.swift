@@ -15,7 +15,7 @@ class NIDRegistrationTests: BaseTestClass {
     }
 
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
     }
 
     override func tearDown() {
@@ -27,15 +27,15 @@ class NIDRegistrationTests: BaseTestClass {
 
     func test_excludeViewByTestID() {
         clearOutDataStore()
-        NeuroID.shared.excludedViewsTestIDs = []
+        NeuroIDCore.shared.excludedViewsTestIDs = []
         let expectedValue = "testScreenName"
 
         NeuroID.excludeViewByTestID(excludedView: expectedValue)
 
-        let contains = NeuroID.shared.excludedViewsTestIDs.contains(where: { $0 == expectedValue })
+        let contains = NeuroIDCore.shared.excludedViewsTestIDs.contains(where: { $0 == expectedValue })
         assert(contains)
 
-        assert(NeuroID.shared.excludedViewsTestIDs.count == 1)
+        assert(NeuroIDCore.shared.excludedViewsTestIDs.count == 1)
     }
 
     func test_manuallyRegisterTarget_valid_type() {
@@ -47,7 +47,7 @@ class NIDRegistrationTests: BaseTestClass {
 
         assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
 
-        let allEvents = NeuroID.shared.datastore.getAllEvents()
+        let allEvents = NeuroIDCore.shared.datastore.getAllEvents()
         let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
         assert(validEvents[0].tgs == "wow")
         assert(validEvents[0].et == "UITextField::UITextField")

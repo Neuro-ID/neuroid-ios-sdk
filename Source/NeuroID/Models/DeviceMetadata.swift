@@ -47,9 +47,9 @@ struct DeviceMetadata: Codable {
         self.isSimulator = DeviceMetadata.isSimulator()
         self.lastInstallTime = Int64(getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) * 1000)
         self.gpsCoordinates = NIDLocation(
-            latitude: NeuroID.shared.locationManager?.latitude ?? -1,
-            longitude: NeuroID.shared.locationManager?.longitude ?? -1,
-            authorizationStatus: NeuroID.shared.locationManager?.authorizationStatus ?? "unknown"
+            latitude: NeuroIDCore.shared.locationManager?.latitude ?? -1,
+            longitude: NeuroIDCore.shared.locationManager?.longitude ?? -1,
+            authorizationStatus: NeuroIDCore.shared.locationManager?.authorizationStatus ?? "unknown"
         )
     }
 

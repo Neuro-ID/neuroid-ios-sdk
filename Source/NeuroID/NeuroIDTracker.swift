@@ -29,7 +29,7 @@ public class NeuroIDTracker: NSObject {
         let newEvent = event
         // Make sure we have a valid url set
         newEvent.url = NeuroID.getScreenName()
-        NeuroID.shared.saveEventToLocalDataStore(newEvent, screen: screenName)
+        NeuroIDCore.shared.saveEventToLocalDataStore(newEvent, screen: screenName)
     }
     
     public static func registerSingleView(
@@ -181,7 +181,7 @@ public class NeuroIDTracker: NSObject {
 
         default:
             // Capture custom RN elements that have a testID set
-            if NeuroID.shared.isRN && !id.contains("UNKNOWN_NO_ID_SET") {
+            if NeuroIDCore.shared.isRN && !id.contains("UNKNOWN_NO_ID_SET") {
                 value = id
                 etn = "ELEMENT"
                 type = "ReactNativeElement"
@@ -210,8 +210,8 @@ public class NeuroIDTracker: NSObject {
     }
     
     static func registerViewIfNotRegistered(view: UIView) -> Bool {
-        if !NeuroID.registeredTargets.contains(view.id) {
-            NeuroID.registeredTargets.append(view.id)
+        if !NeuroIDCore.registeredTargets.contains(view.id) {
+            NeuroIDCore.registeredTargets.append(view.id)
             let guid = ParamsCreator.generateID()
             
             NeuroIDTracker.registerSingleView(
@@ -239,8 +239,8 @@ extension NeuroIDTracker {
         }
 
         // Only run observations on first run
-        if !NeuroID.shared.observingInputs {
-            NeuroID.shared.observingInputs = true
+        if !NeuroIDCore.shared.observingInputs {
+            NeuroIDCore.shared.observingInputs = true
             observeTextInputEvents()
             observeAppEvents()
             observeRotation()

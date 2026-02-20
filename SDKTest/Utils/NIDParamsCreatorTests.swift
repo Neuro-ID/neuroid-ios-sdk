@@ -47,7 +47,7 @@ class NIDParamsCreatorTests: XCTestCase {
 
     override func setUp() {
         // Clear out the DataStore Events after each test
-        NeuroID.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared.datastore.removeSentEvents()
     }
 
     // Util Helper Functions
@@ -383,29 +383,29 @@ class NIDParamsCreatorTests: XCTestCase {
     }
 
     func test_getSDKVersion() {
-        NeuroID.shared.isRN = false
-        let version: String = NeuroID.nidVersion
+        NeuroIDCore.shared.isRN = false
+        let version: String = NeuroIDCore.nidVersion
         let expectedValue = "5.ios-adv-\(version)"
 
         let value = ParamsCreator.getSDKVersion()
 
         assert(value == expectedValue)
 
-        NeuroID.shared.isRN = true
+        NeuroIDCore.shared.isRN = true
         let expectedValueRN = "5.ios-rn-adv-\(version)"
 
         let valueRN = ParamsCreator.getSDKVersion()
 
         assert(valueRN == expectedValueRN)
 
-        NeuroID.shared.isRN = false
+        NeuroIDCore.shared.isRN = false
         let expectedValueADV = "5.ios-adv-\(version)"
 
         let valueADV = ParamsCreator.getSDKVersion()
 
         assert(valueADV == expectedValueADV)
 
-        NeuroID.shared.isRN = true
+        NeuroIDCore.shared.isRN = true
         let expectedValueADVRN = "5.ios-rn-adv-\(version)"
 
         let valueADVRN = ParamsCreator.getSDKVersion()

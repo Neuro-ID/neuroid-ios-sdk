@@ -26,18 +26,18 @@ final class UtilFunctionsTests: XCTestCase {
     }
 
     override func setUp() {
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
     }
 
     override func tearDown() {
         _ = NeuroID.stop()
 
         // Clear out the DataStore Events after each test
-        NeuroID.shared.datastore.removeSentEvents()
+        NeuroIDCore.shared.datastore.removeSentEvents()
     }
 
     func getEventOfType(type: String) -> [NIDEvent] {
-        let dataStoreEvents = NeuroID.shared.datastore.getAllEvents()
+        let dataStoreEvents = NeuroIDCore.shared.datastore.getAllEvents()
         return dataStoreEvents.filter { $0.type == type }
     }
 
@@ -110,8 +110,8 @@ final class UtilFunctionsTests: XCTestCase {
     }
 
     func test_captureTextEvents_blur() {
-        NeuroID.shared._isSDKStarted = true
-        NeuroID._isTesting = true
+        NeuroIDCore.shared._isSDKStarted = true
+        NeuroIDCore._isTesting = true
         let uiView = UIView()
 
         UtilFunctions.captureTextEvents(
@@ -121,7 +121,7 @@ final class UtilFunctionsTests: XCTestCase {
 
         assertEventTypeCount(type: "BLUR", expectedCount: 1)
         assertEventTypeCount(type: "TEXT_CHANGE", expectedCount: 1)
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     func test_captureInputTextChangeEvent_input() {

@@ -7,13 +7,13 @@
 
 import Foundation
 
-extension NeuroID {
+extension NeuroIDCore {
     func setupListeners() {
         // We will always cancel the collection job and then recreate with new interval and start
         self.sendCollectionEventsJob.cancel()
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
-            task: NeuroID.sendCollectionEventsTask
+            task: NeuroIDCore.sendCollectionEventsTask
         )
         self.sendCollectionEventsJob.start()
 
@@ -39,7 +39,7 @@ extension NeuroID {
         if self.configService.configCache.gyroAccelCadence {
             self.collectGyroAccelEventJob = RepeatingTask(
                 interval: Double(self.configService.configCache.gyroAccelCadenceTime),
-                task: NeuroID.collectGyroAccelEventTask
+                task: NeuroIDCore.collectGyroAccelEventTask
             )
 
             self.collectGyroAccelEventJob.start()

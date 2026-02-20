@@ -13,10 +13,10 @@ class NIDNewSessionTests: BaseTestClass {
         // skip all tests in this class, remove this line to re-enabled tests
 //        throw XCTSkip("Skipping all tests in this class.")
 
-        NeuroID.shared.configService = MockConfigService()
+        NeuroIDCore.shared.configService = MockConfigService()
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
-        NeuroID._isTesting = true
+        NeuroIDCore._isTesting = true
 
         clearOutDataStore()
     }
@@ -25,12 +25,12 @@ class NIDNewSessionTests: BaseTestClass {
         _ = NeuroID.stop()
         // Clear out the DataStore Events after each test
         clearOutDataStore()
-        NeuroID._isTesting = false
+        NeuroIDCore._isTesting = false
     }
 
     func assertSessionStartedTests(_ sessionRes: SessionStartResult) {
         assert(sessionRes.started)
-        assert(NeuroID.shared._isSDKStarted)
+        assert(NeuroIDCore.shared._isSDKStarted)
 
         assertStoredEventTypeAndCount(type: NIDEventName.createSession.rawValue, count: 1)
         assertStoredEventTypeAndCount(type: NIDEventName.mobileMetadataIOS.rawValue, count: 1)
@@ -41,7 +41,7 @@ class NIDNewSessionTests: BaseTestClass {
     func assertSessionNotStartedTests(_ sessionRes: SessionStartResult) {
         assert(!sessionRes.started)
         assert(sessionRes.sessionID == "")
-        assert(!NeuroID.shared._isSDKStarted)
+        assert(!NeuroIDCore.shared._isSDKStarted)
     }
 
     func assertSetVariableEvents() {
@@ -50,20 +50,20 @@ class NIDNewSessionTests: BaseTestClass {
 
     //    clearSessionVariables
     func test_clearSessionVariables() {
-        NeuroID.shared.identifierService.sessionID = "myUserID"
-        NeuroID.shared.identifierService.registeredUserID = "myRegisteredUserID"
-        NeuroID.shared.linkedSiteID = "mySite"
+        NeuroIDCore.shared.identifierService.sessionID = "myUserID"
+        NeuroIDCore.shared.identifierService.registeredUserID = "myRegisteredUserID"
+        NeuroIDCore.shared.linkedSiteID = "mySite"
 
-        NeuroID.shared.clearSessionVariables()
+        NeuroIDCore.shared.clearSessionVariables()
 
-        assert(NeuroID.shared.sessionID == nil)
-        assert(NeuroID.shared.registeredUserID == "")
-        assert(NeuroID.shared.linkedSiteID == nil)
+        assert(NeuroIDCore.shared.sessionID == nil)
+        assert(NeuroIDCore.shared.registeredUserID == "")
+        assert(NeuroIDCore.shared.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
-        NeuroID.shared.identifierService.sessionID = nil
-        NeuroID.shared._isSDKStarted = false
+        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared._isSDKStarted = false
 
         let expectedValue = "mySessionID"
         NeuroID.startSession(expectedValue) { sessionRes in
@@ -76,8 +76,8 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id() {
-        NeuroID.shared.identifierService.sessionID = nil
-        NeuroID.shared._isSDKStarted = false
+        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared._isSDKStarted = false
 
         let expectedValue = "mySessionID"
         NeuroID.startSession { sessionRes in
@@ -89,8 +89,8 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id_sdk_started() {
-        NeuroID.shared.identifierService.sessionID = nil
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared._isSDKStarted = true
 
         let expectedValue = "mySessionID"
         NeuroID.startSession { sessionRes in
@@ -102,8 +102,8 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_id_sdk_started() {
-        NeuroID.shared.identifierService.sessionID = nil
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared._isSDKStarted = true
 
         let expectedValue = "mySessionID"
         NeuroID.startSession(expectedValue) { sessionRes in
@@ -114,7 +114,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_failure_clientKey() {
-        NeuroID.shared.clientKey = nil
+        NeuroIDCore.shared.clientKey = nil
 
         NeuroID.startSession { sessionRes in
             self.assertSessionNotStartedTests(sessionRes)
@@ -138,28 +138,28 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_pauseCollection() {
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
 
         NeuroID.pauseCollection()
 
-        assert(!NeuroID.shared._isSDKStarted)
+        assert(!NeuroIDCore.shared._isSDKStarted)
     }
 
     func test_resumeCollection() {
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.identifierService.sessionID = "temp"
+        NeuroIDCore.shared._isSDKStarted = false
+        NeuroIDCore.shared.identifierService.sessionID = "temp"
 
         NeuroID.resumeCollection()
 
-        assert(NeuroID.shared._isSDKStarted)
+        assert(NeuroIDCore.shared._isSDKStarted)
     }
 
     func test_willNotResumeCollectionIfNotStarted() {
-        NeuroID.shared._isSDKStarted = false
-        NeuroID.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared._isSDKStarted = false
+        NeuroIDCore.shared.identifierService.sessionID = nil
         NeuroID.resumeCollection()
 
-        assert(!NeuroID.shared._isSDKStarted)
+        assert(!NeuroIDCore.shared._isSDKStarted)
     }
 
     func test_stopSession() {
@@ -170,55 +170,55 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_startAppFlow_valid_site() {
         let mySite = "form_thing123"
-        NeuroID.shared._isSDKStarted = true
-        NeuroID.shared.linkedSiteID = nil
+        NeuroIDCore.shared._isSDKStarted = true
+        NeuroIDCore.shared.linkedSiteID = nil
 
         NeuroID.startAppFlow(siteID: mySite) { started in
             assert(started.started)
-            assert(NeuroID.shared.linkedSiteID == mySite)
+            assert(NeuroIDCore.shared.linkedSiteID == mySite)
 
-            NeuroID.shared._isSDKStarted = false
-            NeuroID.shared.linkedSiteID = nil
+            NeuroIDCore.shared._isSDKStarted = false
+            NeuroIDCore.shared.linkedSiteID = nil
         }
     }
 
     func test_startAppFlow_invalid_site() {
         let mySite = "mySite"
-        NeuroID.shared._isSDKStarted = true
-        NeuroID.shared.linkedSiteID = nil
+        NeuroIDCore.shared._isSDKStarted = true
+        NeuroIDCore.shared.linkedSiteID = nil
 
         NeuroID.startAppFlow(siteID: mySite) { started in
             assert(!started.started)
-            assert(NeuroID.shared.linkedSiteID == nil)
+            assert(NeuroIDCore.shared.linkedSiteID == nil)
 
-            NeuroID.shared._isSDKStarted = false
+            NeuroIDCore.shared._isSDKStarted = false
         }
     }
 
     func test_clearSendOldFlowEvents_not_sampled() {
         dataStore.events.append(NIDEvent(rawType: "test"))
-        NeuroID.shared.configService = MockConfigService()
+        NeuroIDCore.shared.configService = MockConfigService()
 
-        NeuroID.shared.clearSendOldFlowEvents {
+        NeuroIDCore.shared.clearSendOldFlowEvents {
             assert(self.dataStore.events.count == 0)
 
-            NeuroID.shared._isSDKStarted = false
+            NeuroIDCore.shared._isSDKStarted = false
         }
     }
 
     func test_clearSendOldFlowEvents_sampled() {
         dataStore.events.append(NIDEvent(rawType: "test"))
-        NeuroID.shared.configService = MockConfigService()
+        NeuroIDCore.shared.configService = MockConfigService()
 
         let mockNetwork = MockNetworkService()
-        NeuroID.shared.networkService = mockNetwork
+        NeuroIDCore.shared.networkService = mockNetwork
 
-        NeuroID.shared._isSDKStarted = true
+        NeuroIDCore.shared._isSDKStarted = true
 
-        NeuroID.shared.clearSendOldFlowEvents {
+        NeuroIDCore.shared.clearSendOldFlowEvents {
             assert(self.dataStore.events.count == 0)
 
-            NeuroID.shared._isSDKStarted = false
+            NeuroIDCore.shared._isSDKStarted = false
         }
     }
 }

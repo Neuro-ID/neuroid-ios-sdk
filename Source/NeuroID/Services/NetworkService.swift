@@ -43,7 +43,7 @@ class NetworkService: NetworkServiceProtocol {
     ) {
         let maxRetryCount = 3
 
-        afConfiguration.timeoutIntervalForRequest = Double(NeuroID.shared.configService.configCache.requestTimeout)
+        afConfiguration.timeoutIntervalForRequest = Double(NeuroIDCore.shared.configService.configCache.requestTimeout)
 
         afCustomSession.request(
             url,

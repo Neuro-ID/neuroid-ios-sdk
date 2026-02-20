@@ -9,18 +9,18 @@
 import XCTest
 
 class NIDRNTests: XCTestCase {
-    var neuroID = NeuroID()
+    var neuroID = NeuroIDCore()
 
     override func setUp() {
-        neuroID = NeuroID()
+        neuroID = NeuroIDCore()
         neuroID.isRN = false
     }
 
     func assertConfigureTests(defaultValue: Bool, expectedValue: Bool) {
-        assert(NeuroID.shared.isRN)
-        let storedValue = NeuroID.shared.rnOptions[.usingReactNavigation] as? Bool ?? defaultValue
+        assert(NeuroIDCore.shared.isRN)
+        let storedValue = NeuroIDCore.shared.rnOptions[.usingReactNavigation] as? Bool ?? defaultValue
         assert(storedValue == expectedValue)
-        assert(NeuroID.shared.rnOptions.count == 1)
+        assert(NeuroIDCore.shared.rnOptions.count == 1)
     }
 
     // setIsRN

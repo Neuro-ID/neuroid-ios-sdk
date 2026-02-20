@@ -1,5 +1,5 @@
 //
-//  NeuroID.swift
+//  NeuroIDCore.swift
 //  NeuroID
 //
 //  Created by Kevin Sites on 3/29/23.
@@ -7,9 +7,9 @@
 
 import UIKit
 
-public class NeuroID: NSObject {
+public class NeuroIDCore: NSObject {
     static let nidVersion = "3.6.0"
-    static let shared: NeuroID = NeuroID()
+    static let shared: NeuroIDCore = NeuroIDCore()
 
     // Configuration
     var clientKey: String?
@@ -66,18 +66,18 @@ public class NeuroID: NSObject {
 
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
-        NeuroID.shared.send()
+        NeuroIDCore.shared.send()
     }
 
     static var collectGyroAccelEventTask: () -> Void = {
-        if !NeuroID.isStopped(), NeuroID.shared.configService.configCache.gyroAccelCadence {
-            NeuroID.shared.saveEventToLocalDataStore(
+        if !NeuroID.isStopped(), NeuroIDCore.shared.configService.configCache.gyroAccelCadence {
+            NeuroIDCore.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .cadenceReadingAccel,
                     attrs: [
                         Attrs(
                             n: "interval",
-                            v: "\(NeuroID.shared.configService.configCache.gyroAccelCadenceTime)ms"
+                            v: "\(NeuroIDCore.shared.configService.configCache.gyroAccelCadenceTime)ms"
                         ),
                     ]
                 )
@@ -87,12 +87,12 @@ public class NeuroID: NSObject {
 
     var sendCollectionEventsJob: RepeatingTaskProtocol = RepeatingTask(
         interval: Double(5), // default 5, will be recreated on `configure` command
-        task: NeuroID.sendCollectionEventsTask
+        task: NeuroIDCore.sendCollectionEventsTask
     )
 
     var collectGyroAccelEventJob: RepeatingTaskProtocol = RepeatingTask(
         interval: Double(5), // default 5, will be recreated on `configure` command
-        task: NeuroID.collectGyroAccelEventTask
+        task: NeuroIDCore.collectGyroAccelEventTask
     )
 
     var observingInputs = false
@@ -155,12 +155,12 @@ public class NeuroID: NSObject {
 
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
-            task: NeuroID.sendCollectionEventsTask
+            task: NeuroIDCore.sendCollectionEventsTask
         )
 
         self.collectGyroAccelEventJob = RepeatingTask(
             interval: Double(self.configService.configCache.gyroAccelCadenceTime),
-            task: NeuroID.collectGyroAccelEventTask
+            task: NeuroIDCore.collectGyroAccelEventTask
         )
     }
 
@@ -175,7 +175,7 @@ public class NeuroID: NSObject {
     /// 1. Configure the SDK
     /// 2. Setup silent running loop
     /// 3. Send cached events from DB on a given interval
-    func configure(_ configuration: Configuration) -> Bool {
+    func configure(_ configuration: NeuroID.Configuration) -> Bool {
         // set last install time if not already set.
         if getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) == 0 {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)

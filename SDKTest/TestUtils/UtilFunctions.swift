@@ -25,7 +25,7 @@ extension RemoteConfiguration {
 }
 
 func getMockConfigService(shouldFail: Bool, randomGenerator: RandomGenerator) -> ConfigService {
-    NeuroID.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
+    NeuroIDCore.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
     let mockedData = try! JSONEncoder().encode(RemoteConfiguration.mock())
 

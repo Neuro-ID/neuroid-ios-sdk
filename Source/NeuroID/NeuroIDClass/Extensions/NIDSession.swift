@@ -18,7 +18,7 @@ public struct SessionStartResult {
     }
 }
 
-extension NeuroID {
+extension NeuroIDCore {
     func resumeCollection() {
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("resume collection attempt")
@@ -160,7 +160,7 @@ extension NeuroID {
     ) -> NIDEvent {
         return NIDEvent(
             type: sessionEvent,
-            f: NeuroID.shared.getClientKey(),
+            f: NeuroIDCore.shared.getClientKey(),
             cid: NeuroID.getClientID(),
             did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
@@ -180,7 +180,7 @@ extension NeuroID {
     }
 
     func createSession() {
-        self.configService.updateIsSampledStatus(siteID: NeuroID.shared.linkedSiteID)
+        self.configService.updateIsSampledStatus(siteID: NeuroIDCore.shared.linkedSiteID)
         saveEventToLocalDataStore(
             self.createNIDSessionEvent()
         )
@@ -216,7 +216,7 @@ extension NeuroID {
 
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
-            Attrs(n: "isRN", v: "\(NeuroID.shared.isRN)"),
+            Attrs(n: "isRN", v: "\(NeuroIDCore.shared.isRN)"),
         ]
         self.eventStorageService.saveEventToLocalDataStore(event)
 
