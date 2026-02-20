@@ -213,4 +213,22 @@ public enum NeuroID {
             placeHolder: placeHolder
         )
     }
+
+    // ENG-9193 - Will remove on next breaking release
+    @available(
+        *, deprecated,
+        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
+    )
+    public static func printIntegrationHealthInstruction() {
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
+
+    // ENG-9193 - Will remove on next breaking release
+    @available(
+        *, deprecated,
+        message: "printIntegrationHealthInstruction is deprecated and no longer functional"
+    )
+    public static func setVerifyIntegrationHealth(_ verify: Bool) {
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER FUNCTIONAL")
+    }
 }
