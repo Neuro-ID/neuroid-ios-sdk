@@ -258,4 +258,9 @@ public enum NeuroID {
         NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED AND IS NO LONGER REQUIRED")
         return submitEvent
     }
+
+    @available(*, deprecated, message: "setEnvironmentProduction is deprecated and no longer required")
+    public static func setEnvironmentProduction(_ value: Bool) {
+        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED")
+    }
 }
