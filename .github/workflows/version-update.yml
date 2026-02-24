@@ -64,7 +64,7 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
 
-      - name: Update SDK Version in NeuroID.swift
+      - name: Update SDK Version in NeuroIDCore.swift
         run: ./Scripts/update-sdk-version.sh $PACKAGE_VERSION
 
         # Get tag of latest release to create comparison URL in PR description
