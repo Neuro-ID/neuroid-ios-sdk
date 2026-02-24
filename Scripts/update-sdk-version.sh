@@ -13,7 +13,7 @@ if [ $# -lt 1 ]; then
 fi
 
 VERSION="$1"
-NID_FILE="./Source/NeuroID/NeuroIDClass/NeuroID.swift"
+NID_FILE="./Source/NeuroID/NeuroIDClass/NeuroIDCore.swift"
 
 # Update the static version constant in NeuroID.swift
 if [ -f "$NID_FILE" ]; then
