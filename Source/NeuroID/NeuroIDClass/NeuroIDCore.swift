@@ -102,6 +102,7 @@ public class NeuroIDCore: NSObject {
     public static var registeredTargets = [String]()
 
     var isRN: Bool = false
+    var hostReactNativeVersion: String = ""
     var rnOptions: [RNConfigOptions: Any] = [:]
 
     var lowMemory: Bool = false
@@ -310,6 +311,8 @@ public class NeuroIDCore: NSObject {
                     Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
                     Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
                     Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
+                    Attrs(n: "hostRNVersion", v: appMetaData?.hostRnVersion ?? ""),
+                    Attrs(n: "minSDKVersion", v: appMetaData?.minSDKVersion ?? "")
                 ]
             )
         )
@@ -332,7 +335,9 @@ public class NeuroIDCore: NSObject {
                 versionName: versionName,
                 versionNumber: versionNumber,
                 packageName: bundleID.isEmpty ? packageName : bundleID,
-                applicationName: packageName
+                applicationName: packageName,
+                hostRnVersion: hostReactNativeVersion,
+                minSDKVersion: Bundle.main.object(forInfoDictionaryKey: "MinimumOSVersion") as? String ?? "Unknown"
             )
         }
         return nil

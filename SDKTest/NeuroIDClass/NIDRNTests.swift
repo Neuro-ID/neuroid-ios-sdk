@@ -16,7 +16,7 @@ class NIDRNTests: XCTestCase {
         neuroID.isRN = false
     }
 
-    func assertConfigureTests(defaultValue: Bool, expectedValue: Bool) {
+    func assertConfigureTests (defaultValue: Bool, expectedValue: Bool) {
         assert(NeuroIDCore.shared.isRN)
         let storedValue = NeuroIDCore.shared.rnOptions[.usingReactNavigation] as? Bool ?? defaultValue
         assert(storedValue == expectedValue)
@@ -26,9 +26,10 @@ class NIDRNTests: XCTestCase {
     // setIsRN
     func test_isRN() {
         assert(!neuroID.isRN)
-        neuroID.setIsRN()
+        neuroID.setIsRN(hostRnVersion: "0.75.0")
 
         assert(neuroID.isRN)
+        assert(neuroID.hostReactNativeVersion == "0.75.0")
     }
 
     // configure
