@@ -102,6 +102,7 @@ public class NeuroIDCore: NSObject {
     public static var registeredTargets = [String]()
 
     var isRN: Bool = false
+    var hostReactNativeVersion: String = ""
     var rnOptions: [RNConfigOptions: Any] = [:]
 
     var lowMemory: Bool = false
@@ -310,31 +311,29 @@ public class NeuroIDCore: NSObject {
                     Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
                     Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
                     Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
+                    Attrs(n: "hostRNVersion", v: appMetaData?.hostRnVersion ?? ""),
+                    Attrs(n: "minSDKVersion", v: appMetaData?.minSDKVersion ?? "")
                 ]
             )
         )
     }
 
     func getAppMetaData() -> ApplicationMetaData? {
-        let bundleID: String
-        if let bundleIdentifier = Bundle.main.bundleIdentifier {
-            bundleID = bundleIdentifier
-        } else {
-            bundleID = ""
-        }
+        guard let infoDictionary = Bundle.main.infoDictionary else { return nil }
 
-        if let infoDictionary = Bundle.main.infoDictionary {
-            let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
-            let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
-            let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
+        let bundleID = infoDictionary["CFBundleIdentifier"] as? String ?? ""
+        let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
+        let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
+        let minSDKVersion = infoDictionary["MinimumOSVersion"] as? String ?? "Unknown"
 
-            return ApplicationMetaData(
-                versionName: versionName,
-                versionNumber: versionNumber,
-                packageName: bundleID.isEmpty ? packageName : bundleID,
-                applicationName: packageName
-            )
-        }
-        return nil
+        return ApplicationMetaData(
+            versionName: versionName,
+            versionNumber: versionNumber,
+            packageName: bundleID.isEmpty ? packageName : bundleID,
+            applicationName: packageName,
+            hostRnVersion: hostReactNativeVersion,
+            minSDKVersion: minSDKVersion
+        )
     }
 }

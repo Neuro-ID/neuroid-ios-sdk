@@ -12,4 +12,6 @@ struct ApplicationMetaData {
     let versionNumber: String
     let packageName: String
     let applicationName: String
+    let hostRnVersion: String
+    let minSDKVersion: String
 }

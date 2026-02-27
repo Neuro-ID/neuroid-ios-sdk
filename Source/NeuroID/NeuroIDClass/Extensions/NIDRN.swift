@@ -8,8 +8,9 @@
 import Foundation
 
 extension NeuroIDCore {
-    func setIsRN() {
+    func setIsRN(hostRnVersion: String) {
         isRN = true
+        hostReactNativeVersion = hostRnVersion
     }
 
     func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
@@ -27,6 +28,11 @@ extension NeuroIDCore {
             rnOptions: rnOptions,
             configOptionKey: .useAdvancedDeviceProxy
         )
+        
+        let rnVersion: String = self.getOptionValueString(
+            rnOptions: rnOptions,
+            configOptionKey: .hostReactNativeVersion
+        )
 
         let configuration = NeuroID.Configuration(
             clientKey: clientKey,
@@ -40,9 +46,9 @@ extension NeuroIDCore {
         if !configured {
             return false
         }
-
-        self.setIsRN()
-
+       
+        self.setIsRN(hostRnVersion: rnVersion)
+     
         // Extract RN Options and put them in NeuroID Class Dict to be referenced
         let usingReactNavigation = self.getOptionValueBool(
             rnOptions: rnOptions,
@@ -66,7 +72,7 @@ extension NeuroIDCore {
 
     func getOptionValueString(
         rnOptions: [String: Any], configOptionKey: RNConfigOptions
-    ) -> String? {
+    ) -> String {
         guard let configValue = rnOptions[configOptionKey.rawValue] as? String else {
             return ""
         }
@@ -79,4 +85,6 @@ public enum RNConfigOptions: String, Hashable {
     case isAdvancedDevice
     case advancedDeviceKey
     case useAdvancedDeviceProxy
+    case hostReactNativeVersion
+    case minSdkVersion
 }
