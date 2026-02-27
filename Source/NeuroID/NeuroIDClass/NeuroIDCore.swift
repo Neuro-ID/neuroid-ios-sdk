@@ -319,27 +319,21 @@ public class NeuroIDCore: NSObject {
     }
 
     func getAppMetaData() -> ApplicationMetaData? {
-        let bundleID: String
-        if let bundleIdentifier = Bundle.main.bundleIdentifier {
-            bundleID = bundleIdentifier
-        } else {
-            bundleID = ""
-        }
+        guard let infoDictionary = Bundle.main.infoDictionary else { return nil }
 
-        if let infoDictionary = Bundle.main.infoDictionary {
-            let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
-            let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
-            let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
+        let bundleID = infoDictionary["CFBundleIdentifier"] as? String ?? ""
+        let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
+        let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
+        let minSDKVersion = infoDictionary["MinimumOSVersion"] as? String ?? "Unknown"
 
-            return ApplicationMetaData(
-                versionName: versionName,
-                versionNumber: versionNumber,
-                packageName: bundleID.isEmpty ? packageName : bundleID,
-                applicationName: packageName,
-                hostRnVersion: hostReactNativeVersion,
-                minSDKVersion: Bundle.main.object(forInfoDictionaryKey: "MinimumOSVersion") as? String ?? "Unknown"
-            )
-        }
-        return nil
+        return ApplicationMetaData(
+            versionName: versionName,
+            versionNumber: versionNumber,
+            packageName: bundleID.isEmpty ? packageName : bundleID,
+            applicationName: packageName,
+            hostRnVersion: hostReactNativeVersion,
+            minSDKVersion: minSDKVersion
+        )
     }
 }
