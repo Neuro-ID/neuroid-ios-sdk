@@ -16,7 +16,7 @@ extension NeuroID {
             clientKey: String,
             isAdvancedDevice: Bool = false,
             advancedDeviceKey: String? = nil,
-            useAdvancedDeviceProxy: Bool = false
+            useAdvancedDeviceProxy: Bool = true
         ) {
             self.clientKey = clientKey
             self.isAdvancedDevice = isAdvancedDevice

@@ -42,10 +42,10 @@ class ConfigurationTests: XCTestCase {
     }
 
     // Test default value when not specified
-    func testConfigureProxyDefaultsToFalse() {
+    func testConfigureProxyDefaults() {
         let _ = neuroID.configure(config)
         
-        XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Proxy flag should default to false when not specified")
+        XCTAssertTrue(neuroID.useAdvancedDeviceProxy, "Proxy flag should default to true when not specified")
     }
     
     
