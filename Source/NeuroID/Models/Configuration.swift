@@ -7,10 +7,10 @@
 
 extension NeuroID {
     public struct Configuration {
-        var clientKey: String
-        var isAdvancedDevice: Bool
-        var advancedDeviceKey: String?
-        var useAdvancedDeviceProxy: Bool
+        public var clientKey: String
+        public var isAdvancedDevice: Bool
+        public var advancedDeviceKey: String?
+        public var useAdvancedDeviceProxy: Bool
 
         public init(
             clientKey: String,
