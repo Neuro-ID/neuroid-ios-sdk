@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class NeuroIDCore: NSObject {
+class NeuroIDCore: NSObject {
     static let nidVersion = "3.6.0"
     static let shared: NeuroIDCore = NeuroIDCore()
 

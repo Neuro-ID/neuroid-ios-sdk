@@ -12,7 +12,7 @@ protocol DataStoreServiceProtocol {
     func checkLastEventType(type: String) -> Bool
 }
 
-public class DataStore: DataStoreServiceProtocol {
+class DataStore: DataStoreServiceProtocol {
 
     var _events = [NIDEvent]()
     private let lock = NSLock()

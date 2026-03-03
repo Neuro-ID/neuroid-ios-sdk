@@ -283,7 +283,7 @@ class NetworkStatus {
 
 // No longer maintaining these list of models on the client side, sending the model identifier instead
 
-public enum Model: String {
+enum Model: String {
     case simulator,
 
          iPod1 = "iPod 1",
@@ -365,7 +365,7 @@ public enum Model: String {
          unrecognized = "?unrecognized?"
 }
 
-public extension UIDevice {
+extension UIDevice {
     var type: Model {
         var systemInfo = utsname()
         uname(&systemInfo)

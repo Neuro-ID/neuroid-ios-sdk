@@ -60,7 +60,7 @@ public extension UIViewController {
         }
     }
 
-    func captureEvent(event: NIDEvent) {
+    internal func captureEvent(event: NIDEvent) {
         if ignoreLists.contains(nidClassName) { return }
 
         // TODO: Implement UIAlertController
