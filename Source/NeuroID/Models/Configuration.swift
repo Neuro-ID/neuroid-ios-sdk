@@ -14,14 +14,14 @@ extension NeuroID {
 
         public init(
             clientKey: String,
-            isAdvancedDevice: Bool = false,
+            isAdvancedDevice: Bool? = nil,
             advancedDeviceKey: String? = nil,
-            useAdvancedDeviceProxy: Bool = true
+            useAdvancedDeviceProxy: Bool? = nil
         ) {
             self.clientKey = clientKey
-            self.isAdvancedDevice = isAdvancedDevice
+            self.isAdvancedDevice = isAdvancedDevice ?? false
             self.advancedDeviceKey = advancedDeviceKey
-            self.useAdvancedDeviceProxy = useAdvancedDeviceProxy
+            self.useAdvancedDeviceProxy = useAdvancedDeviceProxy ?? true
         }
     }
 }
