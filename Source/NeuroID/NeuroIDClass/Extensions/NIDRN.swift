@@ -8,31 +8,16 @@
 import Foundation
 
 extension NeuroIDCore {
+
     func setIsRN(hostRnVersion: String) {
         isRN = true
         hostReactNativeVersion = hostRnVersion
     }
 
     func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
-        let isAdvancedDevice = self.getOptionValueBool(
-            rnOptions: rnOptions,
-            configOptionKey: .isAdvancedDevice
-        )
-        
-        let advancedDeviceKey = self.getOptionValueString(
-            rnOptions: rnOptions,
-            configOptionKey: .advancedDeviceKey
-        )
-        
-        let useAdvancedDeviceProxy: Bool = self.getOptionValueBool(
-            rnOptions: rnOptions,
-            configOptionKey: .useAdvancedDeviceProxy
-        )
-        
-        let rnVersion: String = self.getOptionValueString(
-            rnOptions: rnOptions,
-            configOptionKey: .hostReactNativeVersion
-        )
+        let isAdvancedDevice: Bool? = rnOptions[RNConfigOptions.isAdvancedDevice.rawValue] as? Bool
+        let advancedDeviceKey: String? = rnOptions[RNConfigOptions.advancedDeviceKey.rawValue] as? String
+        let useAdvancedDeviceProxy: Bool? = rnOptions[RNConfigOptions.useAdvancedDeviceProxy.rawValue] as? Bool
 
         let configuration = NeuroID.Configuration(
             clientKey: clientKey,
@@ -40,51 +25,23 @@ extension NeuroIDCore {
             advancedDeviceKey: advancedDeviceKey,
             useAdvancedDeviceProxy: useAdvancedDeviceProxy
         )
-            
-        let configured = self.configure(configuration)
 
-        if !configured {
-            return false
-        }
-       
+        // Extract RN Version
+        let rnVersion: String = rnOptions[RNConfigOptions.hostReactNativeVersion.rawValue] as? String ?? ""
         self.setIsRN(hostRnVersion: rnVersion)
-     
-        // Extract RN Options and put them in NeuroID Class Dict to be referenced
-        let usingReactNavigation = self.getOptionValueBool(
-            rnOptions: rnOptions,
-            configOptionKey: .usingReactNavigation
-        )
 
+        // Extract RN Options and put them in NeuroID Class Dict to be referenced
+        let usingReactNavigation: Bool = rnOptions[RNConfigOptions.usingReactNavigation.rawValue] as? Bool ?? false
         self.rnOptions[.usingReactNavigation] = usingReactNavigation
 
-        return true
-    }
-
-    func getOptionValueBool(
-        rnOptions: [String: Any], configOptionKey: RNConfigOptions
-    ) -> Bool {
-        if let configValue = rnOptions[configOptionKey.rawValue] as? Bool {
-            return configValue
-        }
-
-        return false
-    }
-
-    func getOptionValueString(
-        rnOptions: [String: Any], configOptionKey: RNConfigOptions
-    ) -> String {
-        guard let configValue = rnOptions[configOptionKey.rawValue] as? String else {
-            return ""
-        }
-        return configValue as String
+        return self.configure(configuration)
     }
 }
 
-public enum RNConfigOptions: String, Hashable {
+enum RNConfigOptions: String {
     case usingReactNavigation
     case isAdvancedDevice
     case advancedDeviceKey
     case useAdvancedDeviceProxy
     case hostReactNativeVersion
-    case minSdkVersion
 }

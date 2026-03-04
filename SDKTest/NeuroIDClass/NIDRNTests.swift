@@ -5,8 +5,9 @@
 //  Created by Kevin Sites on 7/10/25.
 //
 
-@testable import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class NIDRNTests: XCTestCase {
     var neuroID = NeuroIDCore()
@@ -16,7 +17,7 @@ class NIDRNTests: XCTestCase {
         neuroID.isRN = false
     }
 
-    func assertConfigureTests (defaultValue: Bool, expectedValue: Bool) {
+    func assertConfigureTests(defaultValue: Bool, expectedValue: Bool) {
         assert(NeuroIDCore.shared.isRN)
         let storedValue = NeuroIDCore.shared.rnOptions[.usingReactNavigation] as? Bool ?? defaultValue
         assert(storedValue == expectedValue)
@@ -42,7 +43,7 @@ class NIDRNTests: XCTestCase {
 
         assert(configured)
         assert(!neuroID.isAdvancedDevice)
-        assert(neuroID.advancedDeviceKey == "")
+        assert(neuroID.advancedDeviceKey == nil)
         assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == false)
     }
 
@@ -57,7 +58,7 @@ class NIDRNTests: XCTestCase {
 
         assert(configured)
         assert(neuroID.isAdvancedDevice)
-        assert(neuroID.advancedDeviceKey == "")
+        assert(neuroID.advancedDeviceKey == nil)
         assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == false)
     }
 
@@ -111,7 +112,7 @@ class NIDRNTests: XCTestCase {
         assert(!configured)
         assert(!neuroID.isAdvancedDevice)
         assert(neuroID.advancedDeviceKey == nil)
-        assert(neuroID.rnOptions.count == 0)
+        assert(neuroID.rnOptions.count == 1)
     }
 
     // configure - client key, not advanced, not adv key, react nav
@@ -125,68 +126,7 @@ class NIDRNTests: XCTestCase {
 
         assert(configured)
         assert(!neuroID.isAdvancedDevice)
-        assert(neuroID.advancedDeviceKey == "")
+        assert(neuroID.advancedDeviceKey == nil)
         assert(neuroID.rnOptions[.usingReactNavigation] as! Bool == true)
-    }
-
-    // getOptionValueBool
-    func test_getOptionValueBool_true() {
-        let value = neuroID.getOptionValueBool(
-            rnOptions: [
-                RNConfigOptions.usingReactNavigation.rawValue: true,
-                RNConfigOptions.isAdvancedDevice.rawValue: false
-            ],
-            configOptionKey: .usingReactNavigation
-        )
-
-        assert(value)
-    }
-
-    func test_getOptionValueBool_false() {
-        let value = neuroID.getOptionValueBool(
-            rnOptions: [RNConfigOptions.usingReactNavigation.rawValue: false],
-            configOptionKey: .usingReactNavigation
-        )
-
-        assert(!value)
-    }
-
-    func test_getOptionValueBool_invalid() {
-        let value = neuroID.getOptionValueBool(
-            rnOptions: ["foo": "bar"],
-            configOptionKey: .usingReactNavigation
-        )
-
-        assert(!value)
-    }
-
-    // getOptionValueString
-    func test_getOptionValueString_nonNil() {
-        let value = neuroID.getOptionValueString(
-            rnOptions: [RNConfigOptions.advancedDeviceKey.rawValue: "testkey"],
-            configOptionKey: .advancedDeviceKey
-        )
-
-        assert(value == "testkey")
-    }
-
-    func test_getOptionValueString_nil() {
-        // does not contain advanced device key, therfore nil
-        let value = neuroID.getOptionValueString(
-            rnOptions: [:],
-            configOptionKey: .advancedDeviceKey
-        )
-
-        assert(value == "")
-    }
-
-    func test_getOptionValueString_invalid() {
-        // does not contain advanced device key, therfore nil
-        let value = neuroID.getOptionValueString(
-            rnOptions: [RNConfigOptions.advancedDeviceKey.rawValue: false],
-            configOptionKey: .advancedDeviceKey
-        )
-
-        assert(value == "")
     }
 }

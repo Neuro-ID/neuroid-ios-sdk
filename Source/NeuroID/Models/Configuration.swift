@@ -7,21 +7,21 @@
 
 extension NeuroID {
     public struct Configuration {
-        var clientKey: String
-        var isAdvancedDevice: Bool
-        var advancedDeviceKey: String?
-        var useAdvancedDeviceProxy: Bool
+        public var clientKey: String
+        public var isAdvancedDevice: Bool
+        public var advancedDeviceKey: String?
+        public var useAdvancedDeviceProxy: Bool
 
         public init(
             clientKey: String,
-            isAdvancedDevice: Bool = false,
+            isAdvancedDevice: Bool? = nil,
             advancedDeviceKey: String? = nil,
-            useAdvancedDeviceProxy: Bool = true
+            useAdvancedDeviceProxy: Bool? = nil
         ) {
             self.clientKey = clientKey
-            self.isAdvancedDevice = isAdvancedDevice
+            self.isAdvancedDevice = isAdvancedDevice ?? false
             self.advancedDeviceKey = advancedDeviceKey
-            self.useAdvancedDeviceProxy = useAdvancedDeviceProxy
+            self.useAdvancedDeviceProxy = useAdvancedDeviceProxy ?? true
         }
     }
 }
