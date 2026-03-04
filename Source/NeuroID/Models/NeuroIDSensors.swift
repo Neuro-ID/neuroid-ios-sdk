@@ -8,7 +8,7 @@ import CoreMotion
 import Foundation
 
 /// Sensor manager to get data current
-public final class NIDSensorManager: NSObject {
+final class NIDSensorManager: NSObject {
     /// Instance of the class
     public static let shared: NIDSensorManager = .init()
     /// Motion manger for all the sensor
@@ -90,7 +90,7 @@ public final class NIDSensorManager: NSObject {
 }
 
 /// Type of sensor available to map
-public enum NIDSensorType: String, CustomStringConvertible {
+enum NIDSensorType: String, CustomStringConvertible {
     case accelerometer = "Accelerometer"
     case gyro = "Gyroscope"
     public var description: String {
@@ -99,7 +99,7 @@ public enum NIDSensorType: String, CustomStringConvertible {
 }
 
 /// Struct for the data of the sensor
-public struct NIDSensorData: CustomStringConvertible, Codable {
+struct NIDSensorData: CustomStringConvertible, Codable {
     /// Data from axis X
     var axisX: Double
     ///  Data from axis Y

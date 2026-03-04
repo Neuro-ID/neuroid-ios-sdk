@@ -5,8 +5,9 @@
 //  Created by jose perez on 14/07/22.
 //
 
-import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class SensorsTest: XCTestCase {
     let instance: NIDSensorManager = .shared

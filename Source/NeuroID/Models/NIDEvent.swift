@@ -1,6 +1,6 @@
 import UIKit
 
-public enum NIDEventName: String {
+enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
     case closeSession = "CLOSE_SESSION"
     case attemptedLogin = "ATTEMPTED_LOGIN"
@@ -104,12 +104,12 @@ public enum NIDEventName: String {
     }
 }
 
-public struct Attrs: Codable, Equatable {
+struct Attrs: Codable, Equatable {
     var n: String?
     var v: String?
 }
 
-public struct Attr: Codable, Equatable {
+struct Attr: Codable, Equatable {
     var guid: String?
     var screenHierarchy: String?
     var n: String?
@@ -117,7 +117,7 @@ public struct Attr: Codable, Equatable {
     var hash: String?
 }
 
-public struct NIDTouches: Codable, Equatable {
+struct NIDTouches: Codable, Equatable {
     var x: CGFloat?
     var y: CGFloat?
     var tid: Int?
@@ -148,7 +148,7 @@ public struct NIDTouches: Codable, Equatable {
     }
 }
 
-public struct NeuroHTTPRequest: Codable {
+struct NeuroHTTPRequest: Codable {
     var clientId: String
     var environment: String
     var sdkVersion: String
@@ -198,7 +198,7 @@ public struct NeuroHTTPRequest: Codable {
     }
 }
 
-public enum TargetValue: Codable, Equatable {
+enum TargetValue: Codable, Equatable {
     case int(Int), string(String), bool(Bool), double(Double), attrs([Attrs]), attr([Attr])
 
     public func encode(to encoder: Encoder) throws {

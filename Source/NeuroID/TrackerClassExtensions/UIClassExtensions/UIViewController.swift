@@ -21,7 +21,7 @@ func uiViewSwizzling(
     }
 }
 
-public extension UIViewController {
+extension UIViewController {
     internal var ignoreLists: [String] {
         return [
             "UICompatibilityInputViewController",
