@@ -21,7 +21,7 @@ func uiViewSwizzling(
     }
 }
 
-public extension UIViewController {
+extension UIViewController {
     internal var ignoreLists: [String] {
         return [
             "UICompatibilityInputViewController",
@@ -60,7 +60,7 @@ public extension UIViewController {
         }
     }
 
-    internal func captureEvent(event: NIDEvent) {
+    func captureEvent(event: NIDEvent) {
         if ignoreLists.contains(nidClassName) { return }
 
         // TODO: Implement UIAlertController

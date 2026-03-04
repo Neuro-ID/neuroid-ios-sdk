@@ -8,7 +8,7 @@ import WebKit
 
 // MARK: - NeuroIDTracker
 
-public class NeuroIDTracker: NSObject {
+class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
     private var createSessionEvent: NIDEvent?

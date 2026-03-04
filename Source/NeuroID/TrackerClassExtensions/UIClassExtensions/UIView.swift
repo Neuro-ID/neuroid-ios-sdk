@@ -43,7 +43,7 @@ extension UIView {
     }
 }
 
-public extension UIView {
+extension UIView {
     var id: String {
         get {
             let title = "\(nidClassName)_UNKNOWN_NO_ID_SET"
