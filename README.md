@@ -1,6 +1,6 @@
-<div style="text-align: center;">
+<div align="center">
 
-![Neuro-ID Logo](/docs/images/lockup.png)
+<img src="/docs/images/lockup.png" alt="Neuro-ID Logo" />
 
 <div style="text-align: center;">
 
@@ -11,6 +11,7 @@
 <a href="https://cocoapods.org/pods/NeuroID">
     <img src="https://img.shields.io/cocoapods/v/NeuroID.svg" alt="CocoaPods" />
 </a>
+
 </div>
 
 </div>
