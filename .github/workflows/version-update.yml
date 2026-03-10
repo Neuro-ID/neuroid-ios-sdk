@@ -87,6 +87,7 @@ jobs:
           git add NeuroID.podspec
           git add SDKTest/Info.plist
           git add Source/NeuroID/Info.plist
+          git add Source/NeuroID/NeuroIDClass/NeuroIDCore.swift
           git commit -m "Update SDK to $PACKAGE_VERSION"
           git push --set-upstream origin ${{ env.BRANCH_NAME }}
           set -e
