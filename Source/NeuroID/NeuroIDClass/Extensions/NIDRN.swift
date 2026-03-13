@@ -11,7 +11,7 @@ extension NeuroIDCore {
 
     func setIsRN(hostRnVersion: String) {
         isRN = true
-        hostReactNativeVersion = hostRnVersion
+        rnVersion = hostRnVersion
     }
 
     func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
@@ -27,7 +27,7 @@ extension NeuroIDCore {
         )
 
         // Extract RN Version
-        let rnVersion: String = rnOptions[RNConfigOptions.hostReactNativeVersion.rawValue] as? String ?? ""
+        let rnVersion: String = rnOptions[RNConfigOptions.rnVersion.rawValue] as? String ?? ""
         self.setIsRN(hostRnVersion: rnVersion)
 
         // Extract RN Options and put them in NeuroID Class Dict to be referenced
@@ -43,5 +43,5 @@ enum RNConfigOptions: String {
     case isAdvancedDevice
     case advancedDeviceKey
     case useAdvancedDeviceProxy
-    case hostReactNativeVersion
+    case rnVersion
 }

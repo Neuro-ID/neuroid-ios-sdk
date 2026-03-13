@@ -220,7 +220,7 @@ extension NeuroIDCore {
         ]
         self.eventStorageService.saveEventToLocalDataStore(event)
 
-        self.captureApplicationMetaData()
+        self.captureApplicationMetadata()
     }
 
     func clearSessionVariables() {

@@ -102,7 +102,7 @@ class NeuroIDCore: NSObject {
     public static var registeredTargets = [String]()
 
     var isRN: Bool = false
-    var hostReactNativeVersion: String = ""
+    var rnVersion: String = ""
     var rnOptions: [RNConfigOptions: Any] = [:]
 
     var lowMemory: Bool = false
@@ -235,7 +235,7 @@ class NeuroIDCore: NSObject {
             self.captureAdvancedDevice(self.isAdvancedDevice)
         }
 
-        self.captureApplicationMetaData()
+        self.captureApplicationMetadata()
 
         self.saveEventToDataStore(
             NIDEvent.createInfoLogEvent("isAdvancedDevice setting: \(isAdvancedDevice)")
@@ -300,40 +300,40 @@ class NeuroIDCore: NSObject {
         return ParamsCreator.getSDKVersion()
     }
 
-    func captureApplicationMetaData() {
-        let appMetaData = self.getAppMetaData()
+    func captureApplicationMetadata() {
+        let appMetadata = self.getAppMetadata()
 
         self.eventStorageService.saveEventToDataStore(
             NIDEvent(
-                type: .applicationMetaData,
+                type: .applicationMetadata,
                 attrs: [
-                    Attrs(n: "versionName", v: appMetaData?.versionName ?? "N/A"),
-                    Attrs(n: "versionNumber", v: appMetaData?.versionNumber ?? "N/A"),
-                    Attrs(n: "packageName", v: appMetaData?.packageName ?? "N/A"),
-                    Attrs(n: "applicationName", v: appMetaData?.applicationName ?? "N/A"),
-                    Attrs(n: "hostRNVersion", v: appMetaData?.hostRnVersion ?? ""),
-                    Attrs(n: "minSDKVersion", v: appMetaData?.minSDKVersion ?? "")
+                    Attrs(n: "versionName", v: appMetadata?.versionName ?? "N/A"),
+                    Attrs(n: "versionNumber", v: appMetadata?.versionNumber ?? "N/A"),
+                    Attrs(n: "packageName", v: appMetadata?.packageName ?? "N/A"),
+                    Attrs(n: "applicationName", v: appMetadata?.applicationName ?? "N/A"),
+                    Attrs(n: "rnVersion", v: appMetadata?.rnVersion ?? ""),
+                    Attrs(n: "minOSVersion", v: appMetadata?.minOSVersion ?? "")
                 ]
             )
         )
     }
 
-    func getAppMetaData() -> ApplicationMetaData? {
+    func getAppMetadata() -> ApplicationMetadata? {
         guard let infoDictionary = Bundle.main.infoDictionary else { return nil }
 
         let bundleID = infoDictionary["CFBundleIdentifier"] as? String ?? ""
         let packageName = infoDictionary["CFBundleName"] as? String ?? "Unknown"
         let versionName = infoDictionary["CFBundleShortVersionString"] as? String ?? "Unknown"
         let versionNumber = infoDictionary["CFBundleVersion"] as? String ?? "Unknown"
-        let minSDKVersion = infoDictionary["MinimumOSVersion"] as? String ?? "Unknown"
+        let minOSVersion = infoDictionary["MinimumOSVersion"] as? String ?? "Unknown"
 
-        return ApplicationMetaData(
+        return ApplicationMetadata(
             versionName: versionName,
             versionNumber: versionNumber,
             packageName: bundleID.isEmpty ? packageName : bundleID,
             applicationName: packageName,
-            hostRnVersion: hostReactNativeVersion,
-            minSDKVersion: minSDKVersion
+            rnVersion: rnVersion,
+            minOSVersion: minOSVersion
         )
     }
 }
