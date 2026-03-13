@@ -306,6 +306,7 @@ class NeuroIDCore: NSObject {
         self.eventStorageService.saveEventToDataStore(
             NIDEvent(
                 type: .applicationMetadata,
+                p: ParamsCreator.getPlatform(),
                 attrs: [
                     Attrs(n: "versionName", v: appMetadata?.versionName ?? "N/A"),
                     Attrs(n: "versionNumber", v: appMetadata?.versionNumber ?? "N/A"),
