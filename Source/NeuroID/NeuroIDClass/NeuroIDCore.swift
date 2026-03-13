@@ -311,8 +311,8 @@ class NeuroIDCore: NSObject {
                     Attrs(n: "versionNumber", v: appMetadata?.versionNumber ?? "N/A"),
                     Attrs(n: "packageName", v: appMetadata?.packageName ?? "N/A"),
                     Attrs(n: "applicationName", v: appMetadata?.applicationName ?? "N/A"),
-                    Attrs(n: "rnVersion", v: appMetadata?.rnVersion ?? ""),
-                    Attrs(n: "minOSVersion", v: appMetadata?.minOSVersion ?? "")
+                    Attrs(n: "rnVersion", v: appMetadata?.rnVersion ?? "N/A"),
+                    Attrs(n: "minOSVersion", v: appMetadata?.minOSVersion ?? "N/A")
                 ]
             )
         )
