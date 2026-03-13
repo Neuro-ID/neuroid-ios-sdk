@@ -50,7 +50,7 @@ class NIDScreenTests: BaseTestClass {
         assert(mockEventStorageService.saveEventToDataStoreCount == 1)
         _ = assertStoredEventTypeAndCount(
             dataStoreEvents: mockEventStorageService.mockEventStore,
-            type: NIDEventName.applicationMetaData.rawValue,
+            type: NIDEventName.applicationMetadata.rawValue,
             count: 1
         )
     }
@@ -73,7 +73,7 @@ class NIDScreenTests: BaseTestClass {
         assert(mockEventStorageService.saveEventToDataStoreCount == 1)
         _ = assertStoredEventTypeAndCount(
             dataStoreEvents: mockEventStorageService.mockEventStore,
-            type: NIDEventName.applicationMetaData.rawValue,
+            type: NIDEventName.applicationMetadata.rawValue,
             count: 1
         )
     }

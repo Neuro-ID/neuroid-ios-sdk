@@ -30,7 +30,7 @@ class NIDRNTests: XCTestCase {
         neuroID.setIsRN(hostRnVersion: "0.75.0")
 
         assert(neuroID.isRN)
-        assert(neuroID.hostReactNativeVersion == "0.75.0")
+        assert(neuroID.rnVersion == "0.75.0")
     }
 
     // configure
