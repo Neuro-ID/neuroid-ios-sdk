@@ -15,7 +15,7 @@ s.homepage = "https://neuro-id.com/"
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
 s.source_files = "Source/NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
-s.dependency 'Alamofire'
+s.dependency 'Alamofire', '5.11.1'
 s.dependency 'FingerprintPro', '2.11.0'
 
 s.default_subspecs = 'Core'
