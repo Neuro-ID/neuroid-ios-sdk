@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/docs/images/lockup_white.png" />
-    <source media="(prefers-color-scheme: light)" srcset="/docs/images/lockup.png" />
+    <source media="(prefers-color-scheme: dark)" srcset="/resources/lockup_white.png" />
+    <source media="(prefers-color-scheme: light)" srcset="/resources/lockup.png" />
     <img src="/docs/images/lockup.png" alt="NeuroID" width="448px" />
 </picture>
 
