@@ -47,12 +47,6 @@ jobs:
           ruby-version: 3.4.7
           bundler-cache: true
 
-      - name: Pre-check PodSpec
-        run: pod spec lint --allow-warnings
-
-      - name: Pre-check Pod Libraries
-        run: pod lib lint --allow-warnings
-
       - name: Update Current Version
         run: bundle exec fastlane update_project_version
         env:
@@ -65,17 +59,12 @@ jobs:
           echo "BRANCH_NAME=releases/${PACKAGE_VERSION}_version_update" >> $GITHUB_ENV
 
       - name: Update SDK Version in NeuroIDCore.swift
-        run: ./Scripts/update-sdk-version.sh $PACKAGE_VERSION
+        run: ./Scripts/update-sdk-version.sh ${{ env.PACKAGE_VERSION }}
 
-        # Get tag of latest release to create comparison URL in PR description
-      - name: Get previous release tag
-        run: echo PREV_TAG="$(gh release view --json tagName -q .tagName)" >> $GITHUB_ENV
-
-      - name: Get current commit hash
-        run: echo HASH="$(git rev-parse HEAD)" >> $GITHUB_ENV
-
-      - name: Create comparison URL
-        run: echo URL="https://github.com/Neuro-ID/neuroid-ios-sdk/compare/${{ env.PREV_TAG }}...${{ env.HASH }}" >> $GITHUB_ENV
+      - name: Validate CocoaPods package
+        run: | 
+          pod spec lint --allow-warnings
+          pod lib lint --allow-warnings
 
       - name: Commit version changes
         run: |
@@ -87,29 +76,24 @@ jobs:
           git add SDKTest/Info.plist
           git add Source/NeuroID/Info.plist
           git add Source/NeuroID/NeuroIDClass/NeuroIDCore.swift
-          git commit -m "Update SDK to $PACKAGE_VERSION"
+          git commit -m "Update SDK to ${{ env.PACKAGE_VERSION }}"
           git push --set-upstream origin ${{ env.BRANCH_NAME }}
 
       - name: Open Pull Request
-        uses: actions/github-script@v5
-        with:
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const title = 'Release Version: ${{ env.PACKAGE_VERSION }}';
-            const body = 'This PR establishes the \`${{ env.PACKAGE_VERSION }}\` release line. Please review detailed release changes: ${{ env.URL }}';
-            const headBranch = '${{ env.BRANCH_NAME }}';
-            const baseBranch = 'main';
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: | 
+          PR_BODY="$(cat <<EOF
+          Update the SDK version to the \`${{ env.PACKAGE_VERSION }}\` release line.
 
-            const createPullRequest = async () => {
-              const response = await github.rest.pulls.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: title,
-                body: body,
-                head: headBranch,
-                base: baseBranch
-              });
-              console.log(`Pull request ${response.data.number} created`);
-            };
+          After merge: 
+          - use the RC cut workflow to create \`${{ env.PACKAGE_VERSION }}\-rc.1`
+          - use the release workflow to publish the tested commit as \`${{ env.PACKAGE_VERSION }}\`
+          EOF
+          )"
 
-            createPullRequest();
+          gh pr create
+            --base main \
+            --head ${{ env.BRANCH_NAME }}
+            --title "Release Version: ${{ env.PACKAGE_VERSION }}" \
+            --body "$PR_BODY" \
