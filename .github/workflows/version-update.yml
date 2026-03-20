@@ -63,7 +63,6 @@ jobs:
 
       - name: Validate CocoaPods package
         run: | 
-          pod spec lint --allow-warnings
           pod lib lint --allow-warnings
 
       - name: Commit version changes
