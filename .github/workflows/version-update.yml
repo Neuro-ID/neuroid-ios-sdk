@@ -82,15 +82,13 @@ jobs:
           git config --global user.email developer@neuro-id.com
           git config --global user.name neuroid-developer
           git checkout -b ${{ env.BRANCH_NAME }}
-          git status
-          set +e
           git add NeuroID.podspec
+          git add NeuroID.xcodeproj/project.pbxproj
           git add SDKTest/Info.plist
           git add Source/NeuroID/Info.plist
           git add Source/NeuroID/NeuroIDClass/NeuroIDCore.swift
           git commit -m "Update SDK to $PACKAGE_VERSION"
           git push --set-upstream origin ${{ env.BRANCH_NAME }}
-          set -e
 
       - name: Open Pull Request
         uses: actions/github-script@v5
@@ -98,7 +96,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const title = 'Release Version: ${{ env.PACKAGE_VERSION }}';
-            const body = 'Once merged, this PR will trigger an action to release version: ${{ env.PACKAGE_VERSION }}. Please review detailed release changes: ${{ env.URL }}';
+            const body = 'This PR establishes the \`${{ env.PACKAGE_VERSION }}\` release line. Please review detailed release changes: ${{ env.URL }}';
             const headBranch = '${{ env.BRANCH_NAME }}';
             const baseBranch = 'main';
 

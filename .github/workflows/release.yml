@@ -1,16 +1,7 @@
-# ******************************************************************
-# This workflow will trigger once the `version-update.yaml` workflow PR is complete
-# or a PR goes into main from a branch that has a prefix of `releases/`
-# ******************************************************************
-
 name: Release iOS SDK
 
 on:
-  pull_request_target:
-    types:
-      - closed
-    branches:
-      - main
+  workflow_dispatch:
 
 env: 
   SVC_NAME: "neuroid-ios-sdk"
@@ -19,7 +10,6 @@ env:
 jobs:
   releaseProjectVersion:
     runs-on: macos-15
-    if: github.event.pull_request.merged && startsWith(github.head_ref, 'releases/')
     name: Create Release from Tag
     permissions:
       contents: write
@@ -62,8 +52,7 @@ jobs:
       - name: Release to Cocoapods
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: |
-          pod trunk push NeuroID.podspec --allow-warnings
+        run: pod trunk push NeuroID.podspec --allow-warnings
 
       - name: Send Release Succeeded Result to NID Mobile Infra Repo
         if: success()
