@@ -87,13 +87,13 @@ jobs:
           Update the SDK version to the \`${{ env.PACKAGE_VERSION }}\` release line.
 
           After merge: 
-          - use the RC cut workflow to create \`${{ env.PACKAGE_VERSION }}\-rc.1`
+          - use the RC cut workflow to create \`${{ env.PACKAGE_VERSION }}-rc.1\`
           - use the release workflow to publish the tested commit as \`${{ env.PACKAGE_VERSION }}\`
           EOF
           )"
 
-          gh pr create
+          gh pr create \
             --base main \
-            --head ${{ env.BRANCH_NAME }}
+            --head ${{ env.BRANCH_NAME }} \
             --title "Release Version: ${{ env.PACKAGE_VERSION }}" \
-            --body "$PR_BODY" \
+            --body "$PR_BODY"

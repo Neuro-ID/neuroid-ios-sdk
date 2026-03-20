@@ -42,12 +42,10 @@ jobs:
         run: |
           git config --global user.email developer@neuro-id.com
           git config --global user.name neuroid-developer
-          set +e
           git push origin :latest
           git tag -d latest
           git tag latest
           git push origin latest
-          set -e
 
       - name: Release to Cocoapods
         env:
