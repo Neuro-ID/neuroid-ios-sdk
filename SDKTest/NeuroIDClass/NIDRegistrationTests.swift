@@ -30,64 +30,12 @@ class NIDRegistrationTests: BaseTestClass {
         NeuroIDCore.shared.excludedViewsTestIDs = []
         let expectedValue = "testScreenName"
 
-        NeuroID.excludeViewByTestID(excludedView: expectedValue)
+        NeuroID.excludeViewByTestID(expectedValue)
 
         let contains = NeuroIDCore.shared.excludedViewsTestIDs.contains(where: { $0 == expectedValue })
         assert(contains)
 
         assert(NeuroIDCore.shared.excludedViewsTestIDs.count == 1)
-    }
-
-    func test_manuallyRegisterTarget_valid_type() {
-        clearOutDataStore()
-        let uiView = UITextField()
-        uiView.id = "wow"
-
-        NeuroID.manuallyRegisterTarget(view: uiView)
-
-        assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
-
-        let allEvents = NeuroIDCore.shared.datastore.getAllEvents()
-        let validEvents = allEvents.filter { $0.type == "REGISTER_TARGET" }
-        assert(validEvents[0].tgs == "wow")
-        assert(validEvents[0].et == "UITextField::UITextField")
-    }
-
-    func test_manuallyRegisterTarget_invalid_type() {
-        clearOutDataStore()
-        let uiView = UIView()
-
-        NeuroID.manuallyRegisterTarget(view: uiView)
-
-        assertDataStoreCount(count: 0)
-    }
-
-    func test_manuallyRegisterRNTarget() {
-        clearOutDataStore()
-
-        let event = NeuroID.manuallyRegisterRNTarget(
-            id: "test",
-            className: "testClassName",
-            screenName: "testScreenName",
-            placeHolder: "testPlaceholder"
-        )
-
-        assert(event.tgs == "test")
-        assert(event.et == "testClassName")
-        assert(event.etn == "INPUT")
-
-        assertStoredEventTypeAndCount(type: "REGISTER_TARGET", count: 1)
-    }
-
-    func test_setCustomVariable() {
-        clearOutDataStore()
-        let event = NeuroID.setCustomVariable(key: "t", v: "v")
-
-        XCTAssertTrue(event.type == NIDEventName.setVariable.rawValue)
-        XCTAssertTrue(event.key == "t")
-        XCTAssertTrue(event.v == "v")
-
-        assertStoredEventTypeAndCount(type: "SET_VARIABLE", count: 1)
     }
 
     func test_setVariable() {

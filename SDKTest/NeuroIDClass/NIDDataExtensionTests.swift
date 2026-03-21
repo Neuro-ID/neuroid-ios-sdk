@@ -79,7 +79,7 @@ class NIDDataExtensionTests: BaseTestClass {
     }
 
     func test_cleanAndStoreEvent_excludedView_tg() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
+        NeuroID.excludeViewByTestID(excludeId)
 
         let nidE = nidEvent
         nidE.tg = [
@@ -91,7 +91,7 @@ class NIDDataExtensionTests: BaseTestClass {
     }
 
     func test_cleanAndStoreEvent_excludedView_tgs() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
+        NeuroID.excludeViewByTestID(excludeId)
 
         let nidE = nidEvent
 
@@ -102,7 +102,7 @@ class NIDDataExtensionTests: BaseTestClass {
     }
 
     func test_cleanAndStoreEvent_excludedView_en() {
-        NeuroID.excludeViewByTestID(excludedView: excludeId)
+        NeuroID.excludeViewByTestID(excludeId)
 
         let nidE = nidEvent
 

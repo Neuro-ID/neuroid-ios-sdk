@@ -60,8 +60,6 @@ class NIDEventTests: XCTestCase {
         }()
         viewController.view.addSubview(textfield)
         viewController.view.addSubview(button)
-        NeuroID.manuallyRegisterTarget(view: textfield)
-        NeuroID.manuallyRegisterTarget(view: button)
         /// Create touch event
         var tg = ParamsCreator.getTgParams(
             view: textfield,

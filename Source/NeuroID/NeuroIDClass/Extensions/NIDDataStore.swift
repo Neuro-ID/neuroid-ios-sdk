@@ -9,8 +9,6 @@ import Foundation
 
 extension NeuroIDCore {
     static let IMMEDIATE_SEND_EVENT_TYPES: Set<String> = [
-        NIDEventName.formSubmit.rawValue,
-        NIDEventName.pageSubmit.rawValue,
         NIDEventName.setLinkedSite.rawValue,
         NIDEventName.focus.rawValue,
         NIDEventName.setRegisteredUserId.rawValue,

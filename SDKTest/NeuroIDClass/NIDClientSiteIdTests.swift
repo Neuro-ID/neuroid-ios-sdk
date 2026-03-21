@@ -97,14 +97,6 @@ class NIDClientSiteIdTests: BaseTestClass {
         assert(result == neuroID.clientID)
     }
 
-    // setSiteId - DEPRECATED
-    func test_setSiteId() {
-        neuroID.siteID = ""
-        neuroID.setSiteId(siteId: "test_site")
-
-        assert(neuroID.siteID == "test_site")
-    }
-
     // getClientKeyFromLocalStorage
     func test_getClientKeyFromLocalStorage_existing() {
         let expectedValue = "testClientKey"
