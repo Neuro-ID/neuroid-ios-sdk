@@ -72,7 +72,20 @@ public enum NeuroID {
         return NeuroIDCore.shared.identify(sessionID)
     }
 
+    // Temporarily keeping this function for backwards compatibility
+    @available(*, deprecated, message: "setUserID is deprecated, please use `identify` instead.")
+    public static func setUserID(_ userID: String) -> Bool {
+        return NeuroIDCore.shared.identify(userID)
+    }
+
     public static func getSessionID() -> String {
+        return NeuroIDCore.shared.getSessionID()
+    }
+
+    //  Temporarily keeping this function for backwards compatibility, will be removed
+    // replaced with`getSessionID`
+    @available(*, deprecated, message: "getUserID is deprecated, please use `getSessionID` instead.")
+    public static func getUserID() -> String {
         return NeuroIDCore.shared.getSessionID()
     }
 
