@@ -2,7 +2,7 @@
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="/resources/lockup_white.png" />
         <source media="(prefers-color-scheme: light)" srcset="/resources/lockup.png" />
-        <img src="/resources/lockup.png" alt="NeuroID" width="448px" />
+        <img src="/resources/lockup.png" alt="NeuroID" width="320px" />
     </picture>
 </p>
 
