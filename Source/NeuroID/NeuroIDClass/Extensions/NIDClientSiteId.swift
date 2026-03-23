@@ -30,15 +30,6 @@ extension NeuroIDCore {
         return newClientID
     }
 
-    /**
-     Public user facing setSiteId function via Static Instance
-     */
-    @available(*, deprecated, message: "setSiteId is deprecated and no longer required")
-    func setSiteId(siteId: String) {
-        NIDLog.info("**** NOTE: THIS METHOD IS DEPRECATED")
-        self.siteID = siteId
-    }
-
     func getClientKeyFromLocalStorage() -> String {
         let key = getUserDefaultKeyString(Constants.storageClientKey.rawValue)
         return key ?? ""
