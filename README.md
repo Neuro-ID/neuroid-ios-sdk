@@ -1,24 +1,19 @@
-<div align="center">
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="/resources/lockup_white.png" />
+        <source media="(prefers-color-scheme: light)" srcset="/resources/lockup.png" />
+        <img src="/resources/lockup.png" alt="NeuroID" width="448px" />
+    </picture>
+</p>
 
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="/resources/lockup_white.png" />
-    <source media="(prefers-color-scheme: light)" srcset="/resources/lockup.png" />
-    <img src="/resources/lockup.png" alt="NeuroID" width="448px" />
-</picture>
-
-<div style="text-align: center;">
-
-<a href="https://sonarcloud.io/summary/new_code?id=Neuro-ID_neuroid-ios-sdk">
-    <img src="https://sonarcloud.io/api/project_badges/measure?project=Neuro-ID_neuroid-ios-sdk&metric=alert_status" alt="Quality Gate Status" />
-</a>
-
-<a href="https://cocoapods.org/pods/NeuroID">
-    <img src="https://img.shields.io/cocoapods/v/NeuroID.svg" alt="CocoaPods" />
-</a>
-
-</div>
-
-</div>
+<p align="center">
+    <a href="https://cocoapods.org/pods/NeuroID">
+        <img src="https://img.shields.io/cocoapods/v/NeuroID.svg" alt="CocoaPods" />
+    </a>
+    <a href="https://sonarcloud.io/summary/new_code?id=Neuro-ID_neuroid-ios-sdk">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=Neuro-ID_neuroid-ios-sdk&metric=alert_status" alt="Quality Gate Status" />
+    </a>
+</p>
 
 # NeuroID iOS Mobile SDK
 
