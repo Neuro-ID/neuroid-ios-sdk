@@ -5,17 +5,17 @@ set -euo pipefail
 if [ $# -lt 1 ]; then
     echo "usage: $0 <version>"
     echo ""
-    echo "Updates the version in NeuroID.swift"
+    echo "Updates the version in NeuroIDCore.swift"
     echo ""
     echo "Example:"
-    echo "  $0 v3.5.1"
+    echo "  $0 3.5.1"
     exit 1
 fi
 
 VERSION="$1"
 NID_FILE="./Source/NeuroID/NeuroIDClass/NeuroIDCore.swift"
 
-# Update the static version constant in NeuroID.swift
+# Update the static version constant in NeuroIDCore.swift
 if [ -f "$NID_FILE" ]; then
     # Check if the pattern exists before attempting replacement
     if ! grep -q 'static let nidVersion = ' "$NID_FILE"; then
