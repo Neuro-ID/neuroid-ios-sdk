@@ -38,15 +38,6 @@ jobs:
             --notes 'The NeuroID iOS SDK (${{ env.PACKAGE_VERSION }}) is now available.' \
             --generate-notes
 
-      - name: Update Release to also have "Latest" Tag
-        run: |
-          git config --global user.email developer@neuro-id.com
-          git config --global user.name neuroid-developer
-          git push origin :latest
-          git tag -d latest
-          git tag latest
-          git push origin latest
-
       - name: Release to Cocoapods
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}

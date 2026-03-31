@@ -12,7 +12,7 @@ s.version = "4.0.0"
 s.author = { "NeuroID" => "NeuroID" }
 s.homepage = "https://neuro-id.com/"
 
-s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "v#{s.version}"}
+s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
 s.source_files = "Source/NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
 s.dependency 'Alamofire', '5.11.1'
