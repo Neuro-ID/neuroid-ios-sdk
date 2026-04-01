@@ -2,11 +2,17 @@
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="/resources/lockup_white.png" />
         <source media="(prefers-color-scheme: light)" srcset="/resources/lockup.png" />
-        <img src="/resources/lockup.png" alt="NeuroID" width="320px" />
+        <img src="/resources/lockup.png" alt="NeuroID Lockup" width="320px" />
     </picture>
 </p>
 
 <p align="center">
+    <a href="https://swiftpackageindex.com/Neuro-ID/neuroid-ios-sdk">
+        <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FNeuro-ID%2Fneuroid-ios-sdk%2Fbadge%3Ftype%3Dplatforms" alt="Platform Compatibility" />
+    </a>
+    <a href="https://swiftpackageindex.com/Neuro-ID/neuroid-ios-sdk">
+        <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FNeuro-ID%2Fneuroid-ios-sdk%2Fbadge%3Ftype%3Dswift-versions" alt="Swift Version Compatibility" />
+    </a>
     <a href="https://cocoapods.org/pods/NeuroID">
         <img src="https://img.shields.io/cocoapods/v/NeuroID.svg" alt="CocoaPods" />
     </a>
