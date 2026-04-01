@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -45,14 +45,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		01BB77532F21334D00F80519 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		01BB77532F21334D00F80519 /* Exceptions for "Source" folder in "NeuroID" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				NeuroID/Info.plist,
 			);
 			target = 26BCF33B268DA3C40002C289 /* NeuroID */;
 		};
-		01BB77B22F21337800F80519 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		01BB77B22F21337800F80519 /* Exceptions for "SDKTest" folder in "SDKTest" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -62,8 +62,22 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		01BB77152F21334D00F80519 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (01BB77532F21334D00F80519 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
-		01BB77862F21337800F80519 /* SDKTest */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (01BB77B22F21337800F80519 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SDKTest; sourceTree = "<group>"; };
+		01BB77152F21334D00F80519 /* Source */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				01BB77532F21334D00F80519 /* Exceptions for "Source" folder in "NeuroID" target */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		01BB77862F21337800F80519 /* SDKTest */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				01BB77B22F21337800F80519 /* Exceptions for "SDKTest" folder in "SDKTest" target */,
+			);
+			path = SDKTest;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,7 +202,6 @@
 				};
 			};
 			buildConfigurationList = 26BCF336268DA3C40002C289 /* Build configuration list for PBXProject "NeuroID" */;
-			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -202,6 +215,7 @@
 				01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
