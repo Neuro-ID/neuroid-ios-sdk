@@ -32,6 +32,23 @@ extension NeuroIDTracker {
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
+        
+        // Screenshot Events
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(screenCapture),
+            name: UIApplication.userDidTakeScreenshotNotification,
+            object: nil
+        )
+
+        // Screen Recording Events
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(screenRecording),
+            name: UIScreen.capturedDidChangeNotification,
+            object: UIScreen.main
+        )
+                
     }
 
     @objc func appMovedToBackground() {
@@ -66,5 +83,13 @@ extension NeuroIDTracker {
         DispatchQueue.main.asyncAfter(deadline: .now() + lowMembackOffTime) {
             NeuroIDCore.shared.lowMemory = false
         }
+    }
+
+    @objc func screenCapture() {
+        captureEvent(event: NIDEvent(type: .screenCapture))
+    }
+
+    @objc func screenRecording() {
+        captureEvent(event: NIDEvent(type: .screenRecording))
     }
 }
