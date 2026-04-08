@@ -237,6 +237,22 @@ class NeuroIDTrackerTests: BaseTestClass {
         let events = NeuroIDCore.shared.datastore.getAllEvents().filter { $0.type == "REGISTER_TARGET" }
         assert(events.count == 1)
     }
+    
+    func test_screenCapture() {
+        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+        tracker.screenCapture()
+        
+        let events = assertEventTypeCount(type: NIDEventName.screenCapture.rawValue, expectedCount: 1)
+        XCTAssertEqual(events.first?.type, NIDEventName.screenCapture.rawValue)
+    }
+    
+    func test_screenRecording() {
+        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+        tracker.screenRecording()
+        
+        let events = assertEventTypeCount(type: NIDEventName.screenRecording.rawValue, expectedCount: 1)
+        XCTAssertEqual(events.first?.type, NIDEventName.screenRecording.rawValue)
+    }
 
 //    func test_subscribe() {
 //        NeuroID.observingInputs = false

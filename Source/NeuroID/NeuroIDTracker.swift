@@ -12,6 +12,7 @@ class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
+    var appEventObservers: [NSObjectProtocol] = []
     
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
@@ -22,6 +23,11 @@ class NeuroIDTracker: NSObject {
             subscribe(inScreen: controller)
         }
         nidClassName = controller?.nidClassName
+    }
+
+    deinit {
+        appEventObservers.forEach { NotificationCenter.default.removeObserver($0) }
+        appEventObservers.removeAll()
     }
 
     public func captureEvent(event: NIDEvent) {
