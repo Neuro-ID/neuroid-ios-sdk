@@ -34,19 +34,25 @@ extension NeuroIDTracker {
         )
         
         // Screenshot Events
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(screenCapture),
-            name: UIApplication.userDidTakeScreenshotNotification,
-            object: nil
+        appEventObservers.append(
+            NotificationCenter.default.addObserver(
+                forName: UIApplication.userDidTakeScreenshotNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.screenCapture()
+            }
         )
 
         // Screen Recording Events
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(screenRecording),
-            name: UIScreen.capturedDidChangeNotification,
-            object: UIScreen.main
+        appEventObservers.append(
+            NotificationCenter.default.addObserver(
+                forName: UIScreen.capturedDidChangeNotification,
+                object: UIScreen.main,
+                queue: .main
+            ) { [weak self] _ in
+                self?.screenRecording()
+            }
         )
                 
     }
@@ -85,11 +91,11 @@ extension NeuroIDTracker {
         }
     }
 
-    @objc func screenCapture() {
+    func screenCapture() {
         captureEvent(event: NIDEvent(type: .screenCapture))
     }
 
-    @objc func screenRecording() {
+    func screenRecording() {
         captureEvent(event: NIDEvent(type: .screenRecording))
     }
 }
