@@ -8,6 +8,7 @@
 @testable import NeuroID
 import XCTest
 
+@MainActor
 final class NIDPerformanceTests: XCTestCase {
     let mockedConfigService = MockConfigService()
     
