@@ -1,19 +1,20 @@
 import CommonCrypto
 import Foundation
 import ObjectiveC
-import os
 import SwiftUI
 import UIKit
 import WebKit
+import os
 
 // MARK: - NeuroIDTracker
 
+@MainActor
 class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
     var appEventObservers: [NSObjectProtocol] = []
-    
+
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
     public init(screen: String, controller: UIViewController?) {
@@ -25,11 +26,6 @@ class NeuroIDTracker: NSObject {
         nidClassName = controller?.nidClassName
     }
 
-    deinit {
-        appEventObservers.forEach { NotificationCenter.default.removeObserver($0) }
-        appEventObservers.removeAll()
-    }
-
     public func captureEvent(event: NIDEvent) {
         let screenName = screen ?? ParamsCreator.generateID()
         let newEvent = event
@@ -37,7 +33,7 @@ class NeuroIDTracker: NSObject {
         newEvent.url = NeuroID.getScreenName()
         NeuroIDCore.shared.saveEventToLocalDataStore(newEvent, screen: screenName)
     }
-    
+
     public static func registerSingleView(
         v: Any,
         screenName: String,
@@ -46,27 +42,27 @@ class NeuroIDTracker: NSObject {
         topDownHierarchyPath: String
     ) {
         let currView = v as? UIView
-        
+
         // constants
         let screenName = NeuroID.getScreenName() ?? screenName
         let bottomUpHierarchyPath = UtilFunctions.getFullViewlURLPath(currView: currView ?? UIView())
-        
+
         let baseAttrs = [
             Attrs(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
             Attrs(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: bottomUpHierarchyPath),
-            Attrs(n: "top-\(Constants.attrScreenHierarchyKey.rawValue)", v: topDownHierarchyPath),
+            Attrs(n: "top-\(Constants.attrScreenHierarchyKey.rawValue)", v: topDownHierarchyPath)
         ]
-        
+
         let tg = [
             "\(Constants.attrKey.rawValue)": TargetValue.attr(
                 [
                     Attr(n: "\(Constants.attrScreenHierarchyKey.rawValue)", v: bottomUpHierarchyPath),
                     Attr(n: "\(Constants.attrGuidKey.rawValue)", v: guid),
-                    Attr(n: "top-\(Constants.attrScreenHierarchyKey.rawValue)", v: topDownHierarchyPath),
+                    Attr(n: "top-\(Constants.attrScreenHierarchyKey.rawValue)", v: topDownHierarchyPath)
                 ]
-            ),
+            )
         ]
-        
+
         // variables per view type
         var value = ""
         var etn = "INPUT"
@@ -75,7 +71,7 @@ class NeuroIDTracker: NSObject {
         var type = ""
         var extraAttrs: [Attrs] = []
         var rawText = false
-        
+
         // indicate if a supported element was found
         var found = false
 
@@ -214,12 +210,12 @@ class NeuroIDTracker: NSObject {
         // Inputs
         // Checkbox/Radios inputs
     }
-    
+
     static func registerViewIfNotRegistered(view: UIView) -> Bool {
         if !NeuroIDCore.registeredTargets.contains(view.id) {
             NeuroIDCore.registeredTargets.append(view.id)
             let guid = ParamsCreator.generateID()
-            
+
             NeuroIDTracker.registerSingleView(
                 v: view,
                 screenName: NeuroID.getScreenName() ?? view.nidClassName,
@@ -243,6 +239,8 @@ extension NeuroIDTracker {
         if let views = controller?.viewIfLoaded?.subviews {
             observeViews(views)
         }
+
+        observeSceneCaptureEvents(inScreen: controller)
 
         // Only run observations on first run
         if !NeuroIDCore.shared.observingInputs {

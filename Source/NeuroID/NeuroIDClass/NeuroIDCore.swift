@@ -107,6 +107,9 @@ class NeuroIDCore: NSObject {
 
     var lowMemory: Bool = false
 
+    var sceneCaptureRegistrationsBySceneID: [String: AnyObject] = [:]
+    var sceneCaptureLastKnownStateBySceneID: [String: Bool] = [:]
+
     var packetNumber: Int32 = 0
 
     // Testing Purposes Only

@@ -86,6 +86,7 @@ enum UtilFunctions {
         return list
     }
 
+    @MainActor
     static func registerSubViewsTargets(controller: UIViewController) {
         // self
         NIDLog.debug("\(Constants.registrationTag.rawValue) Registering Top Level UIViewController \(controller.nidClassName)")
