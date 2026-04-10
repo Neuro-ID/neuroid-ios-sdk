@@ -227,6 +227,7 @@ extension NeuroIDCore {
         identifierService.clearIDs()
 
         linkedSiteID = nil
+        clearSceneCaptureTracking()
     }
 
     func pauseCollection(flushEventQueue: Bool = false) {

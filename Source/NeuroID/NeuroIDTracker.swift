@@ -13,7 +13,6 @@ class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
     private var createSessionEvent: NIDEvent?
-    var appEventObservers: [NSObjectProtocol] = []
 
     /// Capture letter count of textfield/textview to detect a paste action
     var textCapturing = [String: String]()
@@ -230,6 +229,7 @@ class NeuroIDTracker: NSObject {
 }
 
 extension NeuroIDTracker {
+    @MainActor
     func subscribe(inScreen controller: UIViewController?) {
         // Early exit if we are stopped
         if NeuroID.isStopped() {
@@ -240,7 +240,8 @@ extension NeuroIDTracker {
             observeViews(views)
         }
 
-        observeSceneCaptureEvents(inScreen: controller)
+        NeuroIDCore.shared.listenerManager?.observeSceneCaptureEvents(inScreen: controller)
+        NeuroIDCore.shared.listenerManager?.startAppEventListeners()
 
         // Only run observations on first run
         if !NeuroIDCore.shared.observingInputs {
@@ -251,6 +252,7 @@ extension NeuroIDTracker {
         }
     }
 
+    @MainActor
     func observeViews(_ views: [UIView]) {
         for v in views {
             if let sender = v as? UIControl {

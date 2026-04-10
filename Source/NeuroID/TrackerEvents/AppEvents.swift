@@ -32,30 +32,8 @@ extension NeuroIDTracker {
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
-
-        // Screenshot Events
-        appEventObservers.append(
-            NotificationCenter.default.addObserver(
-                forName: UIApplication.userDidTakeScreenshotNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                self?.captureEvent(event: NIDEvent(type: .screenCapture))
-            }
-        )
-
-        // Screen Recording Events for <iOS 17.0
-        if #unavailable(iOS 17.0) {
-            appEventObservers.append(
-                NotificationCenter.default.addObserver(
-                    forName: UIScreen.capturedDidChangeNotification,
-                    object: UIScreen.main,
-                    queue: .main
-                ) { [weak self] _ in
-                    self?.screenRecording(isCaptured: UIScreen.main.isCaptured)
-                }
-            )
-        }
+        
+        NeuroIDCore.shared.listenerManager?.startAppEventListeners()
     }
 
     @objc func appMovedToBackground() {
@@ -90,48 +68,5 @@ extension NeuroIDTracker {
         DispatchQueue.main.asyncAfter(deadline: .now() + lowMembackOffTime) {
             NeuroIDCore.shared.lowMemory = false
         }
-    }
-
-    func screenCapture() {
-        captureEvent(event: NIDEvent(type: .screenCapture))
-    }
-
-    func screenRecording(isCaptured: Bool) {
-        captureEvent(event: NIDEvent(type: isCaptured ? .screenRecordingStarted : .screenRecordingStopped))
-    }
-
-    func observeSceneCaptureEvents(inScreen controller: UIViewController?) {
-        guard #available(iOS 17.0, *), let scene = controller?.viewIfLoaded?.window?.windowScene else { return }
-
-        let sceneID = scene.session.persistentIdentifier
-        if NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil {
-            let initialActive = scene.traitCollection.sceneCaptureState == .active
-            NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = initialActive
-
-            let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
-                [weak self] (windowScene: UIWindowScene, previousTraitCollection: UITraitCollection) in
-                self?.captureSceneCaptureStateChange(
-                    sceneID: windowScene.session.persistentIdentifier,
-                    isActive: windowScene.traitCollection.sceneCaptureState == .active
-                )
-            }
-            NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
-
-            if initialActive {
-                screenRecording(isCaptured: true)
-            }
-        } else {
-            captureSceneCaptureStateChange(
-                sceneID: sceneID,
-                isActive: scene.traitCollection.sceneCaptureState == .active
-            )
-        }
-    }
-
-    @available(iOS 17.0, *)
-    func captureSceneCaptureStateChange(sceneID: String, isActive: Bool) {
-        guard NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] != isActive else { return }
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = isActive
-        screenRecording(isCaptured: isActive)
     }
 }

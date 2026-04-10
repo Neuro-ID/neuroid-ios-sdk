@@ -33,6 +33,7 @@ class NeuroIDCore: NSObject {
 
     var callObserver: CallStatusObserverServiceProtocol?
     var locationManager: LocationManagerServiceProtocol?
+    var listenerManager: ListenerManagerService?
 
     // flag to ensure that we only have one FPJS call in flight
     var isFPJSRunning = false
@@ -109,6 +110,7 @@ class NeuroIDCore: NSObject {
 
     var sceneCaptureRegistrationsBySceneID: [String: AnyObject] = [:]
     var sceneCaptureLastKnownStateBySceneID: [String: Bool] = [:]
+    var screenCaptureLastKnownState: Bool?
 
     var packetNumber: Int32 = 0
 
@@ -128,7 +130,8 @@ class NeuroIDCore: NSObject {
         deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
         payloadSendingService: PayloadSendingServiceProtocol? = nil,
         callObserver: CallStatusObserverServiceProtocol? = nil,
-        locationManager: LocationManagerServiceProtocol? = nil
+        locationManager: LocationManagerServiceProtocol? = nil,
+        listenerManager: ListenerManagerService? = nil
     ) {
         self.datastore = datastore ?? DataStore()
         self.eventStorageService = eventStorageService ?? EventStorageService()
@@ -156,6 +159,7 @@ class NeuroIDCore: NSObject {
             )
         self.callObserver = callObserver
         self.locationManager = locationManager
+        self.listenerManager = listenerManager ?? ListenerManagerService()
 
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
@@ -281,6 +285,12 @@ class NeuroIDCore: NSObject {
 
     func isStopped() -> Bool {
         return self._isSDKStarted != true
+    }
+    
+    func clearSceneCaptureTracking() {
+        self.sceneCaptureLastKnownStateBySceneID.removeAll()
+        self.sceneCaptureRegistrationsBySceneID.removeAll()
+        self.screenCaptureLastKnownState = nil
     }
 
     func swizzle() {
