@@ -53,6 +53,7 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
                 }
             )
 
+            // Initial check to see if the screen is observed
             updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
         }
         
@@ -68,7 +69,13 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
                     self.sceneDidDisconnect(sceneID: scene.session.persistentIdentifier)
                 }
             )
-            performInitialSceneCaptureCheck()
+
+            // Initial capture check across all connected scenes
+            for scene in UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }) {
+                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[scene.session.persistentIdentifier] =
+                    scene.traitCollection.sceneCaptureState == .active
+            }
+            refreshSceneAggregateRecordingState()
         }
     }
 
@@ -91,10 +98,9 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
 
             let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
                 [weak self] (windowScene: UIWindowScene, previousTraitCollection: UITraitCollection) in
-                self?.updateSceneCaptureState(
-                    sceneID: windowScene.session.persistentIdentifier,
-                    isActive: windowScene.traitCollection.sceneCaptureState == .active
-                )
+                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[windowScene.session.persistentIdentifier] =
+                    windowScene.traitCollection.sceneCaptureState == .active
+                self?.refreshSceneAggregateRecordingState()
             }
             NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
         }
@@ -115,12 +121,6 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
     }
 
     @available(iOS 17.0, *)
-    private func updateSceneCaptureState(sceneID: String, isActive: Bool) {
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = isActive
-        refreshSceneAggregateRecordingState()
-    }
-
-    @available(iOS 17.0, *)
     func sceneDidDisconnect(sceneID: String) {
         NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeValue(forKey: sceneID)
         NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeValue(forKey: sceneID)
@@ -132,20 +132,7 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         let isActive = NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.values.contains(true)
         updateScreenRecordingStateIfChanged(isActive: isActive)
     }
-    
-    @available(iOS 17.0, *)
-    @MainActor
-    func performInitialSceneCaptureCheck() {
-        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-        for scene in scenes {
-            let sceneID = scene.session.persistentIdentifier
-            NeuroIDCore.shared
-                .sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
-        }
-        refreshSceneAggregateRecordingState()
-    }
 
-    
     private static func captureEvent(event: NIDEventName) {
         let event = NIDEvent(type: event, url: NeuroID.getScreenName())
         NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: NeuroID.getScreenName() ?? ParamsCreator.generateID())
