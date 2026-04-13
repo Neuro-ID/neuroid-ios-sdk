@@ -34,6 +34,7 @@ jobs:
             xcode: '26.4'   # Swift 6.3
             ios-simulator: 'iPhone 17 Pro'
             ios-version: 'latest'
+            sonar_check: true
 
           # Legacy
           - macos: 26
