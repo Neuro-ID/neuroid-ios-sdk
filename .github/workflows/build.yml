@@ -33,19 +33,23 @@ jobs:
           - macos: 26
             xcode: '26.4'   # Swift 6.3
             ios-simulator: 'iPhone 17 Pro'
+            ios-version: 'latest'
 
           # Legacy
           - macos: 26
             xcode: '26.2'   # Swift 6.2
             ios-simulator: 'iPhone 17 Pro'
+            ios-version: 'latest'
 
           - macos: 15
             xcode: '16.4'   # Swift 6.1
             ios-simulator: 'iPhone 16 Pro'
+            ios-version: '18.0'
 
           - macos: 14
             xcode: '16.2'   # Swift 6.0
             ios-simulator: 'iPhone 16 Pro'
+            ios-version: '17.0'
 
     steps:
       - uses: actions/checkout@v6
@@ -70,7 +74,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }}" \
+            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }},OS=${{ matrix.ios-version }}" \
             -configuration Debug \
             -resultBundlePath TestResults.xcresult | \
           xcbeautify --renderer github-actions
@@ -79,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v5
         if: always() # Still upload results even if the build or tests fail
         with:
-          name: xcode-test-results-macos-${{ matrix.macos }}-xcode-${{ matrix.xcode }}
+          name: xcode-test-results-macos-${{ matrix.macos }}-xcode-${{ matrix.xcode }}.xcresult
           path: TestResults.xcresult
           if-no-files-found: ignore
 
@@ -102,11 +106,10 @@ jobs:
         with:
           pattern: xcode-test-results-*
           path: test-results
+          merge-multiple: false
 
       - name: Merge coverage reports
-        run: |
-          mapfile -t xcresults < <(find test-results -maxdepth 2 -name "*.xcresult" -type d)
-          xcrun xccov merge "${xcresults[@]}" --outReport MergedResults.xcresult
+        run: xcrun xccov merge $(find test-results -maxdepth 2 -name "*.xcresult" -type d) --outReport MergedResults.xcresult
 
       - name: Convert Coverage for Sonar
         run: ./Scripts/xccov-to-sonarqube-generic.sh MergedResults.xcresult > Coverage.xml
