@@ -86,6 +86,15 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         appEventObservers.removeAll()
     }
 
+    private static func captureEvent(event: NIDEventName) {
+        let event = NIDEvent(type: event, url: NeuroID.getScreenName())
+        NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: NeuroID.getScreenName() ?? ParamsCreator.generateID())
+    }
+}
+
+// Screen Recording Logic
+extension ListenerManagerService {
+
     // Start observing events at the view controller
     @MainActor
     func observeSceneCaptureEvents(inScreen controller: UIViewController?) {
@@ -96,17 +105,17 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         if NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil {
             NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
 
-            let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
-                [weak self] (windowScene: UIWindowScene, previousTraitCollection: UITraitCollection) in
+            let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) { (windowScene: UIWindowScene, previousTraitCollection: UITraitCollection) in
                 NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[windowScene.session.persistentIdentifier] =
                     windowScene.traitCollection.sceneCaptureState == .active
-                self?.refreshSceneAggregateRecordingState()
+                self.refreshSceneAggregateRecordingState()
             }
             NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
         }
     }
 
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
+        //If there was no known state, set a baseline
         if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
             NeuroIDCore.shared.screenCaptureLastKnownState = isActive
             if isActive {
@@ -131,10 +140,5 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
     func refreshSceneAggregateRecordingState() {
         let isActive = NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.values.contains(true)
         updateScreenRecordingStateIfChanged(isActive: isActive)
-    }
-
-    private static func captureEvent(event: NIDEventName) {
-        let event = NIDEvent(type: event, url: NeuroID.getScreenName())
-        NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: NeuroID.getScreenName() ?? ParamsCreator.generateID())
     }
 }
