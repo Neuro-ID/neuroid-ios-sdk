@@ -33,7 +33,7 @@ class NeuroIDCore: NSObject {
 
     var callObserver: CallStatusObserverServiceProtocol?
     var locationManager: LocationManagerServiceProtocol?
-    var listenerManager: ListenerManagerService?
+    var listenerManager: ListenerManagerService
 
     // flag to ensure that we only have one FPJS call in flight
     var isFPJSRunning = false
@@ -159,7 +159,7 @@ class NeuroIDCore: NSObject {
             )
         self.callObserver = callObserver
         self.locationManager = locationManager
-        self.listenerManager = listenerManager ?? ListenerManagerService()
+        self.listenerManager = listenerManager ?? ListenerManagerService(notificationCenter: .default)
 
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),

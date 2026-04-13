@@ -240,8 +240,8 @@ extension NeuroIDTracker {
             observeViews(views)
         }
 
-        NeuroIDCore.shared.listenerManager?.observeSceneCaptureEvents(inScreen: controller)
-        NeuroIDCore.shared.listenerManager?.startAppEventListeners()
+        NeuroIDCore.shared.listenerManager.observeSceneCaptureEvents(inScreen: controller)
+        NeuroIDCore.shared.listenerManager.startAppEventListeners()
 
         // Only run observations on first run
         if !NeuroIDCore.shared.observingInputs {

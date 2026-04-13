@@ -16,45 +16,56 @@ protocol ListenerManagerServiceProtocol {
 }
 
 final class ListenerManagerService: ListenerManagerServiceProtocol {
-    private var appEventObservers: [NSObjectProtocol] = []
-
+    
+    let notificationCenter: NotificationCenter
+    private var appEventObservers: [NSObjectProtocol]
+    
+    init(notificationCenter: NotificationCenter) {
+        self.notificationCenter = notificationCenter
+        self.appEventObservers = []
+    }
+    
+    // Attach listeners to notification center events
     @MainActor
     func startAppEventListeners() {
         guard appEventObservers.isEmpty else { return }
 
-        // Screenshot Observer
+        // Screen Capture (screenshot) Observer
         appEventObservers.append(
-            NotificationCenter.default.addObserver(
+            notificationCenter.addObserver(
                 forName: UIApplication.userDidTakeScreenshotNotification,
                 object: nil,
                 queue: .main
-            ) { [weak self] _ in
-                self?.captureEvent(event: .screenCapture)
+            ) { message in
+                ListenerManagerService.captureEvent(event: .screenCapture)
             }
         )
 
         // Screen Recording Events for <iOS 17.0
         if #unavailable(iOS 17.0) {
             appEventObservers.append(
-                NotificationCenter.default.addObserver(
+                notificationCenter.addObserver(
                     forName: UIScreen.capturedDidChangeNotification,
                     object: UIScreen.main,
                     queue: .main
-                ) { [weak self] _ in
-                    self?.updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
+                ) { message in
+                    self.updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
                 }
             )
 
             updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
-        } else {
+        }
+        
+        // Handles scene disconnects for iOS 17.0+
+        if #available(iOS 17.0, *) {
             appEventObservers.append(
-                NotificationCenter.default.addObserver(
+                notificationCenter.addObserver(
                     forName: UIScene.didDisconnectNotification,
                     object: nil,
                     queue: .main
-                ) { [weak self] notification in
+                ) { notification in
                     guard let scene = notification.object as? UIScene else { return }
-                    self?.sceneDidDisconnect(sceneID: scene.session.persistentIdentifier)
+                    self.sceneDidDisconnect(sceneID: scene.session.persistentIdentifier)
                 }
             )
             performInitialSceneCaptureCheck()
@@ -64,10 +75,11 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
     @MainActor
     func stopAppEventListeners() {
         guard !appEventObservers.isEmpty else { return }
-        appEventObservers.forEach { NotificationCenter.default.removeObserver($0) }
+        appEventObservers.forEach { notificationCenter.removeObserver($0) }
         appEventObservers.removeAll()
     }
 
+    // Start observing events at the view controller
     @MainActor
     func observeSceneCaptureEvents(inScreen controller: UIViewController?) {
         guard #available(iOS 17.0, *), let scene = controller?.viewIfLoaded?.window?.windowScene else { return }
@@ -92,14 +104,14 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
             NeuroIDCore.shared.screenCaptureLastKnownState = isActive
             if isActive {
-                captureEvent(event: .screenRecordingStarted)
+                ListenerManagerService.captureEvent(event: .screenRecordingStarted)
             }
             return
         }
 
         guard NeuroIDCore.shared.screenCaptureLastKnownState != isActive else { return }
         NeuroIDCore.shared.screenCaptureLastKnownState = isActive
-        captureEvent(event: isActive ? .screenRecordingStarted : .screenRecordingStopped)
+        ListenerManagerService.captureEvent(event: isActive ? .screenRecordingStarted : .screenRecordingStopped)
     }
 
     @available(iOS 17.0, *)
@@ -122,6 +134,7 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
     }
     
     @available(iOS 17.0, *)
+    @MainActor
     func performInitialSceneCaptureCheck() {
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         for scene in scenes {
@@ -132,7 +145,8 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         refreshSceneAggregateRecordingState()
     }
 
-    private func captureEvent(event: NIDEventName) {
+    
+    private static func captureEvent(event: NIDEventName) {
         let event = NIDEvent(type: event, url: NeuroID.getScreenName())
         NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: NeuroID.getScreenName() ?? ParamsCreator.generateID())
     }

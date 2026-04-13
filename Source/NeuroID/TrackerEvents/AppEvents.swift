@@ -33,7 +33,7 @@ extension NeuroIDTracker {
             object: nil
         )
         
-        NeuroIDCore.shared.listenerManager?.startAppEventListeners()
+        NeuroIDCore.shared.listenerManager.startAppEventListeners()
     }
 
     @objc func appMovedToBackground() {
