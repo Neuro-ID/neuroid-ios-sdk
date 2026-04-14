@@ -25,8 +25,7 @@ enum ParamsCreator {
     }
 
     static func getTimeStamp() -> Int64 {
-        let now = Int64(Date().timeIntervalSince1970 * 1000)
-        return now
+        return Int64(Date().timeIntervalSince1970 * 1000)
     }
 
     static func getTGParamsForInput(
@@ -140,13 +139,7 @@ enum ParamsCreator {
     }
 
     static func getDnt() -> Bool {
-        let dnt = getUserDefaultKeyString(Constants.storageDntKey.rawValue)
-        // If there is ANYTHING set in nid_dnt, we return true (meaning don't track)
-        if dnt != nil {
-            return true
-        } else {
-            return false
-        }
+        return getUserDefaultKeyString(Constants.storageDntKey.rawValue) != nil
     }
 
     // Obviously, being a phone we always support touch
@@ -168,8 +161,7 @@ enum ParamsCreator {
 
     // Minutes from GMT
     static func getTimezone() -> Int {
-        let timezone = TimeZone.current.secondsFromGMT() / 60
-        return timezone
+        return TimeZone.current.secondsFromGMT() / 60
     }
 
     static func getLanguage() -> String {

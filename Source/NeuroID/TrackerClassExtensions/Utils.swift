@@ -57,7 +57,8 @@ enum UtilFunctions {
     static func registerRecursiveUIViewController(controller: UIViewController, parentTag: String) -> [(UIViewController, String)] {
         var list: [(UIViewController, String)] = []
 
-        let shouldIgnore = controller.ignoreLists.contains(controller.nidClassName)
+        // TODO: why is the ignore list is not being honored here
+        let _ = controller.ignoreLists.contains(controller.nidClassName)
 
         if controller.children.isEmpty {
             list.append(
@@ -86,6 +87,7 @@ enum UtilFunctions {
         return list
     }
 
+    @MainActor
     static func registerSubViewsTargets(controller: UIViewController) {
         // self
         NIDLog.debug("\(Constants.registrationTag.rawValue) Registering Top Level UIViewController \(controller.nidClassName)")
