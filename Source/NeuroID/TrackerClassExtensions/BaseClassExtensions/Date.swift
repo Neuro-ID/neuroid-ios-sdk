@@ -11,8 +11,6 @@ extension Date {
     func toString() -> String {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd hh:mm:ss"
-        let dpValue = df.string(from: self)
-
-        return dpValue
+        return df.string(from: self)
     }
 }
