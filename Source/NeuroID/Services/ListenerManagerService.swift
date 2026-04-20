@@ -6,142 +6,204 @@
 import Foundation
 import UIKit
 
+@MainActor
 protocol ListenerManagerServiceProtocol {
-    @MainActor
     func startAppEventListeners()
-    @MainActor
     func stopAppEventListeners()
-    @MainActor
-    func observeSceneCaptureEvents(inScreen controller: UIViewController?)
 }
 
+@MainActor
 final class ListenerManagerService: ListenerManagerServiceProtocol {
-    
+
     let notificationCenter: NotificationCenter
-    private var appEventObservers: [NSObjectProtocol]
-    
-    init(notificationCenter: NotificationCenter) {
+    private var appEventObservers: [NSObjectProtocol] = []
+
+    nonisolated init(notificationCenter: NotificationCenter) {
         self.notificationCenter = notificationCenter
-        self.appEventObservers = []
     }
-    
-    // Attach listeners to notification center events
-    @MainActor
+
     func startAppEventListeners() {
         guard appEventObservers.isEmpty else { return }
 
-        // Screen Capture (screenshot) Observer
+        startScreenshotObserver()
+        startSceneLifecycleObservers()
+
+        if #available(iOS 17.0, *) {
+            registerExistingScenes()
+            refreshSceneAggregateRecordingState()
+        } else {
+            startLegacyScreenRecordingObserver()
+            updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
+        }
+    }
+
+    func stopAppEventListeners() {
+        guard !appEventObservers.isEmpty else { return }
+
+        appEventObservers.forEach { notificationCenter.removeObserver($0) }
+        appEventObservers.removeAll()
+
+        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
+        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeAll()
+        NeuroIDCore.shared.screenCaptureLastKnownState = nil
+    }
+}
+
+// MARK: - Observer Registration
+extension ListenerManagerService {
+    func startScreenshotObserver() {
         appEventObservers.append(
             notificationCenter.addObserver(
                 forName: UIApplication.userDidTakeScreenshotNotification,
                 object: nil,
                 queue: .main
-            ) { message in
-                ListenerManagerService.captureEvent(event: NIDEvent(type: .screenCapture))
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.handleScreenshotNotification()
+                }
+            }
+        )
+    }
+
+    func startSceneLifecycleObservers() {
+        appEventObservers.append(
+            notificationCenter.addObserver(
+                forName: UIScene.didActivateNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                guard let scene = notification.object as? UIWindowScene else { return }
+                Task { @MainActor [weak self] in
+                    self?.handleSceneDidActivate(scene)
+                }
             }
         )
 
-        // Screen Recording Events for <iOS 17.0
-        if #unavailable(iOS 17.0) {
-            appEventObservers.append(
-                notificationCenter.addObserver(
-                    forName: UIScreen.capturedDidChangeNotification,
-                    object: UIScreen.main,
-                    queue: .main
-                ) { message in
-                    self.updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
+        appEventObservers.append(
+            notificationCenter.addObserver(
+                forName: UIScene.didDisconnectNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                guard let scene = notification.object as? UIScene else { return }
+                Task { @MainActor [weak self] in
+                    self?.handleSceneDidDisconnect(sceneID: scene.session.persistentIdentifier)
                 }
-            )
-
-            // Initial check to see if the screen is observed
-            updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
-        }
-        
-        // Handles scene disconnects for iOS 17.0+
-        if #available(iOS 17.0, *) {
-            appEventObservers.append(
-                notificationCenter.addObserver(
-                    forName: UIScene.didDisconnectNotification,
-                    object: nil,
-                    queue: .main
-                ) { notification in
-                    guard let scene = notification.object as? UIScene else { return }
-                    self.sceneDidDisconnect(sceneID: scene.session.persistentIdentifier)
-                }
-            )
-
-            // Initial capture check across all connected scenes
-            for scene in UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }) {
-                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[scene.session.persistentIdentifier] =
-                    scene.traitCollection.sceneCaptureState == .active
             }
-            refreshSceneAggregateRecordingState()
-        }
+        )
     }
 
-    @MainActor
-    func stopAppEventListeners() {
-        guard !appEventObservers.isEmpty else { return }
-        appEventObservers.forEach { notificationCenter.removeObserver($0) }
-        appEventObservers.removeAll()
-    }
-
-    private static func captureEvent(event: NIDEvent) {
-        event.url = NeuroID.getScreenName()
-        NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: NeuroID.getScreenName() ?? ParamsCreator.generateID())
+    func startLegacyScreenRecordingObserver() {
+        appEventObservers.append(
+            notificationCenter.addObserver(
+                forName: UIScreen.capturedDidChangeNotification,
+                object: UIScreen.main,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.handleLegacyScreenCaptureChange(isCaptured: UIScreen.main.isCaptured)
+                }
+            }
+        )
     }
 }
 
-// Screen Recording Logic
+// MARK: - Notification Handlers
 extension ListenerManagerService {
+    func handleScreenshotNotification() {
+        captureEvent(event: NIDEvent(type: .screenCapture))
+    }
 
-    // Start observing events at the view controller
-    @MainActor
-    func observeSceneCaptureEvents(inScreen controller: UIViewController?) {
-        guard #available(iOS 17.0, *), let scene = controller?.viewIfLoaded?.window?.windowScene else { return }
+    func handleLegacyScreenCaptureChange(isCaptured: Bool) {
+        updateScreenRecordingStateIfChanged(isActive: isCaptured)
+    }
 
-        let sceneID = scene.session.persistentIdentifier
-        
-        if NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil {
-            NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
+    func handleSceneDidActivate(_ scene: UIWindowScene) {
+        registerSceneIfNeeded(scene)
+    }
 
-            let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) { (windowScene: UIWindowScene, previousTraitCollection: UITraitCollection) in
-                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[windowScene.session.persistentIdentifier] = windowScene.traitCollection.sceneCaptureState == .active
-                self.refreshSceneAggregateRecordingState()
-            }
-            NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
+    func handleSceneDidDisconnect(sceneID: String) {
+        sceneDidDisconnect(sceneID: sceneID)
+    }
+}
+
+// MARK: - Scene Tracking
+extension ListenerManagerService {
+    @available(iOS 17.0, *)
+    func registerExistingScenes() {
+        for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
+            registerSceneIfNeeded(scene)
         }
     }
 
+    func registerSceneIfNeeded(_ scene: UIWindowScene) {
+        guard #available(iOS 17.0, *) else { return }
+
+        let sceneID = scene.session.persistentIdentifier
+        guard NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil else { return }
+
+        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
+        
+        let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
+            [weak self] (windowScene: UIWindowScene, _: UITraitCollection) in
+            let changedSceneID = windowScene.session.persistentIdentifier
+            let isActive = windowScene.traitCollection.sceneCaptureState == .active
+            Task { @MainActor [weak self] in
+                self?.handleSceneCaptureTraitChange(sceneID: changedSceneID, isActive: isActive)
+            }
+        }
+
+        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
+        refreshSceneAggregateRecordingState()
+    }
+
+    @available(iOS 17.0, *)
+    func handleSceneCaptureTraitChange(sceneID: String, isActive: Bool) {
+        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = isActive
+        refreshSceneAggregateRecordingState()
+    }
+
+    func sceneDidDisconnect(sceneID: String) {
+        if #available(iOS 17.0, *) {
+            NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeValue(forKey: sceneID)
+            NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeValue(forKey: sceneID)
+            refreshSceneAggregateRecordingState()
+        }
+    }
+}
+
+// MARK: - Screen Recording State
+extension ListenerManagerService {
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
-        //If there was no known state, set a baseline
         let event = NIDEvent(type: .screenRecording)
         if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
             NeuroIDCore.shared.screenCaptureLastKnownState = isActive
             if isActive {
                 event.attrs = [Attrs(n: "state", v: "active")]
-                ListenerManagerService.captureEvent(event: event)
+                captureEvent(event: event)
             }
             return
         }
-
         guard NeuroIDCore.shared.screenCaptureLastKnownState != isActive else { return }
         NeuroIDCore.shared.screenCaptureLastKnownState = isActive
-
         event.attrs = [Attrs(n: "state", v: isActive ? "active" : "inactive")]
-        ListenerManagerService.captureEvent(event: event)
-    }
-
-    @available(iOS 17.0, *)
-    func sceneDidDisconnect(sceneID: String) {
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeValue(forKey: sceneID)
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeValue(forKey: sceneID)
-        refreshSceneAggregateRecordingState()
+        captureEvent(event: event)
     }
 
     @available(iOS 17.0, *)
     func refreshSceneAggregateRecordingState() {
         let isActive = NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.values.contains(true)
         updateScreenRecordingStateIfChanged(isActive: isActive)
+    }
+}
+
+// MARK: - Event Capture
+extension ListenerManagerService {
+    fileprivate func captureEvent(event: NIDEvent) {
+        event.url = NeuroID.getScreenName()
+        NeuroIDCore.shared.saveEventToLocalDataStore(
+            event,
+            screen: NeuroID.getScreenName() ?? ParamsCreator.generateID()
+        )
     }
 }
