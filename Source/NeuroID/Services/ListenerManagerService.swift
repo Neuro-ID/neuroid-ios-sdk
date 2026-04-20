@@ -138,12 +138,9 @@ extension ListenerManagerService {
 
     func registerSceneIfNeeded(_ scene: UIWindowScene) {
         guard #available(iOS 17.0, *) else { return }
-
         let sceneID = scene.session.persistentIdentifier
         guard NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil else { return }
-
         NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
-        
         let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
             [weak self] (windowScene: UIWindowScene, _: UITraitCollection) in
             let changedSceneID = windowScene.session.persistentIdentifier
@@ -152,7 +149,6 @@ extension ListenerManagerService {
                 self?.handleSceneCaptureTraitChange(sceneID: changedSceneID, isActive: isActive)
             }
         }
-
         NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
         refreshSceneAggregateRecordingState()
     }

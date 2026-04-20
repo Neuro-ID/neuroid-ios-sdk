@@ -238,17 +238,20 @@ class NeuroIDTrackerTests: BaseTestClass {
         assert(events.count == 1)
     }
     
-    func test_clearSessionVariablesClearsScreenCaptureState() {
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID["scene"] = NSObject()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["scene"] = true
+    func test_screenCapture() {
+        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+        tracker.screenCapture()
         
-        NeuroIDCore.shared.screenCaptureLastKnownState = true
+        let events = assertEventTypeCount(type: NIDEventName.screenCapture.rawValue, expectedCount: 1)
+        XCTAssertEqual(events.first?.type, NIDEventName.screenCapture.rawValue)
+    }
+    
+    func test_screenRecording() {
+        let tracker = NeuroIDTracker(screen: screenNameValue, controller: nil)
+        tracker.screenRecording()
         
-        NeuroIDCore.shared.clearSessionVariables()
-        
-        XCTAssertTrue(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.isEmpty)
-        XCTAssertTrue(NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.isEmpty)
-        XCTAssertNil(NeuroIDCore.shared.screenCaptureLastKnownState)
+        let events = assertEventTypeCount(type: NIDEventName.screenRecording.rawValue, expectedCount: 1)
+        XCTAssertEqual(events.first?.type, NIDEventName.screenRecording.rawValue)
     }
 
 //    func test_subscribe() {
