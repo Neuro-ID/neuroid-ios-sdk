@@ -51,8 +51,7 @@ enum NIDEventName: String {
     case deviceMotion = "DEVICE_MOTION"
     case deviceOrientation = "DEVICE_ORIENTATION"
     case screenCapture = "SCREEN_CAPTURE"
-    case screenRecordingStarted = "SCREEN_RECORDING_STARTED"
-    case screenRecordingStopped = "SCREEN_RECORDING_STOPPED"
+    case screenRecording = "SCREEN_RECORDING"
 
     case customTouchStart = "CUSTOM_TOUCH_START"
     case customTouchEnd = "CUSTOM_TOUCH_END"

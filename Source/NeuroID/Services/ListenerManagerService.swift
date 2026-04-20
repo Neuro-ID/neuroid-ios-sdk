@@ -37,7 +37,7 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
                 object: nil,
                 queue: .main
             ) { message in
-                ListenerManagerService.captureEvent(event: .screenCapture)
+                ListenerManagerService.captureEvent(event: NIDEvent(type: .screenCapture))
             }
         )
 
@@ -86,8 +86,8 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         appEventObservers.removeAll()
     }
 
-    private static func captureEvent(event: NIDEventName) {
-        let event = NIDEvent(type: event, url: NeuroID.getScreenName())
+    private static func captureEvent(event: NIDEvent) {
+        event.url = NeuroID.getScreenName()
         NeuroIDCore.shared.saveEventToLocalDataStore(event, screen: NeuroID.getScreenName() ?? ParamsCreator.generateID())
     }
 }
@@ -106,8 +106,7 @@ extension ListenerManagerService {
             NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
 
             let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) { (windowScene: UIWindowScene, previousTraitCollection: UITraitCollection) in
-                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[windowScene.session.persistentIdentifier] =
-                    windowScene.traitCollection.sceneCaptureState == .active
+                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[windowScene.session.persistentIdentifier] = windowScene.traitCollection.sceneCaptureState == .active
                 self.refreshSceneAggregateRecordingState()
             }
             NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
@@ -116,17 +115,21 @@ extension ListenerManagerService {
 
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
         //If there was no known state, set a baseline
+        let event = NIDEvent(type: .screenRecording)
         if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
             NeuroIDCore.shared.screenCaptureLastKnownState = isActive
             if isActive {
-                ListenerManagerService.captureEvent(event: .screenRecordingStarted)
+                event.attrs = [Attrs(n: "state", v: "active")]
+                ListenerManagerService.captureEvent(event: event)
             }
             return
         }
 
         guard NeuroIDCore.shared.screenCaptureLastKnownState != isActive else { return }
         NeuroIDCore.shared.screenCaptureLastKnownState = isActive
-        ListenerManagerService.captureEvent(event: isActive ? .screenRecordingStarted : .screenRecordingStopped)
+
+        event.attrs = [Attrs(n: "state", v: isActive ? "active" : "inactive")]
+        ListenerManagerService.captureEvent(event: event)
     }
 
     @available(iOS 17.0, *)
