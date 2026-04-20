@@ -29,10 +29,13 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         startSceneLifecycleObservers()
 
         if #available(iOS 17.0, *) {
+            // UIScreen.capturedDidChangeNotification is deprecated in iOS 17+, replaced by per-scene trait callbacks
+            // connected scenes won't fire didActivate, so seed their state before computing the initial aggregate
             registerExistingScenes()
             refreshSceneAggregateRecordingState()
         } else {
             startLegacyScreenRecordingObserver()
+            // notification won't fire if recording was already active when the SDK starts
             updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
         }
     }
@@ -66,6 +69,7 @@ extension ListenerManagerService {
     }
 
     func startSceneLifecycleObservers() {
+        // also fires on foreground return, catching scenes not present at SDK start
         appEventObservers.append(
             notificationCenter.addObserver(
                 forName: UIScene.didActivateNotification,
@@ -79,6 +83,7 @@ extension ListenerManagerService {
             }
         )
 
+        // prevents stale scene entries from holding aggregate state as "active"
         appEventObservers.append(
             notificationCenter.addObserver(
                 forName: UIScene.didDisconnectNotification,
@@ -141,6 +146,7 @@ extension ListenerManagerService {
         let sceneID = scene.session.persistentIdentifier
         guard NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil else { return }
         NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
+        // iOS 17+ replacement for the deprecated traitCollectionDidChange override
         let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
             [weak self] (windowScene: UIWindowScene, _: UITraitCollection) in
             let changedSceneID = windowScene.session.persistentIdentifier
@@ -173,6 +179,7 @@ extension ListenerManagerService {
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
         let event = NIDEvent(type: .screenRecording)
         if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
+            // first observation — only emit if already active to avoid a spurious "inactive" on cold start
             NeuroIDCore.shared.screenCaptureLastKnownState = isActive
             if isActive {
                 event.attrs = [Attrs(n: "state", v: "active")]
@@ -180,6 +187,7 @@ extension ListenerManagerService {
             }
             return
         }
+        // dedupe — multiple scenes can converge on the same state
         guard NeuroIDCore.shared.screenCaptureLastKnownState != isActive else { return }
         NeuroIDCore.shared.screenCaptureLastKnownState = isActive
         event.attrs = [Attrs(n: "state", v: isActive ? "active" : "inactive")]
@@ -188,6 +196,7 @@ extension ListenerManagerService {
 
     @available(iOS 17.0, *)
     func refreshSceneAggregateRecordingState() {
+        // any one scene capturing = device is recording
         let isActive = NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.values.contains(true)
         updateScreenRecordingStateIfChanged(isActive: isActive)
     }
