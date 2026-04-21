@@ -43,7 +43,9 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
     func stopAppEventListeners() {
         guard !appEventObservers.isEmpty else { return }
 
-        appEventObservers.forEach { notificationCenter.removeObserver($0) }
+        for observer in appEventObservers {
+            notificationCenter.removeObserver(observer)
+        }
         appEventObservers.removeAll()
 
         NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
