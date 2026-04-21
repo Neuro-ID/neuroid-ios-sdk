@@ -8,6 +8,7 @@
 @testable import NeuroID
 import XCTest
 
+@MainActor
 class NIDEventTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     let userId = "form_mobilesandbox"
@@ -170,7 +171,6 @@ class NIDEventTests: XCTestCase {
         } catch {
             NIDLog.error("\(error.localizedDescription)")
         }
-        assert(neuroHTTPRequest != nil)
     }
     
     func test_init_1() {

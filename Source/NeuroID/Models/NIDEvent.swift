@@ -437,7 +437,7 @@ public class NIDEvent: Codable {
         self.isconnected = isconnected
         self.sealedClientResults = sealedClientResults
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case type
         case tg
