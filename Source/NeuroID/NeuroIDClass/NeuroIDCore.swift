@@ -286,12 +286,6 @@ class NeuroIDCore: NSObject {
     func isStopped() -> Bool {
         return self._isSDKStarted != true
     }
-    
-    func clearSceneCaptureTracking() {
-        self.sceneCaptureLastKnownStateBySceneID.removeAll()
-        self.sceneCaptureRegistrationsBySceneID.removeAll()
-        self.screenCaptureLastKnownState = nil
-    }
 
     func swizzle() {
         if self.didSwizzle {

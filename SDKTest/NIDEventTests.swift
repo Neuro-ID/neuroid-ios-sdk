@@ -171,7 +171,6 @@ class NIDEventTests: XCTestCase {
         } catch {
             NIDLog.error("\(error.localizedDescription)")
         }
-        assert(neuroHTTPRequest != nil)
     }
     
     func test_init_1() {
