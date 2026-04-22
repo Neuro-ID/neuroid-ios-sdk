@@ -17,6 +17,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # format:
+  #   name: Check Formatting and Linting
+  #   runs-on: macos-26
+  #   steps:
+  #     - uses: actions/checkout@v6
+
+  #     - run: brew install swiftlint
+
+  #     - name: Run Format Check
+  #       run: swift-format lint . --recursive --configuration .swift-format
+
   build:
     name: Build and Test (Xcode ${{ matrix.xcode }})
     runs-on: macos-${{ matrix.macos }}
