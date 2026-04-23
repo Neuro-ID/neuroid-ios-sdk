@@ -141,7 +141,7 @@ enum UtilFunctions {
     ) {
         NeuroIDCore.registeredTargets.append(id)
 
-        let nidEvent = NIDEvent(
+        var nidEvent = NIDEvent(
             type: .registerTarget,
             tg: tg,
             tgs: id,
@@ -253,7 +253,7 @@ enum UtilFunctions {
             type: inputType,
             attrParams: attrParams
         )
-        let event =
+        var event =
             NIDEvent(
                 type: eventType,
                 tg: eventTg,

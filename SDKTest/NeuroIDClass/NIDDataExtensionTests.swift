@@ -71,7 +71,7 @@ class NIDDataExtensionTests: BaseTestClass {
     }
 
     func test_cleanAndStoreEvent_RNScreen() {
-        let nidE = nidEvent
+        var nidE = nidEvent
         nidE.url = "RNScreensNavigationController"
 
         NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
@@ -81,7 +81,7 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_cleanAndStoreEvent_excludedView_tg() {
         NeuroID.excludeViewByTestID(excludeId)
 
-        let nidE = nidEvent
+        var nidE = nidEvent
         nidE.tg = [
             "tgs": TargetValue.string(excludeId)
         ]
@@ -93,7 +93,7 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_cleanAndStoreEvent_excludedView_tgs() {
         NeuroID.excludeViewByTestID(excludeId)
 
-        let nidE = nidEvent
+        var nidE = nidEvent
 
         nidE.tgs = excludeId
 
@@ -104,7 +104,7 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_cleanAndStoreEvent_excludedView_en() {
         NeuroID.excludeViewByTestID(excludeId)
 
-        let nidE = nidEvent
+        var nidE = nidEvent
 
         nidE.en = excludeId
 

@@ -86,13 +86,12 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         let altScreenName = dataStoreEvents.first?.url ?? "unnamed_screen"
 
         let cleanEvents = dataStoreEvents.map { nidevent -> NIDEvent in
+            var event = nidevent
             // Only send url on register target and create session events
-            if nidevent.type != NIDEventName.registerTarget.rawValue,
-                nidevent.type != NIDEventName.createSession.rawValue
-            {
-                nidevent.url = nil
+            if event.type != NIDEventName.registerTarget.rawValue, event.type != NIDEventName.createSession.rawValue {
+                event.url = nil
             }
-            return nidevent
+            return event
         }
 
         onPacketIncrement()

@@ -1,4 +1,9 @@
-import UIKit
+//
+//  NIDEvent.swift
+//  NeuroID
+//
+
+import Foundation
 
 enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
@@ -271,7 +276,7 @@ enum TargetValue: Codable, Equatable {
     }
 }
 
-public class NIDEvent: Codable {
+public struct NIDEvent: Codable {
     public let type: String
     var tg: [String: TargetValue]? = nil
     var tgs: String?
@@ -536,7 +541,7 @@ public class NIDEvent: Codable {
         return valuesAsDict
     }
 
-    func setRTS(_ addRts: Bool? = false) {
+    mutating func setRTS(_ addRts: Bool? = false) {
         if addRts ?? false {
             self.rts = "targetInteractionEvent"
         }
