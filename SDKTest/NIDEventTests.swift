@@ -79,7 +79,7 @@ class NIDEventTests: XCTestCase {
                 currView: textfield
             )))
         /// Create Focus event
-        let focusBlurEvent = NIDEvent(type: .focus, tg: [
+        var focusBlurEvent = NIDEvent(type: .focus, tg: [
             "\(Constants.tgsKey.rawValue)": TargetValue.string(textfield.id),
         ])
         focusBlurEvent.tgs = TargetValue.string(textfield.id).toString()
@@ -91,7 +91,7 @@ class NIDEventTests: XCTestCase {
         let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textfield.text?.count ?? 0)"
         let hashValue = textfield.text?.hashValue()
         let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
-        let inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
+        var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
         inputEvent.v = lengthValue
         inputEvent.hv = hashValue
         inputEvent.tgs = TargetValue.string(textfield.id).toString()
@@ -103,7 +103,7 @@ class NIDEventTests: XCTestCase {
         let pd = 0.0
         let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
         
-        let textChangeEvent = NIDEvent(type: .textChange)
+        var textChangeEvent = NIDEvent(type: .textChange)
         textChangeEvent.v = lengthValue
         textChangeEvent.tg = textChangeTG
         textChangeEvent.sm = sm
@@ -188,7 +188,7 @@ class NIDEventTests: XCTestCase {
     func test_asDictionary() {
         let expectedV = "value"
         
-        let nidEvent = NIDEvent(type: .blur)
+        var nidEvent = NIDEvent(type: .blur)
         nidEvent.v = expectedV
         
         let dict = nidEvent.asDictionary
@@ -199,7 +199,7 @@ class NIDEventTests: XCTestCase {
     func test_toDictionary() {
         let expectedV = "value"
         
-        let nidEvent = NIDEvent(type: .blur)
+        var nidEvent = NIDEvent(type: .blur)
         nidEvent.v = expectedV
         
         let dict = nidEvent.toDict()
@@ -208,14 +208,14 @@ class NIDEventTests: XCTestCase {
     }
     
     func test_setRTS_false() {
-        let nidEvent = NIDEvent(type: .blur)
+        var nidEvent = NIDEvent(type: .blur)
         nidEvent.setRTS()
         
         setRtsTests(nidEvent: nidEvent, rts: nil)
     }
     
     func test_setRTS_false_existing() {
-        let nidEvent = NIDEvent(type: .blur)
+        var nidEvent = NIDEvent(type: .blur)
         nidEvent.rts = "test"
         nidEvent.setRTS()
         
@@ -223,7 +223,7 @@ class NIDEventTests: XCTestCase {
     }
     
     func test_setRTS_true() {
-        let nidEvent = NIDEvent(type: .blur)
+        var nidEvent = NIDEvent(type: .blur)
         nidEvent.setRTS(true)
         
         setRtsTests(nidEvent: nidEvent, rts: "targetInteractionEvent")

@@ -179,7 +179,7 @@ extension ListenerManagerService {
 // MARK: - Screen Recording State
 extension ListenerManagerService {
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
-        let event = NIDEvent(type: .screenRecording)
+        var event = NIDEvent(type: .screenRecording)
         if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
             // first observation — only emit if already active to avoid a spurious "inactive" on cold start
             NeuroIDCore.shared.screenCaptureLastKnownState = isActive
@@ -207,6 +207,7 @@ extension ListenerManagerService {
 // MARK: - Event Capture
 extension ListenerManagerService {
     fileprivate func captureEvent(event: NIDEvent) {
+        var event = event
         event.url = NeuroID.getScreenName()
         NeuroIDCore.shared.saveEventToLocalDataStore(
             event,

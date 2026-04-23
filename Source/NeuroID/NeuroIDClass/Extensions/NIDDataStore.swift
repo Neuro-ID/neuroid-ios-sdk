@@ -69,7 +69,7 @@ extension NeuroIDCore {
             return
         }
 
-        let mutableEvent = event
+        var mutableEvent = event
 
         // Do not capture any events bound to RNScreensNavigationController as we will double count if we do
         if let eventURL = mutableEvent.url {

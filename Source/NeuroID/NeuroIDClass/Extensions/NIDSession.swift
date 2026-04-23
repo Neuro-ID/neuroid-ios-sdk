@@ -212,7 +212,7 @@ extension NeuroIDCore {
     }
 
     func captureMobileMetadata() {
-        let event = self.createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
+        var event = self.createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
 
         event.attrs = [
             Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
