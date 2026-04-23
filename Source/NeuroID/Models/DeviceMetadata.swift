@@ -188,7 +188,7 @@ extension DeviceMetadata {
     }
 
     // suspicious apps path to check
-    static var suspiciousAppsPathToCheck: [String] = [
+    static let suspiciousAppsPathToCheck: [String] = [
         "/Applications/Cydia.app",
         "/Applications/blackra1n.app",
         "/Applications/FakeCarrier.app",
@@ -201,7 +201,7 @@ extension DeviceMetadata {
     ]
 
     // suspicious system paths to check
-    static var suspiciousSystemPathsToCheck: [String] = [
+    static let suspiciousSystemPathsToCheck: [String] = [
         "/Library/MobileSubstrate/DynamicLibraries/LiveClock.plist",
         "/Library/MobileSubstrate/DynamicLibraries/Veency.plist",
         "/private/var/lib/apt",

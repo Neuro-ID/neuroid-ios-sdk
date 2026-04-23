@@ -24,6 +24,7 @@ enum UtilFunctions {
         }
     }
 
+    @MainActor
     static func getParentRecursively(viewController: UIViewController) -> [String] {
         if let parent = viewController.parent {
             return [parent.nidClassName] + getParentRecursively(viewController: parent)
@@ -36,6 +37,7 @@ enum UtilFunctions {
         This method will take the UIView and navigate back through its entire ancestory tree to produce
         a path from the highest UIViewController down to the element.
      */
+    @MainActor
     static func getFullViewlURLPath(currView: UIView) -> String {
         let viewControllerParent = currView.viewController
 
@@ -54,6 +56,7 @@ enum UtilFunctions {
         return "\(finalPath)/\(currView.nidClassName)"
     }
 
+    @MainActor
     static func registerRecursiveUIViewController(controller: UIViewController, parentTag: String) -> [(UIViewController, String)] {
         var list: [(UIViewController, String)] = []
 
@@ -164,6 +167,7 @@ enum UtilFunctions {
         NIDLog.debug("\(Constants.registrationTag.rawValue)            Registered View: \(className) - \(id)")
     }
 
+    @MainActor
     static func captureContextMenuAction(
         type: NIDEventName,
         view: UIView,
@@ -200,6 +204,7 @@ enum UtilFunctions {
         )
     }
 
+    @MainActor
     static func captureTextEvents(view: UIView, textValue: String, eventType: NIDEventName) {
         let id = view.id
         let inputType = "text"
@@ -238,6 +243,7 @@ enum UtilFunctions {
         }
     }
 
+    @MainActor
     static func captureInputTextChangeEvent(
         eventType: NIDEventName,
         textControl: UIView,
@@ -304,6 +310,7 @@ enum UtilFunctions {
         )
     }
 
+    @MainActor
     static func extractTouchesFromEvent(uiView: UIView, event: UIEvent) -> [NIDTouches] {
         if let touches = event.allTouches {
             return extractTouchInfoFromTouchArray(touches)
@@ -312,6 +319,7 @@ enum UtilFunctions {
         }
     }
 
+    @MainActor
     static func extractTouchInfoFromTouchArray(_ touches: Set<UITouch>) -> [NIDTouches] {
         var touchArray: [NIDTouches] = []
 
@@ -336,6 +344,7 @@ enum UtilFunctions {
         return touchArray
     }
 
+    @MainActor
     static func extractTouchesFromGestureRecognizer(
         gestureRecognizer: UIGestureRecognizer
     ) -> [NIDTouches] {
@@ -358,6 +367,7 @@ enum UtilFunctions {
         return touchArray
     }
 
+    @MainActor
     static func createTouchEvent(sender: UIView, eventName: NIDEventName, location: String, touches: [NIDTouches]) -> NIDEvent {
         let viewId = TargetValue.string(sender.id)
 

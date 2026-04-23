@@ -43,6 +43,7 @@ extension NeuroIDTracker {
     }
 }
 
+@MainActor
 class CustomTapGestureRecognizer: UITapGestureRecognizer {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)
@@ -57,6 +58,7 @@ class CustomTapGestureRecognizer: UITapGestureRecognizer {
     }
 }
 
+@MainActor
 func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, type: NIDEventName) {
     var size: CGFloat = 0.0
     var force: CGFloat = 0.0
@@ -72,6 +74,7 @@ func captureTouchInfo(gesture: UITapGestureRecognizer, touches: Set<UITouch>, ty
     )
 }
 
+@MainActor
 func captureTouchEvent(
     type: NIDEventName,
     gestureRecognizer: UIGestureRecognizer,
