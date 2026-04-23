@@ -49,7 +49,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
         NeuroIDCore.shared._isSDKStarted = true
 
-        var nidE = nidEvent
+        let nidE = nidEvent
         assert(nidE.url == nil)
 
         NeuroIDCore.shared.saveEventToLocalDataStore(nidE, screen: screenName)
@@ -61,7 +61,7 @@ class NIDDataExtensionTests: BaseTestClass {
         let screen = "DS_TEST_SCREEN"
         NeuroIDCore.shared._currentScreenName = screen
 
-        var nidE = nidEvent
+        let nidE = nidEvent
         assert(nidE.url == nil)
 
         NeuroIDCore.shared.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
