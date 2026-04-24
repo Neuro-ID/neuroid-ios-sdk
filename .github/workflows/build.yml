@@ -39,7 +39,7 @@ jobs:
       matrix:
         include:
           # Check Apple Developer for information on device and Swift version support: https://developer.apple.com/support/xcode/
-          
+
           # Latest
           - macos: 26
             xcode: '26.4'   # Swift 6.3
@@ -76,7 +76,15 @@ jobs:
       - name: Prepare Simulator
         run: |
           set -o pipefail
-          xcrun simctl boot "${{ matrix.ios-simulator }} (${{ matrix.ios-version }})" || true
+          
+          # Find the UDID for the specified simulator and iOS version
+          SIMULATOR_UDID=$(
+            xcrun simctl list -j devices available | \
+            jq -r --arg name "${{ matrix.ios-simulator }}" --arg ver "${{ matrix.ios-version }}" \
+            '.devices | to_entries[] | select($ver == "latest" or (.key | contains($ver | gsub("\\."; "-")))) | .value[] | select(.name == $name) | .udid' | head -1
+          )
+
+          xcrun simctl boot "$SIMULATOR_UDID"
           xcrun simctl list devices
 
       - name: Build and Test (Simulator)
