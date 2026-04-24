@@ -8,6 +8,7 @@
 @testable import NeuroID
 import XCTest
 
+@MainActor
 class TouchEventTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 

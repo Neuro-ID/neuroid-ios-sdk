@@ -8,6 +8,7 @@
 @testable import NeuroID
 import XCTest
 
+@MainActor
 final class UtilFunctionsTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
     let userId = "form_mobilesandbox"
