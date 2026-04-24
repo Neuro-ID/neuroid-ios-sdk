@@ -76,7 +76,7 @@ jobs:
       - name: Prepare Simulator
         run: |
           set -o pipefail
-          xcrun simctl boot "${{ matrix.ios-simulator }}" || true
+          xcrun simctl boot "${{ matrix.ios-simulator }} (${{ matrix.ios-version }})" || true
           xcrun simctl list devices
 
       - name: Build and Test (Simulator)

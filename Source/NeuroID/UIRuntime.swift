@@ -5,13 +5,16 @@
 
 import Foundation
 
-@MainActor final class UIRuntime {
+@MainActor
+final class UIRuntime {
 
     var sceneCaptureRegistrationsBySceneID: [String: AnyObject] = [:]
     var sceneCaptureLastKnownStateBySceneID: [String: Bool] = [:]
     var screenCaptureLastKnownState: Bool?
 
-    nonisolated init() {}
+    nonisolated init() {
+        // init should not be isolated so NeuroIDCore can start it
+    }
 
     func resetScreenCaptureTrackingState() {
         sceneCaptureRegistrationsBySceneID.removeAll()
