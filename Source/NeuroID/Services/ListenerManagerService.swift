@@ -15,10 +15,12 @@ protocol ListenerManagerServiceProtocol {
 @MainActor
 final class ListenerManagerService: ListenerManagerServiceProtocol {
 
+    let uiRuntime: UIRuntime
     let notificationCenter: NotificationCenter
     private var appEventObservers: [NSObjectProtocol] = []
 
-    nonisolated init(notificationCenter: NotificationCenter) {
+    nonisolated init(uiRuntime: UIRuntime, notificationCenter: NotificationCenter) {
+        self.uiRuntime = uiRuntime
         self.notificationCenter = notificationCenter
     }
 
@@ -48,9 +50,7 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
         }
         appEventObservers.removeAll()
 
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeAll()
-        NeuroIDCore.shared.screenCaptureLastKnownState = nil
+        uiRuntime.resetScreenCaptureTrackingState()
     }
 }
 
@@ -146,8 +146,8 @@ extension ListenerManagerService {
     func registerSceneIfNeeded(_ scene: UIWindowScene) {
         guard #available(iOS 17.0, *) else { return }
         let sceneID = scene.session.persistentIdentifier
-        guard NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] == nil else { return }
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
+        guard uiRuntime.sceneCaptureRegistrationsBySceneID[sceneID] == nil else { return }
+        uiRuntime.sceneCaptureLastKnownStateBySceneID[sceneID] = scene.traitCollection.sceneCaptureState == .active
         // iOS 17+ replacement for the deprecated traitCollectionDidChange override
         let registration = scene.registerForTraitChanges([UITraitSceneCaptureState.self]) {
             [weak self] (windowScene: UIWindowScene, _: UITraitCollection) in
@@ -157,20 +157,20 @@ extension ListenerManagerService {
                 self?.handleSceneCaptureTraitChange(sceneID: changedSceneID, isActive: isActive)
             }
         }
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
+        uiRuntime.sceneCaptureRegistrationsBySceneID[sceneID] = registration as AnyObject
         refreshSceneAggregateRecordingState()
     }
 
     @available(iOS 17.0, *)
     func handleSceneCaptureTraitChange(sceneID: String, isActive: Bool) {
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID] = isActive
+        uiRuntime.sceneCaptureLastKnownStateBySceneID[sceneID] = isActive
         refreshSceneAggregateRecordingState()
     }
 
     func sceneDidDisconnect(sceneID: String) {
         if #available(iOS 17.0, *) {
-            NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeValue(forKey: sceneID)
-            NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeValue(forKey: sceneID)
+            uiRuntime.sceneCaptureRegistrationsBySceneID.removeValue(forKey: sceneID)
+            uiRuntime.sceneCaptureLastKnownStateBySceneID.removeValue(forKey: sceneID)
             refreshSceneAggregateRecordingState()
         }
     }
@@ -180,9 +180,9 @@ extension ListenerManagerService {
 extension ListenerManagerService {
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
         var event = NIDEvent(type: .screenRecording)
-        if NeuroIDCore.shared.screenCaptureLastKnownState == nil {
+        if uiRuntime.screenCaptureLastKnownState == nil {
             // first observation — only emit if already active to avoid a spurious "inactive" on cold start
-            NeuroIDCore.shared.screenCaptureLastKnownState = isActive
+            uiRuntime.screenCaptureLastKnownState = isActive
             if isActive {
                 event.attrs = [Attrs(n: "state", v: "active")]
                 captureEvent(event: event)
@@ -190,8 +190,8 @@ extension ListenerManagerService {
             return
         }
         // dedupe — multiple scenes can converge on the same state
-        guard NeuroIDCore.shared.screenCaptureLastKnownState != isActive else { return }
-        NeuroIDCore.shared.screenCaptureLastKnownState = isActive
+        guard uiRuntime.screenCaptureLastKnownState != isActive else { return }
+        uiRuntime.screenCaptureLastKnownState = isActive
         event.attrs = [Attrs(n: "state", v: isActive ? "active" : "inactive")]
         captureEvent(event: event)
     }
@@ -199,7 +199,7 @@ extension ListenerManagerService {
     @available(iOS 17.0, *)
     func refreshSceneAggregateRecordingState() {
         // any one scene capturing = device is recording
-        let isActive = NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.values.contains(true)
+        let isActive = uiRuntime.sceneCaptureLastKnownStateBySceneID.values.contains(true)
         updateScreenRecordingStateIfChanged(isActive: isActive)
     }
 }
