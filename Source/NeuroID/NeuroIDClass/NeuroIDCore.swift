@@ -21,6 +21,7 @@ class NeuroIDCore: NSObject {
     var linkedSiteID: String?
 
     // Services
+    var uiRuntime: UIRuntime
     var datastore: DataStoreServiceProtocol
     var eventStorageService: EventStorageServiceProtocol
     var validationService: ValidationServiceProtocol
@@ -108,10 +109,6 @@ class NeuroIDCore: NSObject {
 
     var lowMemory: Bool = false
 
-    var sceneCaptureRegistrationsBySceneID: [String: AnyObject] = [:]
-    var sceneCaptureLastKnownStateBySceneID: [String: Bool] = [:]
-    var screenCaptureLastKnownState: Bool?
-
     var packetNumber: Int32 = 0
 
     // Testing Purposes Only
@@ -120,6 +117,7 @@ class NeuroIDCore: NSObject {
     // MARK: - Setup
 
     init(
+        uiRuntime: UIRuntime? = nil,
         datastore: DataStoreServiceProtocol? = nil,
         eventStorageService: EventStorageServiceProtocol? = nil,
         validationService: ValidationServiceProtocol? = nil,
@@ -133,6 +131,7 @@ class NeuroIDCore: NSObject {
         locationManager: LocationManagerServiceProtocol? = nil,
         listenerManager: ListenerManagerService? = nil
     ) {
+        self.uiRuntime = uiRuntime ?? UIRuntime()
         self.datastore = datastore ?? DataStore()
         self.eventStorageService = eventStorageService ?? EventStorageService()
         self.validationService = validationService ?? ValidationService()
@@ -159,7 +158,12 @@ class NeuroIDCore: NSObject {
             )
         self.callObserver = callObserver
         self.locationManager = locationManager
-        self.listenerManager = listenerManager ?? ListenerManagerService(notificationCenter: .default)
+        self.listenerManager =
+            listenerManager
+            ?? ListenerManagerService(
+                uiRuntime: self.uiRuntime,
+                notificationCenter: .default
+            )
 
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),

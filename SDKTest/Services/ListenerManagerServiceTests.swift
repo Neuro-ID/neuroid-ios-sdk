@@ -12,19 +12,22 @@ import UIKit
 @MainActor
 struct ListenerManagerServiceTests {
 
+    var uiRuntime: UIRuntime
     var notificationCenter: NotificationCenter
     var listenerManagerService: ListenerManagerService
     var dataStore: DataStore
 
     init() {
+        self.uiRuntime = UIRuntime()
         self.notificationCenter = NotificationCenter()
-        self.listenerManagerService = ListenerManagerService(notificationCenter: notificationCenter)
+        self.listenerManagerService = ListenerManagerService(
+            uiRuntime: uiRuntime,
+            notificationCenter: notificationCenter
+        )
         self.dataStore = DataStore()
         NeuroIDCore.shared._isSDKStarted = true
         NeuroIDCore.shared.datastore = dataStore
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeAll()
-        NeuroIDCore.shared.screenCaptureLastKnownState = nil
+        uiRuntime.resetScreenCaptureTrackingState()
     }
 
     func screenRecordingEvents() -> [NIDEvent] {
@@ -64,13 +67,13 @@ struct ListenerManagerServiceTests {
     @Test
     func stopAppEventListeners_clearsScreenCaptureTrackingState() {
         listenerManagerService.startAppEventListeners()
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID["scene"] = NSObject()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["scene"] = true
-        NeuroIDCore.shared.screenCaptureLastKnownState = true
+        uiRuntime.sceneCaptureRegistrationsBySceneID["scene"] = NSObject()
+        uiRuntime.sceneCaptureLastKnownStateBySceneID["scene"] = true
+        uiRuntime.screenCaptureLastKnownState = true
         listenerManagerService.stopAppEventListeners()
-        #expect(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.isEmpty)
-        #expect(NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.isEmpty)
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == nil)
+        #expect(uiRuntime.sceneCaptureRegistrationsBySceneID.isEmpty)
+        #expect(uiRuntime.sceneCaptureLastKnownStateBySceneID.isEmpty)
+        #expect(uiRuntime.screenCaptureLastKnownState == nil)
     }
 
     @Test
@@ -82,7 +85,7 @@ struct ListenerManagerServiceTests {
         #expect(events.count == 2)
         #expect(events[0].attrs == [Attrs(n: "state", v: "active")])
         #expect(events[1].attrs == [Attrs(n: "state", v: "inactive")])
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == false)
+        #expect(uiRuntime.screenCaptureLastKnownState == false)
     }
 
     @Test
@@ -94,7 +97,7 @@ struct ListenerManagerServiceTests {
         #expect(events.count == 2)
         #expect(events[0].attrs == [Attrs(n: "state", v: "active")])
         #expect(events[1].attrs == [Attrs(n: "state", v: "inactive")])
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == false)
+        #expect(uiRuntime.screenCaptureLastKnownState == false)
     }
 
     @Test
@@ -102,7 +105,7 @@ struct ListenerManagerServiceTests {
         listenerManagerService.startLegacyScreenRecordingObserver()
         notificationCenter.post(name: UIScreen.capturedDidChangeNotification, object: UIScreen.main)
         await Task.yield()
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == UIScreen.main.isCaptured)
+        #expect(uiRuntime.screenCaptureLastKnownState == UIScreen.main.isCaptured)
     }
 
     @available(iOS 17.0, *)
@@ -110,13 +113,13 @@ struct ListenerManagerServiceTests {
     func registerSceneIfNeeded_registersConnectedSceneState() {
         let scenes = connectedWindowScenes()
         guard let scene = scenes.first else { return }
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeAll()
+        uiRuntime.sceneCaptureRegistrationsBySceneID.removeAll()
+        uiRuntime.sceneCaptureLastKnownStateBySceneID.removeAll()
         listenerManagerService.registerSceneIfNeeded(scene)
         let sceneID = scene.session.persistentIdentifier
-        #expect(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] != nil)
+        #expect(uiRuntime.sceneCaptureRegistrationsBySceneID[sceneID] != nil)
         #expect(
-            NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID]
+            uiRuntime.sceneCaptureLastKnownStateBySceneID[sceneID]
                 == (scene.traitCollection.sceneCaptureState == .active)
         )
     }
@@ -126,14 +129,14 @@ struct ListenerManagerServiceTests {
     func registerExistingScenes_registersEachConnectedScene() {
         let scenes = connectedWindowScenes()
         guard !scenes.isEmpty else { return }
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeAll()
+        uiRuntime.sceneCaptureRegistrationsBySceneID.removeAll()
+        uiRuntime.sceneCaptureLastKnownStateBySceneID.removeAll()
         listenerManagerService.registerExistingScenes()
         for scene in scenes {
             let sceneID = scene.session.persistentIdentifier
-            #expect(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] != nil)
+            #expect(uiRuntime.sceneCaptureRegistrationsBySceneID[sceneID] != nil)
             #expect(
-                NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID]
+                uiRuntime.sceneCaptureLastKnownStateBySceneID[sceneID]
                     == (scene.traitCollection.sceneCaptureState == .active)
             )
         }
@@ -144,13 +147,13 @@ struct ListenerManagerServiceTests {
     func handleSceneDidActivate_registersSceneIfNeeded() {
         let scenes = connectedWindowScenes()
         guard let scene = scenes.first else { return }
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID.removeAll()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID.removeAll()
+        uiRuntime.sceneCaptureRegistrationsBySceneID.removeAll()
+        uiRuntime.sceneCaptureLastKnownStateBySceneID.removeAll()
         listenerManagerService.handleSceneDidActivate(scene)
         let sceneID = scene.session.persistentIdentifier
-        #expect(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID[sceneID] != nil)
+        #expect(uiRuntime.sceneCaptureRegistrationsBySceneID[sceneID] != nil)
         #expect(
-            NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID[sceneID]
+            uiRuntime.sceneCaptureLastKnownStateBySceneID[sceneID]
                 == (scene.traitCollection.sceneCaptureState == .active)
         )
     }
@@ -158,37 +161,37 @@ struct ListenerManagerServiceTests {
     @available(iOS 17.0, *)
     @Test
     func handleSceneCaptureTraitChange_updatesAggregateAndEmitsInactive() {
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneA"] = true
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneB"] = false
-        NeuroIDCore.shared.screenCaptureLastKnownState = true
+        uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneA"] = true
+        uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneB"] = false
+        uiRuntime.screenCaptureLastKnownState = true
         listenerManagerService.handleSceneCaptureTraitChange(sceneID: "sceneA", isActive: false)
-        #expect(NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneA"] == false)
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == false)
+        #expect(uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneA"] == false)
+        #expect(uiRuntime.screenCaptureLastKnownState == false)
         #expect(screenRecordingEvents().last?.attrs == [Attrs(n: "state", v: "inactive")])
     }
 
     @available(iOS 17.0, *)
     @Test
     func sceneDidDisconnect_removesSceneAndRefreshesAggregate() {
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID["sceneA"] = NSObject()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneA"] = true
-        NeuroIDCore.shared.screenCaptureLastKnownState = true
+        uiRuntime.sceneCaptureRegistrationsBySceneID["sceneA"] = NSObject()
+        uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneA"] = true
+        uiRuntime.screenCaptureLastKnownState = true
         listenerManagerService.sceneDidDisconnect(sceneID: "sceneA")
-        #expect(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID["sceneA"] == nil)
-        #expect(NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneA"] == nil)
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == false)
+        #expect(uiRuntime.sceneCaptureRegistrationsBySceneID["sceneA"] == nil)
+        #expect(uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneA"] == nil)
+        #expect(uiRuntime.screenCaptureLastKnownState == false)
         #expect(screenRecordingEvents().last?.attrs == [Attrs(n: "state", v: "inactive")])
     }
 
     @available(iOS 17.0, *)
     @Test
     func handleSceneDidDisconnect_routesToSceneDisconnectFlow() {
-        NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID["sceneB"] = NSObject()
-        NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneB"] = true
-        NeuroIDCore.shared.screenCaptureLastKnownState = true
+        uiRuntime.sceneCaptureRegistrationsBySceneID["sceneB"] = NSObject()
+        uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneB"] = true
+        uiRuntime.screenCaptureLastKnownState = true
         listenerManagerService.handleSceneDidDisconnect(sceneID: "sceneB")
-        #expect(NeuroIDCore.shared.sceneCaptureRegistrationsBySceneID["sceneB"] == nil)
-        #expect(NeuroIDCore.shared.sceneCaptureLastKnownStateBySceneID["sceneB"] == nil)
-        #expect(NeuroIDCore.shared.screenCaptureLastKnownState == false)
+        #expect(uiRuntime.sceneCaptureRegistrationsBySceneID["sceneB"] == nil)
+        #expect(uiRuntime.sceneCaptureLastKnownStateBySceneID["sceneB"] == nil)
+        #expect(uiRuntime.screenCaptureLastKnownState == false)
     }
 }
