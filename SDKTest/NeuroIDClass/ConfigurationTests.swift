@@ -12,8 +12,8 @@ import Testing
 @Suite
 struct ConfigurationTests {
 
-    var config = NeuroID.Configuration(clientKey: "")
-    var neuroID: NeuroIDCore = NeuroIDCore()
+    var neuroID: NeuroIDCore
+    var config: NeuroID.Configuration
 
     init() {
         neuroID = NeuroIDCore()
@@ -26,31 +26,25 @@ struct ConfigurationTests {
     // MARK: - `useAdvancedDeviceProxy` Tests
 
     // Test that Configuration properly sets the proxy flag
-    @Test
+    @Test("Proxy flag should be enabled after configuration")
     mutating func testConfigureWithProxyEnabled() {
         config.useAdvancedDeviceProxy = true
         let _ = neuroID.configure(config)
-
-        // "Proxy flag should be enabled after configuration"
         #expect(neuroID.useAdvancedDeviceProxy)
     }
 
     // Test explicit proxy disabled
-    @Test
+    @Test("Proxy flag should be disabled when explicitly set to false")
     mutating func testConfigureWithProxyDisabled() {
         config.useAdvancedDeviceProxy = false
         let _ = neuroID.configure(config)
-
-        // "Proxy flag should be disabled when explicitly set to false"
         #expect(!neuroID.useAdvancedDeviceProxy)
     }
 
     // Test default value when not specified
-    @Test
+    @Test("Proxy flag should default to true when not specified")
     func testConfigureProxyDefaults() {
         let _ = neuroID.configure(config)
-
-        // "Proxy flag should default to true when not specified"
         #expect(neuroID.useAdvancedDeviceProxy)
     }
 
