@@ -193,8 +193,6 @@ class NeuroIDCore: NSObject {
             setUserDefaultKey(Constants.lastInstallTime.rawValue, value: Date().timeIntervalSince1970)
         }
 
-        self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
-
         if self.clientKey != nil && self.clientKey != "" {
             NIDLog.error("You already configured the SDK")
             return false
@@ -214,18 +212,14 @@ class NeuroIDCore: NSObject {
             return false
         }
 
-        self.advancedDeviceKey = configuration.advancedDeviceKey
+        self.clientKey = configuration.clientKey
         self.isAdvancedDevice = configuration.isAdvancedDevice
-
-        if configuration.clientKey.contains("_live_") {
-            self.environment = Constants.environmentLive.rawValue
-        } else {
-            self.environment = Constants.environmentTest.rawValue
-        }
+        self.advancedDeviceKey = configuration.advancedDeviceKey
+        self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
+        self.environment = configuration.environment
 
         self.clearSessionVariables()
 
-        self.clientKey = configuration.clientKey
         setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
 
         // Reset tab id / packet number on configure

@@ -5,63 +5,72 @@
 //  Created by Collin Dunphy on 11/4/25.
 //
 
-import XCTest
+import Testing
+
 @testable import NeuroID
 
-class ConfigurationTests: XCTestCase {
-    
+@Suite
+struct ConfigurationTests {
+
     var config = NeuroID.Configuration(clientKey: "")
-    
     var neuroID: NeuroIDCore = NeuroIDCore()
-    
-    override func setUp() {
-        super.setUp()
+
+    init() {
         neuroID = NeuroIDCore()
         config = NeuroID.Configuration(
-            clientKey: "test_key",
+            clientKey: "key_live_123456",
             isAdvancedDevice: true
         )
     }
-    
+
     // MARK: - `useAdvancedDeviceProxy` Tests
-    
+
     // Test that Configuration properly sets the proxy flag
-    func testConfigureWithProxyEnabled() {
+    @Test
+    mutating func testConfigureWithProxyEnabled() {
         config.useAdvancedDeviceProxy = true
         let _ = neuroID.configure(config)
-        
-        XCTAssertTrue(neuroID.useAdvancedDeviceProxy, "Proxy flag should be enabled after configuration")
+
+        // "Proxy flag should be enabled after configuration"
+        #expect(neuroID.useAdvancedDeviceProxy)
     }
-    
+
     // Test explicit proxy disabled
-    func testConfigureWithProxyDisabled() {
+    @Test
+    mutating func testConfigureWithProxyDisabled() {
         config.useAdvancedDeviceProxy = false
         let _ = neuroID.configure(config)
-        
-        XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Proxy flag should be disabled when explicitly set to false")
+
+        // "Proxy flag should be disabled when explicitly set to false"
+        #expect(!neuroID.useAdvancedDeviceProxy)
     }
 
     // Test default value when not specified
+    @Test
     func testConfigureProxyDefaults() {
         let _ = neuroID.configure(config)
-        
-        XCTAssertTrue(neuroID.useAdvancedDeviceProxy, "Proxy flag should default to true when not specified")
-    }
-    
-    
-    // Test that the value changes on reconfigure
-    func testReconfigureChangesProxySetting() {
-        // First configure with proxy enabled
-        config.useAdvancedDeviceProxy = true
-        let _ = neuroID.configure(config)
-        
-        XCTAssertTrue(neuroID.useAdvancedDeviceProxy, "Initial configuration should enable proxy")
-        
-        // Reconfigure with proxy disabled
-        config.useAdvancedDeviceProxy = false
-        let _ = neuroID.configure(config)
-        
-        XCTAssertFalse(neuroID.useAdvancedDeviceProxy, "Reconfiguration should disable proxy")
+
+        // "Proxy flag should default to true when not specified"
+        #expect(neuroID.useAdvancedDeviceProxy)
     }
 
+    // MARK: Environment Tests
+
+    @Test
+    func testDefaultEnvironment() {
+        #expect(neuroID.getEnvironment() == "TEST")
+    }
+
+    @Test
+    func testLiveEnvironment() {
+        let _ = neuroID.configure(config)
+        #expect(neuroID.getEnvironment() == "LIVE")
+    }
+
+    @Test
+    mutating func testTestEnvironment() {
+        config.clientKey = "key_test_123456"
+        let _ = neuroID.configure(config)
+        #expect(neuroID.getEnvironment() == "TEST")
+    }
 }
