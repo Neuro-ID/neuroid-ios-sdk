@@ -16,6 +16,7 @@ class NeuroIDCore: NSObject {
     var isAdvancedDevice: Bool = false
     var advancedDeviceKey: String? = nil
     var useAdvancedDeviceProxy: Bool = false
+    var environment: String = Constants.environmentTest.rawValue
 
     var siteID: String?
     var linkedSiteID: String?
@@ -58,8 +59,6 @@ class NeuroIDCore: NSObject {
 
     var excludedViewsTestIDs = [String]()
     private static let lock = NSLock()
-
-    var environment: String = Constants.environmentTest.rawValue
 
     var _currentScreenName: String?
 
