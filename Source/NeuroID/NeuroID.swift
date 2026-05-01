@@ -106,6 +106,7 @@ public enum NeuroID {
     }
 
     // SESSION FUNCTIONS
+    @MainActor
     public static func start(
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
@@ -116,6 +117,7 @@ public enum NeuroID {
         return NeuroIDCore.shared.stop()
     }
 
+    @MainActor
     public static func startSession(
         _ sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
@@ -144,6 +146,7 @@ public enum NeuroID {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
+    @MainActor
     public static func startAppFlow(
         siteID: String,
         sessionID: String? = nil,
@@ -153,6 +156,7 @@ public enum NeuroID {
     }
 
     // AdvancedDevice Functions
+    @MainActor
     public static func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
@@ -160,6 +164,7 @@ public enum NeuroID {
         NeuroIDCore.shared.start(advancedDeviceSignals, completion: completion)
     }
 
+    @MainActor
     public static func startSession(
         _ sessionID: String? = nil,
         _ advancedDeviceSignals: Bool,

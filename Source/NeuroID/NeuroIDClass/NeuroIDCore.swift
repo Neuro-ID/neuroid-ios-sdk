@@ -98,7 +98,6 @@ class NeuroIDCore: NSObject {
 
     var observingInputs = false
     var observingKeyboard = false
-    var didSwizzle: Bool = false
 
     public static var registeredTargets = [String]()
 
@@ -282,20 +281,6 @@ class NeuroIDCore: NSObject {
 
     func isStopped() -> Bool {
         return self._isSDKStarted != true
-    }
-
-    func swizzle() {
-        if self.didSwizzle {
-            return
-        }
-
-        UIViewController.startSwizzling()
-        UITextField.startSwizzling()
-        UITextView.startSwizzling()
-        UINavigationController.swizzleNavigation()
-        UITableView.tableviewSwizzle()
-
-        self.didSwizzle.toggle()
     }
 
     /// Get the current SDK version from bundle
