@@ -8,7 +8,7 @@ import UIKit
 
 @testable import NeuroID
 
-@Suite
+@Suite(.serialized)
 @MainActor
 struct ListenerManagerServiceTests {
 

@@ -9,7 +9,7 @@ import Testing
 
 @testable import NeuroID
 
-@Suite("NID Log Tests")
+@Suite("NID Log Tests", .serialized)
 struct NIDLogTests {
 
     @Test func enableLogging() {

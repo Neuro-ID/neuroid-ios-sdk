@@ -8,7 +8,7 @@ import Testing
 
 @testable import NeuroID
 
-@Suite("Network Service Tests")
+@Suite("Network Service Tests", .serialized)
 struct NetworkServiceTests {
 
     var networkService: NetworkService
