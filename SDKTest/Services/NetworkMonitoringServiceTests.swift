@@ -8,6 +8,7 @@
 @testable import NeuroID
 import XCTest
 
+@MainActor
 class NetworkMonitoringServiceTests: XCTestCase {
     var sut: NetworkMonitoringService!
 
