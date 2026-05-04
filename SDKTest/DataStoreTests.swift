@@ -9,6 +9,7 @@ import XCTest
 
 @testable import NeuroID
 
+@MainActor
 class DataStoreTests: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
