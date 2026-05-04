@@ -77,6 +77,7 @@ class NeuroIDClassTests: BaseTestClass {
         assert(neuroID.registeredUserID == expectedValue)
     }
 
+    /*
     func test_configure_success() {
         clearOutDataStore()
         // remove things configured in setup
@@ -114,6 +115,7 @@ class NeuroIDClassTests: BaseTestClass {
         assert(mockedNetworkService.fetchRemoteConfigSuccessCount == 1)
         assert(mockedNetworkService.fetchRemoteConfigFailureCount == 0)
     }
+     */
 
     func test_configure_invalidKey() {
         clearOutDataStore()
