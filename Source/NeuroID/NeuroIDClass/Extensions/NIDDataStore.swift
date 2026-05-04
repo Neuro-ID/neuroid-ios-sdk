@@ -112,8 +112,8 @@ extension NeuroIDCore {
         }
     }
 
-    static func clearDataStore() {
-        NeuroIDCore.shared.datastore.forceClearAllEvents()
+    func clearDataStore() {
+        self.datastore.forceClearAllEvents()
     }
 
     func moveQueuedEventsToDataStore() {

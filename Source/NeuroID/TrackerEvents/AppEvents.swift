@@ -48,7 +48,7 @@ extension NeuroIDTracker {
         // Reduce memory footprint
         // Only clear this event queue the first time as it might be triggered a few times in a row (dropping our low mem event)
         if !NeuroIDCore.shared.lowMemory {
-            NeuroIDCore.clearDataStore()
+            NeuroIDCore.shared.clearDataStore()
 
             NeuroIDCore.shared.send(
                 forceSend: true,
