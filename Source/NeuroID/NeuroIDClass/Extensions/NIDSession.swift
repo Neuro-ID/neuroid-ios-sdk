@@ -34,6 +34,7 @@ extension NeuroIDCore {
         self.collectGyroAccelEventJob.start()
     }
 
+    @MainActor
     func stopSession() -> Bool {
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Stop session attempt")
@@ -49,6 +50,8 @@ extension NeuroIDCore {
 
         // Stop listening to changes in call status
         self.callObserver?.stopListeningToCallStatus()
+
+        self.listenerManager.stopAppEventListeners()
 
         return true
     }
@@ -189,6 +192,7 @@ extension NeuroIDCore {
         self.captureMobileMetadata()
     }
 
+    @MainActor
     func closeSession(skipStop: Bool = false) throws -> NIDEvent {
         saveEventToDataStore(
             NIDEvent.createInfoLogEvent("Close session attempt")
@@ -266,6 +270,9 @@ extension NeuroIDCore {
         self._isSDKStarted = true
 
         self.setupListeners()
+        
+        // Global Event Listeners
+        self.listenerManager.startAppEventListeners()
 
         self.createSession()
         self.uiRuntime.swizzle()

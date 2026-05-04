@@ -113,6 +113,7 @@ public enum NeuroID {
         NeuroIDCore.shared.start(siteID: nil, completion: completion)
     }
 
+    @MainActor
     public static func stop() -> Bool {
         return NeuroIDCore.shared.stop()
     }
@@ -136,6 +137,7 @@ public enum NeuroID {
         NeuroIDCore.shared.resumeCollection()
     }
 
+    @MainActor
     public static func stopSession() -> Bool {
         return NeuroIDCore.shared.stopSession()
     }

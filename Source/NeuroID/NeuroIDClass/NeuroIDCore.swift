@@ -258,6 +258,7 @@ class NeuroIDCore: NSObject {
         self.setupListeners()
     }
 
+    @MainActor
     func stop() -> Bool {
         NIDLog.info("NeuroID Stopped")
         do {
@@ -276,6 +277,8 @@ class NeuroIDCore: NSObject {
 
         //  stop listening to changes in call status
         self.callObserver?.stopListeningToCallStatus()
+
+        self.listenerManager.stopAppEventListeners()
         return true
     }
 
