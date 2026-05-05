@@ -33,7 +33,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         return NeuroHTTPRequest(
             clientID: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
-            sdkVersion: NeuroID.getSDKVersion(),
+            sdkVersion: ParamsCreator.getSDKVersion(),
             pageTag: screen,
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: NeuroIDCore.shared.siteID ?? "",

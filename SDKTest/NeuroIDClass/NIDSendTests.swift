@@ -14,6 +14,7 @@ class NIDSendTests: BaseTestClass {
         let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
         NeuroIDCore.shared.sendCollectionEventsJob.cancel()
+        NeuroIDCore.shared.collectGyroAccelEventJob.cancel()
         NeuroIDCore._isTesting = true
 
         clearOutDataStore()

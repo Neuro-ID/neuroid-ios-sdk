@@ -161,8 +161,8 @@ extension NeuroIDCore {
     ) -> NIDEvent {
         return NIDEvent(
             type: sessionEvent,
-            f: NeuroIDCore.shared.getClientKey(),
-            cid: NeuroID.getClientID(),
+            f: getClientKey(),
+            cid: getClientID(),
             did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
             ua: ParamsCreator.getUserAgent(),
@@ -171,9 +171,9 @@ extension NeuroIDCore {
             p: ParamsCreator.getPlatform(),
             dnt: false,
             tch: ParamsCreator.getTouch(),
-            url: NeuroID.getScreenName(),
+            url: getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
-            jsv: NeuroID.getSDKVersion(),
+            jsv: ParamsCreator.getSDKVersion(),
             metadata: DeviceMetadata(),
             sh: UIScreen.main.bounds.height,
             sw: UIScreen.main.bounds.width
@@ -208,7 +208,7 @@ extension NeuroIDCore {
             return closeEvent
         }
 
-        _ = NeuroID.stop()
+        _ = stop()
         return closeEvent
     }
 

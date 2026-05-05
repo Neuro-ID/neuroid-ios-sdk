@@ -79,7 +79,7 @@ extension NeuroIDCore {
         }
 
         // Grab the current set screen and set event URL to this
-        mutableEvent.url = "ios://\(NeuroID.getScreenName() ?? "")"
+        mutableEvent.url = "ios://\(getScreenName() ?? "")"
 
         if mutableEvent.tg?["\(Constants.tgsKey.rawValue)"] != nil {
             if self.excludedViewsTestIDs.contains(where: {

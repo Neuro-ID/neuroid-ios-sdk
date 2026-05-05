@@ -2,113 +2,129 @@
 //  NIDDataExtensionTests.swift
 //  SDKTest
 //
-//  Created by Kevin Sites on 1/21/25.
-//
+
+import Foundation
+import Testing
 
 @testable import NeuroID
-import XCTest
 
-class NIDDataExtensionTests: BaseTestClass {
-    let eventsKey = "test_events_stored"
+@Suite(.serialized)
+class NIDDataExtensionTests {
+
+    var dataStore: DataStore
+    var neuroID: NeuroIDCore
+
     let screenName = "test_screen_name"
+    let excludeId = "exclude_test_id"
 
     let nidEvent = NIDEvent(
         type: .radioChange
     )
 
-    let excludeId = "exclude_test_id"
-
-    override func setUpWithError() throws {
-        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
-        _ = NeuroID.configure(configuration)
-        NeuroIDCore.shared.datastore = dataStore
-    }
-
-    override func setUp() {
+    init() {
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
-    }
+        dataStore = DataStore()
 
-    override func tearDown() {
-        _ = NeuroID.stop()
+        let configuration = NeuroID.Configuration(clientKey: "key_test_123456")
+        neuroID = NeuroIDCore(datastore: dataStore)
+        _ = neuroID.configure(configuration)
 
         // Clear out the DataStore Events after each test
-        clearOutDataStore()
+        dataStore.removeSentEvents()
+        let _ = dataStore.getAndRemoveAllEvents()
+        let _ = dataStore.getAndRemoveAllQueuedEvents()
     }
 
-    func test_saveEventToLocalDataStore_stoppedSDK() {
-        _ = NeuroID.stop()
+    deinit {
+        _ = neuroID.stop()
 
-        NeuroIDCore.shared.saveEventToLocalDataStore(nidEvent, screen: screenName)
+        // Clear out the DataStore Events after each test
+        dataStore.removeSentEvents()
+        let _ = dataStore.getAndRemoveAllEvents()
+        let _ = dataStore.getAndRemoveAllQueuedEvents()
+    }
+
+    @Test
+    func test_saveEventToLocalDataStore_stoppedSDK() {
+        _ = neuroID.stop()
+
+        neuroID.saveEventToLocalDataStore(nidEvent, screen: screenName)
         assert(dataStore.events.count == 0)
     }
 
+    @Test
     func test_saveEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
-        NeuroIDCore.shared._currentScreenName = screen
-        NeuroIDCore.shared.datastore = dataStore
+        neuroID._currentScreenName = screen
+        neuroID.datastore = dataStore
 
-        NeuroIDCore.shared._isSDKStarted = true
+        neuroID._isSDKStarted = true
 
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroIDCore.shared.saveEventToLocalDataStore(nidE, screen: screenName)
+        neuroID.saveEventToLocalDataStore(nidE, screen: screenName)
         assert(dataStore.events.count == 1)
         assert(dataStore.events[0].url == "ios://\(screen)")
     }
 
+    @Test
     func test_saveQueuedEventToLocalDataStore_success() {
         let screen = "DS_TEST_SCREEN"
-        NeuroIDCore.shared._currentScreenName = screen
+        neuroID._currentScreenName = screen
 
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroIDCore.shared.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
+        neuroID.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
         assert(dataStore.events.count == 0)
         assert(dataStore.queuedEvents.count == 1)
         assert(dataStore.queuedEvents[0].url == "ios://\(screen)")
     }
 
+    @Test
     func test_cleanAndStoreEvent_RNScreen() {
         var nidE = nidEvent
         nidE.url = "RNScreensNavigationController"
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
+    @Test
     func test_cleanAndStoreEvent_excludedView_tg() {
-        NeuroID.excludeViewByTestID(excludeId)
+        neuroID.excludeViewByTestID(excludeId)
 
         var nidE = nidEvent
         nidE.tg = [
             "tgs": TargetValue.string(excludeId)
         ]
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
+    @Test
     func test_cleanAndStoreEvent_excludedView_tgs() {
-        NeuroID.excludeViewByTestID(excludeId)
+        neuroID.excludeViewByTestID(excludeId)
 
         var nidE = nidEvent
 
         nidE.tgs = excludeId
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
+    @Test
     func test_cleanAndStoreEvent_excludedView_en() {
-        NeuroID.excludeViewByTestID(excludeId)
+        neuroID.excludeViewByTestID(excludeId)
 
         var nidE = nidEvent
 
         nidE.en = excludeId
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 }
