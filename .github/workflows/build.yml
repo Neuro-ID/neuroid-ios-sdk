@@ -98,8 +98,7 @@ jobs:
             -scheme NeuroID \
             -destination "id=$SIMULATOR_UDID" \
             -configuration Debug \
-            -resultBundlePath TestResults.xcresult | \
-          xcbeautify --renderer github-actions
+            -resultBundlePath TestResults.xcresult
 
       - name: Convert Coverage for Sonar
         if: ${{ matrix.sonar_check == true }}
