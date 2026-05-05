@@ -53,9 +53,7 @@ extension ListenerManagerService {
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
-                Task { @MainActor [weak self] in
-                    self?.handleScreenshotNotification()
-                }
+                self?.handleScreenshotNotification()
             }
         )
     }
@@ -67,9 +65,7 @@ extension ListenerManagerService {
                 object: UIScreen.main,
                 queue: .main
             ) { [weak self] _ in
-                Task { @MainActor [weak self] in
-                    self?.handleLegacyScreenCaptureChange(isCaptured: UIScreen.main.isCaptured)
-                }
+                self?.handleLegacyScreenCaptureChange(isCaptured: UIScreen.main.isCaptured)
             }
         )
     }

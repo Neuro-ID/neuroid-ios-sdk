@@ -9,7 +9,6 @@ import UIKit
 @testable import NeuroID
 
 @Suite(.serialized)
-@MainActor
 struct ListenerManagerServiceTests {
 
     var uiRuntime: UIRuntime
@@ -35,12 +34,11 @@ struct ListenerManagerServiceTests {
     }
 
     @Test
-    func startAppEventListeners_screenshotObserverRegisteredOnce() async {
+    func startAppEventListeners_screenshotObserverRegisteredOnce() {
         listenerManagerService.startAppEventListeners()
         listenerManagerService.startAppEventListeners()
         listenerManagerService.startAppEventListeners()
         notificationCenter.post(name: UIApplication.userDidTakeScreenshotNotification, object: nil)
-        await Task.yield()
         let screenshotEvents = dataStore.getAllEvents().filter {
             $0.type == NIDEventName.screenCapture.rawValue
         }
@@ -48,11 +46,10 @@ struct ListenerManagerServiceTests {
     }
 
     @Test
-    func stopAppEventListeners_removesObservers() async {
+    func stopAppEventListeners_removesObservers() {
         listenerManagerService.startAppEventListeners()
         listenerManagerService.stopAppEventListeners()
         notificationCenter.post(name: UIApplication.userDidTakeScreenshotNotification, object: nil)
-        await Task.yield()
         let screenshotEvents = dataStore.getAllEvents().filter {
             $0.type == NIDEventName.screenCapture.rawValue
         }
@@ -98,10 +95,9 @@ struct ListenerManagerServiceTests {
     }
 
     @Test
-    func startLegacyScreenRecordingObserver_observesCapturedDidChange() async {
+    func startLegacyScreenRecordingObserver_observesCapturedDidChange() {
         listenerManagerService.startAppEventListeners()
         notificationCenter.post(name: UIScreen.capturedDidChangeNotification, object: UIScreen.main)
-        await Task.yield()
         #expect(uiRuntime.screenCaptureLastKnownState == UIScreen.main.isCaptured)
     }
 }
