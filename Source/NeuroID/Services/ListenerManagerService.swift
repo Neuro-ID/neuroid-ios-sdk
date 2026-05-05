@@ -24,22 +24,22 @@ final class ListenerManagerService: ListenerManagerServiceProtocol {
 
     func startAppEventListeners() {
         guard appEventObservers.isEmpty else { return }
-        
+
         startScreenshotObserver()
         startScreenRecordingObserver()
-        
+
         // notification won't fire if recording was already active when the SDK starts
         updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
     }
 
     func stopAppEventListeners() {
         guard !appEventObservers.isEmpty else { return }
-        
+
         for observer in appEventObservers {
             notificationCenter.removeObserver(observer)
         }
         appEventObservers.removeAll()
-        
+
         uiRuntime.resetScreenCaptureTrackingState()
     }
 }
@@ -81,7 +81,6 @@ extension ListenerManagerService {
         updateScreenRecordingStateIfChanged(isActive: isCaptured)
     }
 }
-
 
 // MARK: - Screen Recording State
 extension ListenerManagerService {

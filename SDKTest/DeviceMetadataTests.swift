@@ -8,7 +8,7 @@
 import Testing
 @testable import NeuroID
 
-@Suite("Device Metadata Tests")
+@Suite("Device Metadata Tests", .serialized)
 struct DeviceMetadataTests {
     
     @Test func deviceModelIdentifier() {

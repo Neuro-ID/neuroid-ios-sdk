@@ -8,7 +8,7 @@ import Testing
 
 @testable import NeuroID
 
-@Suite
+@Suite(.serialized)
 struct ConfigServiceTests {
 
     var networkService: MockNetworkService
