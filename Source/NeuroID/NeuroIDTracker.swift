@@ -8,7 +8,6 @@ import os
 
 // MARK: - NeuroIDTracker
 
-@MainActor
 class NeuroIDTracker: NSObject {
     private var screen: String?
     private var nidClassName: String?
@@ -229,7 +228,6 @@ class NeuroIDTracker: NSObject {
 }
 
 extension NeuroIDTracker {
-    @MainActor
     func subscribe(inScreen controller: UIViewController?) {
         // Early exit if we are stopped
         if NeuroID.isStopped() {
@@ -251,7 +249,6 @@ extension NeuroIDTracker {
         }
     }
 
-    @MainActor
     func observeViews(_ views: [UIView]) {
         for v in views {
             if let sender = v as? UIControl {

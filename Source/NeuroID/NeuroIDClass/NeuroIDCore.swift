@@ -276,6 +276,7 @@ class NeuroIDCore: NSObject {
 
         //  stop listening to changes in call status
         self.callObserver?.stopListeningToCallStatus()
+        self.listenerManager.stopAppEventListeners()
         return true
     }
 

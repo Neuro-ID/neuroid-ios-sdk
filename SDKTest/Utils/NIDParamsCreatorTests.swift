@@ -8,7 +8,6 @@
 @testable import NeuroID
 import XCTest
 
-@MainActor
 class NIDParamsCreatorTests: XCTestCase {
     // consts
     let tgsKey = Constants.tgsKey.rawValue

@@ -5,13 +5,10 @@
 
 import UIKit
 
-//@MainActor
 final class UIRuntime {
 
     var didSwizzle: Bool = false
 
-    var sceneCaptureRegistrationsBySceneID: [String: AnyObject] = [:]
-    var sceneCaptureLastKnownStateBySceneID: [String: Bool] = [:]
     var screenCaptureLastKnownState: Bool?
 
     nonisolated init() {
@@ -19,8 +16,6 @@ final class UIRuntime {
     }
 
     func resetScreenCaptureTrackingState() {
-        sceneCaptureRegistrationsBySceneID.removeAll()
-        sceneCaptureLastKnownStateBySceneID.removeAll()
         screenCaptureLastKnownState = nil
     }
 
