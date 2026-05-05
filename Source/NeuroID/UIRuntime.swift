@@ -11,7 +11,7 @@ final class UIRuntime {
 
     var screenCaptureLastKnownState: Bool?
 
-    nonisolated init() {
+    init() {
         // init should not be isolated so NeuroIDCore can start it
     }
 
