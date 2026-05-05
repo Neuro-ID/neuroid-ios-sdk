@@ -238,6 +238,8 @@ extension NeuroIDCore {
 
         self._isSDKStarted = false
 
+        self.configService.cancelInFlightWork()
+
         self.sendCollectionEventsJob.cancel()
         self.collectGyroAccelEventJob.cancel()
 

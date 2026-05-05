@@ -49,7 +49,7 @@ class NIDDataExtensionTests {
         _ = neuroID.stop()
 
         neuroID.saveEventToLocalDataStore(nidEvent, screen: screenName)
-        assert(dataStore.events.count == 0)
+        #expect(dataStore.events.count == 0)
     }
 
     @Test
@@ -61,11 +61,11 @@ class NIDDataExtensionTests {
         neuroID._isSDKStarted = true
 
         let nidE = nidEvent
-        assert(nidE.url == nil)
+        #expect(nidE.url == nil)
 
         neuroID.saveEventToLocalDataStore(nidE, screen: screenName)
-        assert(dataStore.events.count == 1)
-        assert(dataStore.events[0].url == "ios://\(screen)")
+        #expect(dataStore.events.count == 1)
+        #expect(dataStore.events[0].url == "ios://\(screen)")
     }
 
     @Test
@@ -74,12 +74,12 @@ class NIDDataExtensionTests {
         neuroID._currentScreenName = screen
 
         let nidE = nidEvent
-        assert(nidE.url == nil)
+        #expect(nidE.url == nil)
 
         neuroID.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
-        assert(dataStore.events.count == 0)
-        assert(dataStore.queuedEvents.count == 1)
-        assert(dataStore.queuedEvents[0].url == "ios://\(screen)")
+        #expect(dataStore.events.count == 0)
+        #expect(dataStore.queuedEvents.count == 1)
+        #expect(dataStore.queuedEvents[0].url == "ios://\(screen)")
     }
 
     @Test
@@ -88,7 +88,7 @@ class NIDDataExtensionTests {
         nidE.url = "RNScreensNavigationController"
 
         neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(dataStore.events.count == 0)
+        #expect(dataStore.events.count == 0)
     }
 
     @Test
@@ -101,7 +101,7 @@ class NIDDataExtensionTests {
         ]
 
         neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(dataStore.events.count == 0)
+        #expect(dataStore.events.count == 0)
     }
 
     @Test
@@ -113,7 +113,7 @@ class NIDDataExtensionTests {
         nidE.tgs = excludeId
 
         neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(dataStore.events.count == 0)
+        #expect(dataStore.events.count == 0)
     }
 
     @Test
@@ -125,6 +125,6 @@ class NIDDataExtensionTests {
         nidE.en = excludeId
 
         neuroID.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
-        assert(dataStore.events.count == 0)
+        #expect(dataStore.events.count == 0)
     }
 }

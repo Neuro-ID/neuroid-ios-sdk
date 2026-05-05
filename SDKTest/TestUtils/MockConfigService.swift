@@ -25,4 +25,6 @@ class MockConfigService: ConfigServiceProtocol {
     func clearSiteIDMap() { siteIDMap.removeAll() }
     var isSessionFlowSampled: Bool { return true }
     func updateIsSampledStatus(siteID: String?) {}
+
+    func cancelInFlightWork() { }
 }

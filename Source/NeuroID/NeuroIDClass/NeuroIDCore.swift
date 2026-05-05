@@ -250,6 +250,7 @@ class NeuroIDCore: NSObject {
     }
 
     func configSetupCompletion() {
+        guard self.isSDKStarted else { return }
         self.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent("Remote Config Retrieval Attempt Completed")
         )
@@ -269,6 +270,8 @@ class NeuroIDCore: NSObject {
             )
             return false
         }
+
+        self.configService.cancelInFlightWork()
 
         self.send(forceSend: true)
         self._isSDKStarted = false

@@ -5,40 +5,40 @@
 //  Created by Clayton Selby on 8/19/21.
 //
 
+import Testing
+import UIKit
+
 @testable import NeuroID
-import XCTest
 
 @MainActor
-class NIDEventTests: XCTestCase {
-    let clientKey = "key_live_vtotrandom_form_mobilesandbox"
-    let userId = "form_mobilesandbox"
-    
-    override func setUpWithError() throws {
-        let configuration = NeuroID.Configuration(clientKey: clientKey, isAdvancedDevice: false)
+@Suite(.serialized)
+class NIDEventTests {
+
+    init() {
+        let configuration = NeuroID.Configuration(clientKey: "key_test_123456", isAdvancedDevice: false)
         _ = NeuroID.configure(configuration)
-    }
-    
-    override func setUp() {
+
         // Clear out the DataStore Events after each test
         NeuroIDCore.shared.datastore.removeSentEvents()
         NeuroIDCore.shared._currentScreenName = nil
     }
- 
+
     func dictionaryTests(dict: [String: Any?], expectedV: String) {
         let actualType = dict["type"] ?? ""
         let actualV = dict["v"] ?? ""
         let actualP = dict["p"] ?? ""
-        
-        assert(actualType as! String == NIDEventName.blur.rawValue)
-        assert(actualV as! String == expectedV)
-        assert(actualP as! String? == nil)
+
+        #expect(actualType as! String == NIDEventName.blur.rawValue)
+        #expect(actualV as! String == expectedV)
+        #expect(actualP as! String? == nil)
     }
-    
+
     func setRtsTests(nidEvent: NIDEvent, rts: String?) {
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-        assert(nidEvent.rts == rts)
+        #expect(nidEvent.type == NIDEventName.blur.rawValue)
+        #expect(nidEvent.rts == rts)
     }
-    
+
+    @Test
     func testFullPayload() {
         NeuroIDCore.shared._isSDKStarted = true
         var tracker: NeuroIDTracker?
@@ -65,50 +65,63 @@ class NIDEventTests: XCTestCase {
         var tg = ParamsCreator.getTgParams(
             view: textfield,
             extraParams: ["sender": TargetValue.string(textfield.nidClassName)])
-        
+
         let viewId = TargetValue.string(textfield.id)
         tg["\(Constants.tgsKey.rawValue)"] = viewId
-        
-        tracker?.captureEvent(event: NIDEvent(
-            type: .touchStart,
-            tg: tg,
-            tgs: viewId.toString(),
-            x: textfield.frame.origin.x,
-            y: textfield.frame.origin.y,
-            url: UtilFunctions.getFullViewlURLPath(
-                currView: textfield
-            )))
+
+        tracker?.captureEvent(
+            event: NIDEvent(
+                type: .touchStart,
+                tg: tg,
+                tgs: viewId.toString(),
+                x: textfield.frame.origin.x,
+                y: textfield.frame.origin.y,
+                url: UtilFunctions.getFullViewlURLPath(
+                    currView: textfield
+                )))
         /// Create Focus event
-        var focusBlurEvent = NIDEvent(type: .focus, tg: [
-            "\(Constants.tgsKey.rawValue)": TargetValue.string(textfield.id),
-        ])
+        var focusBlurEvent = NIDEvent(
+            type: .focus,
+            tg: [
+                "\(Constants.tgsKey.rawValue)": TargetValue.string(textfield.id)
+            ])
         focusBlurEvent.tgs = TargetValue.string(textfield.id).toString()
         tracker?.captureEvent(event: focusBlurEvent)
-        
+
         /// Input event
         // Create Input
         textfield.text = "text"
         let lengthValue = "\(Constants.eventValuePrefix.rawValue)\(textfield.text?.count ?? 0)"
         let hashValue = textfield.text?.hashValue()
-        let inputTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.input, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
+        let inputTG = ParamsCreator.getTGParamsForInput(
+            eventName: NIDEventName.input, view: textfield, type: "text",
+            attrParams: [
+                "\(Constants.vKey.rawValue)": lengthValue,
+                "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"
+            ])
         var inputEvent = NIDEvent(type: NIDEventName.input, tg: inputTG)
         inputEvent.v = lengthValue
         inputEvent.hv = hashValue
         inputEvent.tgs = TargetValue.string(textfield.id).toString()
         tracker?.captureEvent(event: inputEvent)
-        
+
         /// Create Text change and blur
         textfield.text = "text_match"
         let sm = 0.0
         let pd = 0.0
-        let textChangeTG = ParamsCreator.getTGParamsForInput(eventName: NIDEventName.textChange, view: textfield, type: "text", attrParams: ["\(Constants.vKey.rawValue)": lengthValue, "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"])
-        
+        let textChangeTG = ParamsCreator.getTGParamsForInput(
+            eventName: NIDEventName.textChange, view: textfield, type: "text",
+            attrParams: [
+                "\(Constants.vKey.rawValue)": lengthValue,
+                "\(Constants.hashKey.rawValue)": textfield.text ?? "emptyHash"
+            ])
+
         var textChangeEvent = NIDEvent(type: .textChange)
         textChangeEvent.v = lengthValue
         textChangeEvent.tg = textChangeTG
         textChangeEvent.sm = sm
         textChangeEvent.pd = pd
-      
+
         var shaText = textfield.text ?? ""
         if shaText != "" {
             shaText = shaText.hashValue()
@@ -116,33 +129,34 @@ class NIDEventTests: XCTestCase {
         textChangeEvent.hv = shaText
         textChangeEvent.tgs = TargetValue.string(textfield.id).toString()
         tracker?.captureEvent(event: textChangeEvent)
-        
+
         /// Touch a button
         var tg2 = ParamsCreator.getTgParams(
             view: button,
             extraParams: ["sender": TargetValue.string(button.nidClassName)])
-        
+
         let viewId2 = TargetValue.string(button.id)
         tg2["\(Constants.tgsKey.rawValue)"] = viewId2
 
-        tracker?.captureEvent(event: NIDEvent(
-            type: .touchStart,
-            tg: tg2,
-            tgs: viewId2.toString(),
-            x: button.frame.origin.x,
-            y: button.frame.origin.y,
-            url: UtilFunctions.getFullViewlURLPath(
-                currView: button
-            )))
-        
+        tracker?.captureEvent(
+            event: NIDEvent(
+                type: .touchStart,
+                tg: tg2,
+                tgs: viewId2.toString(),
+                x: button.frame.origin.x,
+                y: button.frame.origin.y,
+                url: UtilFunctions.getFullViewlURLPath(
+                    currView: button
+                )))
+
         /// Get all events
         let events = NeuroIDCore.shared.datastore.getAllEvents()
         /// Create http request
         let tabId = ParamsCreator.getTabId()
-        
+
         let randomString = UUID().uuidString
         let pageid = randomString.replacingOccurrences(of: "-", with: "").prefix(12)
-        
+
         let neuroHTTPRequest = NeuroHTTPRequest(
             clientID: NeuroID.getClientID(),
             environment: NeuroID.getEnvironment(),
@@ -165,67 +179,75 @@ class NIDEventTests: XCTestCase {
             let values = try encoder.encode(neuroHTTPRequest)
             let str = String(data: values, encoding: .utf8)
             NIDLog.log("\(String(describing: str))")
-            let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("payload.txt")
+            let filename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("payload.txt")
             NIDLog.log("************\(filename)*************")
             try str?.write(to: filename, atomically: true, encoding: String.Encoding.utf8)
         } catch {
             NIDLog.error("\(error.localizedDescription)")
         }
     }
-    
+
+    @Test
     func test_init_1() {
         let nidEvent = NIDEvent(type: .blur)
-        
-        assert(nidEvent.type == NIDEventName.blur.rawValue)
-    }
-    
-    func test_init_3() {
-        let nidEvent = NIDEvent(rawType: "testRaw")
-        
-        assert(nidEvent.type == "testRaw")
+
+        #expect(nidEvent.type == NIDEventName.blur.rawValue)
     }
 
+    @Test
+    func test_init_3() {
+        let nidEvent = NIDEvent(rawType: "testRaw")
+
+        #expect(nidEvent.type == "testRaw")
+    }
+
+    @Test
     func test_asDictionary() {
         let expectedV = "value"
-        
+
         var nidEvent = NIDEvent(type: .blur)
         nidEvent.v = expectedV
-        
+
         let dict = nidEvent.asDictionary
-        
+
         dictionaryTests(dict: dict, expectedV: expectedV)
     }
-    
+
+    @Test
     func test_toDictionary() {
         let expectedV = "value"
-        
+
         var nidEvent = NIDEvent(type: .blur)
         nidEvent.v = expectedV
-        
+
         let dict = nidEvent.toDict()
-        
+
         dictionaryTests(dict: dict, expectedV: expectedV)
     }
-    
+
+    @Test
     func test_setRTS_false() {
         var nidEvent = NIDEvent(type: .blur)
         nidEvent.setRTS()
-        
+
         setRtsTests(nidEvent: nidEvent, rts: nil)
     }
-    
+
+    @Test
     func test_setRTS_false_existing() {
         var nidEvent = NIDEvent(type: .blur)
         nidEvent.rts = "test"
         nidEvent.setRTS()
-        
+
         setRtsTests(nidEvent: nidEvent, rts: "test")
     }
-    
+
+    @Test
     func test_setRTS_true() {
         var nidEvent = NIDEvent(type: .blur)
         nidEvent.setRTS(true)
-        
+
         setRtsTests(nidEvent: nidEvent, rts: "targetInteractionEvent")
     }
 }

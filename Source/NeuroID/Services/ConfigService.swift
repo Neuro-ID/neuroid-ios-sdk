@@ -12,6 +12,7 @@ protocol ConfigServiceProtocol {
 
     func clearSiteIDMap()
     func retrieveOrRefreshCache()
+    func cancelInFlightWork()
     func updateIsSampledStatus(siteID: String?)
 }
 
@@ -78,6 +79,8 @@ class ConfigService: ConfigServiceProtocol {
     }
 
     func retrieveConfig() async {
+        guard !Task.isCancelled else { return }
+        
         guard NeuroIDCore.shared.verifyClientKeyExists() else {
             setCacheWithRemote(false)
             configRetrievalCallback()
@@ -90,10 +93,15 @@ class ConfigService: ConfigServiceProtocol {
 
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
 
+            guard !Task.isCancelled else { return }
+
             NIDLog.debug("Retrieved remote config \(config)")
             setConfigCache(config)
             self.initSiteIDSampleMap(config: config)
             setCacheWithRemote(true)
+
+            guard !Task.isCancelled else { return }
+
             self.captureConfigEvent(configData: config)
             self.configRetrievalCallback()
         } catch (let error) {
@@ -217,6 +225,13 @@ class ConfigService: ConfigServiceProtocol {
             NeuroIDCore.shared.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent("Failed to parse config")
             )
+        }
+    }
+    
+    func cancelInFlightWork() {
+        stateLock.withLock {
+            inFlightRetrieveTask?.cancel()
+            inFlightRetrieveTask = nil
         }
     }
 
