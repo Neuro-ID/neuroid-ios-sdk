@@ -8,7 +8,6 @@
 import Foundation
 
 extension NeuroIDCore {
-    @MainActor
     func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
@@ -24,7 +23,6 @@ extension NeuroIDCore {
         }
     }
 
-    @MainActor
     func startSession(
         _ sessionID: String? = nil,
         _ advancedDeviceSignals: Bool,

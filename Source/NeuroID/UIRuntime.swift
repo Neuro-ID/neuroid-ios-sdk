@@ -5,7 +5,7 @@
 
 import UIKit
 
-@MainActor
+//@MainActor
 final class UIRuntime {
 
     var didSwizzle: Bool = false
