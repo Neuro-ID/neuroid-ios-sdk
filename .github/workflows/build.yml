@@ -42,14 +42,14 @@ jobs:
           # Check Apple Developer for information on device and Swift version support: https://developer.apple.com/support/xcode/
 
           # Latest
-          - macos: 26-xlarge
+          - macos: 26
             xcode: '26.4'   # Swift 6.3
             ios-simulator: 'iPhone 17 Pro'
             ios-version: 'latest'
             sonar_check: true
 
           # Legacy
-          - macos: 26-xlarge
+          - macos: 26
             xcode: '26.2'   # Swift 6.2
             ios-simulator: 'iPhone 17 Pro'
             ios-version: '26.2'
