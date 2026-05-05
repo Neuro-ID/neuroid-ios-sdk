@@ -14,13 +14,19 @@ import UIKit
 @Suite(.serialized)
 class NIDEventTests {
 
+    var neuroID: NeuroIDCore
+    var dataStore: DataStore
+
     init() {
+        dataStore = DataStore()
+        neuroID = NeuroIDCore(datastore: dataStore)
+
         let configuration = NeuroID.Configuration(clientKey: "key_test_123456", isAdvancedDevice: false)
-        _ = NeuroID.configure(configuration)
+        _ = neuroID.configure(configuration)
 
         // Clear out the DataStore Events after each test
-        NeuroIDCore.shared.datastore.removeSentEvents()
-        NeuroIDCore.shared._currentScreenName = nil
+        dataStore.removeSentEvents()
+        neuroID._currentScreenName = nil
     }
 
     func dictionaryTests(dict: [String: Any?], expectedV: String) {
@@ -40,7 +46,7 @@ class NIDEventTests {
 
     @Test
     func testFullPayload() {
-        NeuroIDCore.shared._isSDKStarted = true
+        neuroID._isSDKStarted = true
         var tracker: NeuroIDTracker?
         /// Create a textfield
         lazy var textfield: UITextField = {
@@ -150,7 +156,7 @@ class NIDEventTests {
                 )))
 
         /// Get all events
-        let events = NeuroIDCore.shared.datastore.getAllEvents()
+        let events = dataStore.getAllEvents()
         /// Create http request
         let tabId = ParamsCreator.getTabId()
 
