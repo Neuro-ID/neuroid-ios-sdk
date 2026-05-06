@@ -50,6 +50,8 @@ extension NeuroIDCore {
         // Stop listening to changes in call status
         self.callObserver?.stopListeningToCallStatus()
 
+        self.listenerManager.stopAppEventListeners()
+
         return true
     }
 
@@ -59,7 +61,6 @@ extension NeuroIDCore {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
-    @MainActor
     func startAppFlow(
         siteID: String,
         sessionID: String? = nil,
@@ -252,7 +253,6 @@ extension NeuroIDCore {
      - Will move queued events into main queue
      - Will make call to check/capture ADV event
      */
-    @MainActor
     func setupSession(
         siteID: String?,
         customFunctionality: @escaping () -> Void = {},
@@ -282,7 +282,6 @@ extension NeuroIDCore {
     }
 
     // Internal implementation that allows a siteID
-    @MainActor
     func start(
         siteID: String?,
         completion: @escaping (Bool) -> Void = { _ in }
@@ -316,7 +315,6 @@ extension NeuroIDCore {
     }
 
     // Internal implementation that allows a siteID
-    @MainActor
     func startSession(
         siteID: String?,
         sessionID: String? = nil,

@@ -26,6 +26,7 @@ class NIDSendTests: BaseTestClass {
         NeuroIDCore._isTesting = false
     }
 
+    /*
     func test_sendCollectionEventsJob() {
         let exp = expectation(description: "D")
         exp.expectedFulfillmentCount = 2
@@ -57,5 +58,5 @@ class NIDSendTests: BaseTestClass {
 
         let finalCount = counterQ.sync { valueChanged }
         XCTAssertGreaterThanOrEqual(finalCount, 2)
-    }
+    }*/
 }

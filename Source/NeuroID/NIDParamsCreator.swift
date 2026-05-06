@@ -11,7 +11,6 @@ import UIKit
 // MARK: - Properties - temporary public for testing
 
 enum ParamsCreator {
-    @MainActor
     static func getTgParams(view: UIView, extraParams: [String: TargetValue] = [:]) -> [String: TargetValue] {
         // TODO, figure out if we need to find super class of ETN
         var params: [String: TargetValue] = [
@@ -29,7 +28,6 @@ enum ParamsCreator {
         return Int64(Date().timeIntervalSince1970 * 1000)
     }
 
-    @MainActor
     static func getTGParamsForInput(
         eventName: NIDEventName,
         view: UIView,
@@ -72,7 +70,6 @@ enum ParamsCreator {
         return params
     }
 
-    @MainActor
     static func getUiControlTgParams(sender: UIView) -> [String: TargetValue] {
         var tg: [String: TargetValue] = [
             "sender": TargetValue.string(sender.nidClassName),

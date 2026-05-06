@@ -9,7 +9,7 @@ import Testing
 
 @testable import NeuroID
 
-@Suite
+@Suite(.serialized)
 struct ConfigurationTests {
 
     var neuroID: NeuroIDCore

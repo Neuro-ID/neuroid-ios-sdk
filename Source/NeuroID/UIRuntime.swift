@@ -5,22 +5,17 @@
 
 import UIKit
 
-@MainActor
 final class UIRuntime {
 
     var didSwizzle: Bool = false
 
-    var sceneCaptureRegistrationsBySceneID: [String: AnyObject] = [:]
-    var sceneCaptureLastKnownStateBySceneID: [String: Bool] = [:]
     var screenCaptureLastKnownState: Bool?
 
-    nonisolated init() {
+    init() {
         // init should not be isolated so NeuroIDCore can start it
     }
 
     func resetScreenCaptureTrackingState() {
-        sceneCaptureRegistrationsBySceneID.removeAll()
-        sceneCaptureLastKnownStateBySceneID.removeAll()
         screenCaptureLastKnownState = nil
     }
 

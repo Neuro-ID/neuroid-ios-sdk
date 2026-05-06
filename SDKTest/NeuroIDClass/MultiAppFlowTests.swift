@@ -9,7 +9,6 @@ import XCTest
 
 @testable import NeuroID
 
-@MainActor
 class MultiAppFlowTests: XCTestCase {
     let clientKey = "key_test_0OMmplsawAp2CQfWrytWA3wL"
 

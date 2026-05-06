@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: build-${{ github.ref }}
@@ -87,6 +88,8 @@ jobs:
           xcrun simctl boot "$SIMULATOR_UDID"
           xcrun simctl list devices
 
+          echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> "$GITHUB_ENV"
+
       - name: Build and Test (Simulator)
         run: |
           set -o pipefail
@@ -94,8 +97,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
-            -destination "platform=iOS Simulator,name=${{ matrix.ios-simulator }},OS=${{ matrix.ios-version }}" \
-            -configuration Debug \
+            -destination "id=$SIMULATOR_UDID" \
             -resultBundlePath TestResults.xcresult | \
           xcbeautify --renderer github-actions
 
