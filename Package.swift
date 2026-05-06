@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", exact: "5.11.2"),
-        .package(url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", exact: "2.15.0"),
+        .package(url: "https://github.com/fingerprintjs/fingerprintjs-pro-ios", exact: "2.14.0"),
         .package(url: "https://github.com/dashpay/JSONSchemaValidation", from: "2.0.7"),
         .package(url: "https://github.com/kylef/JSONSchema.swift", from: "0.6.0")
     ],
