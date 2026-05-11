@@ -238,8 +238,6 @@ extension NeuroIDTracker {
             observeViews(views)
         }
 
-        NeuroIDCore.shared.listenerManager.startAppEventListeners()
-
         // Only run observations on first run
         if !NeuroIDCore.shared.observingInputs {
             NeuroIDCore.shared.observingInputs = true

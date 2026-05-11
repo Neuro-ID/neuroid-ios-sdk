@@ -84,9 +84,9 @@ struct ListenerManagerServiceTests {
 
     @Test
     func handleLegacyScreenCaptureChange_updatesRecordingState() {
-        listenerManagerService.handleLegacyScreenCaptureChange(isCaptured: false)
-        listenerManagerService.handleLegacyScreenCaptureChange(isCaptured: true)
-        listenerManagerService.handleLegacyScreenCaptureChange(isCaptured: false)
+        listenerManagerService.updateScreenRecordingStateIfChanged(isActive: false)
+        listenerManagerService.updateScreenRecordingStateIfChanged(isActive: true)
+        listenerManagerService.updateScreenRecordingStateIfChanged(isActive: false)
         let events = screenRecordingEvents()
         #expect(events.count == 2)
         #expect(events[0].attrs == [Attrs(n: "state", v: "active")])

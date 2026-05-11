@@ -53,7 +53,7 @@ extension ListenerManagerService {
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
-                self?.handleScreenshotNotification()
+                self?.captureEvent(event: NIDEvent(type: .screenCapture))
             }
         )
     }
@@ -65,41 +65,29 @@ extension ListenerManagerService {
                 object: UIScreen.main,
                 queue: .main
             ) { [weak self] _ in
-                self?.handleLegacyScreenCaptureChange(isCaptured: UIScreen.main.isCaptured)
+                self?.updateScreenRecordingStateIfChanged(isActive: UIScreen.main.isCaptured)
             }
         )
-    }
-}
-
-// MARK: - Notification Handlers
-extension ListenerManagerService {
-    func handleScreenshotNotification() {
-        captureEvent(event: NIDEvent(type: .screenCapture))
-    }
-
-    func handleLegacyScreenCaptureChange(isCaptured: Bool) {
-        updateScreenRecordingStateIfChanged(isActive: isCaptured)
     }
 }
 
 // MARK: - Screen Recording State
 extension ListenerManagerService {
     func updateScreenRecordingStateIfChanged(isActive: Bool) {
-        var event = NIDEvent(type: .screenRecording)
-        if uiRuntime.screenCaptureLastKnownState == nil {
-            // first observation — only emit if already active to avoid a spurious "inactive" on cold start
-            uiRuntime.screenCaptureLastKnownState = isActive
-            if isActive {
-                event.attrs = [Attrs(n: "state", v: "active")]
-                captureEvent(event: event)
-            }
-            return
-        }
-        // dedupe repeated notifications for unchanged capture state
-        guard uiRuntime.screenCaptureLastKnownState != isActive else { return }
+        let previousState: Bool? = uiRuntime.screenCaptureLastKnownState
         uiRuntime.screenCaptureLastKnownState = isActive
-        event.attrs = [Attrs(n: "state", v: isActive ? "active" : "inactive")]
-        captureEvent(event: event)
+
+        guard previousState != isActive else { return }
+
+        // Only emit the initial observation if capture was already active
+        guard previousState != nil || isActive else { return }
+
+        captureEvent(
+            event: NIDEvent(
+                type: .screenRecording,
+                attrs: [Attrs(n: "state", v: isActive ? "active" : "inactive")]
+            )
+        )
     }
 }
 
