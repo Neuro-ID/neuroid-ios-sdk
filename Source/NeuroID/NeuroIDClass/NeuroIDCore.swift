@@ -8,7 +8,7 @@
 import UIKit
 
 class NeuroIDCore: NSObject {
-    static let nidVersion = "4.1.0"
+    static let nidVersion = "4.1.1"
     static let shared: NeuroIDCore = NeuroIDCore()
 
     // Configuration
