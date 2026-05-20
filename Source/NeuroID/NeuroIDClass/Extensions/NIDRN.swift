@@ -18,12 +18,15 @@ extension NeuroIDCore {
         let isAdvancedDevice: Bool? = rnOptions[RNConfigOptions.isAdvancedDevice.rawValue] as? Bool
         let advancedDeviceKey: String? = rnOptions[RNConfigOptions.advancedDeviceKey.rawValue] as? String
         let useAdvancedDeviceProxy: Bool? = rnOptions[RNConfigOptions.useAdvancedDeviceProxy.rawValue] as? Bool
-
+        let region: Region? = (rnOptions[RNConfigOptions.region.rawValue] as? String)
+            .flatMap(Region.init(configValue:))
+        
         let configuration = NeuroID.Configuration(
             clientKey: clientKey,
             isAdvancedDevice: isAdvancedDevice,
             advancedDeviceKey: advancedDeviceKey,
-            useAdvancedDeviceProxy: useAdvancedDeviceProxy
+            useAdvancedDeviceProxy: useAdvancedDeviceProxy,
+            region: region
         )
 
         // Extract RN Version
@@ -44,4 +47,5 @@ enum RNConfigOptions: String {
     case advancedDeviceKey
     case useAdvancedDeviceProxy
     case rnVersion
+    case region
 }
