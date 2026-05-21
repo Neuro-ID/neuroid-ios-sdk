@@ -155,13 +155,15 @@ public enum NeuroID {
     }
 
     // AdvancedDevice Functions
+    @available(*, deprecated)
     public static func start(
         _ advancedDeviceSignals: Bool,
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
         NeuroIDCore.shared.start(advancedDeviceSignals, completion: completion)
     }
-
+    
+    @available(*, deprecated)
     public static func startSession(
         _ sessionID: String? = nil,
         _ advancedDeviceSignals: Bool,
