@@ -73,7 +73,7 @@ public enum NeuroID {
     }
 
     // Temporarily keeping this function for backwards compatibility
-    @available(*, deprecated, message: "setUserID is deprecated, please use `identify` instead.")
+    @available(*, deprecated, renamed: "identify(_:)")
     public static func setUserID(_ userID: String) -> Bool {
         return NeuroIDCore.shared.identify(userID)
     }
@@ -84,7 +84,7 @@ public enum NeuroID {
 
     //  Temporarily keeping this function for backwards compatibility, will be removed
     // replaced with`getSessionID`
-    @available(*, deprecated, message: "getUserID is deprecated, please use `getSessionID` instead.")
+    @available(*, deprecated, renamed: "getSessionID()")
     public static func getUserID() -> String {
         return NeuroIDCore.shared.getSessionID()
     }
@@ -101,6 +101,7 @@ public enum NeuroID {
      This should be called the moment a user trys to login. Returns true always
      @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
      */
+    @available(*, deprecated)
     public static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
         return NeuroIDCore.shared.attemptedLogin(attemptedRegisteredUserId)
     }
@@ -144,6 +145,7 @@ public enum NeuroID {
        throughout the rest of the session
       i.e. start/startSession/startAppFlow -> startAppFlow("site2") -> stop/stopSession
      */
+    @available(*, deprecated)
     public static func startAppFlow(
         siteID: String,
         sessionID: String? = nil,
