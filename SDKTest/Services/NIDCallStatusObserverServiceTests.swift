@@ -3,8 +3,30 @@
 //  NeuroID
 //
 
+import CallKit
 import Testing
 @testable import NeuroID
+
+// Subclass CXCall to override read-only properties for testing
+class MockCXCall: CXCall {
+    private var _isOutgoing: Bool
+    private var _hasConnected: Bool
+    private var _hasEnded: Bool
+    private var _isOnHold: Bool
+
+    init(isOutgoing: Bool = false, hasConnected: Bool = false, hasEnded: Bool = false, isOnHold: Bool = false) {
+        self._isOutgoing = isOutgoing
+        self._hasConnected = hasConnected
+        self._hasEnded = hasEnded
+        self._isOnHold = isOnHold
+        super.init(uuid: UUID())
+    }
+
+    override var isOutgoing: Bool { _isOutgoing }
+    override var hasConnected: Bool { _hasConnected }
+    override var hasEnded: Bool { _hasEnded }
+    override var isOnHold: Bool { _isOnHold }
+}
 
 @Suite
 struct NIDCallStatusObserverServiceTests {
@@ -208,6 +230,64 @@ struct NIDCallStatusObserverServiceTests {
     }
 
     // MARK: - callObserver delegate
+
+    @Test
+    func callObserver_delegateMethod_outgoingConnectedCall() {
+        let mockCall = MockCXCall(isOutgoing: true, hasConnected: true, hasEnded: false, isOnHold: false)
+        let observer = CXCallObserver()
+
+        service.callObserver(observer, callChanged: mockCall)
+
+        let event = eventStorageService.mockEventStore.last
+        #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
+        let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
+        #expect(typeAttr?.v == "outgoing")
+        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
+        #expect(progressAttr?.v == "answered")
+    }
+
+    @Test
+    func callObserver_delegateMethod_incomingEndedCall() {
+        let mockCall = MockCXCall(isOutgoing: false, hasConnected: false, hasEnded: true, isOnHold: false)
+        let observer = CXCallObserver()
+
+        service.callObserver(observer, callChanged: mockCall)
+
+        let event = eventStorageService.mockEventStore.last
+        #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
+        let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
+        #expect(typeAttr?.v == "incoming")
+        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
+        #expect(progressAttr?.v == "ended")
+    }
+
+    @Test
+    func callObserver_delegateMethod_onHoldCall() {
+        let mockCall = MockCXCall(isOutgoing: true, hasConnected: false, hasEnded: false, isOnHold: true)
+        let observer = CXCallObserver()
+
+        service.callObserver(observer, callChanged: mockCall)
+
+        let event = eventStorageService.mockEventStore.last
+        #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
+        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
+        #expect(progressAttr?.v == "onhold")
+    }
+
+    @Test
+    func callObserver_delegateMethod_ringingCall() {
+        let mockCall = MockCXCall(isOutgoing: false, hasConnected: false, hasEnded: false, isOnHold: false)
+        let observer = CXCallObserver()
+
+        service.callObserver(observer, callChanged: mockCall)
+
+        let event = eventStorageService.mockEventStore.last
+        #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
+        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
+        #expect(progressAttr?.v == "ringing")
+        let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
+        #expect(typeAttr?.v == "incoming")
+    }
 
     @Test
     func callObserver_delegateIsSetAfterInit() {
