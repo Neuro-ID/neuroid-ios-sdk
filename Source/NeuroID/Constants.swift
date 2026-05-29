@@ -71,8 +71,6 @@ enum CallInProgressMetaData: String {
     case ENDED = "ended"
     case ONHOLD = "onhold"
     case RINGING = "ringing"
-    case INBOUND = "inbound"
-    case OUTBOUND = "outbound"
 }
 
 // Options for Endpoints
