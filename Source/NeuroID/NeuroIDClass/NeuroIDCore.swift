@@ -14,7 +14,7 @@ class NeuroIDCore: NSObject {
     // Configuration
     var clientKey: String?
     var isAdvancedDevice: Bool = false
-    var advancedDeviceKey: String? = nil
+    var advancedDeviceKey: String? = nil 
     var useAdvancedDeviceProxy: Bool = false
     var environment: String = Constants.environmentTest.rawValue
 
