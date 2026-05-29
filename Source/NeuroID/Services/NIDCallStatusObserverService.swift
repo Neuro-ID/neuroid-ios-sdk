@@ -13,6 +13,15 @@ protocol CallStatusObserverServiceProtocol {
     func stopListeningToCallStatus()
 }
 
+protocol CallProperties {
+    var hasEnded: Bool { get }
+    var isOnHold: Bool { get }
+    var hasConnected: Bool { get }
+    var isOutgoing: Bool { get }
+}
+
+extension CXCall: CallProperties {}
+
 class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatusObserverServiceProtocol {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
@@ -38,6 +47,11 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
     }
 
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
+        processCall(call)
+    }
+
+    // Internal entry point that accepts the CallProperties protocol for testability
+    internal func processCall(_ call: CallProperties) {
         handleCallChange(
             hasEnded: call.hasEnded,
             isOnHold: call.isOnHold,
