@@ -112,7 +112,8 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onSuccess: @escaping () -> Void,
         onFailure: @escaping (Error) -> Void
     ) {
-        let url = NeuroIDCore.shared.region.collectionUrl
+        let region: Region = NeuroIDCore.shared.region
+        let url = Endpoints.Collection.url(region)
 
         // if stored fn use that (testing purposes) otherwise fallback to static instance
         let neuroHTTPRequest = (self.buildPayload ?? PayloadSendingService.buildStaticPayload)(events, screen)
