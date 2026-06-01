@@ -14,11 +14,9 @@ enum Endpoints {
         static func url(_ region: Region) -> URL {
             switch region {
             case .usWest:
-                return Self.usWestCollectionURL
+                return URL(string: "https://receiver.neuroid.cloud/c")!
             }
         }
-
-        private static let usWestCollectionURL = URL(string: "https://receiver.neuroid.cloud/c")!
     }
 
     // MARK: - Device & Network Endpoints
@@ -39,6 +37,18 @@ enum Endpoints {
             switch region {
             case .usWest:
                 return "https://dn.neuroid.cloud"
+            }
+        }
+    }
+    
+    // MARK: - Remote Config Scripts
+    
+    enum RemoteConfig {
+        
+        static func url(_ region: Region) -> URL {
+            switch region {
+            case .usWest:
+                return URL(string: "https://scripts.neuro-id.com/mobile/")!
             }
         }
     }

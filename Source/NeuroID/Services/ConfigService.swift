@@ -30,7 +30,6 @@ class ConfigService: ConfigServiceProtocol {
 
     static let DEFAULT_SAMPLE_RATE: Int = 100
     static let MAX_SAMPLE_RATE: Int = 100
-    static var NID_CONFIG_URL = "https://scripts.neuro-id.com/mobile/"
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
 
@@ -85,8 +84,12 @@ class ConfigService: ConfigServiceProtocol {
         }
 
         do {
-            let configUrlStr = ConfigService.NID_CONFIG_URL + NeuroIDCore.shared.getClientKey() + ".json"
-            let configUrl = URL(string: configUrlStr)!
+            let clientKey: String = NeuroIDCore.shared.getClientKey()
+            let region: Region = NeuroIDCore.shared.region
+
+            let configUrl = Endpoints.RemoteConfig.url(region)
+                .appendingPathComponent(clientKey)
+                .appendingPathExtension("json")
 
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
 
