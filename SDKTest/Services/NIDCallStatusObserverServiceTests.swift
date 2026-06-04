@@ -13,6 +13,7 @@ struct MockCallProperties: CallProperties {
     var isOnHold: Bool = false
     var hasConnected: Bool = false
     var isOutgoing: Bool = false
+    var uuid: UUID = UUID()
 }
 
 @Suite
@@ -31,60 +32,11 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    // MARK: - Duration
-
-    @Test
-    func ended_withoutPriorConnect_durationIsZero() {
-        // End without a preceding connect — callStartTime was never set
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false)
-
-        let event = eventStorageService.mockEventStore.last
-        let durationAttr = event?.attrs?.first(where: { $0.n == "duration_ms" })
-        #expect(durationAttr?.v == "0")
-    }
-
-    @Test
-    func ended_afterConnect_durationIsPositive() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: true)
-
-        let event = eventStorageService.mockEventStore.last
-        let durationAttr = event?.attrs?.first(where: { $0.n == "duration_ms" })
-        let duration = Int64(durationAttr?.v ?? "-1")
-        #expect((duration ?? -1) >= 0, "Duration should be non-negative")
-    }
-
-    @Test
-    func ended_callStartTimeIsResetAfterEnd() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: true)
-
-        // Start a new call — callStartTime should be 0 so it gets set again
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: true)
-
-        let event = eventStorageService.mockEventStore.last
-        let durationAttr = event?.attrs?.first(where: { $0.n == "duration_ms" })
-        let duration = Int64(durationAttr?.v ?? "-1")
-        #expect((duration ?? -1) >= 0, "Second call duration should also be non-negative")
-    }
-
-    @Test
-    func connected_callStartTimeOnlySetOnFirstConnect() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
-        let startTime = service.callStartTime
-
-        // Simulate duplicate connect event (e.g. held then reconnected without end)
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
-
-        #expect(service.callStartTime == startTime, "callStartTime should not be overwritten by duplicate connect events")
-    }
-
     // MARK: - Backward compatibility: existing "type" attr still present
 
     @Test
     func answered_outgoingCall_typeAttrPreserved() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
@@ -93,18 +45,30 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func answered_incomingCall_typeAttrPreserved() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
         #expect(typeAttr?.v == "incoming")
     }
 
+    // MARK: - UUID attribute
+
+    @Test
+    func callEvent_containsUuidAttribute() {
+        let testUUID = UUID()
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true, uuid: testUUID)
+
+        let event = eventStorageService.mockEventStore.last
+        let uuidAttr = event?.attrs?.first(where: { $0.n == "uuid" })
+        #expect(uuidAttr?.v == testUUID.uuidString)
+    }
+
     // MARK: - Progress values
 
     @Test
     func ringing_progressIsRinging() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
@@ -113,7 +77,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func answered_progressIsAnswered() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
@@ -122,7 +86,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func ended_progressIsEnded() {
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
@@ -131,7 +95,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func onHold_progressIsOnhold() {
-        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
@@ -147,7 +111,7 @@ struct NIDCallStatusObserverServiceTests {
         service.startListeningToCallStatus()
 
         // Verify service still works correctly after no-op start
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true, uuid: UUID())
         #expect(eventStorageService.mockEventStore.count == 1)
     }
 
@@ -163,7 +127,7 @@ struct NIDCallStatusObserverServiceTests {
         service.startListeningToCallStatus()
 
         // Verify service processes events (delegate is set)
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
         let event = eventStorageService.mockEventStore.last
         #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
     }
@@ -183,7 +147,7 @@ struct NIDCallStatusObserverServiceTests {
         service.stopListeningToCallStatus()
 
         // Service still works for direct handleCallChange calls
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true, uuid: UUID())
         #expect(eventStorageService.mockEventStore.count == 1)
     }
 
@@ -198,7 +162,7 @@ struct NIDCallStatusObserverServiceTests {
         configService.mockConfigCache.callInProgress = true
         service.startListeningToCallStatus()
 
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
         #expect(eventStorageService.mockEventStore.count == 1)
     }
 
@@ -211,7 +175,7 @@ struct NIDCallStatusObserverServiceTests {
         service.stopListeningToCallStatus()
 
         // Service handleCallChange still works (it's independent of delegate registration)
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
         let event = eventStorageService.mockEventStore.last
         #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
     }
@@ -281,7 +245,7 @@ struct NIDCallStatusObserverServiceTests {
         service.startListeningToCallStatus()
 
         // The service should still be able to handle call changes
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: true)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: true, uuid: UUID())
         let event = eventStorageService.mockEventStore.last
         let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
         #expect(progressAttr?.v == "ringing")
@@ -292,11 +256,11 @@ struct NIDCallStatusObserverServiceTests {
     @Test
     func callObserver_fullLifecycle_incomingCall() {
         // Simulate full lifecycle: ringing -> answered -> on hold -> answered -> ended
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false)
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
-        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false)
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
+        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, uuid: UUID())
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
+        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         #expect(eventStorageService.mockEventStore.count == 5)
 
@@ -311,7 +275,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func ringing_cpIsInactive() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
@@ -319,7 +283,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func answered_cpIsActive() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
@@ -327,7 +291,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func onHold_cpIsActive() {
-        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
@@ -335,7 +299,7 @@ struct NIDCallStatusObserverServiceTests {
 
     @Test
     func ended_cpIsInactive() {
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false)
+        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         #expect(event?.cp == CallInProgress.INACTIVE.rawValue)

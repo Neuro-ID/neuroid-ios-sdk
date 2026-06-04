@@ -18,6 +18,7 @@ protocol CallProperties {
     var isOnHold: Bool { get }
     var hasConnected: Bool { get }
     var isOutgoing: Bool { get }
+    var uuid: UUID { get }
 }
 
 extension CXCall: CallProperties {}
@@ -42,10 +43,6 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
         self.isRegistered = true
     }
 
-    private func currentTimeMs() -> Int64 {
-        Int64(Date().timeIntervalSince1970 * 1000)
-    }
-
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
         processCall(call)
     }
@@ -56,12 +53,13 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             hasEnded: call.hasEnded,
             isOnHold: call.isOnHold,
             hasConnected: call.hasConnected,
-            isOutgoing: call.isOutgoing
+            isOutgoing: call.isOutgoing,
+            uuid: call.uuid
         )
     }
 
     // Internal entry point extracted for testability (CXCall cannot be instantiated in unit tests)
-    func handleCallChange(hasEnded: Bool, isOnHold: Bool, hasConnected: Bool, isOutgoing: Bool) {
+    func handleCallChange(hasEnded: Bool, isOnHold: Bool, hasConnected: Bool, isOutgoing: Bool, uuid: UUID) {
         var status: String
         var attrs: [Attrs] = []
         var progress: String
@@ -73,11 +71,6 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             status = CallInProgress.INACTIVE.rawValue
             progress = CallInProgressMetaData.ENDED.rawValue
 
-            // Calculate call duration
-            let duration = callStartTime > 0 ? currentTimeMs() - callStartTime : 0
-            attrs.append(Attrs(n: "duration_ms", v: "\(duration)"))
-            callStartTime = 0
-
         } else if isOnHold {
             status = CallInProgress.ACTIVE.rawValue
             progress = CallInProgressMetaData.ONHOLD.rawValue
@@ -86,11 +79,6 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             status = CallInProgress.ACTIVE.rawValue
             progress = CallInProgressMetaData.ANSWERED.rawValue
 
-            // Record start time when call first connects
-            if callStartTime == 0 {
-                callStartTime = currentTimeMs()
-            }
-
         } else {
             status = CallInProgress.INACTIVE.rawValue
             progress = CallInProgressMetaData.RINGING.rawValue
@@ -98,6 +86,7 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
 
         // Add call progress
         attrs.append(Attrs(n: "progress", v: progress))
+        attrs.append(Attrs(n: "uuid", v: uuid.uuidString))
 
         self.eventStorageService.saveEventToLocalDataStore(
             NIDEvent(
