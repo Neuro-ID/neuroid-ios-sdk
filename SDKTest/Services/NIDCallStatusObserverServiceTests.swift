@@ -34,22 +34,13 @@ struct NIDCallStatusObserverServiceTests {
 
     // MARK: - Backward compatibility: existing "type" attr still present
 
-    @Test
-    func answered_outgoingCall_typeAttrPreserved() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true, uuid: UUID())
+    @Test(arguments: [true, false])
+    func answered_typeAttrPreserved(isOutgoing: Bool) {
+        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: isOutgoing, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
-        #expect(typeAttr?.v == "outgoing")
-    }
-
-    @Test
-    func answered_incomingCall_typeAttrPreserved() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
-
-        let event = eventStorageService.mockEventStore.last
-        let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
-        #expect(typeAttr?.v == "incoming")
+        #expect(typeAttr?.v == (isOutgoing ? "outgoing" : "incoming"))
     }
 
     // MARK: - UUID attribute
@@ -66,40 +57,18 @@ struct NIDCallStatusObserverServiceTests {
 
     // MARK: - Progress values
 
-    @Test
-    func ringing_progressIsRinging() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
+    @Test(arguments: [
+        CallScenario(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, expectedProgress: "ringing", expectedCp: CallInProgress.INACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, expectedProgress: "answered", expectedCp: CallInProgress.ACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, expectedProgress: "ended", expectedCp: CallInProgress.INACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, expectedProgress: "onhold", expectedCp: CallInProgress.ACTIVE.rawValue, expectedType: "incoming")
+    ])
+    func progressValues(_ scenario: CallScenario) {
+        service.handleCallChange(hasEnded: scenario.hasEnded, isOnHold: scenario.isOnHold, hasConnected: scenario.hasConnected, isOutgoing: scenario.isOutgoing, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
         let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "ringing")
-    }
-
-    @Test
-    func answered_progressIsAnswered() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
-
-        let event = eventStorageService.mockEventStore.last
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "answered")
-    }
-
-    @Test
-    func ended_progressIsEnded() {
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
-
-        let event = eventStorageService.mockEventStore.last
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "ended")
-    }
-
-    @Test
-    func onHold_progressIsOnhold() {
-        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, uuid: UUID())
-
-        let event = eventStorageService.mockEventStore.last
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "onhold")
+        #expect(progressAttr?.v == scenario.expectedProgress)
     }
 
     // MARK: - startListeningToCallStatus
@@ -182,58 +151,23 @@ struct NIDCallStatusObserverServiceTests {
 
     // MARK: - callObserver delegate (via processCall)
 
-    @Test
-    func callObserver_delegateMethod_outgoingConnectedCall() {
-        let mockCall = MockCallProperties(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true)
+    @Test(arguments: [
+        CallScenario(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: true, expectedProgress: "answered", expectedCp: CallInProgress.ACTIVE.rawValue, expectedType: "outgoing"),
+        CallScenario(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, expectedProgress: "ended", expectedCp: CallInProgress.INACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: true, expectedProgress: "onhold", expectedCp: CallInProgress.ACTIVE.rawValue, expectedType: "outgoing"),
+        CallScenario(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, expectedProgress: "ringing", expectedCp: CallInProgress.INACTIVE.rawValue, expectedType: "incoming")
+    ])
+    func callObserver_delegateMethod(_ scenario: CallScenario) {
+        let mockCall = MockCallProperties(hasEnded: scenario.hasEnded, isOnHold: scenario.isOnHold, hasConnected: scenario.hasConnected, isOutgoing: scenario.isOutgoing)
 
         service.processCall(mockCall)
 
         let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
+        #expect(event?.cp == scenario.expectedCp)
+        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
+        #expect(progressAttr?.v == scenario.expectedProgress)
         let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
-        #expect(typeAttr?.v == "outgoing")
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "answered")
-    }
-
-    @Test
-    func callObserver_delegateMethod_incomingEndedCall() {
-        let mockCall = MockCallProperties(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false)
-
-        service.processCall(mockCall)
-
-        let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
-        let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
-        #expect(typeAttr?.v == "incoming")
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "ended")
-    }
-
-    @Test
-    func callObserver_delegateMethod_onHoldCall() {
-        let mockCall = MockCallProperties(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: true)
-
-        service.processCall(mockCall)
-
-        let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "onhold")
-    }
-
-    @Test
-    func callObserver_delegateMethod_ringingCall() {
-        let mockCall = MockCallProperties(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false)
-
-        service.processCall(mockCall)
-
-        let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
-        let progressAttr = event?.attrs?.first(where: { $0.n == "progress" })
-        #expect(progressAttr?.v == "ringing")
-        let typeAttr = event?.attrs?.first(where: { $0.n == "type" })
-        #expect(typeAttr?.v == "incoming")
+        #expect(typeAttr?.v == scenario.expectedType)
     }
 
     @Test
@@ -273,35 +207,34 @@ struct NIDCallStatusObserverServiceTests {
 
     // MARK: - cp (callInProgress status) values
 
-    @Test
-    func ringing_cpIsInactive() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
+    @Test(arguments: [
+        CallScenario(hasEnded: false, isOnHold: false, hasConnected: false, isOutgoing: false, expectedProgress: "ringing", expectedCp: CallInProgress.INACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, expectedProgress: "answered", expectedCp: CallInProgress.ACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, expectedProgress: "onhold", expectedCp: CallInProgress.ACTIVE.rawValue, expectedType: "incoming"),
+        CallScenario(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, expectedProgress: "ended", expectedCp: CallInProgress.INACTIVE.rawValue, expectedType: "incoming")
+    ])
+    func cpValues(_ scenario: CallScenario) {
+        service.handleCallChange(hasEnded: scenario.hasEnded, isOnHold: scenario.isOnHold, hasConnected: scenario.hasConnected, isOutgoing: scenario.isOutgoing, uuid: UUID())
 
         let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
+        #expect(event?.cp == scenario.expectedCp)
     }
+}
 
-    @Test
-    func answered_cpIsActive() {
-        service.handleCallChange(hasEnded: false, isOnHold: false, hasConnected: true, isOutgoing: false, uuid: UUID())
+// MARK: - Test Argument Types
 
-        let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
-    }
+extension NIDCallStatusObserverServiceTests {
+    struct CallScenario: CustomStringConvertible, Sendable {
+        let hasEnded: Bool
+        let isOnHold: Bool
+        let hasConnected: Bool
+        let isOutgoing: Bool
+        let expectedProgress: String
+        let expectedCp: String
+        let expectedType: String?
 
-    @Test
-    func onHold_cpIsActive() {
-        service.handleCallChange(hasEnded: false, isOnHold: true, hasConnected: false, isOutgoing: false, uuid: UUID())
-
-        let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.ACTIVE.rawValue)
-    }
-
-    @Test
-    func ended_cpIsInactive() {
-        service.handleCallChange(hasEnded: true, isOnHold: false, hasConnected: false, isOutgoing: false, uuid: UUID())
-
-        let event = eventStorageService.mockEventStore.last
-        #expect(event?.cp == CallInProgress.INACTIVE.rawValue)
+        var description: String {
+            return "\(expectedProgress) (\(isOutgoing ? "outgoing" : "incoming"))"
+        }
     }
 }
