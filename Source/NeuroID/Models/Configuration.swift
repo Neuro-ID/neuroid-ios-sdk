@@ -26,10 +26,9 @@ extension NeuroID {
             self.useAdvancedDeviceProxy = useAdvancedDeviceProxy ?? true
             self.region = region ?? .usWest
         }
-        
+
         var environment: String {
             return clientKey.contains("_live_") ? Constants.environmentLive.rawValue : Constants.environmentTest.rawValue
         }
     }
 }
-
