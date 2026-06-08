@@ -19,7 +19,7 @@ extension NeuroIDCore {
         let advancedDeviceKey: String? = rnOptions[RNConfigOptions.advancedDeviceKey.rawValue] as? String
         let useAdvancedDeviceProxy: Bool? = rnOptions[RNConfigOptions.useAdvancedDeviceProxy.rawValue] as? Bool
         let region: Region? = (rnOptions[RNConfigOptions.region.rawValue] as? String)
-            .flatMap(Region.init(configValue:))
+            .flatMap(Region.init(rawValue:))
 
         let configuration = NeuroID.Configuration(
             clientKey: clientKey,

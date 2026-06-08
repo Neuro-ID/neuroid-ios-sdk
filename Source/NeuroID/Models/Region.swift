@@ -5,15 +5,6 @@
 
 import Foundation
 
-public enum Region {
+public enum Region: String {
     case usWest
-
-    init?(configValue: String) {
-        switch configValue {
-        case "usWest":
-            self = .usWest
-        default:
-            return nil
-        }
-    }
 }
