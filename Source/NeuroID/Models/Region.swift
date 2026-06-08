@@ -5,6 +5,6 @@
 
 import Foundation
 
-public enum Region: String {
+public enum Region: String, Sendable {
     case usWest
 }
