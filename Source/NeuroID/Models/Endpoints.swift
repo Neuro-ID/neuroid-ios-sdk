@@ -11,7 +11,7 @@ enum Endpoints {
 
     enum Collection {
 
-        static func url(_ region: Region) -> URL {
+        static func collectionURL(_ region: Region) -> URL {
             switch region {
             case .usWest:
                 return URL(string: "https://receiver.neuroid.cloud/c")!
@@ -24,7 +24,7 @@ enum Endpoints {
     // FP expects type `String`, not `URL`
     enum DeviceNetwork {
 
-        static func proxyUrl(_ region: Region) -> String {
+        static func proxyURL(_ region: Region) -> String {
             switch region {
             case .usWest:
                 return "https://dn.neuroid.cloud/iynlfqcb0t"
@@ -43,7 +43,7 @@ enum Endpoints {
 
     enum RemoteConfig {
 
-        static func url(_ region: Region) -> URL {
+        static func remoteConfigURL(_ region: Region) -> URL {
             switch region {
             case .usWest:
                 return URL(string: "https://scripts.neuro-id.com/mobile/")!

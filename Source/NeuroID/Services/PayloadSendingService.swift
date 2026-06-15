@@ -113,7 +113,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onFailure: @escaping (Error) -> Void
     ) {
         let region: Region = NeuroIDCore.shared.region
-        let url = Endpoints.Collection.url(region)
+        let url = Endpoints.Collection.collectionURL(region)
 
         // if stored fn use that (testing purposes) otherwise fallback to static instance
         let neuroHTTPRequest = (self.buildPayload ?? PayloadSendingService.buildStaticPayload)(events, screen)
@@ -121,7 +121,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         let headers: HTTPHeaders = [
             "Content-Type": "application/json",
             "site_key": clientKey,
-            "authority": "receiver.neuroid.cloud",
+            "authority": url.host ?? "",
         ]
 
         self.networkService.retryableRequest(

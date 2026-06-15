@@ -185,7 +185,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         let region: Region = NeuroIDCore.shared.region
         return useProxy
             ? .custom(
-                domain: Endpoints.DeviceNetwork.proxyUrl(region),
+                domain: Endpoints.DeviceNetwork.proxyURL(region),
                 fallback: [Endpoints.DeviceNetwork.standardURL(region)]
             )
             : .custom(domain: Endpoints.DeviceNetwork.standardURL(region))
