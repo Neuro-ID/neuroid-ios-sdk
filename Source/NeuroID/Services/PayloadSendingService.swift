@@ -20,7 +20,6 @@ protocol PayloadSendingServiceProtocol {
 }
 
 class PayloadSendingService: PayloadSendingServiceProtocol {
-    static let collectionEndpointUrl = Constants.productionURL.rawValue
 
     static func buildStaticPayload(events: [NIDEvent], screen: String) -> NeuroHTTPRequest {
         let tabId = ParamsCreator.getTabId()
@@ -113,10 +112,8 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         onSuccess: @escaping () -> Void,
         onFailure: @escaping (Error) -> Void
     ) {
-        guard let url = URL(string: PayloadSendingService.collectionEndpointUrl) else {
-            NIDLog.error("NeuroID Base URL NOT found")
-            return
-        }
+        let region: Region = NeuroIDCore.shared.region
+        let url = Endpoints.Collection.collectionURL(region)
 
         // if stored fn use that (testing purposes) otherwise fallback to static instance
         let neuroHTTPRequest = (self.buildPayload ?? PayloadSendingService.buildStaticPayload)(events, screen)
@@ -124,7 +121,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
         let headers: HTTPHeaders = [
             "Content-Type": "application/json",
             "site_key": clientKey,
-            "authority": "receiver.neuroid.cloud",
+            "authority": url.host ?? "",
         ]
 
         self.networkService.retryableRequest(

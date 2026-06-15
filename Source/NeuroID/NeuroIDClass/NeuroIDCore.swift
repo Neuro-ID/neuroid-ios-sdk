@@ -16,6 +16,7 @@ class NeuroIDCore: NSObject {
     var isAdvancedDevice: Bool = false
     var advancedDeviceKey: String? = nil
     var useAdvancedDeviceProxy: Bool = false
+    var region: Region = .usWest
     var environment: String = Constants.environmentTest.rawValue
 
     var siteID: String?
@@ -214,6 +215,7 @@ class NeuroIDCore: NSObject {
         self.isAdvancedDevice = configuration.isAdvancedDevice
         self.advancedDeviceKey = configuration.advancedDeviceKey
         self.useAdvancedDeviceProxy = configuration.useAdvancedDeviceProxy
+        self.region = configuration.region
         self.environment = configuration.environment
 
         self.clearSessionVariables()

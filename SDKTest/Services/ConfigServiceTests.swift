@@ -15,7 +15,6 @@ struct ConfigServiceTests {
     var configService: ConfigService
 
     init() {
-        ConfigService.NID_CONFIG_URL = "https://scripts.neuro-dev.com/mobile/"
         NeuroIDCore.shared.clientKey = "key_test_ymNZWHDYvHYNeS4hM0U7yLc7"
 
         self.networkService = MockNetworkService()

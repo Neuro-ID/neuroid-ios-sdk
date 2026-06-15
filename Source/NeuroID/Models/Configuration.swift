@@ -11,19 +11,22 @@ extension NeuroID {
         public var isAdvancedDevice: Bool
         public var advancedDeviceKey: String?
         public var useAdvancedDeviceProxy: Bool
+        public var region: Region
 
         public init(
             clientKey: String,
             isAdvancedDevice: Bool? = nil,
             advancedDeviceKey: String? = nil,
-            useAdvancedDeviceProxy: Bool? = nil
+            useAdvancedDeviceProxy: Bool? = nil,
+            region: Region? = nil
         ) {
             self.clientKey = clientKey
             self.isAdvancedDevice = isAdvancedDevice ?? false
             self.advancedDeviceKey = advancedDeviceKey
             self.useAdvancedDeviceProxy = useAdvancedDeviceProxy ?? true
+            self.region = region ?? .usWest
         }
-        
+
         var environment: String {
             return clientKey.contains("_live_") ? Constants.environmentLive.rawValue : Constants.environmentTest.rawValue
         }
