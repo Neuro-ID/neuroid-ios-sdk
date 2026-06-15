@@ -179,14 +179,18 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
             }
         }
     }
-    
+
     // Selects the endpoint to use based on the `useAdvancedDeviceProxy` flag
     static func endpoint(useProxy: Bool) -> FingerprintPro.Region {
+        let region: Region = NeuroIDCore.shared.region
         return useProxy
-            ? .custom(domain: Endpoints.proxy.url, fallback: [Endpoints.standard.url])
-            : .custom(domain: Endpoints.standard.url)
+            ? .custom(
+                domain: Endpoints.DeviceNetwork.proxyURL(region),
+                fallback: [Endpoints.DeviceNetwork.standardURL(region)]
+            )
+            : .custom(domain: Endpoints.DeviceNetwork.standardURL(region))
     }
-    
+
     static func retryAPICall(
         apiKey: String,
         maxRetries: Int,
