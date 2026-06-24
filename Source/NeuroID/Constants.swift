@@ -57,17 +57,3 @@ enum SessionOrigin: String {
     case NID_ORIGIN_CODE_NID = "200"
     case NID_ORIGIN_CODE_CUSTOMER = "201"
 }
-
-enum CallInProgress: String {
-    case ACTIVE = "true"
-    case INACTIVE = "false"
-}
-
-enum CallInProgressMetaData: String {
-    case OUTGOING = "outgoing"
-    case INCOMING = "incoming"
-    case ANSWERED = "answered"
-    case ENDED = "ended"
-    case ONHOLD = "onhold"
-    case RINGING = "ringing"
-}
