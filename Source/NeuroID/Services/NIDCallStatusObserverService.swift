@@ -16,10 +16,11 @@ protocol CallStatusObserverServiceProtocol {
 class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatusObserverServiceProtocol {
     private let callObserver = CXCallObserver()
     private var isRegistered = false
-    
+    private var callStates: [UUID: CallPhase] = [:]
+
     private let eventStorageService: EventStorageServiceProtocol
     private let configService: ConfigServiceProtocol
-    
+
     init(
         eventStorageService: EventStorageServiceProtocol,
         configService: ConfigServiceProtocol
@@ -32,42 +33,72 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
     }
 
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
-        var status: String
-        var attrs: [Attrs] = []
-        var progress: String
-        
-        // Add call type
-        attrs.append(Attrs(n: "type", v: call.isOutgoing ? CallInProgressMetaData.OUTGOING.rawValue : CallInProgressMetaData.INCOMING.rawValue))
-        
-        if call.hasEnded {
-            status = CallInProgress.INACTIVE.rawValue
-            progress = CallInProgressMetaData.ENDED.rawValue
-            
-        } else if call.isOnHold {
-            status = CallInProgress.ACTIVE.rawValue
-            progress = CallInProgressMetaData.ONHOLD.rawValue
-            
-        } else if call.hasConnected {
-            status = CallInProgress.ACTIVE.rawValue
-            progress = CallInProgressMetaData.ANSWERED.rawValue
-            
-        } else {
-            status = CallInProgress.INACTIVE.rawValue
-            progress = CallInProgressMetaData.RINGING.rawValue
+        processCallChange(
+            hasEnded: call.hasEnded,
+            isOnHold: call.isOnHold,
+            hasConnected: call.hasConnected,
+            direction: call.isOutgoing ? .outgoing : .incoming,
+            callID: call.uuid
+        )
+    }
+
+    func processCallChange(
+        hasEnded: Bool, isOnHold: Bool, hasConnected: Bool, direction: Direction, callID: UUID
+    ) {
+        let previousPhase = callStates[callID]
+
+        if hasEnded {
+            guard previousPhase != .disconnected else { return }
+
+            emitCallEvent(
+                state: .disconnected,
+                direction: direction,
+                callID: callID
+            )
+            callStates[callID] = .disconnected
+            return
         }
-        
-        // Add call progress
-        attrs.append(Attrs(n: "progress", v: progress))
-        
+
+        if isOnHold {
+            guard previousPhase != .onHold else { return }
+
+            emitCallEvent(
+                state: .onHold,
+                direction: direction,
+                callID: callID
+            )
+            callStates[callID] = .onHold
+            return
+        }
+
+        if hasConnected {
+            guard previousPhase != .connected else { return }
+
+            emitCallEvent(
+                state: .connected,
+                direction: direction,
+                callID: callID
+            )
+            callStates[callID] = .connected
+            return
+        }
+    }
+
+    private func emitCallEvent(state: CallPhase, direction: Direction, callID: UUID) {
+        let attrs = [
+            Attrs(n: "direction", v: direction.rawValue),
+            Attrs(n: "id", v: callID.uuidString)
+        ]
+
         self.eventStorageService.saveEventToLocalDataStore(
             NIDEvent(
                 type: .callInProgress,
                 attrs: attrs,
-                cp: status
+                cp: state.rawValue
             )
         )
     }
-    
+
     func startListeningToCallStatus() {
         if !self.isRegistered {
             if self.configService.configCache.callInProgress {
@@ -76,11 +107,22 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             }
         }
     }
-    
+
     func stopListeningToCallStatus() {
         if self.isRegistered {
             self.callObserver.setDelegate(nil, queue: nil)
             self.isRegistered = false
+            self.callStates.removeAll()
         }
+    }
+}
+
+extension NIDCallStatusObserverService {
+    enum CallPhase: String {
+        case connected, disconnected, onHold
+    }
+
+    enum Direction: String {
+        case incoming, outgoing
     }
 }
