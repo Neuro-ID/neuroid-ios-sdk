@@ -23,8 +23,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test(arguments: [true, false])
-    func `emits connected with direction and id when a call connects`(isOutgoing: Bool) {
+    @Test("emits connected with direction and id when a call connects", arguments: [true, false])
+    func emitsConnectedEvent(isOutgoing: Bool) {
         let callID = UUID()
         let direction: NIDCallStatusObserverService.Direction = isOutgoing ? .outgoing : .incoming
 
@@ -43,8 +43,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test
-    func `emits onHold with direction and id after a connected call is placed on hold`() {
+    @Test("emits onHold with direction and id after a connected call is placed on hold")
+    func emitsOnHoldAfterConnected() {
         let callID = UUID()
 
         callService.processCallChange(
@@ -71,8 +71,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test
-    func `emits connected again when a held call becomes active`() {
+    @Test("emits connected again when a held call becomes active")
+    func emitsConnectedWhenResumedFromHold() {
         let callID = UUID()
 
         callService.processCallChange(
@@ -106,8 +106,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test
-    func `emits disconnected with direction and id when a tracked call ends`() {
+    @Test("emits disconnected with direction and id when a tracked call ends")
+    func emitsDisconnectedWhenTrackedCallEnds() {
         let callID = UUID()
 
         callService.processCallChange(
@@ -134,8 +134,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test
-    func `emits disconnected when the first observed state is ended`() {
+    @Test("emits disconnected when the first observed state is ended")
+    func emitsDisconnectedWhenFirstStateIsEnded() {
         let callID = UUID()
 
         callService.processCallChange(
@@ -154,8 +154,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test
-    func `emits nothing for calls that are only ringing`() {
+    @Test("emits nothing for calls that are only ringing")
+    func emitsNothingForRingingOnly() {
         callService.processCallChange(
             hasEnded: false,
             isOnHold: false,
@@ -167,8 +167,8 @@ struct NIDCallStatusObserverServiceTests {
         #expect(eventStorageService.mockEventStore.isEmpty)
     }
 
-    @Test
-    func `does not eemit duplicate events for repeated callbacks of the same state`() {
+    @Test("does not eemit duplicate events for repeated callbacks of the same state")
+    func doesNotEmitDuplicateEvents() {
         let callID = UUID()
 
         callService.processCallChange(
@@ -218,8 +218,8 @@ struct NIDCallStatusObserverServiceTests {
         #expect(callStates() == [.connected, .onHold, .disconnected])
     }
 
-    @Test
-    func `emits only onHold when the first observed state is on hold`() {
+    @Test("emits only onHold when the first observed state is on hold")
+    func emitsOnHoldWhenFirstStateIsOnHold() {
         let callID = UUID()
 
         callService.processCallChange(
@@ -239,8 +239,8 @@ struct NIDCallStatusObserverServiceTests {
         )
     }
 
-    @Test
-    func `tracks simultaneous calls independetly`() {
+    @Test("tracks simultaneous calls independetly")
+    func tracksSimultaneousCalls() {
         let firstCallID = UUID()
         let secondCallID = UUID()
 
