@@ -8,23 +8,23 @@
 extension NeuroID {
     public struct Configuration {
         public var clientKey: String
+        public var region: Region
         public var isAdvancedDevice: Bool
         public var advancedDeviceKey: String?
         public var useAdvancedDeviceProxy: Bool
-        public var region: Region
 
         public init(
             clientKey: String,
+            region: Region? = nil,
             isAdvancedDevice: Bool? = nil,
             advancedDeviceKey: String? = nil,
-            useAdvancedDeviceProxy: Bool? = nil,
-            region: Region? = nil
+            useAdvancedDeviceProxy: Bool? = nil
         ) {
             self.clientKey = clientKey
+            self.region = region ?? .usWest
             self.isAdvancedDevice = isAdvancedDevice ?? false
             self.advancedDeviceKey = advancedDeviceKey
             self.useAdvancedDeviceProxy = useAdvancedDeviceProxy ?? true
-            self.region = region ?? .usWest
         }
 
         var environment: String {
