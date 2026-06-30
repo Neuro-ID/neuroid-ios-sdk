@@ -211,7 +211,7 @@
 			mainGroup = 26BCF332268DA3C40002C289;
 			packageReferences = (
 				01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */,
-				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */,
+				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema.swift" */,
 				01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */,
 			);
@@ -359,7 +359,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7.0;
+				MARKETING_VERSION = 4.2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
@@ -562,7 +562,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7.0;
+				MARKETING_VERSION = 4.2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
@@ -600,7 +600,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7.0;
+				MARKETING_VERSION = 4.2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_CFLAGS = "-DNDEBUG";
@@ -726,7 +726,7 @@
 				minimumVersion = 2.0.7;
 			};
 		};
-		01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */ = {
+		01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kylef/JSONSchema.swift";
 			requirement = {
@@ -754,7 +754,7 @@
 		};
 		01D31F582E9D90F10042B0DD /* JSONSchema */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */;
+			package = 01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema.swift" */;
 			productName = JSONSchema;
 		};
 /* End XCSwiftPackageProductDependency section */
