@@ -81,7 +81,6 @@ class NeuroIDClassTests: BaseTestClass {
         clearOutDataStore()
         // remove things configured in setup
         NeuroIDCore.shared.clientKey = nil
-        UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
         let configuration = NeuroID.Configuration(
@@ -91,8 +90,7 @@ class NeuroIDClassTests: BaseTestClass {
         let configured = NeuroID.configure(configuration)
         assert(configured)
 
-        let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
-        assert(clientKeyValue == clientKey)
+        assert(NeuroIDCore.shared.clientKey == clientKey)
 
         let tabIdValue = UserDefaults.standard.string(forKey: tabIdKey)
         assert(tabIdValue == nil)
@@ -120,15 +118,13 @@ class NeuroIDClassTests: BaseTestClass {
         // remove things configured in setup
         NeuroIDCore.shared.environment = Constants.environmentTest.rawValue
         NeuroIDCore.shared.clientKey = nil
-        UserDefaults.standard.setValue(nil, forKey: clientKeyKey)
         UserDefaults.standard.setValue("testTabId", forKey: tabIdKey)
 
         let configuration = NeuroID.Configuration(clientKey: "invalid_key", isAdvancedDevice: false)
         let configured = NeuroID.configure(configuration)
         assert(configured == false)
 
-        let clientKeyValue = UserDefaults.standard.string(forKey: clientKeyKey)
-        assert(clientKeyValue == nil)
+        assert(NeuroIDCore.shared.clientKey == nil)
 
         let tabIdValue = UserDefaults.standard.string(forKey: tabIdKey)
         assert(tabIdValue == "testTabId-invalid-client-key")

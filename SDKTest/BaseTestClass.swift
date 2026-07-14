@@ -13,7 +13,6 @@ class BaseTestClass: XCTestCase {
     let clientKey = "key_live_vtotrandom_form_mobilesandbox"
 
     // Keys for storage:
-    let clientKeyKey = Constants.storageClientKey.rawValue
     let clientIdKey = Constants.storageClientIDKey.rawValue
     let tabIdKey = Constants.storageTabIDKey.rawValue
     

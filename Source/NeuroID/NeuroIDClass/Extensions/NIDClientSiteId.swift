@@ -30,11 +30,6 @@ extension NeuroIDCore {
         return newClientID
     }
 
-    func getClientKeyFromLocalStorage() -> String {
-        let key = getUserDefaultKeyString(Constants.storageClientKey.rawValue)
-        return key ?? ""
-    }
-
     func getClientKey() -> String {
         guard let key = self.clientKey else {
             NIDLog.error("ClientKey is not set")

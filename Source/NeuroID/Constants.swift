@@ -13,7 +13,6 @@ enum Constants: String {
 
     case developmentURL = "https://receiver.neuro-dev.com/c"
 
-    case storageClientKey = "nid_key"
     case storageClientIDKey = "nid_cid"
     case storageTabIDKey = "nid_tid"
     case storageDeviceIDKey = "nid_did"

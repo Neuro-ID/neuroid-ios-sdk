@@ -14,10 +14,6 @@ extension NeuroIDCore {
         self.excludedViewsTestIDs.append(excludedView)
     }
 
-    func excludeViewByTestID(excludedView: String) {
-        self.excludeViewByTestID(excludedView)
-    }
-
     /**
         Specifically available for the React Native SDK to call and register all page targets due to lifecycle event delays
      */
