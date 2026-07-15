@@ -19,7 +19,6 @@ enum NIDEventName: String {
     case setLinkedSite = "SET_LINKED_SITE"
     case configCached = "CONFIG_CACHED"
 
-    case error = "ERROR"
     case log = "LOG"
     case registerTarget = "REGISTER_TARGET"
     case focus = "FOCUS"

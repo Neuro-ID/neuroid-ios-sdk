@@ -97,26 +97,6 @@ class NIDClientSiteIdTests: BaseTestClass {
         assert(result == neuroID.clientID)
     }
 
-    // getClientKeyFromLocalStorage
-    func test_getClientKeyFromLocalStorage_existing() {
-        let expectedValue = "testClientKey"
-
-        UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
-
-        let value = neuroID.getClientKeyFromLocalStorage()
-        assert(value == expectedValue)
-    }
-
-    func test_getClientKeyFromLocalStorage_nil() {
-        let expectedValue: String? = nil
-
-        UserDefaults.standard.setValue(expectedValue, forKey: clientKeyKey)
-
-        let value = neuroID.getClientKeyFromLocalStorage()
-        assert(value != expectedValue)
-        assert(value == "")
-    }
-
     // getClientKey
     func test_getClientKey_nil() {
         neuroID.clientKey = nil

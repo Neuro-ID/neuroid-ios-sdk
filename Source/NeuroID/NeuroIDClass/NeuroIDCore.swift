@@ -220,8 +220,6 @@ class NeuroIDCore: NSObject {
 
         self.clearSessionVariables()
 
-        setUserDefaultKey(Constants.storageClientKey.rawValue, value: clientKey)
-
         // Reset tab id / packet number on configure
         setUserDefaultKey(Constants.storageTabIDKey.rawValue, value: nil)
         self.saveEventToDataStore(
