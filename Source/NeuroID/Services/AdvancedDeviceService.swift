@@ -152,7 +152,8 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     ) {
         let configuration = FingerprintPro.Configuration(
             apiKey: apiKey,
-            region: endpoint(useProxy: NeuroIDCore.shared.useAdvancedDeviceProxy)
+            region: endpoint(useProxy: NeuroIDCore.shared.useAdvancedDeviceProxy),
+            allowUseOfLocationData: false
         )
         
         let client = FingerprintProFactory.getInstance(configuration)

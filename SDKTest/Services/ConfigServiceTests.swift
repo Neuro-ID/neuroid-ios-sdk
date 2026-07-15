@@ -32,7 +32,6 @@ struct ConfigServiceTests {
         // set an initial config to test that it was set to the default one
         let newCache = RemoteConfiguration(
             callInProgress: false,
-            geoLocation: false,
             eventQueueFlushInterval: 0,
             eventQueueFlushSize: 1999,
             requestTimeout: 0,
@@ -60,7 +59,6 @@ struct ConfigServiceTests {
         #expect(!configService.cacheSetWithRemote)
 
         #expect(configService.configCache.requestTimeout == 10)
-        #expect(!configService.configCache.geoLocation)
     }
 
     // Valid key, fetch request succeed

@@ -26,7 +26,6 @@ struct DeviceMetadata: Codable {
     var isJailBreak: Bool
     var isWifiOn: Bool
     var isSimulator: Bool
-    var gpsCoordinates: NIDLocation
     var lastInstallTime: Int64
 
     // Init with local data
@@ -46,11 +45,6 @@ struct DeviceMetadata: Codable {
         self.isJailBreak = DeviceMetadata.hasJailbreak()
         self.isSimulator = DeviceMetadata.isSimulator()
         self.lastInstallTime = Int64(getUserDefaultKeyDouble(Constants.lastInstallTime.rawValue) * 1000)
-        self.gpsCoordinates = NIDLocation(
-            latitude: NeuroIDCore.shared.locationManager?.latitude ?? -1,
-            longitude: NeuroIDCore.shared.locationManager?.longitude ?? -1,
-            authorizationStatus: NeuroIDCore.shared.locationManager?.authorizationStatus ?? "unknown"
-        )
     }
 
     enum CodingKeys: String, CodingKey {
@@ -68,15 +62,8 @@ struct DeviceMetadata: Codable {
         case isJailBreak
         case isWifiOn
         case isSimulator
-        case gpsCoordinates
         case lastInstallTime
     }
-}
-
-struct NIDLocation: Codable {
-    var latitude: Double?
-    var longitude: Double?
-    var authorizationStatus: String
 }
 
 // MARK: - Static funtions
