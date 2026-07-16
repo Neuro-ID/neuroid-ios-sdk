@@ -35,7 +35,6 @@ class NeuroIDCore: NSObject {
     var payloadSendingService: PayloadSendingServiceProtocol
 
     var callObserver: CallStatusObserverServiceProtocol?
-    var locationManager: LocationManagerServiceProtocol?
     var listenerManager: ListenerManagerService
 
     // flag to ensure that we only have one FPJS call in flight
@@ -127,7 +126,6 @@ class NeuroIDCore: NSObject {
         deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
         payloadSendingService: PayloadSendingServiceProtocol? = nil,
         callObserver: CallStatusObserverServiceProtocol? = nil,
-        locationManager: LocationManagerServiceProtocol? = nil,
         listenerManager: ListenerManagerService? = nil
     ) {
         self.uiRuntime = uiRuntime ?? UIRuntime()
@@ -156,7 +154,6 @@ class NeuroIDCore: NSObject {
                 networkService: self.networkService
             )
         self.callObserver = callObserver
-        self.locationManager = locationManager
         self.listenerManager =
             listenerManager
             ?? ListenerManagerService(

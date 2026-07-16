@@ -29,12 +29,6 @@ extension NeuroIDCore {
             self.callObserver = nil
         }
 
-        if self.configService.configCache.geoLocation {
-            self.locationManager = LocationManagerService()
-        } else {
-            self.locationManager = nil
-        }
-
         // We will always cancel the current gyro job and then if the config allows we will recreate and start
         //  with new interval value
         self.collectGyroAccelEventJob.cancel()

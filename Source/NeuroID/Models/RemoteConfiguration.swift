@@ -9,7 +9,6 @@ import Foundation
 
 struct RemoteConfiguration: Codable, Equatable {
     var callInProgress: Bool = true
-    var geoLocation: Bool = false
     var eventQueueFlushInterval: Int = 5
     var eventQueueFlushSize: Int = 2000
     var requestTimeout: Int = 10
@@ -28,7 +27,6 @@ struct RemoteConfiguration: Codable, Equatable {
         case callInProgress = "call_in_progress"
         case eventQueueFlushInterval = "event_queue_flush_interval"
         case eventQueueFlushSize = "event_queue_flush_size"
-        case geoLocation = "geo_location"
         case gyroAccelCadence = "gyro_accel_cadence"
         case gyroAccelCadenceTime = "gyro_accel_cadence_time"
         case requestTimeout = "request_timeout"
