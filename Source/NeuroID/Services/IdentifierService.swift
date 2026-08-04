@@ -8,10 +8,10 @@
 import Foundation
 
 protocol IdentifierServiceProtocol {
-    var sessionID: String? { get set }  // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    var identityId: String? { get set }  // Formerly known as userID, now within the mobile sdk ONLY identityId
     var registeredUserID: String { get set }
 
-    func setSessionID(_ sessionID: String, _ userGenerated: Bool) -> Bool
+    func setIdentityId(_ identityId: String, _ userGenerated: Bool) -> Bool
     func setRegisteredUserID(_ registeredUserID: String) -> Bool
 
     func setGenericIdentifier(
@@ -31,7 +31,7 @@ protocol IdentifierServiceProtocol {
     func scrubIdentifier(_ identifier: String) -> String
 }
 
-struct SessionIDOriginalResult {
+struct IdentityIdOriginalResult {
     let origin: String
     let originCode: String
     let idValue: String
@@ -42,7 +42,7 @@ class IdentifierService: IdentifierServiceProtocol {
     let validationService: ValidationServiceProtocol
     let eventStorageService: EventStorageServiceProtocol
 
-    var sessionID: String?  // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    var identityId: String?  // Formerly known as userID, now within the mobile sdk ONLY identityId
     var registeredUserID: String = ""
 
     init(
@@ -54,14 +54,14 @@ class IdentifierService: IdentifierServiceProtocol {
     }
 
     // This command replaces `setUserID` (internal version)
-    func setSessionID(_ sessionID: String, _ userGenerated: Bool) -> Bool {
+    func setIdentityId(_ identityId: String, _ userGenerated: Bool) -> Bool {
         let validID = setGenericIdentifier(
-            identifier: sessionID,
-            type: .sessionID,
+            identifier: identityId,
+            type: .identityId,
             userGenerated: userGenerated,
             duplicatesAllowedCheck: { _ in true }
         ) {
-            self.sessionID = sessionID
+            self.identityId = identityId
         }
 
         return validID
@@ -135,7 +135,7 @@ class IdentifierService: IdentifierServiceProtocol {
 
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                type: type == .sessionID
+                type: type == .identityId
                     ? .setUserId
                     : type == .registeredUserID
                     ? .setRegisteredUserId
@@ -150,7 +150,7 @@ class IdentifierService: IdentifierServiceProtocol {
     }
 
     func clearIDs() {
-        sessionID = nil
+        identityId = nil
         registeredUserID = ""
     }
 
@@ -201,7 +201,7 @@ class IdentifierService: IdentifierServiceProtocol {
         }
     }
 
-    func sendOriginEvent(_ originResult: SessionIDOriginalResult) {
+    func sendOriginEvent(_ originResult: IdentityIdOriginalResult) {
         eventStorageService.saveEventToDataStore(
             NIDEvent(
                 type: .setVariable,
@@ -237,7 +237,7 @@ class IdentifierService: IdentifierServiceProtocol {
         validID: Bool,
         userGenerated: Bool,
         idType: UserIDTypes
-    ) -> SessionIDOriginalResult {
+    ) -> IdentityIdOriginalResult {
         let origin =
             userGenerated
             ? SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue
@@ -249,7 +249,7 @@ class IdentifierService: IdentifierServiceProtocol {
                 ? SessionOrigin.NID_ORIGIN_CODE_CUSTOMER.rawValue
                 : SessionOrigin.NID_ORIGIN_CODE_NID.rawValue
         }
-        return SessionIDOriginalResult(
+        return IdentityIdOriginalResult(
             origin: origin, originCode: originCode, idValue: idValue,
             idType: idType
         )

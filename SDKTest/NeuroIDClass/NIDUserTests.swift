@@ -29,39 +29,39 @@ class NIDUserTests: BaseTestClass {
     // identify
     func test_identify_success() {
         let expectedValue = true
-        mockIdentifierService.setSessionIDResponse = expectedValue
+        mockIdentifierService.setIdentityIdResponse = expectedValue
 
         let response = neuroID.identify("")
 
         assert(response == expectedValue)
-        assert(mockIdentifierService.setSessionIDCount == 1)
+        assert(mockIdentifierService.setIdentityIdCount == 1)
     }
 
     func test_identify_failure() {
         let expectedValue = false
-        mockIdentifierService.setSessionIDResponse = expectedValue
+        mockIdentifierService.setIdentityIdResponse = expectedValue
 
         let response = neuroID.identify("")
 
         assert(response == expectedValue)
-        assert(mockIdentifierService.setSessionIDCount == 1)
+        assert(mockIdentifierService.setIdentityIdCount == 1)
     }
 
-    // getSessionID
-    func test_getSessionID_exists() {
+    // getIdentityId
+    func test_getIdentityId_exists() {
         let expectedValue = "test_uid"
-        mockIdentifierService.sessionID = expectedValue
+        mockIdentifierService.identityId = expectedValue
 
-        let value = neuroID.getSessionID()
+        let value = neuroID.getIdentityId()
 
         assert(value == expectedValue)
     }
 
-    func test_getSessionID_not_exists() {
+    func test_getIdentityId_not_exists() {
         let expectedValue = ""
-        mockIdentifierService.sessionID = nil
+        mockIdentifierService.identityId = nil
 
-        let value = neuroID.getSessionID()
+        let value = neuroID.getIdentityId()
 
         assert(value == expectedValue)
     }

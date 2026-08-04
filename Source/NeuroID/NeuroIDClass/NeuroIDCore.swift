@@ -41,10 +41,10 @@ class NeuroIDCore: NSObject {
     var isFPJSRunning = false
 
     var clientID: String?
-    var sessionID: String? {
-        // Formerly known as userID, now within the mobile sdk ONLY sessionID
+    var identityId: String? {
+        // Formerly known as userID, now within the mobile sdk ONLY identityId
         // setting should only be through our setIdentity/setUserId command
-        self.identifierService.sessionID
+        self.identifierService.identityId
     }
 
     var registeredUserID: String {

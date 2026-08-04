@@ -63,11 +63,11 @@ class NeuroIDClassTests: BaseTestClass {
         }
     }
 
-    func test_class_var_sessionID_get() {
+    func test_class_var_identityId_get() {
         let expectedValue = "testID"
-        mockIdentifierService.sessionID = expectedValue
+        mockIdentifierService.identityId = expectedValue
 
-        assert(neuroID.sessionID == expectedValue)
+        assert(neuroID.identityId == expectedValue)
     }
 
     func test_class_var_registeredUserID_get() {

@@ -109,7 +109,7 @@ class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
 
                     // not collecting but a session is in progress we need to restart
                     if !NeuroIDCore.shared.isSDKStarted,
-                       !NeuroIDCore.shared.identifierService.sessionID.isEmptyOrNil
+                       !NeuroIDCore.shared.identifierService.identityId.isEmptyOrNil
                     {
                         self.setupResumeNetworkTask()
 

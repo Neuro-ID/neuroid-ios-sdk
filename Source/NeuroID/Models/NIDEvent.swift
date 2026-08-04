@@ -146,7 +146,7 @@ struct NeuroHTTPRequest: Codable {
     var pageTag: String
     var responseId: String
     var siteId: String
-    var userId: String? // this is the only reference where userId stays but really means sessionID in the context of mobile sdk
+    var identityId: String?
     var registeredUserId: String?
     var jsonEvents: [NIDEvent]
     var tabId: String
@@ -164,7 +164,7 @@ struct NeuroHTTPRequest: Codable {
         responseID: String,
         siteID: String,
         linkedSiteID: String?,
-        sessionID: String?,
+        identityId: String?,
         registeredUserID: String?,
         jsonEvents: [NIDEvent],
         tabID: String,
@@ -179,13 +179,30 @@ struct NeuroHTTPRequest: Codable {
         self.responseId = responseID
         self.siteId = siteID
         self.linkedSiteId = linkedSiteID
-        self.userId = sessionID
+        self.identityId = identityId
         self.registeredUserId = registeredUserID
         self.jsonEvents = jsonEvents
         self.tabId = tabID
         self.pageId = pageID
         self.url = url
         self.packetNumber = packetNumber
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case clientId
+        case environment
+        case sdkVersion
+        case pageTag
+        case responseId
+        case siteId
+        case linkedSiteId
+        case identityId = "userId" // Map to userId for backwards compatibility purposes
+        case registeredUserId
+        case jsonEvents
+        case tabId
+        case pageId
+        case url
+        case packetNumber
     }
 }
 

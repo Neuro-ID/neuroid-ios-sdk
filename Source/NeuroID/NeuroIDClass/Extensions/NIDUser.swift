@@ -8,16 +8,13 @@
 import Foundation
 
 extension NeuroIDCore {
-    // This command replaces `setUserID`
-    // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    func identify(_ sessionID: String) -> Bool {
-        return self.identifierService.setSessionID(sessionID, true)
+
+    func getIdentityId() -> String {
+        return self.identifierService.identityId ?? ""
     }
 
-    // This command replaces `getUserID`
-    // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    func getSessionID() -> String {
-        return self.identifierService.sessionID ?? ""
+    func identify(_ identityId: String) -> Bool {
+        return self.identifierService.setIdentityId(identityId, true)
     }
 
     func setRegisteredUserID(_ registeredUserID: String) -> Bool {

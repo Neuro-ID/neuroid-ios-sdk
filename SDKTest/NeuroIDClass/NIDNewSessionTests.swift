@@ -40,7 +40,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func assertSessionNotStartedTests(_ sessionRes: SessionStartResult) {
         assert(!sessionRes.started)
-        assert(sessionRes.sessionID == "")
+        assert(sessionRes.identityId == "")
         assert(!NeuroIDCore.shared._isSDKStarted)
     }
 
@@ -50,25 +50,25 @@ class NIDNewSessionTests: BaseTestClass {
 
     //    clearSessionVariables
     func test_clearSessionVariables() {
-        NeuroIDCore.shared.identifierService.sessionID = "myUserID"
+        NeuroIDCore.shared.identifierService.identityId = "myUserID"
         NeuroIDCore.shared.identifierService.registeredUserID = "myRegisteredUserID"
         NeuroIDCore.shared.linkedSiteID = "mySite"
 
         NeuroIDCore.shared.clearSessionVariables()
 
-        assert(NeuroIDCore.shared.sessionID == nil)
+        assert(NeuroIDCore.shared.identityId == nil)
         assert(NeuroIDCore.shared.registeredUserID == "")
         assert(NeuroIDCore.shared.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
-        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared.identifierService.identityId = nil
         NeuroIDCore.shared._isSDKStarted = false
 
-        let expectedValue = "mySessionID"
+        let expectedValue = "myIdentityId"
         NeuroID.startSession(expectedValue) { sessionRes in
             self.assertSessionStartedTests(sessionRes)
-            assert(expectedValue == sessionRes.sessionID)
+            assert(expectedValue == sessionRes.identityId)
         }
 
         assertSetVariableEvents()
@@ -76,39 +76,39 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id() {
-        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared.identifierService.identityId = nil
         NeuroIDCore.shared._isSDKStarted = false
 
-        let expectedValue = "mySessionID"
+        let expectedValue = "myIdentityId"
         NeuroID.startSession { sessionRes in
             self.assertSessionStartedTests(sessionRes)
-            assert(expectedValue != sessionRes.sessionID)
+            assert(expectedValue != sessionRes.identityId)
         }
 
         assertSetVariableEvents()
     }
 
     func test_startSession_success_no_id_sdk_started() {
-        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared.identifierService.identityId = nil
         NeuroIDCore.shared._isSDKStarted = true
 
-        let expectedValue = "mySessionID"
+        let expectedValue = "myIdentityId"
         NeuroID.startSession { sessionRes in
             self.assertSessionStartedTests(sessionRes)
-            assert(expectedValue != sessionRes.sessionID)
+            assert(expectedValue != sessionRes.identityId)
         }
 
         assertSetVariableEvents()
     }
 
     func test_startSession_success_id_sdk_started() {
-        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared.identifierService.identityId = nil
         NeuroIDCore.shared._isSDKStarted = true
 
-        let expectedValue = "mySessionID"
+        let expectedValue = "myIdentityId"
         NeuroID.startSession(expectedValue) { sessionRes in
             self.assertSessionStartedTests(sessionRes)
-            assert(expectedValue == sessionRes.sessionID)
+            assert(expectedValue == sessionRes.identityId)
         }
         assertSetVariableEvents()
     }
@@ -147,7 +147,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_resumeCollection() {
         NeuroIDCore.shared._isSDKStarted = false
-        NeuroIDCore.shared.identifierService.sessionID = "temp"
+        NeuroIDCore.shared.identifierService.identityId = "temp"
 
         NeuroID.resumeCollection()
 
@@ -156,7 +156,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_willNotResumeCollectionIfNotStarted() {
         NeuroIDCore.shared._isSDKStarted = false
-        NeuroIDCore.shared.identifierService.sessionID = nil
+        NeuroIDCore.shared.identifierService.identityId = nil
         NeuroID.resumeCollection()
 
         assert(!NeuroIDCore.shared._isSDKStarted)
