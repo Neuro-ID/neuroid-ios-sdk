@@ -147,6 +147,7 @@ struct NeuroHTTPRequest: Codable {
     var responseId: String
     var siteId: String
     var identityId: String?
+    private var userId: String?
     var registeredUserId: String?
     var jsonEvents: [NIDEvent]
     var tabId: String
@@ -180,6 +181,7 @@ struct NeuroHTTPRequest: Codable {
         self.siteId = siteID
         self.linkedSiteId = linkedSiteID
         self.identityId = identityId
+        self.userId = identityId // map `identityId` to `userId` for backwards compatability
         self.registeredUserId = registeredUserID
         self.jsonEvents = jsonEvents
         self.tabId = tabID
@@ -196,7 +198,8 @@ struct NeuroHTTPRequest: Codable {
         case responseId
         case siteId
         case linkedSiteId
-        case identityId = "userId" // Map to userId for backwards compatibility purposes
+        case identityId
+        case userId
         case registeredUserId
         case jsonEvents
         case tabId
