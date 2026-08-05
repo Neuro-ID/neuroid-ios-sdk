@@ -315,8 +315,6 @@ public struct NIDEvent: Codable {
     var w: CGFloat?
     var f: String?
     var l: Double? // Latency (advanced device request)
-    var lsid: String?
-    var sid: String? // Done
     var cid: String? // Done
     var rid: String?
     var loc: String? // Done
@@ -372,8 +370,6 @@ public struct NIDEvent: Codable {
         w: CGFloat? = nil,
         f: String? = nil,
         l: Double? = nil,
-        lsid: String? = nil,
-        sid: String? = nil,
         cid: String? = nil,
         rid: String? = nil,
         loc: String? = nil,
@@ -424,8 +420,6 @@ public struct NIDEvent: Codable {
         self.w = w
         self.f = f
         self.l = l
-        self.lsid = lsid
-        self.sid = sid
         self.cid = cid
         self.rid = rid
         self.loc = loc
@@ -479,8 +473,6 @@ public struct NIDEvent: Codable {
         case w
         case f
         case l
-        case lsid
-        case sid
         case cid
         case rid
         case loc
