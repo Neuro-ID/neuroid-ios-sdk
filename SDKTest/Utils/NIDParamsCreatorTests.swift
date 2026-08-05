@@ -283,27 +283,6 @@ class NIDParamsCreatorTests: XCTestCase {
         assert(value.prefix(7) == "mobile-")
     }
 
-    let didKey = Constants.storageDeviceIDKey.rawValue
-    func test_getDeviceId_existing() {
-        let expectedValue = "test_did"
-
-        UserDefaults.standard.set(expectedValue, forKey: didKey)
-
-        let value = ParamsCreator.getDeviceId()
-
-        assert(value == expectedValue)
-    }
-
-    func test_getDeviceId_random() {
-        let expectedValue = "test-did"
-
-        UserDefaults.standard.set(expectedValue, forKey: didKey)
-
-        let value = ParamsCreator.getDeviceId()
-
-        assert(value != expectedValue)
-    }
-
     // Private Access Level
     func test_generateID() {
         let expectedValue = 36

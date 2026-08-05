@@ -164,7 +164,6 @@ extension NeuroIDCore {
             type: sessionEvent,
             f: NeuroIDCore.shared.getClientKey(),
             cid: NeuroID.getClientID(),
-            did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
             ua: ParamsCreator.getUserAgent(),
             tzo: ParamsCreator.getTimezone(),

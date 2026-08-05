@@ -318,7 +318,6 @@ public struct NIDEvent: Codable {
     var lsid: String?
     var sid: String? // Done
     var cid: String? // Done
-    var did: String? // Done
     var rid: String?
     var loc: String? // Done
     var ua: String? // Done
@@ -376,7 +375,6 @@ public struct NIDEvent: Codable {
         lsid: String? = nil,
         sid: String? = nil,
         cid: String? = nil,
-        did: String? = nil,
         rid: String? = nil,
         loc: String? = nil,
         ua: String? = nil,
@@ -429,7 +427,6 @@ public struct NIDEvent: Codable {
         self.lsid = lsid
         self.sid = sid
         self.cid = cid
-        self.did = did
         self.rid = rid
         self.loc = loc
         self.ua = ua
@@ -485,7 +482,6 @@ public struct NIDEvent: Codable {
         case lsid
         case sid
         case cid
-        case did
         case rid
         case loc
         case ua
