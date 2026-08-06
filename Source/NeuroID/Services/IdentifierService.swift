@@ -8,7 +8,6 @@
 import Foundation
 
 protocol IdentifierServiceProtocol {
-//    var identityId: String? { get set }  // Formerly known as userID, now within the mobile sdk ONLY identityId
     var registeredUserID: String { get set }
 
     func setIdentityId(_ identityId: String, _ userGenerated: Bool) -> Bool

@@ -68,7 +68,7 @@ public enum NeuroID {
     public static func getIdentityId() -> String {
         return NeuroIDCore.shared.getIdentityId()
     }
-    
+
     @available(*, deprecated, renamed: "getIdentityId()")
     public static func getSessionID() -> String {
         return NeuroIDCore.shared.getIdentityId()
@@ -80,7 +80,7 @@ public enum NeuroID {
     public static func getUserID() -> String {
         return NeuroIDCore.shared.getIdentityId()
     }
-    
+
     // USER FUNCTIONS
     // This command replaces `setUserID`
     // Formerly known as userID, now within the mobile sdk ONLY identityId
@@ -167,7 +167,7 @@ public enum NeuroID {
     ) {
         NeuroIDCore.shared.start(advancedDeviceSignals, completion: completion)
     }
-    
+
     @available(*, deprecated)
     public static func startSession(
         _ sessionID: String? = nil,
