@@ -124,7 +124,7 @@ class MultiAppFlowTests: XCTestCase {
         NeuroIDCore.shared.configService = mockedConfig
         clearOutDataStore()
 
-        NeuroID.startAppFlow(siteID: "form_dream102", identityId: "jakeId") { _ in
+        NeuroID.startAppFlow(siteID: "form_dream102", sessionID: "jakeId") { _ in
             let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
                 $0.type == "ADVANCED_DEVICE_REQUEST"
             }

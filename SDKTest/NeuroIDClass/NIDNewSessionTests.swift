@@ -50,19 +50,19 @@ class NIDNewSessionTests: BaseTestClass {
 
     //    clearSessionVariables
     func test_clearSessionVariables() {
-        NeuroIDCore.shared.identifierService.identityId = "myUserID"
+        NeuroIDCore.shared.state.setIdentityId("myUserID")
         NeuroIDCore.shared.identifierService.registeredUserID = "myRegisteredUserID"
         NeuroIDCore.shared.linkedSiteID = "mySite"
 
         NeuroIDCore.shared.clearSessionVariables()
 
-        assert(NeuroIDCore.shared.identityId == nil)
+        assert(NeuroIDCore.shared.state.identityId == nil)
         assert(NeuroIDCore.shared.registeredUserID == "")
         assert(NeuroIDCore.shared.linkedSiteID == nil)
     }
 
     func test_startSession_success_id() {
-        NeuroIDCore.shared.identifierService.identityId = nil
+        NeuroIDCore.shared.state.setIdentityId(nil)
         NeuroIDCore.shared._isSDKStarted = false
 
         let expectedValue = "myIdentityId"
@@ -76,7 +76,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id() {
-        NeuroIDCore.shared.identifierService.identityId = nil
+        NeuroIDCore.shared.state.setIdentityId(nil)
         NeuroIDCore.shared._isSDKStarted = false
 
         let expectedValue = "myIdentityId"
@@ -89,7 +89,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_no_id_sdk_started() {
-        NeuroIDCore.shared.identifierService.identityId = nil
+        NeuroIDCore.shared.state.setIdentityId(nil)
         NeuroIDCore.shared._isSDKStarted = true
 
         let expectedValue = "myIdentityId"
@@ -102,7 +102,7 @@ class NIDNewSessionTests: BaseTestClass {
     }
 
     func test_startSession_success_id_sdk_started() {
-        NeuroIDCore.shared.identifierService.identityId = nil
+        NeuroIDCore.shared.state.setIdentityId(nil)
         NeuroIDCore.shared._isSDKStarted = true
 
         let expectedValue = "myIdentityId"
@@ -147,7 +147,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_resumeCollection() {
         NeuroIDCore.shared._isSDKStarted = false
-        NeuroIDCore.shared.identifierService.identityId = "temp"
+        NeuroIDCore.shared.state.setIdentityId("temp")
 
         NeuroID.resumeCollection()
 
@@ -156,7 +156,7 @@ class NIDNewSessionTests: BaseTestClass {
 
     func test_willNotResumeCollectionIfNotStarted() {
         NeuroIDCore.shared._isSDKStarted = false
-        NeuroIDCore.shared.identifierService.identityId = nil
+        NeuroIDCore.shared.state.setIdentityId(nil)
         NeuroID.resumeCollection()
 
         assert(!NeuroIDCore.shared._isSDKStarted)

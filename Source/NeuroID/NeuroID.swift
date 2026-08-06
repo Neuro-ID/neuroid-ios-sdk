@@ -153,10 +153,10 @@ public enum NeuroID {
     @available(*, deprecated)
     public static func startAppFlow(
         siteID: String,
-        identityId: String? = nil,
+        sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        NeuroIDCore.shared.startAppFlow(siteID: siteID, identityId: identityId, completion: completion)
+        NeuroIDCore.shared.startAppFlow(siteID: siteID, identityId: sessionID, completion: completion)
     }
 
     // AdvancedDevice Functions
@@ -170,11 +170,11 @@ public enum NeuroID {
     
     @available(*, deprecated)
     public static func startSession(
-        _ identityId: String? = nil,
+        _ sessionID: String? = nil,
         _ advancedDeviceSignals: Bool,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        NeuroIDCore.shared.startSession(identityId, advancedDeviceSignals, completion: completion)
+        NeuroIDCore.shared.startSession(sessionID, advancedDeviceSignals, completion: completion)
     }
 
     // RN Functions

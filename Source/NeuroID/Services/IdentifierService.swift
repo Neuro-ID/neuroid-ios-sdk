@@ -8,7 +8,7 @@
 import Foundation
 
 protocol IdentifierServiceProtocol {
-    var identityId: String? { get set }  // Formerly known as userID, now within the mobile sdk ONLY identityId
+//    var identityId: String? { get set }  // Formerly known as userID, now within the mobile sdk ONLY identityId
     var registeredUserID: String { get set }
 
     func setIdentityId(_ identityId: String, _ userGenerated: Bool) -> Bool
@@ -39,16 +39,18 @@ struct IdentityIdOriginalResult {
 }
 
 class IdentifierService: IdentifierServiceProtocol {
+    let state: StateStore
     let validationService: ValidationServiceProtocol
     let eventStorageService: EventStorageServiceProtocol
 
-    var identityId: String?  // Formerly known as userID, now within the mobile sdk ONLY identityId
     var registeredUserID: String = ""
 
     init(
+        state: StateStore,
         validationService: ValidationServiceProtocol,
         eventStorageService: EventStorageServiceProtocol
     ) {
+        self.state = state
         self.validationService = validationService
         self.eventStorageService = eventStorageService
     }
@@ -61,7 +63,7 @@ class IdentifierService: IdentifierServiceProtocol {
             userGenerated: userGenerated,
             duplicatesAllowedCheck: { _ in true }
         ) {
-            self.identityId = identityId
+            self.state.setIdentityId(identityId)
         }
 
         return validID
@@ -150,7 +152,7 @@ class IdentifierService: IdentifierServiceProtocol {
     }
 
     func clearIDs() {
-        identityId = nil
+        state.setIdentityId(nil)
         registeredUserID = ""
     }
 

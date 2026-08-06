@@ -65,9 +65,8 @@ class NeuroIDClassTests: BaseTestClass {
 
     func test_class_var_identityId_get() {
         let expectedValue = "testID"
-        mockIdentifierService.identityId = expectedValue
-
-        assert(neuroID.identityId == expectedValue)
+        neuroID.state.setIdentityId(expectedValue)
+        assert(neuroID.getIdentityId() == expectedValue)
     }
 
     func test_class_var_registeredUserID_get() {

@@ -24,7 +24,7 @@ extension NeuroIDCore {
             NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
-        if self.identifierService.identityId.isEmptyOrNil,
+        if self.state.identityId.isEmptyOrNil,
            !self.isSDKStarted
         {
             return
@@ -327,7 +327,7 @@ extension NeuroIDCore {
         }
 
         // stop existing session if one is open
-        if !self.identifierService.identityId.isEmptyOrNil || self.isSDKStarted {
+        if !self.state.identityId.isEmptyOrNil || self.isSDKStarted {
             _ = self.stopSession()
         }
 

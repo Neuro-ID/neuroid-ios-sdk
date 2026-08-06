@@ -10,7 +10,7 @@ import Foundation
 extension NeuroIDCore {
 
     func getIdentityId() -> String {
-        return self.identifierService.identityId ?? ""
+        return state.identityId ?? ""
     }
 
     func identify(_ identityId: String) -> Bool {

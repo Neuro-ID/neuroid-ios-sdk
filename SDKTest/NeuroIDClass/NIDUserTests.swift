@@ -50,7 +50,7 @@ class NIDUserTests: BaseTestClass {
     // getIdentityId
     func test_getIdentityId_exists() {
         let expectedValue = "test_uid"
-        mockIdentifierService.identityId = expectedValue
+        neuroID.state.setIdentityId(expectedValue)
 
         let value = neuroID.getIdentityId()
 
@@ -58,12 +58,10 @@ class NIDUserTests: BaseTestClass {
     }
 
     func test_getIdentityId_not_exists() {
-        let expectedValue = ""
-        mockIdentifierService.identityId = nil
-
+        neuroID.state.setIdentityId(nil)
         let value = neuroID.getIdentityId()
 
-        assert(value == expectedValue)
+        assert(value == "")
     }
 
     // setRegisteredUserID

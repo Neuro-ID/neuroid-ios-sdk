@@ -11,7 +11,9 @@ import XCTest
 
 class IdentifierServiceTests: BaseTestClass {
     var mockEventStorageService = MockEventStorageService()
+    var state: StateStore = StateStore()
     var identifierService = IdentifierService(
+        state: StateStore(),
         validationService: ValidationService(),
         eventStorageService: MockEventStorageService()
     )
@@ -22,7 +24,9 @@ class IdentifierServiceTests: BaseTestClass {
 
     override func setUp() {
         mockEventStorageService = MockEventStorageService()
+        state = StateStore()
         identifierService = IdentifierService(
+            state: state,
             validationService: ValidationService(),
             eventStorageService: mockEventStorageService
         )
@@ -35,22 +39,22 @@ class IdentifierServiceTests: BaseTestClass {
 
     // setIdentityId
     func test_setIdentityId_started_customer_origin() {
-        identifierService.identityId = nil
+        state.setIdentityId(nil)
         let expectedValue = "test_uid"
         let fnSuccess = identifierService.setIdentityId(expectedValue, true)
 
         assert(fnSuccess)
-        assert(identifierService.identityId == expectedValue)
+        assert(state.identityId == expectedValue)
     }
 
     func test_setIdentityId_started_nid_origin() {
-        identifierService.identityId = nil
+        state.setIdentityId(nil)
         let expectedValue = "test_uid"
 
         let fnSuccess = identifierService.setIdentityId(expectedValue, false)
 
         assert(fnSuccess)
-        assert(identifierService.identityId == expectedValue)
+        assert(state.identityId == expectedValue)
     }
 
     // setRegisteredUserID
@@ -142,17 +146,10 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     func test_setGenericIdentifier_invalid_identityId_duplicatesAllowed() {
-        let mockValidationService = MockValidationService()
-        mockValidationService.validIdentifier = false
-        identifierService = IdentifierService(
-            validationService: mockValidationService,
-            eventStorageService: mockEventStorageService
-        )
         var successful = false
-        let expectedValue = "myTestUserID"
 
         let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
+            identifier: "",
             type: .identityId,
             userGenerated: true,
             duplicatesAllowedCheck: { _ in true },
@@ -219,12 +216,12 @@ class IdentifierServiceTests: BaseTestClass {
 
     // clearIDs
     func test_clearIDs() {
-        identifierService.identityId = "testSession"
+        state.setIdentityId("testSession")
         identifierService.registeredUserID = "testRegistered"
 
         identifierService.clearIDs()
 
-        assert(identifierService.identityId == nil)
+        assert(state.identityId == nil)
         assert(identifierService.registeredUserID == "")
     }
 

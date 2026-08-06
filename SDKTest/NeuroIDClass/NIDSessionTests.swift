@@ -29,7 +29,7 @@ class NIDSessionTests: BaseTestClass {
 
     func test_getIdentityId() {
         let expectedValue = ""
-        NeuroIDCore.shared.identifierService.identityId = expectedValue
+        NeuroIDCore.shared.state.setIdentityId(expectedValue)
 
         let value = NeuroID.getIdentityId()
 
@@ -38,7 +38,7 @@ class NIDSessionTests: BaseTestClass {
 
     func test_getIdentityId_existing() {
         let expectedValue = "test_sid"
-        NeuroIDCore.shared.identifierService.identityId = expectedValue
+        NeuroIDCore.shared.state.setIdentityId(expectedValue)
 
         let value = NeuroID.getIdentityId()
 
