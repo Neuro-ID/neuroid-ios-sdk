@@ -34,7 +34,7 @@ class NIDUserTests: XCTestCase {
         // Use real identifier service
         neuroID = NeuroIDCore(
             state: state,
-            eventStorageService: mockEventStorageService,
+            eventStorageService: mockEventStorageService
         )
 
         let response = neuroID.identify("abcd123")
@@ -45,7 +45,7 @@ class NIDUserTests: XCTestCase {
         // Use real identifier service
         neuroID = NeuroIDCore(
             state: state,
-            eventStorageService: mockEventStorageService,
+            eventStorageService: mockEventStorageService
         )
 
         let response = neuroID.identify("")
