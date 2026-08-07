@@ -23,6 +23,7 @@ class NeuroIDCore: NSObject {
     var linkedSiteID: String?
 
     // Services
+    var state: StateStore
     var uiRuntime: UIRuntime
     var datastore: DataStoreServiceProtocol
     var eventStorageService: EventStorageServiceProtocol
@@ -41,11 +42,6 @@ class NeuroIDCore: NSObject {
     var isFPJSRunning = false
 
     var clientID: String?
-    var sessionID: String? {
-        // Formerly known as userID, now within the mobile sdk ONLY sessionID
-        // setting should only be through our setIdentity/setUserId command
-        self.identifierService.sessionID
-    }
 
     var registeredUserID: String {
         // setting should only be through our setRegisteredUserId command
@@ -115,6 +111,7 @@ class NeuroIDCore: NSObject {
     // MARK: - Setup
 
     init(
+        state: StateStore? = nil,
         uiRuntime: UIRuntime? = nil,
         datastore: DataStoreServiceProtocol? = nil,
         eventStorageService: EventStorageServiceProtocol? = nil,
@@ -128,6 +125,7 @@ class NeuroIDCore: NSObject {
         callObserver: CallStatusObserverServiceProtocol? = nil,
         listenerManager: ListenerManagerService? = nil
     ) {
+        self.state = state ?? StateStore()
         self.uiRuntime = uiRuntime ?? UIRuntime()
         self.datastore = datastore ?? DataStore()
         self.eventStorageService = eventStorageService ?? EventStorageService()
@@ -142,6 +140,7 @@ class NeuroIDCore: NSObject {
         self.identifierService =
             identifierService
             ?? IdentifierService(
+                state: self.state,
                 validationService: self.validationService,
                 eventStorageService: self.eventStorageService
             )

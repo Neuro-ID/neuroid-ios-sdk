@@ -15,7 +15,6 @@ enum Constants: String {
 
     case storageClientIDKey = "nid_cid"
     case storageTabIDKey = "nid_tid"
-    case storageDeviceIDKey = "nid_did"
     case storageDntKey = "nid_dnt"
     case storageSaltKey = "nid_sk"
 
@@ -44,7 +43,7 @@ enum Constants: String {
 }
 
 enum UserIDTypes: String {
-    case sessionID = "setUserID"  // leaving for log messages
+    case identityId = "setUserID"  // leaving for log messages
     case registeredUserID = "setRegisteredUserID"
     case attemptedLogin
 }

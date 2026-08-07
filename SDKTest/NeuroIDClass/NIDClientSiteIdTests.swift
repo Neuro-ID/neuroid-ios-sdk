@@ -10,17 +10,14 @@ import XCTest
 
 class NIDClientSiteIdTests: BaseTestClass {
     var mockEventStorageService = MockEventStorageService()
-    var mockValidationService = MockValidationService()
     var mockConfigService = MockConfigService()
     var neuroID = NeuroIDCore()
 
     override func setUp() {
         mockEventStorageService = MockEventStorageService()
-        mockValidationService = MockValidationService()
         mockConfigService = MockConfigService()
         neuroID = NeuroIDCore(
             eventStorageService: mockEventStorageService,
-            validationService: mockValidationService,
             configService: mockConfigService
         )
     }
@@ -120,7 +117,6 @@ class NIDClientSiteIdTests: BaseTestClass {
 
     // addLinkedSiteID
     func test_addLinkedSiteID_invalid_siteID() {
-        mockValidationService.validSiteID = false
         neuroID.linkedSiteID = nil
 
         neuroID.addLinkedSiteID("invalidID")
@@ -130,10 +126,9 @@ class NIDClientSiteIdTests: BaseTestClass {
     }
 
     func test_addLinkedSiteID_valid_siteID() {
-        mockValidationService.validSiteID = true
         neuroID.linkedSiteID = nil
 
-        let expectedValue = "validID"
+        let expectedValue = "form_hello123"
 
         neuroID.addLinkedSiteID(expectedValue)
 

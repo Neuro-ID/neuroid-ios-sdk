@@ -9,8 +9,7 @@
 
 class MockIdentifierService: IdentifierServiceProtocol {
     // Mock Vars
-    var setSessionIDResponse = false
-    var setSessionIDCount = 0
+    var setIdentityIdResponse = false
 
     var setRegisteredIDResponse = false
     var setRegisteredUserIDCount = 0
@@ -27,9 +26,6 @@ class MockIdentifierService: IdentifierServiceProtocol {
     var scrubIdentifierCount = 0
 
     func clearMocks() {
-        setSessionIDResponse = false
-        setSessionIDCount = 0
-
         setRegisteredIDResponse = false
         setRegisteredUserIDCount = 0
 
@@ -46,12 +42,10 @@ class MockIdentifierService: IdentifierServiceProtocol {
     }
 
     // Protocol Implementations
-    var sessionID: String? = nil
     var registeredUserID: String = ""
 
-    func setSessionID(_ sessionID: String, _ userGenerated: Bool) -> Bool {
-        setSessionIDCount += 1
-        return setSessionIDResponse
+    func setIdentityId(_ identityId: String, _ userGenerated: Bool) -> Bool {
+        return setIdentityIdResponse
     }
 
     func setRegisteredUserID(_ registeredUserID: String) -> Bool {

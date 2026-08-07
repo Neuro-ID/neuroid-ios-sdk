@@ -65,28 +65,33 @@ public enum NeuroID {
         NeuroIDCore.shared.setVariable(key: key, value: value)
     }
 
+    public static func getIdentityId() -> String {
+        return NeuroIDCore.shared.getIdentityId()
+    }
+
+    @available(*, deprecated, renamed: "getIdentityId()")
+    public static func getSessionID() -> String {
+        return NeuroIDCore.shared.getIdentityId()
+    }
+
+    //  Temporarily keeping this function for backwards compatibility, will be removed
+    // replaced with`getIdentityId`
+    @available(*, deprecated, renamed: "getIdentityId()")
+    public static func getUserID() -> String {
+        return NeuroIDCore.shared.getIdentityId()
+    }
+
     // USER FUNCTIONS
     // This command replaces `setUserID`
-    // Formerly known as userID, now within the mobile sdk ONLY sessionID
-    public static func identify(_ sessionID: String) -> Bool {
-        return NeuroIDCore.shared.identify(sessionID)
+    // Formerly known as userID, now within the mobile sdk ONLY identityId
+    public static func identify(_ identityId: String) -> Bool {
+        return NeuroIDCore.shared.identify(identityId)
     }
 
     // Temporarily keeping this function for backwards compatibility
     @available(*, deprecated, renamed: "identify(_:)")
     public static func setUserID(_ userID: String) -> Bool {
         return NeuroIDCore.shared.identify(userID)
-    }
-
-    public static func getSessionID() -> String {
-        return NeuroIDCore.shared.getSessionID()
-    }
-
-    //  Temporarily keeping this function for backwards compatibility, will be removed
-    // replaced with`getSessionID`
-    @available(*, deprecated, renamed: "getSessionID()")
-    public static func getUserID() -> String {
-        return NeuroIDCore.shared.getSessionID()
     }
 
     public static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
@@ -118,10 +123,10 @@ public enum NeuroID {
     }
 
     public static func startSession(
-        _ sessionID: String? = nil,
+        _ identityId: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        NeuroIDCore.shared.startSession(siteID: nil, sessionID: sessionID, completion: completion)
+        NeuroIDCore.shared.startSession(siteID: nil, identityId: identityId, completion: completion)
     }
 
     public static func pauseCollection() {
@@ -151,7 +156,7 @@ public enum NeuroID {
         sessionID: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        NeuroIDCore.shared.startAppFlow(siteID: siteID, sessionID: sessionID, completion: completion)
+        NeuroIDCore.shared.startAppFlow(siteID: siteID, identityId: sessionID, completion: completion)
     }
 
     // AdvancedDevice Functions
@@ -162,7 +167,7 @@ public enum NeuroID {
     ) {
         NeuroIDCore.shared.start(advancedDeviceSignals, completion: completion)
     }
-    
+
     @available(*, deprecated)
     public static func startSession(
         _ sessionID: String? = nil,

@@ -24,11 +24,11 @@ extension NeuroIDCore {
     }
 
     func startSession(
-        _ sessionID: String? = nil,
+        _ identityId: String? = nil,
         _ advancedDeviceSignals: Bool,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
-        self.startSession(siteID: nil, sessionID: sessionID) { sessionRes in
+        self.startSession(siteID: nil, identityId: identityId) { sessionRes in
             if !sessionRes.started {
                 completion(sessionRes)
                 return

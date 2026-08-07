@@ -150,7 +150,7 @@ class NIDEventTests: XCTestCase {
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: "_",
             linkedSiteID: nil,
-            sessionID: NeuroID.getSessionID(),
+            identityId: NeuroID.getIdentityId(),
             registeredUserID: NeuroID.getRegisteredUserID(),
             jsonEvents: events,
             tabID: "\(tabId)",

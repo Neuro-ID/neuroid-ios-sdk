@@ -11,7 +11,9 @@ import XCTest
 
 class IdentifierServiceTests: BaseTestClass {
     var mockEventStorageService = MockEventStorageService()
+    var state: StateStore = StateStore()
     var identifierService = IdentifierService(
+        state: StateStore(),
         validationService: ValidationService(),
         eventStorageService: MockEventStorageService()
     )
@@ -22,7 +24,9 @@ class IdentifierServiceTests: BaseTestClass {
 
     override func setUp() {
         mockEventStorageService = MockEventStorageService()
+        state = StateStore()
         identifierService = IdentifierService(
+            state: state,
             validationService: ValidationService(),
             eventStorageService: mockEventStorageService
         )
@@ -33,24 +37,24 @@ class IdentifierServiceTests: BaseTestClass {
         NeuroIDCore._isTesting = false
     }
 
-    // setSessionID
-    func test_setSessionID_started_customer_origin() {
-        identifierService.sessionID = nil
+    // setIdentityId
+    func test_setIdentityId_started_customer_origin() {
+        state.setIdentityId(nil)
         let expectedValue = "test_uid"
-        let fnSuccess = identifierService.setSessionID(expectedValue, true)
+        let fnSuccess = identifierService.setIdentityId(expectedValue, true)
 
         assert(fnSuccess)
-        assert(identifierService.sessionID == expectedValue)
+        assert(state.identityId == expectedValue)
     }
 
-    func test_setSessionID_started_nid_origin() {
-        identifierService.sessionID = nil
+    func test_setIdentityId_started_nid_origin() {
+        state.setIdentityId(nil)
         let expectedValue = "test_uid"
 
-        let fnSuccess = identifierService.setSessionID(expectedValue, false)
+        let fnSuccess = identifierService.setIdentityId(expectedValue, false)
 
         assert(fnSuccess)
-        assert(identifierService.sessionID == expectedValue)
+        assert(state.identityId == expectedValue)
     }
 
     // setRegisteredUserID
@@ -95,13 +99,13 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     // setGenericIdentifier
-    func test_setGenericIdentifier_valid_sessionID_duplicatesAllowed() {
+    func test_setGenericIdentifier_valid_identityId_duplicatesAllowed() {
         var successful = false
         let expectedValue = "myTestUserID"
 
         let result = identifierService.setGenericIdentifier(
             identifier: expectedValue,
-            type: .sessionID,
+            type: .identityId,
             userGenerated: true,
             duplicatesAllowedCheck: { _ in true },
             validIDFunction: { successful = true }
@@ -118,13 +122,13 @@ class IdentifierServiceTests: BaseTestClass {
         assert(userIDEvents[0].uid == expectedValue)
     }
 
-    func test_setGenericIdentifier_valid_sessionID_duplicatesNotAllowed() {
+    func test_setGenericIdentifier_valid_identityId_duplicatesNotAllowed() {
         var successful = false
         let expectedValue = "myTestUserID"
 
         let result = identifierService.setGenericIdentifier(
             identifier: expectedValue,
-            type: .sessionID,
+            type: .identityId,
             userGenerated: true,
             duplicatesAllowedCheck: { _ in false },
             validIDFunction: { successful = true }
@@ -141,19 +145,12 @@ class IdentifierServiceTests: BaseTestClass {
         assert(mockEventStorageService.mockEventStore.count == 1) // 1 for the scrub identifier fn
     }
 
-    func test_setGenericIdentifier_invalid_sessionID_duplicatesAllowed() {
-        let mockValidationService = MockValidationService()
-        mockValidationService.validIdentifier = false
-        identifierService = IdentifierService(
-            validationService: mockValidationService,
-            eventStorageService: mockEventStorageService
-        )
+    func test_setGenericIdentifier_invalid_identityId_duplicatesAllowed() {
         var successful = false
-        let expectedValue = "myTestUserID"
 
         let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .sessionID,
+            identifier: "",
+            type: .identityId,
             userGenerated: true,
             duplicatesAllowedCheck: { _ in true },
             validIDFunction: { successful = true }
@@ -219,12 +216,12 @@ class IdentifierServiceTests: BaseTestClass {
 
     // clearIDs
     func test_clearIDs() {
-        identifierService.sessionID = "testSession"
+        state.setIdentityId("testSession")
         identifierService.registeredUserID = "testRegistered"
 
         identifierService.clearIDs()
 
-        assert(identifierService.sessionID == nil)
+        assert(state.identityId == nil)
         assert(identifierService.registeredUserID == "")
     }
 
@@ -268,9 +265,9 @@ class IdentifierServiceTests: BaseTestClass {
 
     // sendOriginEvent
     func test_sendOriginEvent() {
-        let testOrigin = SessionIDOriginalResult(
+        let testOrigin = IdentityIdOriginalResult(
             origin: "origin", originCode: "originCode", idValue: "idValue",
-            idType: .sessionID
+            idType: .identityId
         )
 
         identifierService.sendOriginEvent(testOrigin)
@@ -301,7 +298,7 @@ class IdentifierServiceTests: BaseTestClass {
             idValue: "idValue",
             validID: true,
             userGenerated: true,
-            idType: .sessionID
+            idType: .identityId
         )
 
         assert(result.origin == SessionOrigin.NID_ORIGIN_CUSTOMER_SET.rawValue)
@@ -313,7 +310,7 @@ class IdentifierServiceTests: BaseTestClass {
             idValue: "idValue",
             validID: true,
             userGenerated: false,
-            idType: .sessionID
+            idType: .identityId
         )
 
         assert(result.origin == SessionOrigin.NID_ORIGIN_NID_SET.rawValue)
@@ -325,7 +322,7 @@ class IdentifierServiceTests: BaseTestClass {
             idValue: "idValue",
             validID: false,
             userGenerated: false,
-            idType: .sessionID
+            idType: .identityId
         )
 
         assert(result.origin == SessionOrigin.NID_ORIGIN_NID_SET.rawValue)

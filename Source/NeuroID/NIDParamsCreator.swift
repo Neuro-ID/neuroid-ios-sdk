@@ -121,19 +121,6 @@ enum ParamsCreator {
         }
     }
 
-    static func getDeviceId() -> String {
-        let deviceIdCacheKey = Constants.storageDeviceIDKey.rawValue
-        var did = getUserDefaultKeyString(deviceIdCacheKey)
-
-        if did != nil && did!.contains("_") {
-            return did!
-        } else {
-            did = generateID()
-            setUserDefaultKey(deviceIdCacheKey, value: did)
-            return did!
-        }
-    }
-
     static func generateID() -> String {
         return UUID().uuidString
     }

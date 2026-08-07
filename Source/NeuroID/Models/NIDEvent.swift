@@ -146,7 +146,8 @@ struct NeuroHTTPRequest: Codable {
     var pageTag: String
     var responseId: String
     var siteId: String
-    var userId: String? // this is the only reference where userId stays but really means sessionID in the context of mobile sdk
+    var identityId: String?
+    private var userId: String?
     var registeredUserId: String?
     var jsonEvents: [NIDEvent]
     var tabId: String
@@ -164,7 +165,7 @@ struct NeuroHTTPRequest: Codable {
         responseID: String,
         siteID: String,
         linkedSiteID: String?,
-        sessionID: String?,
+        identityId: String?,
         registeredUserID: String?,
         jsonEvents: [NIDEvent],
         tabID: String,
@@ -179,13 +180,32 @@ struct NeuroHTTPRequest: Codable {
         self.responseId = responseID
         self.siteId = siteID
         self.linkedSiteId = linkedSiteID
-        self.userId = sessionID
+        self.identityId = identityId
+        self.userId = identityId // map `identityId` to `userId` for backwards compatability
         self.registeredUserId = registeredUserID
         self.jsonEvents = jsonEvents
         self.tabId = tabID
         self.pageId = pageID
         self.url = url
         self.packetNumber = packetNumber
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case clientId
+        case environment
+        case sdkVersion
+        case pageTag
+        case responseId
+        case siteId
+        case linkedSiteId
+        case identityId
+        case userId
+        case registeredUserId
+        case jsonEvents
+        case tabId
+        case pageId
+        case url
+        case packetNumber
     }
 }
 
@@ -295,10 +315,7 @@ public struct NIDEvent: Codable {
     var w: CGFloat?
     var f: String?
     var l: Double? // Latency (advanced device request)
-    var lsid: String?
-    var sid: String? // Done
     var cid: String? // Done
-    var did: String? // Done
     var rid: String?
     var loc: String? // Done
     var ua: String? // Done
@@ -353,10 +370,7 @@ public struct NIDEvent: Codable {
         w: CGFloat? = nil,
         f: String? = nil,
         l: Double? = nil,
-        lsid: String? = nil,
-        sid: String? = nil,
         cid: String? = nil,
-        did: String? = nil,
         rid: String? = nil,
         loc: String? = nil,
         ua: String? = nil,
@@ -406,10 +420,7 @@ public struct NIDEvent: Codable {
         self.w = w
         self.f = f
         self.l = l
-        self.lsid = lsid
-        self.sid = sid
         self.cid = cid
-        self.did = did
         self.rid = rid
         self.loc = loc
         self.ua = ua
@@ -462,10 +473,7 @@ public struct NIDEvent: Codable {
         case w
         case f
         case l
-        case lsid
-        case sid
         case cid
-        case did
         case rid
         case loc
         case ua

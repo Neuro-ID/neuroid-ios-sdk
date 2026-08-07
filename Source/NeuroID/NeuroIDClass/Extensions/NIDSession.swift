@@ -10,11 +10,11 @@ import UIKit
 
 public struct SessionStartResult {
     public let started: Bool
-    public let sessionID: String
+    public let identityId: String
 
-    init(_ started: Bool, _ sessionID: String) {
+    init(_ started: Bool, _ identityId: String) {
         self.started = started
-        self.sessionID = sessionID
+        self.identityId = identityId
     }
 }
 
@@ -24,7 +24,7 @@ extension NeuroIDCore {
             NIDEvent.createInfoLogEvent("resume collection attempt")
         )
         // Don't allow resume to be called if SDK has not been started
-        if self.identifierService.sessionID.isEmptyOrNil,
+        if self.state.identityId.isEmptyOrNil,
            !self.isSDKStarted
         {
             return
@@ -63,12 +63,12 @@ extension NeuroIDCore {
      */
     func startAppFlow(
         siteID: String,
-        sessionID: String? = nil,
+        identityId: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
         _ = self.identifierService.logScrubbedIdentityAttempt(
-            identifier: sessionID ?? "null",
-            message: "StartAppFlow attempt with siteID: \(siteID), sessionID:"
+            identifier: identityId ?? "null",
+            message: "StartAppFlow attempt with siteID: \(siteID), identityId:"
         )
 
         if !self.verifyClientKeyExists() || !self.validationService.validateSiteID(siteID) {
@@ -109,16 +109,16 @@ extension NeuroIDCore {
 
                 self.addLinkedSiteID(siteID)
                 completion(
-                    SessionStartResult(true, self.getSessionID())
+                    SessionStartResult(true, self.getIdentityId())
                 )
 
             } else {
                 // If the SDK is not started we have to start it first
                 //  (which will get the config using passed siteID)
 
-                // if sessionID passed then startSession should be used
-                if sessionID != nil {
-                    self.startSession(siteID: siteID, sessionID: sessionID) { startStatus in
+                // if identityId passed then startSession should be used
+                if identityId != nil {
+                    self.startSession(siteID: siteID, identityId: identityId) { startStatus in
                         if !startStatus.started {
                             completion(startStatus)
 
@@ -136,7 +136,7 @@ extension NeuroIDCore {
                     self.start(siteID: siteID) { started in
                         if !started {
                             completion(
-                                SessionStartResult(started, self.getSessionID())
+                                SessionStartResult(started, self.getIdentityId())
                             )
 
                             self.saveEventToDataStore(
@@ -149,7 +149,7 @@ extension NeuroIDCore {
 
                         self.addLinkedSiteID(siteID)
                         completion(
-                            SessionStartResult(started, self.getSessionID())
+                            SessionStartResult(started, self.getIdentityId())
                         )
                     }
                 }
@@ -164,7 +164,6 @@ extension NeuroIDCore {
             type: sessionEvent,
             f: NeuroIDCore.shared.getClientKey(),
             cid: NeuroID.getClientID(),
-            did: ParamsCreator.getDeviceId(),
             loc: ParamsCreator.getLocale(),
             ua: ParamsCreator.getUserAgent(),
             tzo: ParamsCreator.getTimezone(),
@@ -317,7 +316,7 @@ extension NeuroIDCore {
     // Internal implementation that allows a siteID
     func startSession(
         siteID: String?,
-        sessionID: String? = nil,
+        identityId: String? = nil,
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
         if !self.verifyClientKeyExists() {
@@ -328,26 +327,26 @@ extension NeuroIDCore {
         }
 
         // stop existing session if one is open
-        if !self.identifierService.sessionID.isEmptyOrNil || self.isSDKStarted {
+        if !self.state.identityId.isEmptyOrNil || self.isSDKStarted {
             _ = self.stopSession()
         }
 
-        // If sessionID is nil, set origin as NID here
-        let userGenerated = sessionID != nil
+        // If identityId is nil, set origin as NID here
+        let userGenerated = identityId != nil
 
-        let finalSessionID = sessionID ?? ParamsCreator.generateID()
+        let finalIdentityId = identityId ?? ParamsCreator.generateID()
 
         _ = self.identifierService.logScrubbedIdentityAttempt(
-            identifier: finalSessionID,
-            message: "StartSession attempt with siteID: \(siteID ?? ""), sessionID:"
+            identifier: finalIdentityId,
+            message: "StartSession attempt with siteID: \(siteID ?? ""), identityId:"
         )
 
-        let validSessionID = self.identifierService.setSessionID(
-            finalSessionID,
+        let validIdentityId = self.identifierService.setIdentityId(
+            finalIdentityId,
             userGenerated
         )
 
-        if !validSessionID {
+        if !validIdentityId {
             completion(
                 SessionStartResult(false, "")
             )
@@ -366,7 +365,7 @@ extension NeuroIDCore {
                 #endif
             }
         ) {
-            completion(SessionStartResult(true, finalSessionID))
+            completion(SessionStartResult(true, finalIdentityId))
         }
     }
 

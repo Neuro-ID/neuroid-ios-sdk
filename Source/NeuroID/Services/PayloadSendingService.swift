@@ -23,7 +23,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
 
     static func buildStaticPayload(events: [NIDEvent], screen: String) -> NeuroHTTPRequest {
         let tabId = ParamsCreator.getTabId()
-        let sessionID = NeuroID.getSessionID()
+        let identityId = NeuroID.getIdentityId()
         let registeredUserID = NeuroID.getRegisteredUserID()
 
         let randomString = ParamsCreator.generateID()
@@ -37,7 +37,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
             responseID: ParamsCreator.generateUniqueHexID(),
             siteID: NeuroIDCore.shared.siteID ?? "",
             linkedSiteID: NeuroIDCore.shared.linkedSiteID,
-            sessionID: sessionID == "" ? nil : sessionID,
+            identityId: identityId == "" ? nil : identityId,
             registeredUserID: registeredUserID == "" ? nil : registeredUserID,
             jsonEvents: events,
             tabID: "\(tabId)",
@@ -135,7 +135,7 @@ class PayloadSendingService: PayloadSendingServiceProtocol {
                 """
                 Payload Summary
                 ClientID: \(neuroHTTPRequest.clientId)
-                SessionID: \(neuroHTTPRequest.userId ?? "")
+                IdentityId: \(neuroHTTPRequest.identityId ?? "")
                 RegisteredUserID: \(neuroHTTPRequest.registeredUserId ?? "")
                 LinkedSiteID: \(neuroHTTPRequest.linkedSiteId ?? "")
                 TabID: \(neuroHTTPRequest.tabId)

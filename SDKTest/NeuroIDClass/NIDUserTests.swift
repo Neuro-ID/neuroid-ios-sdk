@@ -2,21 +2,23 @@
 //  NIDUserTests.swift
 //  NeuroID
 //
-//  Created by Kevin Sites on 7/10/25.
-//
 
-@testable import NeuroID
 import XCTest
 
-class NIDUserTests: BaseTestClass {
+@testable import NeuroID
+
+class NIDUserTests: XCTestCase {
+    var state: StateStore = StateStore()
     var mockIdentifierService = MockIdentifierService()
     var mockEventStorageService = MockEventStorageService()
     var neuroID = NeuroIDCore()
 
     override func setUp() {
+        state = StateStore()
         mockIdentifierService = MockIdentifierService()
         mockEventStorageService = MockEventStorageService()
         neuroID = NeuroIDCore(
+            state: state,
             eventStorageService: mockEventStorageService,
             identifierService: mockIdentifierService
         )
@@ -26,44 +28,45 @@ class NIDUserTests: BaseTestClass {
         mockIdentifierService.clearMocks()
     }
 
-    // identify
+    // Identity ID
+
     func test_identify_success() {
-        let expectedValue = true
-        mockIdentifierService.setSessionIDResponse = expectedValue
+        // Use real identifier service
+        neuroID = NeuroIDCore(
+            state: state,
+            eventStorageService: mockEventStorageService
+        )
 
-        let response = neuroID.identify("")
-
-        assert(response == expectedValue)
-        assert(mockIdentifierService.setSessionIDCount == 1)
+        let response = neuroID.identify("abcd123")
+        assert(response)
     }
 
     func test_identify_failure() {
-        let expectedValue = false
-        mockIdentifierService.setSessionIDResponse = expectedValue
+        // Use real identifier service
+        neuroID = NeuroIDCore(
+            state: state,
+            eventStorageService: mockEventStorageService
+        )
 
         let response = neuroID.identify("")
-
-        assert(response == expectedValue)
-        assert(mockIdentifierService.setSessionIDCount == 1)
+        assert(!response)
     }
 
-    // getSessionID
-    func test_getSessionID_exists() {
+    // getIdentityId
+    func test_getIdentityId_exists() {
         let expectedValue = "test_uid"
-        mockIdentifierService.sessionID = expectedValue
+        state.setIdentityId(expectedValue)
 
-        let value = neuroID.getSessionID()
+        let value = neuroID.getIdentityId()
 
         assert(value == expectedValue)
     }
 
-    func test_getSessionID_not_exists() {
-        let expectedValue = ""
-        mockIdentifierService.sessionID = nil
+    func test_getIdentityId_not_exists() {
+        state.setIdentityId(nil)
+        let value = neuroID.getIdentityId()
 
-        let value = neuroID.getSessionID()
-
-        assert(value == expectedValue)
+        assert(value == "")
     }
 
     // setRegisteredUserID

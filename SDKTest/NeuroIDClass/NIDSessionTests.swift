@@ -27,20 +27,20 @@ class NIDSessionTests: BaseTestClass {
         NeuroIDCore._isTesting = false
     }
 
-    func test_getSessionID() {
+    func test_getIdentityId() {
         let expectedValue = ""
-        NeuroIDCore.shared.identifierService.sessionID = expectedValue
+        NeuroIDCore.shared.state.setIdentityId(expectedValue)
 
-        let value = NeuroID.getSessionID()
+        let value = NeuroID.getIdentityId()
 
         assert(value == expectedValue)
     }
 
-    func test_getSessionID_existing() {
+    func test_getIdentityId_existing() {
         let expectedValue = "test_sid"
-        NeuroIDCore.shared.identifierService.sessionID = expectedValue
+        NeuroIDCore.shared.state.setIdentityId(expectedValue)
 
-        let value = NeuroID.getSessionID()
+        let value = NeuroID.getIdentityId()
 
         assert(value == expectedValue)
     }
