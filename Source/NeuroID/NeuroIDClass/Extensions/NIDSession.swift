@@ -12,7 +12,7 @@ public struct SessionStartResult {
     public let started: Bool
     public let identityId: String
 
-    @available(*, deprecated, message: "Use identityId instead")
+    @available(*, deprecated, renamed: "identityId")
     public var sessionID: String {
         return identityId
     }
