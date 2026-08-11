@@ -12,6 +12,11 @@ public struct SessionStartResult {
     public let started: Bool
     public let identityId: String
 
+    @available(*, deprecated, renamed: "identityId")
+    public var sessionID: String {
+        return identityId
+    }
+
     init(_ started: Bool, _ identityId: String) {
         self.started = started
         self.identityId = identityId
