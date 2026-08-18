@@ -206,6 +206,7 @@ struct NeuroHTTPRequest: Codable {
         case pageId
         case url
         case packetNumber
+        case jsVersion
     }
 }
 
