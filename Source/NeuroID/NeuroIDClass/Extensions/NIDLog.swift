@@ -131,8 +131,6 @@ func NIDPrintEvent(_ mutableEvent: NIDEvent) {
             contextString = "meta=\(String(describing: mutableEvent.metadata ?? nil))"
         case NIDEventName.deviceOrientation.rawValue:
             contextString = "tg=\(tgString)"
-        case NIDEventName.windowOrientationChange.rawValue:
-            contextString = "tg=\(tgString)"
         case NIDEventName.log.rawValue:
             contextString = "m=\(mutableEvent.m ?? "")"
         case NIDEventName.advancedDevice.rawValue:

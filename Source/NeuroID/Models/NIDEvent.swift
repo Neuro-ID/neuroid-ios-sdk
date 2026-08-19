@@ -50,7 +50,6 @@ enum NIDEventName: String {
     case windowUnload = "WINDOW_UNLOAD"
     case windowFocus = "WINDOW_FOCUS"
     case windowBlur = "WINDOW_BLUR"
-    case windowOrientationChange = "WINDOW_ORIENTATION_CHANGE"
     case windowResize = "WINDOW_RESIZE"
     case deviceMotion = "DEVICE_MOTION"
     case deviceOrientation = "DEVICE_ORIENTATION"
