@@ -12,6 +12,8 @@ import UIKit
 
 extension NeuroIDTracker {
     func observeRotation() {
+        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+
         NotificationCenter.default.addObserver(self, selector: #selector(deviceRotated), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 
@@ -24,6 +26,14 @@ extension NeuroIDTracker {
             "\(Constants.tgsKey.rawValue)": viewId
         ]
 
+        captureEvent(
+            event: NIDEvent(
+                type: NIDEventName.windowOrientationChange,
+                tg: tg,
+                tgs: viewId.toString(),
+                url: NeuroID.getScreenName() ?? ""
+            )
+        )
         captureEvent(
             event: NIDEvent(
                 type: NIDEventName.deviceOrientation,
