@@ -11,6 +11,8 @@ extension NeuroIDCore {
     func setupListeners() {
         self.listenerManager.startAppEventListeners()
 
+        self.orientationObserver.start()
+        
         // We will always cancel the collection job and then recreate with new interval and start
         self.sendCollectionEventsJob.cancel()
         self.sendCollectionEventsJob = RepeatingTask(
