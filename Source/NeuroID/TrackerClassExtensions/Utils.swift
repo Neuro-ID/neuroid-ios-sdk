@@ -194,8 +194,7 @@ enum UtilFunctions {
                 v: lengthValue,
                 hv: hashValue,
                 url: screenName
-            ),
-            screen: screenName
+            )
         )
     }
 

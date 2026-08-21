@@ -208,8 +208,7 @@ extension UIViewController {
                         Attrs(n: "screenHeightTotal", v: "\(UIScreen.main.bounds.size.height)"),
                         Attrs(n: "screenWidthTotal", v: "\(UIScreen.main.bounds.size.width)"),
                     ]
-                ),
-                screen: nidClassName
+                )
             )
         }
     }
@@ -227,8 +226,7 @@ extension UIViewController {
                 attrs: [
                     Attrs(n: "appear", v: "\(false)"),
                 ]
-            ),
-            screen: nidClassName
+            )
         )
     }
 }
