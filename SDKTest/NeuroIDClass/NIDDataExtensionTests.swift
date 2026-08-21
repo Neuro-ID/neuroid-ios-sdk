@@ -5,12 +5,11 @@
 //  Created by Kevin Sites on 1/21/25.
 //
 
-@testable import NeuroID
 import XCTest
 
+@testable import NeuroID
+
 class NIDDataExtensionTests: BaseTestClass {
-    let eventsKey = "test_events_stored"
-    let screenName = "test_screen_name"
 
     let nidEvent = NIDEvent(
         type: .radioChange
@@ -38,7 +37,7 @@ class NIDDataExtensionTests: BaseTestClass {
     func test_saveEventToLocalDataStore_stoppedSDK() {
         _ = NeuroID.stop()
 
-        NeuroIDCore.shared.saveEventToLocalDataStore(nidEvent, screen: screenName)
+        NeuroIDCore.shared.saveEventToLocalDataStore(nidEvent)
         assert(dataStore.events.count == 0)
     }
 
@@ -52,7 +51,7 @@ class NIDDataExtensionTests: BaseTestClass {
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroIDCore.shared.saveEventToLocalDataStore(nidE, screen: screenName)
+        NeuroIDCore.shared.saveEventToLocalDataStore(nidE)
         assert(dataStore.events.count == 1)
         assert(dataStore.events[0].url == "ios://\(screen)")
     }
@@ -64,7 +63,7 @@ class NIDDataExtensionTests: BaseTestClass {
         let nidE = nidEvent
         assert(nidE.url == nil)
 
-        NeuroIDCore.shared.saveQueuedEventToLocalDataStore(nidE, screen: screenName)
+        NeuroIDCore.shared.saveQueuedEventToLocalDataStore(nidE)
         assert(dataStore.events.count == 0)
         assert(dataStore.queuedEvents.count == 1)
         assert(dataStore.queuedEvents[0].url == "ios://\(screen)")
@@ -74,7 +73,7 @@ class NIDDataExtensionTests: BaseTestClass {
         var nidE = nidEvent
         nidE.url = "RNScreensNavigationController"
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
@@ -86,7 +85,7 @@ class NIDDataExtensionTests: BaseTestClass {
             "tgs": TargetValue.string(excludeId)
         ]
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
@@ -97,7 +96,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
         nidE.tgs = excludeId
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 
@@ -108,7 +107,7 @@ class NIDDataExtensionTests: BaseTestClass {
 
         nidE.en = excludeId
 
-        NeuroIDCore.shared.cleanAndStoreEvent(screen: screenName, event: nidE, storeType: "")
+        NeuroIDCore.shared.cleanAndStoreEvent(event: nidE, storeType: "")
         assert(dataStore.events.count == 0)
     }
 }

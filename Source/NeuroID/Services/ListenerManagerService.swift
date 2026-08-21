@@ -96,9 +96,6 @@ extension ListenerManagerService {
     fileprivate func captureEvent(event: NIDEvent) {
         var event = event
         event.url = NeuroID.getScreenName()
-        NeuroIDCore.shared.saveEventToLocalDataStore(
-            event,
-            screen: NeuroID.getScreenName() ?? ParamsCreator.generateID()
-        )
+        NeuroIDCore.shared.saveEventToLocalDataStore(event)
     }
 }

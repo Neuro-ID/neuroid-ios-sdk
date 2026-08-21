@@ -20,36 +20,36 @@ extension NeuroIDCore {
         NIDEventName.advancedDeviceRequestFailed.rawValue,
         NIDEventName.blur.rawValue,
         NIDEventName.windowBlur.rawValue,
-        NIDEventName.closeSession.rawValue,
+        NIDEventName.closeSession.rawValue
     ]
 
     /**
         Save and event to the datastore (logic of queue or not contained in this function)
      */
-    func saveEventToDataStore(_ event: NIDEvent, screen: String? = nil) {
+    func saveEventToDataStore(_ event: NIDEvent) {
         if !self.isSDKStarted {
-            self.saveQueuedEventToLocalDataStore(event, screen: screen)
+            self.saveQueuedEventToLocalDataStore(event)
         } else {
-            self.saveEventToLocalDataStore(event, screen: screen)
+            self.saveEventToLocalDataStore(event)
         }
     }
 
-    func saveEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
+    func saveEventToLocalDataStore(_ event: NIDEvent) {
         if self.isStopped() {
             return
         }
 
-        self.cleanAndStoreEvent(screen: screen ?? event.type, event: event, storeType: "event")
+        self.cleanAndStoreEvent(event: event, storeType: "event")
     }
 
-    func saveQueuedEventToLocalDataStore(_ event: NIDEvent, screen: String? = nil) {
-        self.cleanAndStoreEvent(screen: screen ?? event.type, event: event, storeType: "queue")
+    func saveQueuedEventToLocalDataStore(_ event: NIDEvent) {
+        self.cleanAndStoreEvent(event: event, storeType: "queue")
     }
 
     /**
             Method to clean incoming events, prevent unwanted events, and attach metadata fields
      */
-    func cleanAndStoreEvent(screen: String, event: NIDEvent, storeType: String) {
+    func cleanAndStoreEvent(event: NIDEvent, storeType: String) {
         // If we hit a low memory event, drop events and early return
         //  OR if we are not sampling the session (i.e. are throttling)
         //  then drop events

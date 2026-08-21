@@ -91,7 +91,7 @@ func captureTouchEvent(
     let tg: [String: TargetValue] = [
         "\(Constants.tgsKey.rawValue)": TargetValue.string(viewName),
         "\(Constants.etnKey.rawValue)": TargetValue.string(viewClass),
-        "location": TargetValue.string("gestureRecognizer"),
+        "location": TargetValue.string("gestureRecognizer")
     ]
 
     var attrs: [Attrs] = []
@@ -107,7 +107,6 @@ func captureTouchEvent(
             url: NeuroID.getScreenName(),
             attrs: attrs,
             touches: touchArray
-        ),
-        screen: viewClass
+        )
     )
 }
