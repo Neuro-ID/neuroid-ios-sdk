@@ -128,7 +128,7 @@ extension NeuroIDCore {
         self.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
-                ct: NeuroIDCore.shared.networkMonitor.connectionType,
+                ct: networkMonitoringService.connectionType.rawValue,
                 l: latency,
                 rid: requestID,
                 c: cached,

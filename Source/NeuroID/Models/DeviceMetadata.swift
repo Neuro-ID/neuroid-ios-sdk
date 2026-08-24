@@ -29,7 +29,7 @@ struct DeviceMetadata: Codable {
     var lastInstallTime: Int64
 
     // Init with local data
-    public init() {
+    public init(isWifiOn: Bool) {
         self.brand = UIDevice.current.model
         self.device = DeviceMetadata.getDeviceName()
         self.display = DeviceMetadata.getDisplay()
@@ -39,7 +39,7 @@ struct DeviceMetadata: Codable {
         self.modelId = DeviceMetadata.getModelIdentifier()
         self.product = DeviceMetadata.getDeviceName()
         self.osVersion = DeviceMetadata.getOSVersion()
-        self.isWifiOn = DeviceMetadata.isWifiEnable()
+        self.isWifiOn = isWifiOn // Get current connection type from NetworkMonitoringService
         self.carrier = DeviceMetadata.getCurrentCarrier()
         self.batteryLevel = DeviceMetadata.getBaterryLevel()
         self.isJailBreak = DeviceMetadata.hasJailbreak()
@@ -132,13 +132,6 @@ extension DeviceMetadata {
         return false
     }
 
-    static func isWifiEnable() -> Bool {
-        let networkStatus = NetworkStatus.shared
-        networkStatus.start()
-        networkStatus.stop()
-        return networkStatus.connType == .wifi
-    }
-
     @available(iOSApplicationExtension, unavailable)
     static func isCydiaAppInstalled() -> Bool {
         return UIApplication.shared.canOpenURL(URL(string: "cydia://")!)
@@ -229,42 +222,6 @@ extension UIDevice {
         #else
             return false
         #endif
-    }
-}
-
-class NetworkStatus {
-    public static let shared = NetworkStatus()
-    private var monitor: NWPathMonitor
-    private var queue = DispatchQueue.global()
-    var isOn: Bool = true
-    var connType: ConnectionType = .unknown
-    private init() {
-        self.monitor = NWPathMonitor()
-        self.queue = DispatchQueue.global(qos: .userInitiated)
-        self.monitor.start(queue: self.queue)
-    }
-
-    func start() {
-        self.connType = self.checkConnectionTypeForPath(self.monitor.currentPath)
-        self.monitor.pathUpdateHandler = { path in
-            self.isOn = path.status == .satisfied
-            self.connType = self.checkConnectionTypeForPath(path)
-        }
-    }
-
-    func stop() {
-        self.monitor.cancel()
-    }
-
-    func checkConnectionTypeForPath(_ path: NWPath) -> ConnectionType {
-        if path.usesInterfaceType(.wifi) {
-            return .wifi
-        } else if path.usesInterfaceType(.wiredEthernet) {
-            return .ethernet
-        } else if path.usesInterfaceType(.cellular) {
-            return .cellular
-        }
-        return .unknown
     }
 }
 

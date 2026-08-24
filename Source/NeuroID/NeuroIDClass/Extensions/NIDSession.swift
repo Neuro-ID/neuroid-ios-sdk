@@ -179,7 +179,9 @@ extension NeuroIDCore {
             url: NeuroID.getScreenName(),
             ns: ParamsCreator.getCommandQueueNamespace(),
             jsv: NeuroID.getSDKVersion(),
-            metadata: DeviceMetadata(),
+            metadata: DeviceMetadata(
+                isWifiOn: networkMonitoringService.connectionType == .wifi
+            ),
             sh: UIScreen.main.bounds.height,
             sw: UIScreen.main.bounds.width
         )

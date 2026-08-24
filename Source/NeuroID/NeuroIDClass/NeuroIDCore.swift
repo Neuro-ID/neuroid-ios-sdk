@@ -31,7 +31,7 @@ class NeuroIDCore: NSObject {
     var configService: ConfigServiceProtocol
     var identifierService: IdentifierServiceProtocol
     var networkService: NetworkServiceProtocol
-    var networkMonitor: NetworkMonitoringServiceProtocol
+    var networkMonitoringService: NetworkMonitoringServiceProtocol
     var deviceSignalService: AdvancedDeviceServiceProtocol
     var payloadSendingService: PayloadSendingServiceProtocol
 
@@ -145,7 +145,9 @@ class NeuroIDCore: NSObject {
                 validationService: self.validationService,
                 eventStorageService: self.eventStorageService
             )
-        self.networkMonitor = networkMonitor ?? NetworkMonitoringService()
+        self.networkMonitoringService = networkMonitor ?? NetworkMonitoringService(
+            eventService: self.eventStorageService
+        )
         self.deviceSignalService = deviceSignalService ?? AdvancedDeviceService()
         self.payloadSendingService =
             payloadSendingService
@@ -230,7 +232,7 @@ class NeuroIDCore: NSObject {
             configRetrievalCallback: self.configSetupCompletion
         )
 
-        self.networkMonitor.startMonitoring()
+        self.networkMonitoringService.start()
 
         if isAdvancedDevice {
             self.captureAdvancedDevice(self.isAdvancedDevice)

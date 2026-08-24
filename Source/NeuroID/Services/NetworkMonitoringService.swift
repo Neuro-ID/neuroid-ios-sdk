@@ -9,9 +9,10 @@ import Foundation
 import Network
 
 protocol NetworkMonitoringServiceProtocol {
-    var connectionType: String { get }
+    var connectionType: ConnectionType { get }
 
-    func startMonitoring()
+    func start()
+    func stop()
 }
 
 enum ConnectionType: String {
@@ -22,122 +23,64 @@ enum ConnectionType: String {
 }
 
 class NetworkMonitoringService: NetworkMonitoringServiceProtocol {
+    let eventService: EventStorageServiceProtocol
+
     private let queue = DispatchQueue.global()
     private let monitor: NWPathMonitor
 
-    private var noNetworkTask: DispatchWorkItem = DispatchWorkItem {}
+    private(set) var isMonitoring: Bool = false
+    private(set) var connectionType: ConnectionType = .unknown
 
-    private var resumeNetworkTask: DispatchWorkItem = DispatchWorkItem {}
-
-    private(set) var isConnected: Bool = false
-    private(set) var _connectionType: ConnectionType = .unknown
-    var connectionType: String {
-        _connectionType.rawValue
-    }
-
-    init() {
+    init(eventService: EventStorageServiceProtocol) {
         monitor = NWPathMonitor()
+        self.eventService = eventService
     }
 
-    private func setupNoNetworkTask() {
-        noNetworkTask = DispatchWorkItem {
-            guard !(self.noNetworkTask.isCancelled) else {
-                return
-            }
-
-            // pause collection but don't flush events
-            NeuroIDCore.shared.pauseCollection(flushEventQueue: false)
-        }
-    }
-
-    private func setupResumeNetworkTask() {
-        resumeNetworkTask = DispatchWorkItem {
-            guard !(self.resumeNetworkTask.isCancelled) else {
-                return
-            }
-
-            NeuroID.resumeCollection()
-        }
-    }
-
-    func startMonitoring() {
-        monitor.start(queue: queue)
+    func start() {
+        guard !isMonitoring else { return }
 
         NeuroIDCore.shared.saveEventToLocalDataStore(
             NIDEvent.createInfoLogEvent(
-                "Network Monitoring Started with starting status of connectionType:\(connectionType) connected:\(isConnected)"
+                "Network Monitoring Started with starting status of connectionType:\(connectionType)"
             )
         )
 
         monitor.pathUpdateHandler = { path in
-            let connectionStatus = path.status == .satisfied
 
-            self.getConnectionType(path)
+            let connectionStatus = path.status == .satisfied
+            let connectionType = self.connectionType(for: path)
+
+            self.setConnectionType(connectionType)
 
             NeuroIDCore.shared.saveEventToLocalDataStore(
                 NIDEvent(
                     type: .networkState,
                     attrs: [
-                        Attrs(n: "connectionType", v: "\(self.connectionType)"),
+                        Attrs(n: "connectionType", v: "\(self.connectionType)")
                     ],
-                    iswifi: self._connectionType == .wifi,
+                    iswifi: self.connectionType == .wifi,
                     isconnected: connectionStatus
                 )
             )
-
-            if connectionStatus != self.isConnected {
-                self.isConnected = connectionStatus
-                if !self.isConnected {
-                    if !NeuroIDCore.shared.isSDKStarted {
-                        return
-                    }
-
-                    self.setupNoNetworkTask()
-                    DispatchQueue
-                        .global(qos: .utility)
-                        .asyncAfter(
-                            deadline: .now() + 10,
-                            execute: self.noNetworkTask
-                        )
-
-                } else {
-                    self.noNetworkTask.cancel()
-
-                    if NeuroIDCore.shared.isSDKStarted {
-                        return
-                    }
-
-                    // not collecting but a session is in progress we need to restart
-                    if !NeuroIDCore.shared.isSDKStarted,
-                       !NeuroIDCore.shared.state.identityId.isEmptyOrNil
-                    {
-                        self.setupResumeNetworkTask()
-
-                        DispatchQueue
-                            .global(qos: .utility)
-                            .asyncAfter(
-                                deadline: .now() + 2,
-                                execute: self.resumeNetworkTask
-                            )
-                    }
-                }
-            }
         }
+        monitor.start(queue: queue)
+        isMonitoring = true
     }
 
-    func stopMonitoring() {
+    func stop() {
+        guard isMonitoring else { return }
+        isMonitoring = false
         monitor.cancel()
     }
 
-    private func getConnectionType(_ path: NWPath) {
-        if path.usesInterfaceType(.wifi) {
-            _connectionType = .wifi
-        } else if path.usesInterfaceType(.cellular) {
-            _connectionType = .cellular
-        } else if path.usesInterfaceType(.wiredEthernet) {
-            _connectionType = .ethernet
-        } else {
-            _connectionType = .unknown
-        }
+    private func connectionType(for path: NWPath) -> ConnectionType {
+        if path.usesInterfaceType(.wifi) { return .wifi }
+        if path.usesInterfaceType(.cellular) { return .cellular }
+        if path.usesInterfaceType(.wiredEthernet) { return .ethernet }
+        return .unknown
+    }
+
+    func setConnectionType(_ type: ConnectionType) {
+        self.connectionType = type
     }
 }
