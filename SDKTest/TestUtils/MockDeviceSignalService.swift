@@ -12,8 +12,6 @@ class MockDeviceSignalService: AdvancedDeviceServiceProtocol {
 
     func getAdvancedDeviceSignal(
         _ apiKey: String,
-        clientID: String?,
-        linkedSiteID: String?,
         advancedDeviceKey: String?,
         completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     ) {

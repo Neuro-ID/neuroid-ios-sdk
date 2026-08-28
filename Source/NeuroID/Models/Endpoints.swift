@@ -37,6 +37,14 @@ enum Endpoints {
                 return "https://advanced.neuro-id.com"
             }
         }
+
+        static func apiKeyURL(_ region: Region, collectionKey: String) -> URL {
+            switch region {
+            case .usWest:
+                return URL(string:"https://receiver.neuroid.cloud/a/")!
+                    .appendingPathComponent(collectionKey)
+            }
+        }
     }
 
     // MARK: - Remote Config Scripts

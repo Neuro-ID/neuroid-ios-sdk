@@ -18,8 +18,6 @@ struct NIDADVKeyResponse: Codable {
 protocol AdvancedDeviceServiceProtocol {
     func getAdvancedDeviceSignal(
         _ apiKey: String,
-        clientID: String?,
-        linkedSiteID: String?,
         advancedDeviceKey: String?,
         completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     )
@@ -28,23 +26,13 @@ protocol AdvancedDeviceServiceProtocol {
 class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     public func getAdvancedDeviceSignal(
         _ apiKey: String,
-        clientID: String?,
-        linkedSiteID: String?,
         advancedDeviceKey: String?,
         completion: @escaping (Result<AdvancedDeviceResult, Error>) -> Void
     ) {
-        // normalize empty advanced device keys to nil for use below
-        var advKey = advancedDeviceKey
-        if advKey != nil && advKey == "" {
-            advKey = nil
-        }
-        guard let notNilFPJSKey = advKey else {
+        // Check if there is a provided key and check that it's not empty
+        guard let notNilFPJSKey = advancedDeviceKey, notNilFPJSKey != "" else {
             // FPJS key not passed in, Retrieve Key from NID Server for Request
-            AdvancedDeviceService.getAPIKey(
-                apiKey,
-                clientID: clientID,
-                linkedSiteID: linkedSiteID
-            ) { result in
+            AdvancedDeviceService.getAPIKey(apiKey) { result in
                 switch result {
                 case .success(let fAPiKey):
                     // Retrieve ADV Data using Request Key
@@ -60,16 +48,9 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         AdvancedDeviceService.retryAPICall(apiKey: notNilFPJSKey, maxRetries: 3, delay: 2, completion: completion)
     }
 
-    static func getAPIKey(
-        _ apiKey: String,
-        clientID: String? = "",
-        linkedSiteID: String? = "",
-        completion: @escaping (Result<String, Error>) -> Void
-    ) {
-        let apiURL = URL(
-            string:
-            "https://receiver.neuroid.cloud/a/\(apiKey)?clientId=\(clientID ?? "")&linkedSiteId=\(linkedSiteID ?? "")"
-        )!
+    static func getAPIKey(_ apiKey: String, completion: @escaping (Result<String, Error>) -> Void) {
+        let region = NeuroIDCore.shared.region
+        let apiURL = Endpoints.DeviceNetwork.apiKeyURL(region, collectionKey: apiKey)
         let task = URLSession.shared.dataTask(with: apiURL) { data, response, error in
             if let error = error {
                 completion(.failure(error))
