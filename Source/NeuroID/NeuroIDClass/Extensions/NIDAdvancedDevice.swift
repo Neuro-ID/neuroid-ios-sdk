@@ -67,8 +67,6 @@ extension NeuroIDCore {
         
         self.deviceSignalService.getAdvancedDeviceSignal(
             self.getClientKey(),
-            clientID: self.clientID,
-            linkedSiteID: self.linkedSiteID,
             advancedDeviceKey: self.advancedDeviceKey
         ) { request in
             switch request {
