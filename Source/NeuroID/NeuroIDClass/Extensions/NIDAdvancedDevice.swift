@@ -42,15 +42,14 @@ extension NeuroIDCore {
     func getCachedADV() -> Bool {
         if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
             if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
+
+                // If there is sealed results from proxy, include those
+                let storedSealedResults: String? = storedADVKey["scr"] as? String
+                self.captureADVEvent(requestID, cached: true, latency: 0, message: "", sealedClientResults: storedSealedResults)
+
+                // Return false when we still need to fetch a new response
                 let currentTimeEpoch = Date().timeIntervalSince1970
-
-                if currentTimeEpoch < exp {
-                    // If there is sealed results from proxy, include those
-                    let storedSealedResults: String? = storedADVKey["scr"] as? String
-
-                    self.captureADVEvent(requestID, cached: true, latency: 0, message: "", sealedClientResults: storedSealedResults)
-                    return true
-                }
+                return currentTimeEpoch < exp
             }
         }
 
