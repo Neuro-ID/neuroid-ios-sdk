@@ -17,10 +17,10 @@ struct CallStatusObserverTests {
     init() {
         dataStore = DataStore()
         eventService = EventStorageService()
-        
+
         NeuroIDCore.shared.datastore = dataStore
         NeuroIDCore.shared._isSDKStarted = true
-        
+
         callService = CallStatusObserver(
             eventService: eventService
         )
@@ -81,7 +81,7 @@ struct CallStatusObserverTests {
             callID: callID
         )
     }
-    
+
     @Test("Emits connected again when a held call becomes active")
     func emitsConnectedWhenResumedFromHold() async {
         let callID = UUID()
@@ -305,7 +305,7 @@ struct CallStatusObserverTests {
         #expect(events.count == 5)
         #expect(callStates(events) == [.connected, .onHold, .connected, .disconnected, .disconnected])
     }
- 
+
     private func assertLastEvent(
         _ lastEvent: NIDEvent?,
         state: CallStatusObserver.CallPhase,
@@ -342,5 +342,5 @@ struct CallStatusObserverTests {
         let events = dataStore.getAndRemoveAllEvents()
         #expect(events.isEmpty)
     }
- 
+
 }
