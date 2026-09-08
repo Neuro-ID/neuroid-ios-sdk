@@ -22,7 +22,7 @@ extension NeuroIDCore {
         self.sendCollectionEventsJob.start()
 
         self.appLifecycleObserver.start()
-        
+
         if self.configService.configCache.callInProgress {
             self.callObserver.start()
         }

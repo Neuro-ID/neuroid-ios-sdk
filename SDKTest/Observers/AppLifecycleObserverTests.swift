@@ -22,7 +22,7 @@ struct AppLifecycleObserverTests {
 
         NeuroIDCore.shared.datastore = dataStore
         NeuroIDCore.shared._isSDKStarted = true
-        
+
         observer = AppLifecycleObserver(
             eventService: eventService,
             notificationCenter: notificationCenter
