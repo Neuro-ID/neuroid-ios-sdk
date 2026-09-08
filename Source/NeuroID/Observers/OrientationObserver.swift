@@ -5,11 +5,6 @@
 
 import UIKit
 
-protocol SessionObserver: Sendable {
-    func start() async
-    func stop() async
-}
-
 final class OrientationObserver: SessionObserver {
     private let eventService: EventStorageServiceProtocol
     private let notificationCenter: NotificationCenter
