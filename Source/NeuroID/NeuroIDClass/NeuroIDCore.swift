@@ -125,7 +125,7 @@ class NeuroIDCore: NSObject {
         deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
         payloadSendingService: PayloadSendingServiceProtocol? = nil,
         appLifecycleObserver: AppLifecycleObserver? = nil,
-        callObserver: CallStatusObserverServiceProtocol? = nil,
+        callObserver: CallStatusObserver? = nil,
         screenCaptureObserver: ScreenCaptureObserver? = nil
     ) {
         self.state = state ?? StateStore()
@@ -155,14 +155,16 @@ class NeuroIDCore: NSObject {
                 datastore: self.datastore,
                 networkService: self.networkService
             )
-        self.callObserver = callObserver
-        self.listenerManager =
-            listenerManager
-            ?? ListenerManagerService(
-                uiRuntime: self.uiRuntime,
-                notificationCenter: .default
-            )
+        self.appLifecycleObserver = appLifecycleObserver ?? AppLifecycleObserver(
+            eventService: self.eventStorageService
+        )
+        self.callObserver = callObserver ?? CallStatusObserver(
+            eventService: self.eventStorageService
+        )
         self.orientationObserver = OrientationObserver(eventService: self.eventStorageService)
+        self.screenCaptureObserver = screenCaptureObserver ?? ScreenCaptureObserver(
+            eventService: self.eventStorageService
+        )
         
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
@@ -275,8 +277,8 @@ class NeuroIDCore: NSObject {
         self.linkedSiteID = nil
 
         //  stop listening to changes in call status
-        self.callObserver?.stopListeningToCallStatus()
-        self.listenerManager.stopAppEventListeners()
+        self.callObserver.stop()
+        self.screenCaptureObserver.stop()
         return true
     }
 
