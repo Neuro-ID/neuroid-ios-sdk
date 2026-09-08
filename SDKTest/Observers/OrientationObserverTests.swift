@@ -20,7 +20,7 @@ struct OrientationObserverTests {
         notificationCenter = NotificationCenter()
         dataStore = DataStore()
         eventService = EventStorageService()
-        
+
         NeuroIDCore.shared.datastore = dataStore
         NeuroIDCore.shared._isSDKStarted = true
 

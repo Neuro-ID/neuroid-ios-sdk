@@ -20,7 +20,7 @@ struct ScreenCaptureObserverTests {
         notificationCenter = NotificationCenter()
         dataStore = DataStore()
         eventService = EventStorageService()
-        
+
         NeuroIDCore.shared._isSDKStarted = true
         NeuroIDCore.shared.datastore = dataStore
 
