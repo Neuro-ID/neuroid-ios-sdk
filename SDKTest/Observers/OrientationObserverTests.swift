@@ -13,14 +13,14 @@ import UIKit
 struct OrientationObserverTests {
     let notificationCenter: NotificationCenter
     let dataStore: DataStore
-    let eventService: EventStorageService
+    let eventService: EventService
     let observer: OrientationObserver
 
     init() {
         notificationCenter = NotificationCenter()
         dataStore = DataStore()
-        eventService = EventStorageService()
-        
+        eventService = EventService()
+
         NeuroIDCore.shared.datastore = dataStore
 
         observer = OrientationObserver(

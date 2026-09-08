@@ -11,12 +11,12 @@ protocol SessionObserver: Sendable {
 }
 
 final class OrientationObserver: SessionObserver {
-    private let eventService: EventStorageServiceProtocol
+    private let eventService: EventServiceProtocol
     private let notificationCenter: NotificationCenter
 
     private var token: NSObjectProtocol?
 
-    nonisolated init(eventService: EventStorageServiceProtocol, notificationCenter: NotificationCenter = .default) {
+    nonisolated init(eventService: EventServiceProtocol, notificationCenter: NotificationCenter = .default) {
         self.eventService = eventService
         self.notificationCenter = notificationCenter
     }
@@ -45,9 +45,9 @@ final class OrientationObserver: SessionObserver {
 
     func record(_ orientation: UIDeviceOrientation) async {
         let tg = [
-            "orientation": TargetValue.string(orientation.description),
+            "orientation": TargetValue.string(orientation.description)
         ]
-        
+
         eventService.saveEventToLocalDataStore(
             NIDEvent(
                 type: NIDEventName.windowOrientationChange,

@@ -40,18 +40,18 @@ struct IdentityIdOriginalResult {
 class IdentifierService: IdentifierServiceProtocol {
     let state: StateStore
     let validationService: ValidationServiceProtocol
-    let eventStorageService: EventStorageServiceProtocol
+    let eventService: EventServiceProtocol
 
     var registeredUserID: String = ""
 
     init(
         state: StateStore,
         validationService: ValidationServiceProtocol,
-        eventStorageService: EventStorageServiceProtocol
+        eventService: EventServiceProtocol
     ) {
         self.state = state
         self.validationService = validationService
-        self.eventStorageService = eventStorageService
+        self.eventService = eventService
     }
 
     // This command replaces `setUserID` (internal version)
@@ -74,7 +74,7 @@ class IdentifierService: IdentifierServiceProtocol {
             type: .registeredUserID,
             duplicatesAllowedCheck: { scrubbedIdentifier in
                 if !self.registeredUserID.isEmpty, registeredUserID != self.registeredUserID {
-                    self.eventStorageService.saveEventToLocalDataStore(
+                    self.eventService.saveEventToLocalDataStore(
                         NIDEvent.createWarnLogEvent(
                             "Multiple Registered UserID Attempt - existing:\(self.registeredUserID) new:\(scrubbedIdentifier)"
                         )
@@ -124,7 +124,7 @@ class IdentifierService: IdentifierServiceProtocol {
         )
 
         if !validID {
-            eventStorageService.saveEventToDataStore(
+            eventService.saveEventToDataStore(
                 NIDEvent.createErrorLogEvent(
                     "Failed to save genericIdentifier of \(type.rawValue) event:\(scrubbedIdentifier)"
                 )
@@ -134,7 +134,7 @@ class IdentifierService: IdentifierServiceProtocol {
 
         NIDLog.debug("\(type) \(identifier)")
 
-        eventStorageService.saveEventToDataStore(
+        eventService.saveEventToDataStore(
             NIDEvent(
                 type: type == .identityId
                     ? .setUserId
@@ -159,7 +159,7 @@ class IdentifierService: IdentifierServiceProtocol {
         identifier: String, message: String
     ) -> String {
         let scrubbedIdentifier = scrubIdentifier(identifier)
-        eventStorageService.saveEventToDataStore(
+        eventService.saveEventToDataStore(
             NIDEvent.createInfoLogEvent(
                 "\(message): \(scrubbedIdentifier)"
             )
@@ -203,28 +203,28 @@ class IdentifierService: IdentifierServiceProtocol {
     }
 
     func sendOriginEvent(_ originResult: IdentityIdOriginalResult) {
-        eventStorageService.saveEventToDataStore(
+        eventService.saveEventToDataStore(
             NIDEvent(
                 type: .setVariable,
                 key: "sessionIdCode",
                 v: originResult.originCode
             )
         )
-        eventStorageService.saveEventToDataStore(
+        eventService.saveEventToDataStore(
             NIDEvent(
                 type: .setVariable,
                 key: "sessionIdSource",
                 v: originResult.origin
             )
         )
-        eventStorageService.saveEventToDataStore(
+        eventService.saveEventToDataStore(
             NIDEvent(
                 type: .setVariable,
                 key: "sessionId",
                 v: "\(originResult.idValue)"
             )
         )
-        eventStorageService.saveEventToDataStore(
+        eventService.saveEventToDataStore(
             NIDEvent(
                 type: .setVariable,
                 key: "sessionIdType",

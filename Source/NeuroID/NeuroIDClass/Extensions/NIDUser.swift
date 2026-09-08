@@ -35,7 +35,7 @@ extension NeuroIDCore {
         )
 
         if !validID {
-            self.eventStorageService.saveEventToDataStore(
+            self.eventService.saveEventToDataStore(
                 NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation")
             )
         }

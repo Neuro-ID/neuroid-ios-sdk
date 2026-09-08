@@ -5,16 +5,17 @@
 //  Created by Kevin Sites on 7/10/25.
 //
 
-@testable import NeuroID
 import XCTest
 
+@testable import NeuroID
+
 class NIDScreenTests: BaseTestClass {
-    var mockEventStorageService = MockEventStorageService()
+    var mockEventService = MockEventService()
     var neuroID = NeuroIDCore()
 
     override func setUp() {
-        mockEventStorageService = MockEventStorageService()
-        neuroID = NeuroIDCore(eventStorageService: mockEventStorageService)
+        mockEventService = MockEventService()
+        neuroID = NeuroIDCore(eventService: mockEventService)
     }
 
     // setScreenName
@@ -27,7 +28,7 @@ class NIDScreenTests: BaseTestClass {
 
         assert(!screenNameSet)
         assert(neuroID._currentScreenName != expectedValue)
-        assert(mockEventStorageService.saveEventToLocalDataStoreCount == 0)
+        assert(mockEventService.saveEventToLocalDataStoreCount == 0)
     }
 
     // started, url encode ok, mobile metadata captured
@@ -40,16 +41,16 @@ class NIDScreenTests: BaseTestClass {
         assert(screenNameSet)
         assert(neuroID._currentScreenName == expectedValue)
 
-        assert(mockEventStorageService.saveEventToLocalDataStoreCount == 1)
+        assert(mockEventService.saveEventToLocalDataStoreCount == 1)
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.mobileMetadataIOS.rawValue,
             count: 1
         )
 
-        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
+        assert(mockEventService.saveEventToDataStoreCount == 1)
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.applicationMetadata.rawValue,
             count: 1
         )
@@ -63,16 +64,16 @@ class NIDScreenTests: BaseTestClass {
         assert(screenNameSet)
         assert(neuroID._currentScreenName == expectedValue)
 
-        assert(mockEventStorageService.saveEventToLocalDataStoreCount == 1)
+        assert(mockEventService.saveEventToLocalDataStoreCount == 1)
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.mobileMetadataIOS.rawValue,
             count: 1
         )
 
-        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
+        assert(mockEventService.saveEventToDataStoreCount == 1)
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.applicationMetadata.rawValue,
             count: 1
         )

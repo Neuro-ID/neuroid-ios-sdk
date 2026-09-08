@@ -45,7 +45,7 @@ extension NeuroIDCore {
 
         self.linkedSiteID = siteID
 
-        self.eventStorageService.saveEventToLocalDataStore(
+        self.eventService.saveEventToLocalDataStore(
             NIDEvent(type: .setLinkedSite, v: siteID)
         )
     }

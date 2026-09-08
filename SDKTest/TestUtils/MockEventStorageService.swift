@@ -1,5 +1,5 @@
 //
-//  MockEventStorageService.swift
+//  MockEventService.swift
 //  NeuroID
 //
 //  Created by Kevin Sites on 8/25/25.
@@ -7,7 +7,7 @@
 
 @testable import NeuroID
 
-class MockEventStorageService: EventStorageServiceProtocol {
+class MockEventService: EventServiceProtocol {
     var saveEventToDataStoreCount = 0
     var saveEventToLocalDataStoreCount = 0
 
