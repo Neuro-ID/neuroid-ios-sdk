@@ -1,35 +1,29 @@
 //
-//  NIDCallStatusObserver.swift
+//  CallStatusObserver.swift
 //  NeuroID
-//
-//  Created by Priya Xavier on 1/26/24.
 //
 
 import CallKit
 import Foundation
 
-protocol CallStatusObserverServiceProtocol {
-    func startListeningToCallStatus()
-    func stopListeningToCallStatus()
-}
-
-class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatusObserverServiceProtocol {
+final class CallStatusObserver: NSObject, CXCallObserverDelegate, SessionObserver, @unchecked Sendable {
+    private let eventService: EventStorageServiceProtocol
     private let callObserver = CXCallObserver()
-    private var isRegistered = false
+
     private var callStates: [UUID: CallPhase] = [:]
 
-    private let eventStorageService: EventStorageServiceProtocol
-    private let configService: ConfigServiceProtocol
-
-    init(
-        eventStorageService: EventStorageServiceProtocol,
-        configService: ConfigServiceProtocol
-    ) {
-        self.eventStorageService = eventStorageService
-        self.configService = configService
+    init(eventService: EventStorageServiceProtocol) {
+        self.eventService = eventService
         super.init()
-        self.callObserver.setDelegate(self, queue: nil)
-        self.isRegistered = true
+    }
+
+    func start() {
+        callObserver.setDelegate(self, queue: nil)
+    }
+
+    func stop() {
+        callObserver.setDelegate(nil, queue: nil)
+        callStates.removeAll()
     }
 
     func callObserver(_ callObserver: CXCallObserver, callChanged call: CXCall) {
@@ -90,7 +84,7 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             Attrs(n: "id", v: callID.uuidString)
         ]
 
-        self.eventStorageService.saveEventToLocalDataStore(
+        self.eventService.saveEventToLocalDataStore(
             NIDEvent(
                 type: .callInProgress,
                 attrs: attrs,
@@ -98,26 +92,9 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             )
         )
     }
-
-    func startListeningToCallStatus() {
-        if !self.isRegistered {
-            if self.configService.configCache.callInProgress {
-                self.callObserver.setDelegate(self, queue: nil)
-                self.isRegistered = true
-            }
-        }
-    }
-
-    func stopListeningToCallStatus() {
-        if self.isRegistered {
-            self.callObserver.setDelegate(nil, queue: nil)
-            self.isRegistered = false
-            self.callStates.removeAll()
-        }
-    }
 }
 
-extension NIDCallStatusObserverService {
+extension CallStatusObserver {
     enum CallPhase: String {
         case connected, disconnected, onHold
     }

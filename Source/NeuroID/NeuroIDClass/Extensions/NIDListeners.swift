@@ -22,13 +22,7 @@ extension NeuroIDCore {
         self.sendCollectionEventsJob.start()
 
         if self.configService.configCache.callInProgress {
-            self.callObserver = NIDCallStatusObserverService(
-                eventStorageService: self.eventStorageService,
-                configService: self.configService
-            )
-            self.callObserver?.startListeningToCallStatus()
-        } else {
-            self.callObserver = nil
+            self.callObserver.start()
         }
 
         // We will always cancel the current gyro job and then if the config allows we will recreate and start

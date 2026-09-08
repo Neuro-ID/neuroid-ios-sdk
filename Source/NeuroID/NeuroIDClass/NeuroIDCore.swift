@@ -35,7 +35,7 @@ class NeuroIDCore: NSObject {
     var deviceSignalService: AdvancedDeviceServiceProtocol
     var payloadSendingService: PayloadSendingServiceProtocol
 
-    var callObserver: CallStatusObserverServiceProtocol?
+    var callObserver: CallStatusObserver
     var orientationObserver: OrientationObserver
     var listenerManager: ListenerManagerService
 
@@ -123,7 +123,7 @@ class NeuroIDCore: NSObject {
         networkMonitor: NetworkMonitoringServiceProtocol? = nil,
         deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
         payloadSendingService: PayloadSendingServiceProtocol? = nil,
-        callObserver: CallStatusObserverServiceProtocol? = nil,
+        callObserver: CallStatusObserver? = nil,
         listenerManager: ListenerManagerService? = nil
     ) {
         self.state = state ?? StateStore()
@@ -153,7 +153,9 @@ class NeuroIDCore: NSObject {
                 datastore: self.datastore,
                 networkService: self.networkService
             )
-        self.callObserver = callObserver
+        self.callObserver = callObserver ?? CallStatusObserver(
+            eventService: self.eventStorageService
+        )
         self.listenerManager =
             listenerManager
             ?? ListenerManagerService(
@@ -273,7 +275,7 @@ class NeuroIDCore: NSObject {
         self.linkedSiteID = nil
 
         //  stop listening to changes in call status
-        self.callObserver?.stopListeningToCallStatus()
+        self.callObserver.stop()
         self.listenerManager.stopAppEventListeners()
         return true
     }
