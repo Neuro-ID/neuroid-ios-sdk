@@ -59,9 +59,6 @@ class NeuroIDCore: NSObject {
 
     var _currentScreenName: String?
 
-    var _isSDKStarted: Bool = false
-    public var isSDKStarted: Bool { self._isSDKStarted }
-
     // Defining Collection and Gyro Tasks here because the job is recreated for new interval timing in the setupListeners fn.
     static var sendCollectionEventsTask: () -> Void = {
         NeuroIDCore.shared.send()
@@ -269,7 +266,7 @@ class NeuroIDCore: NSObject {
         }
 
         self.send(forceSend: true)
-        self._isSDKStarted = false
+        self.state.setCollectionStatus(.stopped)
         self.linkedSiteID = nil
 
         //  stop listening to changes in call status
