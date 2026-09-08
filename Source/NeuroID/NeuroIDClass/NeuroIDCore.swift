@@ -38,7 +38,7 @@ class NeuroIDCore: NSObject {
     var appLifecycleObserver: AppLifecycleObserver
     var callObserver: CallStatusObserver
     var orientationObserver: OrientationObserver
-    var listenerManager: ListenerManagerService
+    var screenCaptureObserver: ScreenCaptureObserver
 
     // flag to ensure that we only have one FPJS call in flight
     var isFPJSRunning = false
@@ -125,8 +125,8 @@ class NeuroIDCore: NSObject {
         deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
         payloadSendingService: PayloadSendingServiceProtocol? = nil,
         appLifecycleObserver: AppLifecycleObserver? = nil,
-        callObserver: CallStatusObserver? = nil,
-        listenerManager: ListenerManagerService? = nil
+        callObserver: CallStatusObserverServiceProtocol? = nil,
+        screenCaptureObserver: ScreenCaptureObserver? = nil
     ) {
         self.state = state ?? StateStore()
         self.uiRuntime = uiRuntime ?? UIRuntime()
@@ -155,12 +155,7 @@ class NeuroIDCore: NSObject {
                 datastore: self.datastore,
                 networkService: self.networkService
             )
-        self.appLifecycleObserver = appLifecycleObserver ?? AppLifecycleObserver(
-            eventService: self.eventStorageService
-        )
-        self.callObserver = callObserver ?? CallStatusObserver(
-            eventService: self.eventStorageService
-        )
+        self.callObserver = callObserver
         self.listenerManager =
             listenerManager
             ?? ListenerManagerService(
@@ -280,7 +275,7 @@ class NeuroIDCore: NSObject {
         self.linkedSiteID = nil
 
         //  stop listening to changes in call status
-        self.callObserver.stop()
+        self.callObserver?.stopListeningToCallStatus()
         self.listenerManager.stopAppEventListeners()
         return true
     }

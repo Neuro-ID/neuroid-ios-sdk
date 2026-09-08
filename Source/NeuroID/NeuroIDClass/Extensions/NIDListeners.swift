@@ -9,7 +9,7 @@ import Foundation
 
 extension NeuroIDCore {
     func setupListeners() {
-        self.listenerManager.startAppEventListeners()
+        self.screenCaptureObserver.start()
 
         self.orientationObserver.start()
         

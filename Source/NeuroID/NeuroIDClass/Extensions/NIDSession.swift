@@ -55,7 +55,7 @@ extension NeuroIDCore {
         // Stop listening to changes in call status
         self.callObserver.stop()
 
-        self.listenerManager.stopAppEventListeners()
+        self.screenCaptureObserver.stop()
 
         return true
     }
