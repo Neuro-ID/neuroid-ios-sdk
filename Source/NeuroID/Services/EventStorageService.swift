@@ -5,7 +5,7 @@
 //  Created by Kevin Sites on 8/4/25.
 //
 
-protocol EventStorageServiceProtocol {
+protocol EventStorageServiceProtocol: Sendable {
     func saveEventToDataStore(_ event: NIDEvent)
 
     func saveEventToLocalDataStore(_ event: NIDEvent)
