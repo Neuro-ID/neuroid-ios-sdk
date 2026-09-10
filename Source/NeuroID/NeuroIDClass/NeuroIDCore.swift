@@ -26,7 +26,7 @@ class NeuroIDCore: NSObject {
     var state: StateStore
     var uiRuntime: UIRuntime
     var datastore: DataStoreServiceProtocol
-    var eventStorageService: EventStorageServiceProtocol
+    var eventService: EventServiceProtocol
     var validationService: ValidationServiceProtocol
     var configService: ConfigServiceProtocol
     var identifierService: IdentifierServiceProtocol
@@ -115,7 +115,7 @@ class NeuroIDCore: NSObject {
         state: StateStore? = nil,
         uiRuntime: UIRuntime? = nil,
         datastore: DataStoreServiceProtocol? = nil,
-        eventStorageService: EventStorageServiceProtocol? = nil,
+        eventService: EventServiceProtocol? = nil,
         validationService: ValidationServiceProtocol? = nil,
         networkService: NetworkServiceProtocol? = nil,
         configService: ConfigServiceProtocol? = nil,
@@ -129,7 +129,7 @@ class NeuroIDCore: NSObject {
         self.state = state ?? StateStore()
         self.uiRuntime = uiRuntime ?? UIRuntime()
         self.datastore = datastore ?? DataStore()
-        self.eventStorageService = eventStorageService ?? EventStorageService()
+        self.eventService = eventService ?? EventService()
         self.validationService = validationService ?? ValidationService()
         self.networkService = networkService ?? NetworkService()
         self.configService =
@@ -143,7 +143,7 @@ class NeuroIDCore: NSObject {
             ?? IdentifierService(
                 state: self.state,
                 validationService: self.validationService,
-                eventStorageService: self.eventStorageService
+                eventService: self.eventService
             )
         self.networkMonitor = networkMonitor ?? NetworkMonitoringService()
         self.deviceSignalService = deviceSignalService ?? AdvancedDeviceService()
@@ -160,8 +160,8 @@ class NeuroIDCore: NSObject {
                 uiRuntime: self.uiRuntime,
                 notificationCenter: .default
             )
-        self.orientationObserver = OrientationObserver(eventService: self.eventStorageService)
-        
+        self.orientationObserver = OrientationObserver(eventService: self.eventService)
+
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
             task: NeuroIDCore.sendCollectionEventsTask
@@ -291,7 +291,7 @@ class NeuroIDCore: NSObject {
     func captureApplicationMetadata() {
         let appMetadata = self.getAppMetadata()
 
-        self.eventStorageService.saveEventToDataStore(
+        self.eventService.saveEventToDataStore(
             NIDEvent(
                 type: .applicationMetadata,
                 p: ParamsCreator.getPlatform(),

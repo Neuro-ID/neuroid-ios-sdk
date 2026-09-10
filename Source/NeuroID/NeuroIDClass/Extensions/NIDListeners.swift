@@ -12,7 +12,7 @@ extension NeuroIDCore {
         self.listenerManager.startAppEventListeners()
 
         self.orientationObserver.start()
-        
+
         // We will always cancel the collection job and then recreate with new interval and start
         self.sendCollectionEventsJob.cancel()
         self.sendCollectionEventsJob = RepeatingTask(
@@ -23,7 +23,7 @@ extension NeuroIDCore {
 
         if self.configService.configCache.callInProgress {
             self.callObserver = NIDCallStatusObserverService(
-                eventStorageService: self.eventStorageService,
+                eventService: self.eventService,
                 configService: self.configService
             )
             self.callObserver?.startListeningToCallStatus()

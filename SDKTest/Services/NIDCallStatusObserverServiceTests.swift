@@ -10,15 +10,15 @@ import Testing
 
 @Suite
 struct NIDCallStatusObserverServiceTests {
-    var eventStorageService: MockEventStorageService
+    var eventService: MockEventService
     var configService: MockConfigService
     var callService: NIDCallStatusObserverService
 
     init() {
-        eventStorageService = MockEventStorageService()
+        eventService = MockEventService()
         configService = MockConfigService()
         callService = NIDCallStatusObserverService(
-            eventStorageService: eventStorageService,
+            eventService: eventService,
             configService: configService
         )
     }
@@ -63,7 +63,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: callID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 2)
+        #expect(eventService.mockEventStore.count == 2)
         assertLastEvent(
             state: .onHold,
             direction: .outgoing,
@@ -97,7 +97,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: callID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 3)
+        #expect(eventService.mockEventStore.count == 3)
         #expect(callStates() == [.connected, .onHold, .connected])
         assertLastEvent(
             state: .connected,
@@ -126,7 +126,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: callID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 2)
+        #expect(eventService.mockEventStore.count == 2)
         assertLastEvent(
             state: .disconnected,
             direction: .outgoing,
@@ -146,7 +146,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: callID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 1)
+        #expect(eventService.mockEventStore.count == 1)
         assertLastEvent(
             state: .disconnected,
             direction: .incoming,
@@ -164,7 +164,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: UUID()
         )
 
-        #expect(eventStorageService.mockEventStore.isEmpty)
+        #expect(eventService.mockEventStore.isEmpty)
     }
 
     @Test("does not eemit duplicate events for repeated callbacks of the same state")
@@ -214,7 +214,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: callID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 3)
+        #expect(eventService.mockEventStore.count == 3)
         #expect(callStates() == [.connected, .onHold, .disconnected])
     }
 
@@ -230,7 +230,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: callID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 1)
+        #expect(eventService.mockEventStore.count == 1)
         #expect(callStates() == [.onHold])
         assertLastEvent(
             state: .onHold,
@@ -280,7 +280,7 @@ struct NIDCallStatusObserverServiceTests {
             callID: firstCallID
         )
 
-        #expect(eventStorageService.mockEventStore.count == 5)
+        #expect(eventService.mockEventStore.count == 5)
         #expect(callStates() == [.connected, .onHold, .connected, .disconnected, .disconnected])
     }
 
@@ -289,7 +289,7 @@ struct NIDCallStatusObserverServiceTests {
         direction: NIDCallStatusObserverService.Direction,
         callID: UUID
     ) {
-        let lastEvent = eventStorageService.mockEventStore.last
+        let lastEvent = eventService.mockEventStore.last
 
         #expect(lastEvent?.cp == state.rawValue)
         #expect(lastEvent?.attrs?.first(where: { $0.n == "direction" })?.v == direction.rawValue)
@@ -297,7 +297,7 @@ struct NIDCallStatusObserverServiceTests {
     }
 
     func callStates() -> [NIDCallStatusObserverService.CallPhase] {
-        eventStorageService.mockEventStore.compactMap {
+        eventService.mockEventStore.compactMap {
             NIDCallStatusObserverService.CallPhase(rawValue: $0.cp!)
         }
     }

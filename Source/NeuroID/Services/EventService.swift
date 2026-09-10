@@ -1,17 +1,15 @@
 //
-//  EventStorageService.swift
+//  EventService.swift
 //  NeuroID
 //
-//  Created by Kevin Sites on 8/4/25.
-//
 
-protocol EventStorageServiceProtocol {
+protocol EventServiceProtocol {
     func saveEventToDataStore(_ event: NIDEvent)
 
     func saveEventToLocalDataStore(_ event: NIDEvent)
 }
 
-struct EventStorageService: EventStorageServiceProtocol {
+struct EventService: EventServiceProtocol {
     func saveEventToDataStore(_ event: NIDEvent) {
         NeuroIDCore.shared.saveEventToDataStore(event)
     }

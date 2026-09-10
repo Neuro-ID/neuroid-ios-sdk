@@ -18,14 +18,14 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
     private var isRegistered = false
     private var callStates: [UUID: CallPhase] = [:]
 
-    private let eventStorageService: EventStorageServiceProtocol
+    private let eventService: EventServiceProtocol
     private let configService: ConfigServiceProtocol
 
     init(
-        eventStorageService: EventStorageServiceProtocol,
+        eventService: EventServiceProtocol,
         configService: ConfigServiceProtocol
     ) {
-        self.eventStorageService = eventStorageService
+        self.eventService = eventService
         self.configService = configService
         super.init()
         self.callObserver.setDelegate(self, queue: nil)
@@ -90,7 +90,7 @@ class NIDCallStatusObserverService: NSObject, CXCallObserverDelegate, CallStatus
             Attrs(n: "id", v: callID.uuidString)
         ]
 
-        self.eventStorageService.saveEventToLocalDataStore(
+        self.eventService.saveEventToLocalDataStore(
             NIDEvent(
                 type: .callInProgress,
                 attrs: attrs,

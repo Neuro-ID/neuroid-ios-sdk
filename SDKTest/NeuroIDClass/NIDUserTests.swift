@@ -10,16 +10,16 @@ import XCTest
 class NIDUserTests: XCTestCase {
     var state: StateStore = StateStore()
     var mockIdentifierService = MockIdentifierService()
-    var mockEventStorageService = MockEventStorageService()
+    var mockEventService = MockEventService()
     var neuroID = NeuroIDCore()
 
     override func setUp() {
         state = StateStore()
         mockIdentifierService = MockIdentifierService()
-        mockEventStorageService = MockEventStorageService()
+        mockEventService = MockEventService()
         neuroID = NeuroIDCore(
             state: state,
-            eventStorageService: mockEventStorageService,
+            eventService: mockEventService,
             identifierService: mockIdentifierService
         )
     }
@@ -34,7 +34,7 @@ class NIDUserTests: XCTestCase {
         // Use real identifier service
         neuroID = NeuroIDCore(
             state: state,
-            eventStorageService: mockEventStorageService
+            eventService: mockEventService
         )
 
         let response = neuroID.identify("abcd123")
@@ -45,7 +45,7 @@ class NIDUserTests: XCTestCase {
         // Use real identifier service
         neuroID = NeuroIDCore(
             state: state,
-            eventStorageService: mockEventStorageService
+            eventService: mockEventService
         )
 
         let response = neuroID.identify("")
@@ -118,7 +118,7 @@ class NIDUserTests: XCTestCase {
 
         assert(response == expectedValue)
         assert(mockIdentifierService.setGenericIdentifierCount == 1)
-        assert(mockEventStorageService.saveEventToDataStoreCount == 0)
+        assert(mockEventService.saveEventToDataStoreCount == 0)
     }
 
     func test_attemptedLogin_invalid() {
@@ -129,8 +129,8 @@ class NIDUserTests: XCTestCase {
 
         assert(response == expectedValue)
         assert(mockIdentifierService.setGenericIdentifierCount == 1)
-        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
-        assert(mockEventStorageService.mockEventStore[0].type == NIDEventName.attemptedLogin.rawValue)
-        assert(mockEventStorageService.mockEventStore[0].uid == "scrubbed-id-failed-validation")
+        assert(mockEventService.saveEventToDataStoreCount == 1)
+        assert(mockEventService.mockEventStore[0].type == NIDEventName.attemptedLogin.rawValue)
+        assert(mockEventService.mockEventStore[0].uid == "scrubbed-id-failed-validation")
     }
 }

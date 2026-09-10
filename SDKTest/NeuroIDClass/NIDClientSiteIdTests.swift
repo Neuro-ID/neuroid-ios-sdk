@@ -5,19 +5,20 @@
 //  Created by Kevin Sites on 7/10/25.
 //
 
-@testable import NeuroID
 import XCTest
 
+@testable import NeuroID
+
 class NIDClientSiteIdTests: BaseTestClass {
-    var mockEventStorageService = MockEventStorageService()
+    var mockEventService = MockEventService()
     var mockConfigService = MockConfigService()
     var neuroID = NeuroIDCore()
 
     override func setUp() {
-        mockEventStorageService = MockEventStorageService()
+        mockEventService = MockEventService()
         mockConfigService = MockConfigService()
         neuroID = NeuroIDCore(
-            eventStorageService: mockEventStorageService,
+            eventService: mockEventService,
             configService: mockConfigService
         )
     }
@@ -122,7 +123,7 @@ class NIDClientSiteIdTests: BaseTestClass {
         neuroID.addLinkedSiteID("invalidID")
 
         assert(neuroID.linkedSiteID == nil)
-        assert(mockEventStorageService.mockEventStore.isEmpty)
+        assert(mockEventService.mockEventStore.isEmpty)
     }
 
     func test_addLinkedSiteID_valid_siteID() {
@@ -133,9 +134,9 @@ class NIDClientSiteIdTests: BaseTestClass {
         neuroID.addLinkedSiteID(expectedValue)
 
         assert(neuroID.linkedSiteID == expectedValue)
-        assert(mockEventStorageService.mockEventStore.count == 1)
+        assert(mockEventService.mockEventStore.count == 1)
         let linkedSiteEvents = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.setLinkedSite.rawValue,
             count: 1
         )

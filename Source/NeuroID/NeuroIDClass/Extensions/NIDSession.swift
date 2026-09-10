@@ -224,7 +224,7 @@ extension NeuroIDCore {
             Attrs(n: "orientation", v: UIDevice.current.orientation.description),
             Attrs(n: "isRN", v: "\(NeuroIDCore.shared.isRN)"),
         ]
-        self.eventStorageService.saveEventToLocalDataStore(event)
+        self.eventService.saveEventToLocalDataStore(event)
 
         self.captureApplicationMetadata()
     }

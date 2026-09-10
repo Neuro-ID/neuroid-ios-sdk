@@ -6,16 +6,17 @@
 //
 
 import Foundation
-@testable import NeuroID
 import XCTest
 
+@testable import NeuroID
+
 class IdentifierServiceTests: BaseTestClass {
-    var mockEventStorageService = MockEventStorageService()
+    var mockEventService = MockEventService()
     var state: StateStore = StateStore()
     var identifierService = IdentifierService(
         state: StateStore(),
         validationService: ValidationService(),
-        eventStorageService: MockEventStorageService()
+        eventService: MockEventService()
     )
 
     override func setUpWithError() throws {
@@ -23,12 +24,12 @@ class IdentifierServiceTests: BaseTestClass {
     }
 
     override func setUp() {
-        mockEventStorageService = MockEventStorageService()
+        mockEventService = MockEventService()
         state = StateStore()
         identifierService = IdentifierService(
             state: state,
             validationService: ValidationService(),
-            eventStorageService: mockEventStorageService
+            eventService: mockEventService
         )
     }
 
@@ -77,7 +78,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(fnSuccess == true)
         assert(identifierService.registeredUserID == expectedValue)
 
-        let warnLogMessages = mockEventStorageService.mockEventStore.filter {
+        let warnLogMessages = mockEventService.mockEventStore.filter {
             $0.type == NIDEventName.log.rawValue && $0.level == "WARN"
         }
         assert(warnLogMessages.count == 1)
@@ -92,7 +93,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(fnSuccess == true)
         assert(identifierService.registeredUserID == expectedValue)
 
-        let warnLogMessages = mockEventStorageService.mockEventStore.filter {
+        let warnLogMessages = mockEventService.mockEventStore.filter {
             $0.type == NIDEventName.log.rawValue && $0.level == "WARN"
         }
         assert(warnLogMessages.count == 0)
@@ -115,7 +116,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(successful == true)
 
         let userIDEvents = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.setUserId.rawValue,
             count: 1
         )
@@ -138,11 +139,11 @@ class IdentifierServiceTests: BaseTestClass {
         assert(successful == false)
 
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.setUserId.rawValue,
             count: 0
         )
-        assert(mockEventStorageService.mockEventStore.count == 1) // 1 for the scrub identifier fn
+        assert(mockEventService.mockEventStore.count == 1)  // 1 for the scrub identifier fn
     }
 
     func test_setGenericIdentifier_invalid_identityId_duplicatesAllowed() {
@@ -160,12 +161,12 @@ class IdentifierServiceTests: BaseTestClass {
         assert(successful == false)
 
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.setUserId.rawValue,
             count: 0
         )
 
-        let errorLogMessages = mockEventStorageService.mockEventStore.filter {
+        let errorLogMessages = mockEventService.mockEventStore.filter {
             $0.type == NIDEventName.log.rawValue && $0.level == "ERROR"
         }
 
@@ -187,7 +188,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(successful == true)
 
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.setRegisteredUserId.rawValue,
             count: 1
         )
@@ -208,7 +209,7 @@ class IdentifierServiceTests: BaseTestClass {
         assert(successful == true)
 
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.attemptedLogin.rawValue,
             count: 1
         )
@@ -235,7 +236,7 @@ class IdentifierServiceTests: BaseTestClass {
         )
         XCTAssertEqual(scrubbedId, expectedId)
         _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.log.rawValue,
             count: 1
         )
@@ -273,12 +274,12 @@ class IdentifierServiceTests: BaseTestClass {
         identifierService.sendOriginEvent(testOrigin)
 
         let originEvents = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
+            dataStoreEvents: mockEventService.mockEventStore,
             type: NIDEventName.setVariable.rawValue,
             count: 4
         )
 
-        assert(mockEventStorageService.saveEventToDataStoreCount == 4)
+        assert(mockEventService.saveEventToDataStoreCount == 4)
 
         assert(originEvents[0].key == "sessionIdCode")
         assert(originEvents[0].v == testOrigin.originCode)
