@@ -5,7 +5,7 @@
 //  Created by Kevin Sites on 1/27/25.
 //
 
-import FingerprintPro
+import Fingerprint
 import Foundation
 
 // Reusable tuple for Advanced Device Results (requestId, calculated duration in ms, sealedResult)
@@ -131,13 +131,13 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        let configuration = FingerprintPro.Configuration(
+        let configuration = Fingerprint.Configuration(
             apiKey: apiKey,
             region: endpoint(useProxy: NeuroIDCore.shared.useAdvancedDeviceProxy),
             allowUseOfLocationData: false
         )
         
-        let client = FingerprintProFactory.getInstance(configuration)
+        let client = FingerprintFactory.getInstance(configuration)
         
         var metadata = Metadata()
         metadata.setTag(NeuroIDCore.shared.getClientID(), forKey: "clientId")
@@ -147,7 +147,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         client.getVisitorIdResponse(metadata) { result in
             switch result {
             case .success(let fpResponse):
-                completion(.success((fpResponse.requestId, fpResponse.sealedResult)))
+                completion(.success((fpResponse.eventId, fpResponse.sealedResult)))
             case .failure(let error):
                 completion(
                     .failure(
@@ -163,7 +163,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     }
 
     // Selects the endpoint to use based on the `useAdvancedDeviceProxy` flag
-    static func endpoint(useProxy: Bool) -> FingerprintPro.Region {
+    static func endpoint(useProxy: Bool) -> Fingerprint.Region {
         let region: Region = NeuroIDCore.shared.region
         return useProxy
             ? .custom(
