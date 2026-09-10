@@ -53,7 +53,7 @@ extension NeuroIDCore {
         self.clearSessionVariables()
 
         // Stop listening to changes in call status
-        self.callObserver?.stopListeningToCallStatus()
+        self.callObserver.stop()
 
         self.listenerManager.stopAppEventListeners()
 
