@@ -9,7 +9,7 @@ import UIKit
 @testable import NeuroID
 
 @MainActor
-@Suite
+@Suite(.serialized)
 struct OrientationObserverTests {
     let notificationCenter: NotificationCenter
     let dataStore: DataStore
@@ -20,8 +20,9 @@ struct OrientationObserverTests {
         notificationCenter = NotificationCenter()
         dataStore = DataStore()
         eventService = EventStorageService()
-        
+
         NeuroIDCore.shared.datastore = dataStore
+        NeuroIDCore.shared._isSDKStarted = true
 
         observer = OrientationObserver(
             eventService: eventService,
@@ -44,7 +45,7 @@ struct OrientationObserverTests {
     func recordsOrientation(orientation: UIDeviceOrientation) async {
         await observer.record(orientation)
 
-        let events = dataStore.getAllEvents()
+        let events = dataStore.getAndRemoveAllEvents()
         #expect(
             events.contains {
                 $0.type == NIDEventName.deviceOrientation.rawValue
