@@ -35,6 +35,7 @@ class NeuroIDCore: NSObject {
     var deviceSignalService: AdvancedDeviceServiceProtocol
     var payloadSendingService: PayloadSendingServiceProtocol
 
+    var appLifecycleObserver: AppLifecycleObserver
     var callObserver: CallStatusObserver
     var orientationObserver: OrientationObserver
     var listenerManager: ListenerManagerService
@@ -123,6 +124,7 @@ class NeuroIDCore: NSObject {
         networkMonitor: NetworkMonitoringServiceProtocol? = nil,
         deviceSignalService: AdvancedDeviceServiceProtocol? = nil,
         payloadSendingService: PayloadSendingServiceProtocol? = nil,
+        appLifecycleObserver: AppLifecycleObserver? = nil,
         callObserver: CallStatusObserver? = nil,
         listenerManager: ListenerManagerService? = nil
     ) {
@@ -153,6 +155,9 @@ class NeuroIDCore: NSObject {
                 datastore: self.datastore,
                 networkService: self.networkService
             )
+        self.appLifecycleObserver = appLifecycleObserver ?? AppLifecycleObserver(
+            eventService: self.eventStorageService
+        )
         self.callObserver = callObserver ?? CallStatusObserver(
             eventService: self.eventStorageService
         )
