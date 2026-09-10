@@ -707,7 +707,7 @@
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 5.11.0;
+				minimumVersion = 5.12.0;
 			};
 		};
 		01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */ = {
@@ -730,8 +730,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/fingerprintjs/fingerprint-ios";
 			requirement = {
-				kind = exactVersion;
-				version = 4.0.0;
+				kind = upToNextMinorVersion;
+				minimumVersion = 4.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
