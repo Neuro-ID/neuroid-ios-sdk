@@ -103,8 +103,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                             .failure(
                                 createError(
                                     code: 3,
-                                    description:
-                                    "NeuroID API Error: Unable to convert to string"
+                                    description: "NeuroID API Error: Unable to convert to string"
                                 )
                             )
                         )
@@ -114,8 +113,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                         .failure(
                             createError(
                                 code: 4,
-                                description:
-                                "NeuroID API Error: Error Retrieving Data"
+                                description: "NeuroID API Error: Error Retrieving Data"
                             )
                         )
                     )
@@ -126,7 +124,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         }
         task.resume()
     }
-    
+
     static func getAdvancedDeviceResult(
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
@@ -136,14 +134,14 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
             region: endpoint(useProxy: NeuroIDCore.shared.useAdvancedDeviceProxy),
             allowUseOfLocationData: false
         )
-        
+
         let client = FingerprintFactory.getInstance(configuration)
-        
+
         var metadata = Metadata()
         metadata.setTag(NeuroIDCore.shared.getClientID(), forKey: "clientId")
         metadata.setTag(NeuroIDCore.shared.getClientKey(), forKey: "collectorKey")
         metadata.setTag((Date().timeIntervalSince1970 * 1000).rounded(), forKey: "requestStartTime")
-               
+
         client.getVisitorIdResponse(metadata) { result in
             switch result {
             case .success(let fpResponse):
@@ -153,8 +151,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                     .failure(
                         createError(
                             code: 6,
-                            description:
-                            "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
+                            description: "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
                         )
                     )
                 )

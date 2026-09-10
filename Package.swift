@@ -28,11 +28,9 @@ let package = Package(
                 .product(name: "Alamofire", package: "Alamofire")
             ],
             path: "Source/NeuroID",
-            exclude: [
-               
-            ],
+            exclude: [],
             resources: [
-                .process("PrivacyInfo.xcprivacy"),
+                .process("PrivacyInfo.xcprivacy")
             ]
         ),
         .testTarget(
