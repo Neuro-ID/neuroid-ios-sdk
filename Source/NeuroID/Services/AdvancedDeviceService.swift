@@ -5,7 +5,7 @@
 //  Created by Kevin Sites on 1/27/25.
 //
 
-import Fingerprint
+import FingerprintPro
 import Foundation
 
 // Reusable tuple for Advanced Device Results (requestId, calculated duration in ms, sealedResult)
@@ -103,7 +103,8 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                             .failure(
                                 createError(
                                     code: 3,
-                                    description: "NeuroID API Error: Unable to convert to string"
+                                    description:
+                                    "NeuroID API Error: Unable to convert to string"
                                 )
                             )
                         )
@@ -113,7 +114,8 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
                         .failure(
                             createError(
                                 code: 4,
-                                description: "NeuroID API Error: Error Retrieving Data"
+                                description:
+                                "NeuroID API Error: Error Retrieving Data"
                             )
                         )
                     )
@@ -124,34 +126,35 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
         }
         task.resume()
     }
-
+    
     static func getAdvancedDeviceResult(
         _ apiKey: String,
         completion: @escaping (Result<(String, String?), Error>) -> Void
     ) {
-        let configuration = Fingerprint.Configuration(
+        let configuration = FingerprintPro.Configuration(
             apiKey: apiKey,
             region: endpoint(useProxy: NeuroIDCore.shared.useAdvancedDeviceProxy),
             allowUseOfLocationData: false
         )
-
-        let client = FingerprintFactory.getInstance(configuration)
-
+        
+        let client = FingerprintProFactory.getInstance(configuration)
+        
         var metadata = Metadata()
         metadata.setTag(NeuroIDCore.shared.getClientID(), forKey: "clientId")
         metadata.setTag(NeuroIDCore.shared.getClientKey(), forKey: "collectorKey")
         metadata.setTag((Date().timeIntervalSince1970 * 1000).rounded(), forKey: "requestStartTime")
-
+               
         client.getVisitorIdResponse(metadata) { result in
             switch result {
             case .success(let fpResponse):
-                completion(.success((fpResponse.eventId, fpResponse.sealedResult)))
+                completion(.success((fpResponse.requestId, fpResponse.sealedResult)))
             case .failure(let error):
                 completion(
                     .failure(
                         createError(
                             code: 6,
-                            description: "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
+                            description:
+                            "Fingerprint Response Failure (code 6): \(error.localizedDescription)"
                         )
                     )
                 )
@@ -160,7 +163,7 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
     }
 
     // Selects the endpoint to use based on the `useAdvancedDeviceProxy` flag
-    static func endpoint(useProxy: Bool) -> Fingerprint.Region {
+    static func endpoint(useProxy: Bool) -> FingerprintPro.Region {
         let region: Region = NeuroIDCore.shared.region
         return useProxy
             ? .custom(
