@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		01219BBE2ED77175008F3D71 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 01219BBD2ED77175008F3D71 /* Alamofire */; };
+		01219BC12ED77183008F3D71 /* FingerprintPro in Frameworks */ = {isa = PBXBuildFile; productRef = 01219BC02ED77183008F3D71 /* FingerprintPro */; };
 		01D31F562E9D90CC0042B0DD /* DSJSONSchemaValidation in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */; };
 		01D31F592E9D90F10042B0DD /* JSONSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 01D31F582E9D90F10042B0DD /* JSONSchema */; };
-		01FCD6433052E496005803BA /* Fingerprint in Frameworks */ = {isa = PBXBuildFile; productRef = 01FCD6423052E496005803BA /* Fingerprint */; };
 		6F39E8CE26CEA9A800BE9834 /* NeuroID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26BCF33C268DA3C40002C289 /* NeuroID.framework */; };
 /* End PBXBuildFile section */
 
@@ -86,7 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01219BBE2ED77175008F3D71 /* Alamofire in Frameworks */,
-				01FCD6433052E496005803BA /* Fingerprint in Frameworks */,
+				01219BC12ED77183008F3D71 /* FingerprintPro in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,9 +211,9 @@
 			mainGroup = 26BCF332268DA3C40002C289;
 			packageReferences = (
 				01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */,
-				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */,
+				01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema.swift" */,
 				01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				01FCD6413052E496005803BA /* XCRemoteSwiftPackageReference "fingerprint-ios" */,
+				01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 26BCF33D268DA3C40002C289 /* Products */;
@@ -707,7 +707,15 @@
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 5.12.0;
+				minimumVersion = 5.11.0;
+			};
+		};
+		01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fingerprintjs/fingerprintjs-pro-ios";
+			requirement = {
+				kind = exactVersion;
+				version = 2.16.0;
 			};
 		};
 		01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */ = {
@@ -718,20 +726,12 @@
 				minimumVersion = 2.0.7;
 			};
 		};
-		01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */ = {
+		01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kylef/JSONSchema.swift";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.6.0;
-			};
-		};
-		01FCD6413052E496005803BA /* XCRemoteSwiftPackageReference "fingerprint-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/fingerprintjs/fingerprint-ios";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 4.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -742,6 +742,11 @@
 			package = 01219BBC2ED77175008F3D71 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
+		01219BC02ED77183008F3D71 /* FingerprintPro */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */;
+			productName = FingerprintPro;
+		};
 		01D31F552E9D90CC0042B0DD /* DSJSONSchemaValidation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */;
@@ -749,13 +754,8 @@
 		};
 		01D31F582E9D90F10042B0DD /* JSONSchema */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema" */;
+			package = 01D31F572E9D90F10042B0DD /* XCRemoteSwiftPackageReference "JSONSchema.swift" */;
 			productName = JSONSchema;
-		};
-		01FCD6423052E496005803BA /* Fingerprint */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 01FCD6413052E496005803BA /* XCRemoteSwiftPackageReference "fingerprint-ios" */;
-			productName = Fingerprint;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
