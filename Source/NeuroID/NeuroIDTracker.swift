@@ -242,6 +242,7 @@ extension NeuroIDTracker {
             NeuroIDCore.shared.observingInputs = true
             observeTextInputEvents()
             observeAppEvents()
+            observeRotation()
         }
     }
 
