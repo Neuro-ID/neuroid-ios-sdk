@@ -36,7 +36,6 @@ class NeuroIDCore: NSObject {
     var payloadSendingService: PayloadSendingServiceProtocol
 
     var callObserver: CallStatusObserverServiceProtocol?
-    var orientationObserver: OrientationObserver
     var listenerManager: ListenerManagerService
 
     // flag to ensure that we only have one FPJS call in flight
@@ -160,8 +159,7 @@ class NeuroIDCore: NSObject {
                 uiRuntime: self.uiRuntime,
                 notificationCenter: .default
             )
-        self.orientationObserver = OrientationObserver(eventService: self.eventStorageService)
-        
+
         self.sendCollectionEventsJob = RepeatingTask(
             interval: Double(self.configService.configCache.eventQueueFlushInterval),
             task: NeuroIDCore.sendCollectionEventsTask

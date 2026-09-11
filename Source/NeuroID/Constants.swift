@@ -20,6 +20,10 @@ enum Constants: String {
 
     case storageAdvancedDeviceKey = "nid_advancedDevice"
 
+    case orientationKey = "orientation"
+    case orientationLandscape = "Landscape"
+    case orientationPortrait = "Portrait"
+
     // event item keys
     case eventValuePrefix = "S~C~~"
     case attrKey = "attr"

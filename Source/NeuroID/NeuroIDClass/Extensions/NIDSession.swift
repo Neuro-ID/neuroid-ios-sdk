@@ -221,7 +221,7 @@ extension NeuroIDCore {
         var event = self.createNIDSessionEvent(sessionEvent: .mobileMetadataIOS)
 
         event.attrs = [
-            Attrs(n: "orientation", v: UIDevice.current.orientation.description),
+            Attrs(n: "orientation", v: ParamsCreator.getOrientation()),
             Attrs(n: "isRN", v: "\(NeuroIDCore.shared.isRN)"),
         ]
         self.eventStorageService.saveEventToLocalDataStore(event)
