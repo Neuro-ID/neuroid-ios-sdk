@@ -17,7 +17,7 @@ enum Endpoints {
                 return URL(string: "https://edge.neuroid.cloud/usw2/c")!
             case .usEast:
                 return URL(string: "https://edge.neuroid.cloud/use2/c")!
-            case .usWestLegacy:
+            case .usWestDefault:
                 return URL(string: "https://receiver.neuroid.cloud/c")!
             }
         }
@@ -34,7 +34,7 @@ enum Endpoints {
                 return "https://dn.neuroid.cloud/iynlfqcb0t/usw2"
             case .usEast:
                 return "https://dn.neuroid.cloud/iynlfqcb0t/use2"
-            case .usWestLegacy:
+            case .usWestDefault:
                 return "https://dn.neuroid.cloud/iynlfqcb0t"
             }
         }
@@ -45,7 +45,7 @@ enum Endpoints {
                 return "https://advanced.neuro-id.com"
             case .usEast:
                 return "https://advanced.neuro-id.com"
-            case .usWestLegacy:
+            case .usWestDefault:
                 return "https://advanced.neuro-id.com"
             }
         }
@@ -57,7 +57,7 @@ enum Endpoints {
                 url = URL(string: "https://edge.neuroid.cloud/usw2/a/")!
             case .usEast:
                 url = URL(string: "https://edge.neuroid.cloud/use2/a/")!
-            case .usWestLegacy:
+            case .usWestDefault:
                 url = URL(string: "https://receiver.neuroid.cloud/a/")!
             }
             return url.appendingPathComponent(collectionKey)
@@ -70,7 +70,7 @@ enum Endpoints {
 
         static func remoteConfigURL(_ region: Region, clientKey: String) -> URL {
             switch region {
-            case .usWest, .usEast, .usWestLegacy:
+            case .usWest, .usEast, .usWestDefault:
                 return URL(string: "https://scripts.neuro-id.com/mobile/")!
                     .appendingPathExtension(clientKey)
                     .appendingPathExtension("json")

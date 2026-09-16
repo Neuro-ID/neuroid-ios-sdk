@@ -21,7 +21,7 @@ extension NeuroID {
             useAdvancedDeviceProxy: Bool? = nil
         ) {
             self.clientKey = clientKey
-            self.region = region ?? .usWestLegacy
+            self.region = region ?? .usWestDefault
             self.isAdvancedDevice = isAdvancedDevice ?? false
             self.advancedDeviceKey = advancedDeviceKey
             self.useAdvancedDeviceProxy = useAdvancedDeviceProxy ?? true
