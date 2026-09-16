@@ -6,5 +6,5 @@
 import Foundation
 
 public enum Region: String, Sendable {
-    case usWest
+    case usWest, usEast, usWestLegacy
 }

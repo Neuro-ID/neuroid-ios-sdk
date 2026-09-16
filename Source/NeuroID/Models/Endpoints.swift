@@ -14,6 +14,10 @@ enum Endpoints {
         static func collectionURL(_ region: Region) -> URL {
             switch region {
             case .usWest:
+                return URL(string: "https://edge.neuroid.cloud/usw2/c")!
+            case .usEast:
+                return URL(string: "https://edge.neuroid.cloud/use2/c")!
+            case .usWestLegacy:
                 return URL(string: "https://receiver.neuroid.cloud/c")!
             }
         }
@@ -27,6 +31,10 @@ enum Endpoints {
         static func proxyURL(_ region: Region) -> String {
             switch region {
             case .usWest:
+                return "https://dn.neuroid.cloud/iynlfqcb0t/usw2"
+            case .usEast:
+                return "https://dn.neuroid.cloud/iynlfqcb0t/use2"
+            case .usWestLegacy:
                 return "https://dn.neuroid.cloud/iynlfqcb0t"
             }
         }
@@ -35,15 +43,24 @@ enum Endpoints {
             switch region {
             case .usWest:
                 return "https://advanced.neuro-id.com"
+            case .usEast:
+                return "https://advanced.neuro-id.com"
+            case .usWestLegacy:
+                return "https://advanced.neuro-id.com"
             }
         }
 
         static func apiKeyURL(_ region: Region, collectionKey: String) -> URL {
+            let url: URL
             switch region {
             case .usWest:
-                return URL(string:"https://receiver.neuroid.cloud/a/")!
-                    .appendingPathComponent(collectionKey)
+                url = URL(string: "https://edge.neuroid.cloud/usw2/a/")!
+            case .usEast:
+                url = URL(string: "https://edge.neuroid.cloud/use2/a/")!
+            case .usWestLegacy:
+                url = URL(string: "https://receiver.neuroid.cloud/a/")!
             }
+            return url.appendingPathComponent(collectionKey)
         }
     }
 
@@ -51,10 +68,12 @@ enum Endpoints {
 
     enum RemoteConfig {
 
-        static func remoteConfigURL(_ region: Region) -> URL {
+        static func remoteConfigURL(_ region: Region, clientKey: String) -> URL {
             switch region {
-            case .usWest:
+            case .usWest, .usEast, .usWestLegacy:
                 return URL(string: "https://scripts.neuro-id.com/mobile/")!
+                    .appendingPathExtension(clientKey)
+                    .appendingPathExtension("json")
             }
         }
     }
