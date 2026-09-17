@@ -87,9 +87,7 @@ class ConfigService: ConfigServiceProtocol {
             let clientKey: String = NeuroIDCore.shared.getClientKey()
             let region: Region = NeuroIDCore.shared.region
 
-            let configUrl = Endpoints.RemoteConfig.remoteConfigURL(region)
-                .appendingPathComponent(clientKey)
-                .appendingPathExtension("json")
+            let configUrl = Endpoints.RemoteConfig.remoteConfigURL(region, clientKey: clientKey)
 
             let config = try await networkService.fetchRemoteConfig(from: configUrl)
 
