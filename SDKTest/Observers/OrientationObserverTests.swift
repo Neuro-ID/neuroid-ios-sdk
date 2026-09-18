@@ -45,4 +45,14 @@ struct OrientationObserverTests {
             ]
         )
     }
+
+    @Test
+    func testMapping() {
+        #expect(ParamsCreator.getOrientation(UIDeviceOrientation.faceDown) == "Flat")
+        #expect(ParamsCreator.getOrientation(UIDeviceOrientation.faceUp) == "Flat")
+        #expect(ParamsCreator.getOrientation(UIDeviceOrientation.portrait) == "Portrait")
+        #expect(ParamsCreator.getOrientation(UIDeviceOrientation.portraitUpsideDown) == "Portrait")
+        #expect(ParamsCreator.getOrientation(UIDeviceOrientation.landscapeLeft) == "Landscape")
+        #expect(ParamsCreator.getOrientation(UIDeviceOrientation.landscapeRight) == "Landscape")
+    }
 }
