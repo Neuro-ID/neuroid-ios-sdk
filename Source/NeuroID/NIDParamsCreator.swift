@@ -96,15 +96,20 @@ enum ParamsCreator {
         return tg
     }
 
-    static func getOrientation() -> String {
-        let orientation: String
-        if UIDevice.current.orientation.isLandscape {
-            orientation = Constants.orientationLandscape.rawValue
-        } else {
-            orientation = Constants.orientationPortrait.rawValue
+    static func getOrientation(_ orientation: UIDeviceOrientation? = nil) -> String {
+        let orientation = orientation ?? UIDevice.current.orientation
+        switch orientation {
+        case .landscapeLeft, .landscapeRight:
+            return Constants.orientationLandscape.rawValue
+        case .portrait, .portraitUpsideDown:
+            return Constants.orientationPortrait.rawValue
+        case .faceUp, .faceDown:
+            return Constants.orientationFlat.rawValue
+        case .unknown:
+            return "Unknown"
+        @unknown default:
+            return "Unknown"
         }
-
-        return orientation
     }
 
     static func getTabId() -> String {

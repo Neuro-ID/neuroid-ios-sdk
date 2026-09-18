@@ -23,6 +23,7 @@ enum Constants: String {
     case orientationKey = "orientation"
     case orientationLandscape = "Landscape"
     case orientationPortrait = "Portrait"
+    case orientationFlat = "Flat"
 
     // event item keys
     case eventValuePrefix = "S~C~~"
