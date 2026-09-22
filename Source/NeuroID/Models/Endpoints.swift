@@ -31,9 +31,9 @@ enum Endpoints {
         static func proxyURL(_ region: Region) -> String {
             switch region {
             case .usWest:
-                return "https://dn.neuroid.cloud/iynlfqcb0t/usw2"
+                return "https://dn.neuroid.cloud/usw2/iynlfqcb0t"
             case .usEast:
-                return "https://dn.neuroid.cloud/iynlfqcb0t/use2"
+                return "https://dn.neuroid.cloud/use2/iynlfqcb0t"
             case .usWestDefault:
                 return "https://dn.neuroid.cloud/iynlfqcb0t"
             }
