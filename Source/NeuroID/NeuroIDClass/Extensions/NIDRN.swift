@@ -16,7 +16,7 @@ extension NeuroIDCore {
 
     func configure(clientKey: String, rnOptions: [String: Any]) -> Bool {
         let region: Region? = (rnOptions[RNConfigOptions.region.rawValue] as? String)
-            .flatMap(Region.init(rawValue:))
+            .flatMap(Region.init(rnValue:))
         let isAdvancedDevice: Bool? = rnOptions[RNConfigOptions.isAdvancedDevice.rawValue] as? Bool
         let advancedDeviceKey: String? = rnOptions[RNConfigOptions.advancedDeviceKey.rawValue] as? String
         let useAdvancedDeviceProxy: Bool? = rnOptions[RNConfigOptions.useAdvancedDeviceProxy.rawValue] as? Bool
