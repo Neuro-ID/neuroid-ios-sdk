@@ -16,7 +16,7 @@ public enum Region: String, Sendable {
     // Initalizer for React Native passed values
     init?(rnValue: String) {
         switch rnValue {
-        case "US_WEST":
+        case "US_WEST", "usWest":
             self = .usWest
         case "US_EAST":
             self = .usEast
