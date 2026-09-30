@@ -100,7 +100,6 @@ jobs:
             -destination "id=$SIMULATOR_UDID" \
             -resultBundlePath TestResults.xcresult \
             -parallel-testing-enabled NO \
-            -test-execution-ordering random \
             -enableThreadSanitizer YES \
             -retry-tests-on-failure \
             -max-test-failures 3 | xcbeautify --renderer github-actions
