@@ -102,7 +102,7 @@ jobs:
             -parallel-testing-enabled NO \
             -enableThreadSanitizer YES \
             -retry-tests-on-failure \
-            -max-test-failures 3 | xcbeautify --renderer github-actions
+            -test-iterations 3 | xcbeautify --renderer github-actions
 
       - name: Convert Coverage for Sonar
         if: ${{ matrix.sonar_check == true }}
