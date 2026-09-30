@@ -98,13 +98,12 @@ jobs:
             -project NeuroID.xcodeproj \
             -scheme NeuroID \
             -destination "id=$SIMULATOR_UDID" \
-            -resultBundlePath TestResults.xcresult | \
+            -resultBundlePath TestResults.xcresult \
             -parallel-testing-enabled NO \
             -test-execution-ordering random \
             -enableThreadSanitizer YES \
             -retry-tests-on-failure \
-            -max-test-failures 3 | \
-          xcbeautify --renderer github-actions
+            -max-test-failures 3 | xcbeautify --renderer github-actions
 
       - name: Convert Coverage for Sonar
         if: ${{ matrix.sonar_check == true }}
