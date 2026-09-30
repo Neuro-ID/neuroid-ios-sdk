@@ -8,14 +8,14 @@ s.name = "NeuroID"
 s.module_name = "NeuroID"
 s.summary = "NeuroID's official SDK for the iOS platform"
 s.requires_arc = true
-s.version = "4.3.3"
+s.version = "4.4.0"
 s.author = { "NeuroID" => "NeuroID" }
 s.homepage = "https://neuro-id.com/"
 
 s.source = { :git => "https://github.com/Neuro-ID/neuroid-ios-sdk.git", :tag => "#{s.version}"}
 s.source_files = "Source/NeuroID/**/*.{h,c,m,swift,mlmodel,mlmodelc}"
 
-s.dependency 'Alamofire', '5.11.2'
+s.dependency 'Alamofire', '5.12.2'
 s.dependency 'FingerprintPro', '2.17.2'
 
 s.default_subspecs = 'Core'
