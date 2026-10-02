@@ -137,10 +137,12 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
         let client = FingerprintFactory.getInstance(configuration)
 
-        var metadata = Metadata()
-        metadata.setTag(NeuroIDCore.shared.getClientID(), forKey: "clientId")
-        metadata.setTag(NeuroIDCore.shared.getClientKey(), forKey: "collectorKey")
-        metadata.setTag((Date().timeIntervalSince1970 * 1000).rounded(), forKey: "requestStartTime")
+        let tags: [String: Fingerprint.JSONType] = [
+            "clientId": .string(NeuroIDCore.shared.getClientID()),
+            "collectorKey": .string(NeuroIDCore.shared.getClientKey()),
+            "requestStartTime": .double((Date().timeIntervalSince1970 * 1000).rounded())
+        ]
+        let metadata = Metadata(tags: tags)
 
         client.getVisitorIdResponse(metadata) { result in
             switch result {
