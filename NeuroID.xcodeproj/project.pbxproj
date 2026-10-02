@@ -710,14 +710,6 @@
 				minimumVersion = 5.12.0;
 			};
 		};
-		01219BBF2ED77183008F3D71 /* XCRemoteSwiftPackageReference "fingerprintjs-pro-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/fingerprintjs/fingerprintjs-pro-ios";
-			requirement = {
-				kind = exactVersion;
-				version = 2.17.2;
-			};
-		};
 		01D31F542E9D90CC0042B0DD /* XCRemoteSwiftPackageReference "JSONSchemaValidation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/dashpay/JSONSchemaValidation";
