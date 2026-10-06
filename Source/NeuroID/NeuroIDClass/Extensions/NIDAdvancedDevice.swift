@@ -136,7 +136,7 @@ extension NeuroIDCore {
      Based on the parameter passed in AND the sampling flag, this function will make a call to the ADV library or not,
      Default is to use the global settings from the NeuroID class but can be overridden (see `start`
      or `startSession` in the `NIDAdvancedDevice.swift` file.
-    
+
      Marked as `@objc` because this method can be called with reflection if the ADV library is not installed.
      Because of the reflection we use an array with a boolean instead of just boolean. Log the shouldCapture flag
      in a LOG event (isAdvancedDevice setting: <true/false>.
