@@ -40,19 +40,30 @@ extension NeuroIDCore {
     }
 
     func getCachedADV() -> Bool {
-        if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
-            if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {
-
-                // If there is sealed results from proxy, include those
-                let storedSealedResults: String? = storedADVKey["scr"] as? String
-                self.captureADVEvent(requestID, cached: true, latency: 0, message: "", sealedClientResults: storedSealedResults)
-
-                // Return false when we still need to fetch a new response
-                let currentTimeEpoch = Date().timeIntervalSince1970
-                return currentTimeEpoch < exp
-            }
+        guard
+            let eventId = getUserDefaultKeyString(Constants.storageAdvancedDeviceKey.rawValue),
+            let requestTimestamp = UtilFunctions.getTimestampFromEventId(eventId)
+        else {
+            return false
         }
 
+        let age = Date().timeIntervalSince(requestTimestamp)
+        let cacheValidity = TimeInterval(ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION)
+        let maxAge = TimeInterval(ConfigService.DEFAULT_ADV_MAX_AGE)
+
+        // Still within the cache window, reuse the existing request
+        if age < cacheValidity {
+            self.captureADVEvent(eventId, cached: true, latency: 0)
+            return true
+        }
+
+        // Cache has expired but the request is still recent enough to be
+        // meaningful, send it one last time before fetching a new one
+        if age < maxAge {
+            self.captureADVEvent(eventId, cached: true, latency: 0)
+        }
+
+        // Either just expired or too stale to send - a new request is needed
         return false
     }
 
@@ -61,36 +72,24 @@ extension NeuroIDCore {
         guard !self.isFPJSRunning else {
             return
         }
-        
+
         self.isFPJSRunning = true
-        
+
         self.deviceSignalService.getAdvancedDeviceSignal(
             self.getClientKey(),
             advancedDeviceKey: self.advancedDeviceKey
         ) { request in
             switch request {
-            case .success((let requestID, let duration, let sealedClientResults)):
+            case .success((let eventId, let duration)):
 
                 self.captureADVEvent(
-                    requestID,
+                    eventId,
                     cached: false,
                     latency: duration,
-                    message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key",
-                    sealedClientResults: sealedClientResults
+                    message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key"
                 )
 
-                let storedKey : [String: Any?] = [
-                    "exp": UtilFunctions.getFutureTimeStamp(
-                        self.configService.configCache.advancedCookieExpiration ?? ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION
-                    ),
-                    "key": requestID,
-                    "scr": sealedClientResults
-                ]
-                
-                setUserDefaultKey(
-                    Constants.storageAdvancedDeviceKey.rawValue,
-                    value: storedKey.compactMapValues { $0 }
-                )
+                setUserDefaultKey(Constants.storageAdvancedDeviceKey.rawValue, value: eventId)
 
                 self.isFPJSRunning = false
 
@@ -116,21 +115,19 @@ extension NeuroIDCore {
     }
 
     func captureADVEvent(
-        _ requestID: String,
+        _ eventId: String,
         cached: Bool,
         latency: Double,
-        message: String,
-        sealedClientResults: String? = nil
+        message: String? = nil
     ) {
         self.saveEventToDataStore(
             NIDEvent(
                 type: .advancedDevice,
                 ct: NeuroIDCore.shared.networkMonitor.connectionType,
                 l: latency,
-                rid: requestID,
+                rid: eventId,
                 c: cached,
-                m: message,
-                sealedClientResults: sealedClientResults
+                m: message
             )
         )
     }

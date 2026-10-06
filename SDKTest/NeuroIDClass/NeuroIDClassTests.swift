@@ -5,8 +5,9 @@
 //  Created by Kevin Sites on 4/5/23.
 //
 
-@testable import NeuroID
 import XCTest
+
+@testable import NeuroID
 
 class NeuroIDClassTests: BaseTestClass {
     var mockedNetworkService = MockNetworkService()
@@ -28,7 +29,7 @@ class NeuroIDClassTests: BaseTestClass {
         neuroID = NeuroIDCore(identifierService: mockIdentifierService)
 
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
-        mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000)), nil))
+        mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
         NeuroIDCore._isTesting = true
         NeuroIDCore.shared.datastore = dataStore
         NeuroIDCore.shared.identifierService = mockIdentifierService
@@ -54,7 +55,7 @@ class NeuroIDClassTests: BaseTestClass {
         let configuration = NeuroID.Configuration(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         _ = NeuroID.configure(configuration)
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
-        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds, nil))
+        mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
 
         NeuroIDCore.shared.configService = MockConfigService()
 

@@ -8,8 +8,8 @@
 import Fingerprint
 import Foundation
 
-// Reusable tuple for Advanced Device Results (requestId, calculated duration in ms, sealedResult)
-typealias AdvancedDeviceResult = (requestId: String, duration: Double, sealedResult: String?)
+// Reusable tuple for Advanced Device Results (eventId, calculated duration in ms, sealedResult)
+typealias AdvancedDeviceResult = (eventId: String, duration: Double)
 
 struct NIDADVKeyResponse: Codable {
     let key: String
@@ -185,9 +185,9 @@ class AdvancedDeviceService: NSObject, AdvancedDeviceServiceProtocol {
 
             getAdvancedDeviceResult(apiKey) { result in
                 switch result {
-                case .success(let (requestID, sealedResults)):
+                case .success(let (eventId, duration)):
                     let duration = Date().timeIntervalSince(startTime) * 1000
-                    completion(.success((requestID, duration, sealedResults)))
+                    completion(.success((eventId, duration)))
 
                 case .failure(let error):
                     if error.localizedDescription.contains("Method not available") {
