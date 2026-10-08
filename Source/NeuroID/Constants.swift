@@ -41,6 +41,8 @@ enum Constants: String {
     // Tags
     case extraInfoTag = "NeuroID Extra:"
     case registrationTag = "NeuroID Registration:"
+
+    static let maxDeviceNetworkAge: TimeInterval = TimeInterval(90 * 24 * 60 * 60)  // 90 days
 }
 
 enum UserIDTypes: String {

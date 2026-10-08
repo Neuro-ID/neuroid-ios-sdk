@@ -29,7 +29,7 @@ class NeuroIDClassTests: BaseTestClass {
         neuroID = NeuroIDCore(identifierService: mockIdentifierService)
 
         UserDefaults.standard.removeObject(forKey: Constants.storageAdvancedDeviceKey.rawValue)
-        mockService.mockResult = .success(("mock", Double(Int.random(in: 0 ..< 3000))))
+        mockService.mockResult = .success(("mock", Double(Int.random(in: 0..<3000))))
         NeuroIDCore._isTesting = true
         NeuroIDCore.shared.datastore = dataStore
         NeuroIDCore.shared.identifierService = mockIdentifierService
@@ -54,7 +54,7 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroIDCore.shared.deviceSignalService = mockService
         let configuration = NeuroID.Configuration(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
         _ = NeuroID.configure(configuration)
-        let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
+        let randomTimeInMilliseconds = Double(Int.random(in: 0..<3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds))
 
         NeuroIDCore.shared.configService = MockConfigService()
@@ -62,6 +62,29 @@ class NeuroIDClassTests: BaseTestClass {
         NeuroID.start(true) { _ in
             self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
         }
+    }
+
+    func test_getCachedADV_false_whenNoStoredValue() {
+        NeuroIDCore.shared._isSDKStarted = true
+
+        let result = NeuroIDCore.shared.getCachedADV()
+
+        XCTAssertFalse(result)
+        assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 0)
+    }
+
+    func test_getCachedADV_true_andCapturesCachedEvent_whenWithinCacheValidity() {
+        NeuroIDCore.shared._isSDKStarted = true
+        let recentTimestamp = Date().addingTimeInterval(-10)
+        setUserDefaultKey(
+            Constants.storageAdvancedDeviceKey.rawValue,
+            value: "\(Int(recentTimestamp.timeIntervalSince1970 * 1000)).suffix"
+        )
+
+        let result = NeuroIDCore.shared.getCachedADV()
+
+        XCTAssertTrue(result)
+        assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
     }
 
     func test_class_var_identityId_get() {

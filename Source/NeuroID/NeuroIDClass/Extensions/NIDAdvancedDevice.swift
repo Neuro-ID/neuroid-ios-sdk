@@ -39,32 +39,37 @@ extension NeuroIDCore {
         }
     }
 
+    func checkEventId(
+        from eventId: String,
+        now: Date = Date(),
+        cacheValidity: TimeInterval = TimeInterval(ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION),
+        maxAge: TimeInterval = Constants.maxDeviceNetworkAge
+    ) -> (eventId: String, isValid: Bool, shouldSend: Bool)? {
+        guard let requestTimestamp = UtilFunctions.getTimestampFromEventId(eventId) else {
+            return nil
+        }
+
+        let age = now.timeIntervalSince(requestTimestamp)
+
+        return (eventId, age < cacheValidity, age < maxAge)
+    }
+
     func getCachedADV() -> Bool {
-        guard
-            let eventId = getUserDefaultKeyString(Constants.storageAdvancedDeviceKey.rawValue),
-            let requestTimestamp = UtilFunctions.getTimestampFromEventId(eventId)
-        else {
+        // Get Event ID from User Defaults
+        guard let eventId = getUserDefaultKeyString(Constants.storageAdvancedDeviceKey.rawValue) else {
             return false
         }
 
-        let age = Date().timeIntervalSince(requestTimestamp)
-        let cacheValidity = TimeInterval(ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION)
-        let maxAge = TimeInterval(ConfigService.DEFAULT_ADV_MAX_AGE)
-
-        // Still within the cache window, reuse the existing request
-        if age < cacheValidity {
-            self.captureADVEvent(eventId, cached: true, latency: 0)
-            return true
+        guard let result = checkEventId(from: eventId) else {
+            return false
         }
 
-        // Cache has expired but the request is still recent enough to be
-        // meaningful, send it one last time before fetching a new one
-        if age < maxAge {
-            self.captureADVEvent(eventId, cached: true, latency: 0)
+        // If the request is still within the cache window or recent enough to be meaningful, send it
+        if result.shouldSend {
+            self.captureADVEvent(result.eventId, cached: true, latency: 0)
         }
 
-        // Either just expired or too stale to send - a new request is needed
-        return false
+        return result.isValid
     }
 
     func getNewADV() {

@@ -32,7 +32,6 @@ class ConfigService: ConfigServiceProtocol {
     static let MAX_SAMPLE_RATE: Int = 100
     static let DEFAULT_LOW_MEMORY_BACK_OFF = 5.0
     static let DEFAULT_ADV_COOKIE_EXPIRATION = 12 * 60 * 60
-    static let DEFAULT_ADV_MAX_AGE = 90 * 24 * 60 * 60
 
     // Services
     let networkService: NetworkServiceProtocol
