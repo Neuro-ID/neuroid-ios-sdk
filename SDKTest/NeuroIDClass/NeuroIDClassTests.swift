@@ -78,7 +78,7 @@ class NeuroIDClassTests: BaseTestClass {
         let recentTimestamp = Date().addingTimeInterval(-10)
         setUserDefaultKey(
             Constants.storageAdvancedDeviceKey.rawValue,
-            value: "\(Int(recentTimestamp.timeIntervalSince1970 * 1000)).suffix"
+            value: ["key": "\(Int(recentTimestamp.timeIntervalSince1970 * 1000)).suffix"]
         )
 
         let result = NeuroIDCore.shared.getCachedADV()
