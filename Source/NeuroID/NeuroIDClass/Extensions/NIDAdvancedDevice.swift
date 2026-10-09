@@ -55,8 +55,11 @@ extension NeuroIDCore {
     }
 
     func getCachedADV() -> Bool {
-        // Get Event ID from User Defaults
-        guard let eventId = getUserDefaultKeyString(Constants.storageAdvancedDeviceKey.rawValue) else {
+        // Get Event ID, stored as a single-element dictionary
+        guard
+            let eventDict = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue),
+            let eventId = eventDict["key"] as? String
+        else {
             return false
         }
 
@@ -94,7 +97,7 @@ extension NeuroIDCore {
                     message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key"
                 )
 
-                setUserDefaultKey(Constants.storageAdvancedDeviceKey.rawValue, value: eventId)
+                setUserDefaultKey(Constants.storageAdvancedDeviceKey.rawValue, value: ["key": eventId])
 
                 self.isFPJSRunning = false
 
