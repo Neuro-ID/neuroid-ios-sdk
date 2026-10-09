@@ -24,6 +24,19 @@ enum UtilFunctions {
         }
     }
 
+    // D+N event IDs are formatted as "<epochMilliseconds>.<suffix>"
+    // This extracts the epoch timestamp embedded at the start of the request ID as a Date
+    static func getTimestampFromEventId(_ requestID: String) -> Date? {
+        guard
+            let millisecondsString = requestID.split(separator: ".").first,
+            let milliseconds = Double(millisecondsString)
+        else {
+            return nil
+        }
+
+        return Date(timeIntervalSince1970: milliseconds / 1000)
+    }
+
     static func getParentRecursively(viewController: UIViewController) -> [String] {
         if let parent = viewController.parent {
             return [parent.nidClassName] + getParentRecursively(viewController: parent)

@@ -189,7 +189,7 @@ struct NeuroHTTPRequest: Codable {
         self.url = url
         self.packetNumber = packetNumber
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case clientId
         case environment
@@ -348,9 +348,6 @@ public struct NIDEvent: Codable {
     var iswifi: Bool?
     var isconnected: Bool?
 
-    // Sealed results from Advanced Device Proxy
-    var sealedClientResults: String?
-
     // Generic Event Init instead of one off inits
     init(
         type: NIDEventName,
@@ -400,8 +397,7 @@ public struct NIDEvent: Codable {
         m: String? = nil,
         level: String? = nil,
         iswifi: Bool? = nil,
-        isconnected: Bool? = nil,
-        sealedClientResults: String? = nil
+        isconnected: Bool? = nil
     ) {
         self.type = type.rawValue
         self.tg = tg
@@ -451,7 +447,6 @@ public struct NIDEvent: Codable {
         self.level = level
         self.iswifi = iswifi
         self.isconnected = isconnected
-        self.sealedClientResults = sealedClientResults
     }
 
     enum CodingKeys: String, CodingKey {
@@ -504,7 +499,6 @@ public struct NIDEvent: Codable {
         case level
         case iswifi
         case isconnected
-        case sealedClientResults = "scr"
     }
 
     init(rawType: String) {
