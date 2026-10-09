@@ -12,7 +12,6 @@ extension NeuroIDCore {
         NIDEventName.setLinkedSite.rawValue,
         NIDEventName.focus.rawValue,
         NIDEventName.setRegisteredUserId.rawValue,
-        NIDEventName.attemptedLogin.rawValue,
         NIDEventName.applicationMetadata.rawValue,
         NIDEventName.setUserId.rawValue,
         NIDEventName.createSession.rawValue,

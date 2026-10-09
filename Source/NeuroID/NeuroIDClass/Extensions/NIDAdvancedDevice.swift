@@ -8,37 +8,6 @@
 import Foundation
 
 extension NeuroIDCore {
-    func start(
-        _ advancedDeviceSignals: Bool,
-        completion: @escaping (Bool) -> Void = { _ in }
-    ) {
-        self.start(siteID: nil) { started in
-            if !started {
-                completion(started)
-                return
-            }
-
-            self.captureAdvancedDevice(advancedDeviceSignals)
-            completion(started)
-        }
-    }
-
-    func startSession(
-        _ identityId: String? = nil,
-        _ advancedDeviceSignals: Bool,
-        completion: @escaping (SessionStartResult) -> Void = { _ in }
-    ) {
-        self.startSession(siteID: nil, identityId: identityId) { sessionRes in
-            if !sessionRes.started {
-                completion(sessionRes)
-                return
-            }
-
-            self.captureAdvancedDevice(advancedDeviceSignals)
-            completion(sessionRes)
-        }
-    }
-
     func getCachedADV() -> Bool {
         if let storedADVKey = getUserDefaultKeyDict(Constants.storageAdvancedDeviceKey.rawValue) {
             if let exp = storedADVKey["exp"] as? Double, let requestID = storedADVKey["key"] as? String {

@@ -8,7 +8,6 @@ import Foundation
 enum NIDEventName: String {
     case createSession = "CREATE_SESSION"
     case closeSession = "CLOSE_SESSION"
-    case attemptedLogin = "ATTEMPTED_LOGIN"
     case stateChange = "STATE_CHANGE"
     case setUserId = "SET_USER_ID"
     case setRegisteredUserId = "SET_REGISTERED_USER_ID"

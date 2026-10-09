@@ -15,18 +15,6 @@ public enum NeuroID {
     public static func configure(_ configuration: NeuroID.Configuration) -> Bool {
         return NeuroIDCore.shared.configure(configuration)
     }
-    
-    @available(*, deprecated, renamed: "configure(_:)", message: "Use `NeuroID.configure(_ configuration: NeuroID.Configuration)` instead.")
-    public static func configure(
-        clientKey: String, isAdvancedDevice: Bool = false, advancedDeviceKey: String? = nil
-    ) -> Bool {
-        let configuration = NeuroID.Configuration(
-            clientKey: clientKey,
-            isAdvancedDevice: isAdvancedDevice,
-            advancedDeviceKey: advancedDeviceKey
-        )
-        return NeuroIDCore.shared.configure(configuration)
-    }
 
     public static func enableLogging(_ value: Bool) {
         NeuroIDCore.shared.enableLogging(value)
@@ -65,34 +53,17 @@ public enum NeuroID {
         NeuroIDCore.shared.setVariable(key: key, value: value)
     }
 
+    // Identity ID
+
     public static func getIdentityId() -> String {
         return NeuroIDCore.shared.getIdentityId()
     }
 
-    @available(*, deprecated, renamed: "getIdentityId()")
-    public static func getSessionID() -> String {
-        return NeuroIDCore.shared.getIdentityId()
-    }
-
-    //  Temporarily keeping this function for backwards compatibility, will be removed
-    // replaced with`getIdentityId`
-    @available(*, deprecated, renamed: "getIdentityId()")
-    public static func getUserID() -> String {
-        return NeuroIDCore.shared.getIdentityId()
-    }
-
-    // USER FUNCTIONS
-    // This command replaces `setUserID`
-    // Formerly known as userID, now within the mobile sdk ONLY identityId
     public static func identify(_ identityId: String) -> Bool {
         return NeuroIDCore.shared.identify(identityId)
     }
 
-    // Temporarily keeping this function for backwards compatibility
-    @available(*, deprecated, renamed: "identify(_:)")
-    public static func setUserID(_ userID: String) -> Bool {
-        return NeuroIDCore.shared.identify(userID)
-    }
+    // Registered User ID
 
     public static func setRegisteredUserID(_ registeredUserID: String) -> Bool {
         return NeuroIDCore.shared.setRegisteredUserID(registeredUserID)
@@ -102,16 +73,8 @@ public enum NeuroID {
         return NeuroIDCore.shared.getRegisteredUserID()
     }
 
-    /**
-     This should be called the moment a user trys to login. Returns true always
-     @param {String} [attemptedRegisteredUserId] - an optional identifier for the login
-     */
-    @available(*, deprecated)
-    public static func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
-        return NeuroIDCore.shared.attemptedLogin(attemptedRegisteredUserId)
-    }
-
     // SESSION FUNCTIONS
+
     public static func start(
         completion: @escaping (Bool) -> Void = { _ in }
     ) {
@@ -157,24 +120,6 @@ public enum NeuroID {
         completion: @escaping (SessionStartResult) -> Void = { _ in }
     ) {
         NeuroIDCore.shared.startAppFlow(siteID: siteID, identityId: sessionID, completion: completion)
-    }
-
-    // AdvancedDevice Functions
-    @available(*, deprecated)
-    public static func start(
-        _ advancedDeviceSignals: Bool,
-        completion: @escaping (Bool) -> Void = { _ in }
-    ) {
-        NeuroIDCore.shared.start(advancedDeviceSignals, completion: completion)
-    }
-
-    @available(*, deprecated)
-    public static func startSession(
-        _ sessionID: String? = nil,
-        _ advancedDeviceSignals: Bool,
-        completion: @escaping (SessionStartResult) -> Void = { _ in }
-    ) {
-        NeuroIDCore.shared.startSession(sessionID, advancedDeviceSignals, completion: completion)
     }
 
     // RN Functions
