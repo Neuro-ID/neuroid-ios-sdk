@@ -136,11 +136,7 @@ class IdentifierService: IdentifierServiceProtocol {
 
         eventStorageService.saveEventToDataStore(
             NIDEvent(
-                type: type == .identityId
-                    ? .setUserId
-                    : type == .registeredUserID
-                    ? .setRegisteredUserId
-                    : .attemptedLogin,
+                type: type == .identityId ? .setUserId : .setRegisteredUserId,
                 uid: identifier
             )
         )

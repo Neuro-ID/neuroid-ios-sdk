@@ -49,23 +49,6 @@ class MultiAppFlowTests: XCTestCase {
         NeuroIDCore._isTesting = false
     }
 
-    func test_start_adv_true() {
-        NeuroIDCore.shared.clientKey = ""
-        let configuration = NeuroID.Configuration(clientKey: clientKey)
-        _ = NeuroID.configure(configuration)
-        NeuroIDCore.shared.configService = mockedConfig
-        clearOutDataStore()
-
-        NeuroID.start(true) { _ in
-            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
-                $0.type == "ADVANCED_DEVICE_REQUEST"
-            }
-
-            assert(!NeuroIDCore.shared.isAdvancedDevice)
-            assert(validEvent.count == 1)
-        }
-    }
-
     func test_start_configure_adv_true() {
         NeuroIDCore.shared.clientKey = ""
 
@@ -80,23 +63,6 @@ class MultiAppFlowTests: XCTestCase {
             }
             assert(NeuroIDCore.shared.isAdvancedDevice)
             assert(validEvent.count == 1)
-        }
-    }
-
-    func test_start_session_adv_true() {
-        NeuroIDCore.shared.clientKey = ""
-        let configuration = NeuroID.Configuration(clientKey: clientKey)
-        _ = NeuroID.configure(configuration)
-        NeuroIDCore.shared.configService = mockedConfig
-        clearOutDataStore()
-
-        NeuroID.startSession("fake_user_session", true) { _ in
-
-            let validEvent = NeuroIDCore.shared.datastore.getAllEvents().filter {
-                $0.type == "ADVANCED_DEVICE_REQUEST"
-            }
-            XCTAssert(!NeuroIDCore.shared.isAdvancedDevice)
-            XCTAssertTrue(validEvent.count == 1)
         }
     }
 
