@@ -23,10 +23,33 @@ extension NeuroIDCore {
 
         // If the request is still within the cache window or recent enough to be meaningful, send it
         if result.shouldSend {
-            self.captureADVEvent(result.eventId, cached: true, latency: 0)
+            self.saveEventToDataStore(
+                NIDEvent(
+                    type: .advancedDevice,
+                    ct: NeuroIDCore.shared.networkMonitor.connectionType,
+                    l: 0,
+                    rid: result.eventId,
+                    c: true
+                )
+            )
         }
 
         return result.isValid
+    }
+
+    func checkEventId(
+        from eventId: String,
+        now: Date = Date(),
+        cacheValidity: TimeInterval = TimeInterval(ConfigService.DEFAULT_ADV_COOKIE_EXPIRATION),
+        maxAge: TimeInterval = Constants.maxDeviceNetworkAge
+    ) -> (eventId: String, isValid: Bool, shouldSend: Bool)? {
+        guard let requestTimestamp = UtilFunctions.getTimestampFromEventId(eventId) else {
+            return nil
+        }
+
+        let age = now.timeIntervalSince(requestTimestamp)
+
+        return (eventId, age < cacheValidity, age < maxAge)
     }
 
     func getNewADV() {
@@ -43,12 +66,15 @@ extension NeuroIDCore {
         ) { request in
             switch request {
             case .success((let eventId, let duration)):
-
-                self.captureADVEvent(
-                    eventId,
-                    cached: false,
-                    latency: duration,
-                    message: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key"
+                self.saveEventToDataStore(
+                    NIDEvent(
+                        type: .advancedDevice,
+                        ct: NeuroIDCore.shared.networkMonitor.connectionType,
+                        l: duration,
+                        rid: eventId,
+                        c: false,
+                        m: self.advancedDeviceKey.isEmptyOrNil ? "server retrieved FPJS key" : "user entered FPJS key"
+                    )
                 )
 
                 setUserDefaultKey(Constants.storageAdvancedDeviceKey.rawValue, value: ["key": eventId])
@@ -76,29 +102,11 @@ extension NeuroIDCore {
         }
     }
 
-    func captureADVEvent(
-        _ eventId: String,
-        cached: Bool,
-        latency: Double,
-        message: String? = nil
-    ) {
-        self.saveEventToDataStore(
-            NIDEvent(
-                type: .advancedDevice,
-                ct: NeuroIDCore.shared.networkMonitor.connectionType,
-                l: latency,
-                rid: eventId,
-                c: cached,
-                m: message
-            )
-        )
-    }
-
     /**
      Based on the parameter passed in AND the sampling flag, this function will make a call to the ADV library or not,
      Default is to use the global settings from the NeuroID class but can be overridden (see `start`
      or `startSession` in the `NIDAdvancedDevice.swift` file.
-
+    
      Marked as `@objc` because this method can be called with reflection if the ADV library is not installed.
      Because of the reflection we use an array with a boolean instead of just boolean. Log the shouldCapture flag
      in a LOG event (isAdvancedDevice setting: <true/false>.
