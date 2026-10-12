@@ -108,29 +108,4 @@ class NIDUserTests: XCTestCase {
 
         assert(value == expectedValue)
     }
-
-    // attemptedLogin
-    func test_attemptedLogin_valid() {
-        let expectedValue = true
-        mockIdentifierService.setGenericIdentifierResponse = expectedValue
-
-        let response = neuroID.attemptedLogin()
-
-        assert(response == expectedValue)
-        assert(mockIdentifierService.setGenericIdentifierCount == 1)
-        assert(mockEventStorageService.saveEventToDataStoreCount == 0)
-    }
-
-    func test_attemptedLogin_invalid() {
-        let expectedValue = true
-        mockIdentifierService.setGenericIdentifierResponse = false
-
-        let response = neuroID.attemptedLogin()
-
-        assert(response == expectedValue)
-        assert(mockIdentifierService.setGenericIdentifierCount == 1)
-        assert(mockEventStorageService.saveEventToDataStoreCount == 1)
-        assert(mockEventStorageService.mockEventStore[0].type == NIDEventName.attemptedLogin.rawValue)
-        assert(mockEventStorageService.mockEventStore[0].uid == "scrubbed-id-failed-validation")
-    }
 }

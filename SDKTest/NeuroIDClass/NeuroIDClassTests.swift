@@ -51,14 +51,15 @@ class NeuroIDClassTests: BaseTestClass {
     func test_getAdvDeviceLatency() {
         let mockService = MockDeviceSignalService()
         NeuroIDCore.shared.deviceSignalService = mockService
-        let configuration = NeuroID.Configuration(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL")
+        let configuration = NeuroID.Configuration(clientKey: "key_test_0OMmplsawAp2CQfWrytWA3wL", isAdvancedDevice: true)
+        NeuroIDCore.shared.isAdvancedDevice = true
         _ = NeuroID.configure(configuration)
         let randomTimeInMilliseconds = Double(Int.random(in: 0 ..< 3000))
         mockService.mockResult = .success(("empty mock result. Can be filled with anything", randomTimeInMilliseconds, nil))
 
         NeuroIDCore.shared.configService = MockConfigService()
 
-        NeuroID.start(true) { _ in
+        NeuroID.start { _ in
             self.assertStoredEventCount(type: "ADVANCED_DEVICE_REQUEST", count: 1)
         }
     }

@@ -24,21 +24,4 @@ extension NeuroIDCore {
     func getRegisteredUserID() -> String {
         return self.identifierService.registeredUserID
     }
-
-    func attemptedLogin(_ attemptedRegisteredUserId: String? = nil) -> Bool {
-        let validID = self.identifierService.setGenericIdentifier(
-            identifier: attemptedRegisteredUserId ?? "scrubbed-id-failed-validation",
-            type: .attemptedLogin,
-            userGenerated: attemptedRegisteredUserId != nil,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: {}
-        )
-
-        if !validID {
-            self.eventStorageService.saveEventToDataStore(
-                NIDEvent(type: .attemptedLogin, uid: "scrubbed-id-failed-validation")
-            )
-        }
-        return true
-    }
 }

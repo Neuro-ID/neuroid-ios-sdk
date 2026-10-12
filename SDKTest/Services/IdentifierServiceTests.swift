@@ -193,27 +193,6 @@ class IdentifierServiceTests: BaseTestClass {
         )
     }
 
-    func test_setGenericIdentifier_valid_attemptedLogin_duplicatesAllowed() {
-        var successful = false
-        let expectedValue = "myTestUserID"
-        let result = identifierService.setGenericIdentifier(
-            identifier: expectedValue,
-            type: .attemptedLogin,
-            userGenerated: true,
-            duplicatesAllowedCheck: { _ in true },
-            validIDFunction: { successful = true }
-        )
-
-        assert(result == true)
-        assert(successful == true)
-
-        _ = assertStoredEventTypeAndCount(
-            dataStoreEvents: mockEventStorageService.mockEventStore,
-            type: NIDEventName.attemptedLogin.rawValue,
-            count: 1
-        )
-    }
-
     // clearIDs
     func test_clearIDs() {
         state.setIdentityId("testSession")
