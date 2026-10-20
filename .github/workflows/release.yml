@@ -33,6 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ env.PACKAGE_VERSION }}" \
+            --target "${{ github.sha }}" \
             --latest \
             --title "${{ env.PACKAGE_VERSION }}" \
             --notes 'The NeuroID iOS SDK (${{ env.PACKAGE_VERSION }}) is now available.' \
