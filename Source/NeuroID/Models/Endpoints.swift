@@ -72,8 +72,7 @@ enum Endpoints {
             switch region {
             case .usWest, .usEast, .usWestDefault:
                 return URL(string: "https://scripts.neuro-id.com/mobile/")!
-                    .appendingPathExtension(clientKey)
-                    .appendingPathExtension("json")
+                    .appendingPathComponent(clientKey, conformingTo: .json)
             }
         }
     }
